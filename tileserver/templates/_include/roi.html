@@ -1,33 +1,25 @@
 {% block roi %}
 
   <style>
-    .roiTool {
-      background-color: #DCDCDC;
-      padding: 2px;
-      border: 2px solid #000;
-      text-align: left;
-      border-radius: 10px;
-    }
+
+  .btn-group .button:hover {
+    background-color: #3e8e41;
+  }
   </style>
 
   <div id="roiTool" class="roiTool">
-    <div class="column is-full field is-grouped">
-      <div class="control">
-        <input class="button is-secondary" type="button" value="Draw ROI" id="drawROIButton" onclick="enableDrawROI()">
-      </div>
-      <div class="control">
-        <input class="button is-secondary" type="button" id="extractROIButton" onclick="downloadROI()" value="Download" disabled="true">
-      </div>
-      <div class="control">
-        <input class="button is-secondary" type="button" value="Clear" id="clearROIButton" onclick="clearROI()" disabled="true">
-      </div>
+    <div class="control">
+      <input class="button is-secondary" type="button" value="Draw ROI" id="drawROIButton" onclick="enableDrawROI()">
+    </div>
+    <div class="control">
+      <input class="button is-secondary" type="button" id="extractROIButton" onclick="downloadROI()" value="Download" disabled="true">
+    </div>
+    <div class="control">
+      <input class="button is-secondary" type="button" value="Clear" id="clearROIButton" onclick="clearROI()" disabled="true">
     </div>
   </div>
 
   <script>
-    // Add ROI Tool to the GeoJS UI layer
-    var basemapTool = ui.createWidget('dom', {position: {right: 20, top: 60}});
-    basemapTool.canvas().appendChild(document.getElementById("roiTool"))
     var b1 = document.getElementById("drawROIButton")
     var b2 = document.getElementById("extractROIButton")
     var b3 = document.getElementById("clearROIButton")

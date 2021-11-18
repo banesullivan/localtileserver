@@ -2,35 +2,9 @@
   <script src="https://d3js.org/d3-color.v2.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
 
-  <div id="map" style="width: 100%; height: calc(100vh - 55px);"></div>
-
-  <style>
-  .basemapTool {
-    background-color: #DCDCDC;
-    padding: 2px;
-    border: 2px solid #000;
-    text-align: left;
-    border-radius: 10px;
-  }
-  </style>
-
-  <div id="basemapTool" class="basemapTool">
-    <label for="basemapDropdown">Choose a basemap:</label>
-    <select id="basemapDropdown" onChange='changeBasemap();'>
-      <option>-- none --</option>
-    </select>
-  </div>
+  <div id="map" style="width: 100%; height: calc(100vh - 180px);"></div>
 
   <script>
-    // Fill select drop down
-    var options = geo.osmLayer.tileSources;
-    for(const option in options){
-      var newOption = document.createElement('option');
-      newOption.value = option;
-      newOption.text = options[option].name ? options[option].name : option;
-    document.getElementById('basemapDropdown').appendChild(newOption)
-    }
-
     // Initialize the map
     let map = geo.map({
       node: '#map',
@@ -75,23 +49,6 @@
       min: 0,
       max: 20,
     })
-
-    // Create a zoom slider widget
-    ui.createWidget('slider', {position: {left: 40, top: 40}});
-    var basemapTool = ui.createWidget('dom', {position: {right: 20, top: 20}});
-    basemapTool.canvas().appendChild(document.getElementById("basemapTool"))
-
-    var basemapDropdown = document.getElementById("basemapDropdown")
-    basemapDropdown.value = basemapLayer.source()
-    function changeBasemap() {
-      if (basemapDropdown.value == '-- none --') {
-        basemapLayer.visible(false)
-      } else {
-        basemapLayer.visible(true)
-        setCookie('basemapChoice', basemapDropdown.value)
-        basemapLayer.source(basemapDropdown.value)
-      }
-    }
 
     // Position the map to show data extents. If none present, the position
     //   should have been set by the search parameters

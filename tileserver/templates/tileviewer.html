@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 
+{% block uicontrols %}
+  {% include '_include/viewer_controls.html' %}
+  {% include '_include/roi.html' %}
+{% endblock %}
+
+
 {% block content %}
 
   {% include '_include/viewer.html' %}
+
 
   <script>
     let extents = JSON.parse('{{ bounds|tojson }}');
@@ -16,6 +23,7 @@
       value = Number(value) / 100.0;
       tileLayer.opacity(value);
     }
+
 
     var boxjson = {
       "type": "Polygon",
@@ -38,9 +46,5 @@
     });
 
   </script>
-
-
-  {% include '_include/roi.html' %}
-
 
 {% endblock %}
