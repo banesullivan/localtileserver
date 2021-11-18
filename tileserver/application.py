@@ -81,6 +81,7 @@ class TilesView(BaseTileView):
 
 
 class ThumbnailView(BaseTileView):
+    @cache.cached(timeout=120)
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
