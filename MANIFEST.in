@@ -1,0 +1,3 @@
+graft tileserver/static
+graft tileserver/templates
+global-exclude *.pyc
