@@ -50,9 +50,7 @@ class BaseTileView(View):
 class TileMetadataView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
-        meta = tile_source.getMetadata()
-        meta.update(tile_source.getInternalMetadata())
-        return meta
+        return large_image_utilities.get_meta_data(tile_source)
 
 
 class TileBoundsView(BaseTileView):
@@ -171,7 +169,9 @@ app.add_url_rule(
 def inject_context():
     path = app.config["path"]
     tile_source = large_image_utilities.get_tilesource_from_image(path)
-    context = tile_source.getMetadata()
+    context = large_image_utilities.get_meta_data(tile_source)
+    context["bounds"] = large_image_utilities.get_tile_bounds(
+        tile_source, projection="EPSG:4326"
+    )
     context["path"] = path
-    context["bounds"] = large_image_utilities.get_tile_bounds(tile_source, projection="EPSG:4326")
     return context
