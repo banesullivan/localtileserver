@@ -1,0 +1,59 @@
+{% block viewer_controls %}
+
+  <style>
+  .basemapTool {
+    background-color: #DCDCDC;
+    padding: 2px;
+    border: 2px solid #000;
+    text-align: left;
+    border-radius: 10px;
+  }
+  </style>
+
+  <div id="basemapTool" class="basemapTool">
+    <label for="basemapDropdown">Choose a basemap:</label>
+    <select id="basemapDropdown" onChange='changeBasemap();'>
+      <option>-- none --</option>
+    </select>
+  </div>
+
+  <script>
+    // Fill select drop down
+    var options = geo.osmLayer.tileSources;
+    for(const option in options){
+      var newOption = document.createElement('option');
+      newOption.value = option;
+      newOption.text = options[option].name ? options[option].name : option;
+    document.getElementById('basemapDropdown').appendChild(newOption)
+    }
+
+    var basemapDropdown = document.getElementById("basemapDropdown")
+    basemapDropdown.value = basemapLayer.source()
+    function changeBasemap() {
+      if (basemapDropdown.value == '-- none --') {
+        basemapLayer.visible(false)
+      } else {
+        basemapLayer.visible(true)
+        setCookie('basemapChoice', basemapDropdown.value)
+        basemapLayer.source(basemapDropdown.value)
+      }
+    }
+  </script>
+
+  <style>
+    .slidecontainer {
+      background-color: #DCDCDC;
+      padding: 2px;
+      border: 2px solid #000;
+      text-align: left;
+      border-radius: 10px;
+    }
+  </style>
+
+  <div class="slidecontainer" id="opacityTool">
+    <label for="rasterOpacityRange">Raster Layer Opacity: </label>
+    <input type="range" min="1" max="100" value="100" class="slider" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)">
+  </div>
+
+
+{% endblock %}
