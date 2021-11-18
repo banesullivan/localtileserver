@@ -87,3 +87,9 @@ def get_tile_bounds(
     for key in ("ymin", "ymax"):
         bounds[key] = max(min(bounds[key], threshold), -threshold)
     return bounds
+
+
+def get_meta_data(tile_source: FileTileSource):
+    meta = tile_source.getMetadata()
+    meta.update(tile_source.getInternalMetadata())
+    return meta
