@@ -50,13 +50,9 @@ class BaseTileView(View):
 class TileMetadataView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
-        return tile_source.getMetadata()
-
-
-class TileInternalMetadataView(BaseTileView):
-    def dispatch_request(self):
-        tile_source = self.get_tile_source()
-        return tile_source.getInternalMetadata()
+        meta = tile_source.getMetadata()
+        meta.update(tile_source.getInternalMetadata())
+        return meta
 
 
 class TileBoundsView(BaseTileView):
@@ -153,10 +149,6 @@ class Viewer(View):
 
 app.add_url_rule("/", view_func=Viewer.as_view("index"))
 app.add_url_rule("/metadata", view_func=TileMetadataView.as_view("metadata"))
-app.add_url_rule(
-    "/metadata/internal",
-    view_func=TileInternalMetadataView.as_view("internal-metadata"),
-)
 app.add_url_rule(
     "/bounds",
     view_func=TileBoundsView.as_view("bounds"),
