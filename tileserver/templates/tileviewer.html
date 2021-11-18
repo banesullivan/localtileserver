@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+  {% include '_include/viewer.html' %}
+
+  <script>
+    let extents = JSON.parse('{{ sourceBounds|tojson }}');
+    setBounds(extents, false)
+
+    tileLayer.idleAfter = 'all';
+    tileLayer.visible(true);
+    tileLayer.url(`${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857`)
+
+    function updateTilesOpacity(e, value) {
+      value = Number(value) / 100.0;
+      tileLayer.opacity(value);
+    }
+
+    var boxjson = {
+      "type": "Polygon",
+      "coordinates": [
+        [
+          [extents.xmin, extents.ymin],
+          [extents.xmin, extents.ymax],
+          [extents.xmax, extents.ymax],
+          [extents.xmax, extents.ymin],
+          [extents.xmin, extents.ymin]
+        ]
+      ]
+    };
+    reader.read(boxjson, (features) => {
+      features[0].style({
+        strokeColor: 'red',
+        fill: false
+      })
+      .draw();
+    });
+
+  </script>
+
+
+  {% include '_include/roi.html' %}
+
+
+{% endblock %}
