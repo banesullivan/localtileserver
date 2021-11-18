@@ -5,7 +5,7 @@
   {% include '_include/viewer.html' %}
 
   <script>
-    let extents = JSON.parse('{{ sourceBounds|tojson }}');
+    let extents = JSON.parse('{{ bounds|tojson }}');
     setBounds(extents, false)
 
     tileLayer.idleAfter = 'all';
