@@ -21,9 +21,8 @@ cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 
 
 class BaseTileView(View):
-    def get_tile_source(self):
+    def get_tile_source(self, projection="EPSG:3857"):
         """Return the built tile source."""
-        projection = request.args.get("projection", "EPSG:3857")
         band = int(request.args.get("band", 0))
         style = None
         if band:
@@ -51,21 +50,27 @@ class BaseTileView(View):
 class TileMetadataView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
-        metadata = tile_source.getMetadata()
-        return metadata
+        return tile_source.getMetadata()
 
 
 class TileInternalMetadataView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
-        metadata = tile_source.getInternalMetadata()
-        return metadata
+        return tile_source.getInternalMetadata()
+
+
+class TileBoundsView(BaseTileView):
+    def dispatch_request(self):
+        tile_source = self.get_tile_source()
+        projection = request.args.get("projection", "EPSG:4326")
+        return tile_source.getBounds(srs=projection)
 
 
 class TilesView(BaseTileView):
     @cache.cached(timeout=120)
     def dispatch_request(self, x: int, y: int, z: int):
-        tile_source = self.get_tile_source()
+        projection = request.args.get("projection", "EPSG:3857")
+        tile_source = self.get_tile_source(projection=projection)
         tile_binary = tile_source.getTile(x, y, z)
         mime_type = tile_source.getTileMimeType()
         return send_file(
@@ -152,6 +157,10 @@ app.add_url_rule(
     view_func=TileInternalMetadataView.as_view("internal-metadata"),
 )
 app.add_url_rule(
+    "/bounds",
+    view_func=TileBoundsView.as_view("bounds"),
+)
+app.add_url_rule(
     "/tiles/<int:z>/<int:x>/<int:y>.png", view_func=TilesView.as_view("tiles")
 )
 app.add_url_rule("/thumbnail", view_func=ThumbnailView.as_view("thumbnail"))
@@ -168,7 +177,8 @@ app.add_url_rule(
 @app.context_processor
 def inject_context():
     path = app.config["path"]
-    tile_source = large_image_utilities.get_tilesource_from_image(path, "EPSG:3857")
+    tile_source = large_image_utilities.get_tilesource_from_image(path)
     context = tile_source.getMetadata()
     context["path"] = path
+    context["bounds"] = large_image_utilities.get_tile_bounds(tile_source, projection="EPSG:4326")
     return context
