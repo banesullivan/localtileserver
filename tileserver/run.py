@@ -32,14 +32,17 @@ class ServerThread(threading.Thread):
 
     def __del__(self):
         self.shutdown()
-        super().__del__()
 
 
-def run_app_threaded(path: pathlib.Path, port: int = 0):
+def run_app_threaded(path: pathlib.Path, port: int = 0, debug: bool = False):
     app = get_app(path)
 
-    log = logging.getLogger("werkzeug")
-    log.setLevel(logging.ERROR)
+    if not debug:
+        logging.getLogger("werkzeug").setLevel(logging.ERROR)
+        logging.getLogger("gdal").setLevel(logging.ERROR)
+        logging.getLogger("large_image").setLevel(logging.ERROR)
+    else:
+        app.config['DEBUG'] = True
 
     server = ServerThread(app)
     server.start()
@@ -47,9 +50,9 @@ def run_app_threaded(path: pathlib.Path, port: int = 0):
 
 
 class TileServer:
-    def __init__(self, path: pathlib.Path, port: int = 0):
+    def __init__(self, path: pathlib.Path, port: int = 0, debug: bool = False):
         self._path = path
-        self._server = run_app_threaded(self._path, port)
+        self._server = run_app_threaded(self._path, port, debug)
         self._port = self.server.srv.port
 
     @property
@@ -58,8 +61,22 @@ class TileServer:
 
     @property
     def port(self):
-        return self._port
+        if hasattr(self, '_port'):
+            return self._port
 
     @property
     def server(self):
-        return self._server
+        if hasattr(self, '_server'):
+            return self._server
+
+    @property
+    def base_url(self):
+        return f'http://{self.server.srv.host}:{self.port}'
+
+    def shutdown(self):
+        print('Cleaning up...')
+        if self.server:
+            self.server.shutdown()
+
+    def __del__(self):
+        self.shutdown()
