@@ -7,7 +7,7 @@ import large_image
 from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 
-from .utilities import get_cache_dir
+from tileserver.utilities import get_cache_dir
 
 
 def get_tilesource(
