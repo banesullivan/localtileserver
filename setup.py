@@ -12,7 +12,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 0, 3
+version_info = 0, 0, 4
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -21,7 +21,7 @@ setup(
     version=__version__,
     description="Locally serve raster image tiles in the Slippy Map OGC standard.",
     long_description=long_description,
-    long_description_content_type='text/markdown',
+    long_description_content_type="text/markdown",
     author="Bane Sullivan",
     author_email="banesullivan@gmail.com",
     url="https://github.com/banesullivan/flask-tileserver",
@@ -30,7 +30,8 @@ setup(
     zip_safe=False,
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "License :: OSI Approved :: Apache Software License",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python",
