@@ -25,7 +25,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.6",
     install_requires=[
         "flask",
         "Flask-Caching",
