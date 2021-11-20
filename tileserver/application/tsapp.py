@@ -8,6 +8,7 @@ from large_image_source_gdal import GDALFileTileSource
 from werkzeug.routing import FloatConverter as BaseFloatConverter
 
 from tileserver import large_image_utilities
+from tileserver.application.paths import get_path
 
 
 class FloatConverter(BaseFloatConverter):
@@ -22,6 +23,7 @@ cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 class BaseTileView(View):
     def get_tile_source(self, projection="EPSG:3857"):
         """Return the built tile source."""
+        path = get_path()
         band = int(request.args.get("band", 0))
         style = None
         if band:
@@ -40,7 +42,6 @@ class BaseTileView(View):
                 style["nodata"] = nodata
             style = json.dumps(style)
 
-        path = app.config["path"]
         return large_image_utilities.get_tilesource(path, projection, style=style)
 
 
@@ -58,7 +59,7 @@ class TileBoundsView(BaseTileView):
 
 
 class TilesView(BaseTileView):
-    @cache.cached(timeout=120)
+    @cache.memoize(timeout=120)
     def dispatch_request(self, x: int, y: int, z: int):
         projection = request.args.get("projection", "EPSG:3857")
         tile_source = self.get_tile_source(projection=projection)
@@ -72,7 +73,7 @@ class TilesView(BaseTileView):
 
 
 class ThumbnailView(BaseTileView):
-    @cache.cached(timeout=120)
+    @cache.memoize(timeout=120)
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
@@ -164,7 +165,7 @@ app.add_url_rule(
 
 @app.context_processor
 def inject_context():
-    path = app.config["path"]
+    path = get_path()
     tile_source = large_image_utilities.get_tilesource(path)
     context = large_image_utilities.get_meta_data(tile_source)
     context["bounds"] = large_image_utilities.get_tile_bounds(
