@@ -43,9 +43,9 @@ Launch the tileserver from the commandline to use the included web application w
 python -m tileserver path/to/raster.tif
 ```
 
-![webviewer](./imgs/webviewer.gif)
+![webviewer](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer.gif)
 
-![webviewer-roi](./imgs/webviewer-roi.gif)
+![webviewer-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer-roi.gif)
 
 ### `ipyleaflet` Tile Layers
 
@@ -77,7 +77,7 @@ m.add_control(FullScreenControl())
 m
 ```
 
-![ipyleaflet](./imgs/ipyleaflet.gif)
+![ipyleaflet](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.gif)
 
 
 Note: the color palette choices come form [`palettable`](https://jiffyclub.github.io/palettable/)
@@ -109,7 +109,7 @@ m.add_control(draw_control)
 m
 ```
 
-![ipyleaflet-draw-roi](./imgs/ipyleaflet-draw-roi.png)
+![ipyleaflet-draw-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet-draw-roi.png)
 
 
 
@@ -138,4 +138,4 @@ m2.add_control(FullScreenControl())
 m2
 ```
 
-![ipyleaflet-roi](./imgs/ipyleaflet-roi.png)
+![ipyleaflet-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet-roi.png)
