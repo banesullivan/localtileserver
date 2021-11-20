@@ -3,6 +3,8 @@ import pathlib
 import threading
 from werkzeug.serving import make_server
 
+from tileserver.application.paths import inject_path
+
 
 def run_app(path: pathlib.Path, port: int = 0, debug: bool = False):
     from tileserver.application import app
@@ -34,8 +36,8 @@ class TileServerThred(threading.Thread):
         self.path = path
 
     def run(self):
-        # TODO: this is still global
-        self.srv.app.config['path'] = self.path
+        # This is absolutely critical this happens here
+        inject_path(self.ident, self.path)
         self.srv.serve_forever()
 
     def shutdown(self):
