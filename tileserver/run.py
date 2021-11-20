@@ -10,7 +10,7 @@ def run_app(path: pathlib.Path, port: int = 0, debug: bool = False):
     from tileserver.application import app
 
     path = pathlib.Path(path).expanduser()
-    app.config["path"] = path
+    inject_path('default', path)
     app.config["DEBUG"] = debug
     return app.run(host="localhost", port=port)
 
