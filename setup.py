@@ -11,10 +11,10 @@ else:
     # When this is first installed in development Docker, README.md is not available
     long_description = ""
 
-__version__ = None
-version_file = os.path.join(dirname, "version.py")
-with io_open(version_file, mode="r") as fd:
-    exec(fd.read())
+# major, minor, patch
+version_info = 0, 0, 3
+# Nice string for the version
+__version__ = ".".join(map(str, version_info))
 
 setup(
     name="flask-tileserver",
