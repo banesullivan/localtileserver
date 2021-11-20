@@ -7,7 +7,7 @@ from werkzeug.serving import make_server
 def get_app(path: pathlib.Path):
     from tileserver.application import app
 
-    path = path.expanduser()
+    path = pathlib.Path(path).expanduser()
     app.config["path"] = path
     return app
 
