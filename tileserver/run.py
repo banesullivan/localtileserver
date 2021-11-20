@@ -75,3 +75,6 @@ class TileServer:
 
     def shutdown(self):
         self.server.shutdown()
+
+    def create_url(self, path: str):
+        return f"{self.base_url}/{path.lstrip('/')}"

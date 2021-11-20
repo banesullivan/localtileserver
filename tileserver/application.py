@@ -7,7 +7,7 @@ from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
 from werkzeug.routing import FloatConverter as BaseFloatConverter
 
-from . import large_image_utilities
+from tileserver import large_image_utilities
 
 
 class FloatConverter(BaseFloatConverter):
