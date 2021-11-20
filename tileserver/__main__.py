@@ -1,12 +1,12 @@
+from argparse import ArgumentParser
+from .run import run_app
+
+
 if __name__ == "__main__":
-    from argparse import ArgumentParser
 
     parser = ArgumentParser()
     parser.add_argument("file")
     parser.add_argument("--port", default=0, type=int)
     args = parser.parse_args()
 
-    from .application import app
-
-    app.config["path"] = args.file
-    app.run(host="localhost", port=args.port)
+    run_app(args.file, args.port)
