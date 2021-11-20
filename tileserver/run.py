@@ -20,6 +20,7 @@ def run_app(path: pathlib.Path, port: int = 0):
 class ServerThread(threading.Thread):
     def __init__(self, app, port=0):
         threading.Thread.__init__(self)
+        self.daemon = True  # CRITICAL
         self.srv = make_server("localhost", port, app)
         self.ctx = app.app_context()
         self.ctx.push()
@@ -28,7 +29,8 @@ class ServerThread(threading.Thread):
         self.srv.serve_forever()
 
     def shutdown(self):
-        self.srv.shutdown()
+        if self.is_alive():
+            self.srv.shutdown()
 
     def __del__(self):
         self.shutdown()
@@ -42,7 +44,7 @@ def run_app_threaded(path: pathlib.Path, port: int = 0, debug: bool = False):
         logging.getLogger("gdal").setLevel(logging.ERROR)
         logging.getLogger("large_image").setLevel(logging.ERROR)
     else:
-        app.config['DEBUG'] = True
+        app.config["DEBUG"] = True
 
     server = ServerThread(app, port)
     server.start()
@@ -61,22 +63,15 @@ class TileServer:
 
     @property
     def port(self):
-        if hasattr(self, '_port'):
-            return self._port
+        return self._port
 
     @property
     def server(self):
-        if hasattr(self, '_server'):
-            return self._server
+        return self._server
 
     @property
     def base_url(self):
-        return f'http://{self.server.srv.host}:{self.port}'
+        return f"http://{self.server.srv.host}:{self.port}"
 
     def shutdown(self):
-        print('Cleaning up...')
-        if self.server:
-            self.server.shutdown()
-
-    def __del__(self):
-        self.shutdown()
+        self.server.shutdown()
