@@ -43,6 +43,7 @@ setup(
         "GDAL",
         "large_image",
         "large_image_source_gdal",
+        "requests",
     ],
     extras_require={"leaflet": ["ipyleaflet"]},
 )
