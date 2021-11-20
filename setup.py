@@ -19,7 +19,9 @@ with io_open(version_file, mode="r") as fd:
 setup(
     name="flask-tileserver",
     version=__version__,
-    description="Locally serve raster image tiles in the Slippy Map OGC standard..",
+    description="Locally serve raster image tiles in the Slippy Map OGC standard.",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author="Bane Sullivan",
     author_email="banesullivan@gmail.com",
     url="https://github.com/banesullivan/flask-tileserver",
