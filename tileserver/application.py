@@ -42,9 +42,7 @@ class BaseTileView(View):
             style = json.dumps(style)
 
         path = app.config["path"]
-        return large_image_utilities.get_tilesource_from_image(
-            path, projection, style=style
-        )
+        return large_image_utilities.get_tilesource(path, projection, style=style)
 
 
 class TileMetadataView(BaseTileView):
@@ -168,7 +166,7 @@ app.add_url_rule(
 @app.context_processor
 def inject_context():
     path = app.config["path"]
-    tile_source = large_image_utilities.get_tilesource_from_image(path)
+    tile_source = large_image_utilities.get_tilesource(path)
     context = large_image_utilities.get_meta_data(tile_source)
     context["bounds"] = large_image_utilities.get_tile_bounds(
         tile_source, projection="EPSG:4326"

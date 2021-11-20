@@ -10,7 +10,7 @@ from large_image_source_gdal import GDALFileTileSource
 from .utilities import get_cache_dir
 
 
-def get_tilesource_from_image(
+def get_tilesource(
     path: pathlib.Path, projection: str = None, style: str = None
 ) -> FileTileSource:
     return large_image.open(
@@ -19,10 +19,8 @@ def get_tilesource_from_image(
 
 
 @contextmanager
-def yeild_tilesource_from_image(
-    path: pathlib.Path, projection: str = None
-) -> FileTileSource:
-    tile_source = get_tilesource_from_image(path, projection)
+def yeild_tilesource(path: pathlib.Path, projection: str = None) -> FileTileSource:
+    tile_source = get_tilesource(path, projection)
     yield tile_source
     tile_source = None
 
