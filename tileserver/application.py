@@ -15,7 +15,6 @@ class FloatConverter(BaseFloatConverter):
 
 
 app = Flask(__name__)
-
 app.url_map.converters["float"] = FloatConverter
 cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 
