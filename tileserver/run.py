@@ -4,28 +4,38 @@ import threading
 from werkzeug.serving import make_server
 
 
-def get_app(path: pathlib.Path):
+def run_app(path: pathlib.Path, port: int = 0, debug: bool = False):
     from tileserver.application import app
 
     path = pathlib.Path(path).expanduser()
     app.config["path"] = path
-    return app
-
-
-def run_app(path: pathlib.Path, port: int = 0):
-    app = get_app(path)
+    app.config["DEBUG"] = debug
     return app.run(host="localhost", port=port)
 
 
-class ServerThread(threading.Thread):
-    def __init__(self, app, port=0):
+class TileServerThred(threading.Thread):
+    def __init__(self, path: pathlib.Path, port: int = 0, debug: bool = False):
         threading.Thread.__init__(self)
-        self.daemon = True  # CRITICAL
+        path = pathlib.Path(path).expanduser()
+
+        from tileserver.application import app
+
+        if not debug:
+            logging.getLogger("werkzeug").setLevel(logging.ERROR)
+            logging.getLogger("gdal").setLevel(logging.ERROR)
+            logging.getLogger("large_image").setLevel(logging.ERROR)
+        else:
+            app.config["DEBUG"] = True
+
+        self.daemon = True  # CRITICAL for safe exit
         self.srv = make_server("localhost", port, app)
         self.ctx = app.app_context()
         self.ctx.push()
+        self.path = path
 
     def run(self):
+        # TODO: this is still global
+        self.srv.app.config['path'] = self.path
         self.srv.serve_forever()
 
     def shutdown(self):
@@ -36,25 +46,11 @@ class ServerThread(threading.Thread):
         self.shutdown()
 
 
-def run_app_threaded(path: pathlib.Path, port: int = 0, debug: bool = False):
-    app = get_app(path)
-
-    if not debug:
-        logging.getLogger("werkzeug").setLevel(logging.ERROR)
-        logging.getLogger("gdal").setLevel(logging.ERROR)
-        logging.getLogger("large_image").setLevel(logging.ERROR)
-    else:
-        app.config["DEBUG"] = True
-
-    server = ServerThread(app, port)
-    server.start()
-    return server
-
-
 class TileServer:
     def __init__(self, path: pathlib.Path, port: int = 0, debug: bool = False):
-        self._path = path
-        self._server = run_app_threaded(self._path, port, debug)
+        self._path = pathlib.Path(path).expanduser()
+        self._server = TileServerThred(self._path, port, debug)
+        self._server.start()  # run app threaded
         self._port = self.server.srv.port
 
     @property
