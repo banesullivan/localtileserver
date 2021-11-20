@@ -13,6 +13,10 @@ def get_path():
     try:
         return _THREAD_FILE_PATHS[threading.get_ident()]
     except KeyError:
+        pass
+    try:
+        return _THREAD_FILE_PATHS["default"]
+    except KeyError:
         raise KeyError(
             f"Current thread has no file path set. Thread ID: {threading.get_ident()}"
         )
