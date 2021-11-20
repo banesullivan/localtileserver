@@ -2,8 +2,16 @@ from io import open as io_open
 import os
 from setuptools import find_packages, setup
 
-__version__ = None
 dirname = os.path.dirname(__file__)
+readme_file = os.path.join(dirname, "README.md")
+if os.path.exists(readme_file):
+    with io_open(readme_file) as f:
+        long_description = f.read()
+else:
+    # When this is first installed in development Docker, README.md is not available
+    long_description = ""
+
+__version__ = None
 version_file = os.path.join(dirname, "version.py")
 with io_open(version_file, mode="r") as fd:
     exec(fd.read())
