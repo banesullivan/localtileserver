@@ -112,7 +112,6 @@ class RegionWorldView(BaseTileView):
         )
         return send_file(
             path,
-            # attachment_filename=os.path.basename(path),
             mimetype=mime_type,
         )
 
@@ -133,7 +132,6 @@ class RegionPixelView(BaseTileView):
         )
         return send_file(
             path,
-            # attachment_filename=os.path.basename(path),
             mimetype=mime_type,
         )
 
