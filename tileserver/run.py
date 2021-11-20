@@ -44,7 +44,7 @@ def run_app_threaded(path: pathlib.Path, port: int = 0, debug: bool = False):
     else:
         app.config['DEBUG'] = True
 
-    server = ServerThread(app)
+    server = ServerThread(app, port)
     server.start()
     return server
 
