@@ -5,6 +5,7 @@ dist/
 build/
 **/.DS_Store
 .coverage
+gdalwmscache
 
 electron
 notebooks

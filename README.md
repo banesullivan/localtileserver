@@ -252,7 +252,7 @@ from tileserver import get_leaflet_tile_layer, examples
 from ipyleaflet import Map, DrawControl
 
 # Load example tile layer from publicly available imagery
-tile_server = examples.get_virtualearth()
+tile_server = examples.get_virtual_earth()
 
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_server,opacity=1)

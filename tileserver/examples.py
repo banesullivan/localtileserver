@@ -8,12 +8,12 @@ def get_data_path(name):
     return dirname / "data" / name
 
 
-def get_bluemarble(port: int = 0, debug: bool = False):
+def get_blue_marble(port: int = 0, debug: bool = False):
     path = get_data_path("frmt_wms_bluemarble_s3_tms.xml")
     return TileServer(path, port=port, debug=debug)
 
 
-def get_virtualearth(port: int = 0, debug: bool = False):
+def get_virtual_earth(port: int = 0, debug: bool = False):
     path = get_data_path("frmt_wms_virtualearth.xml")
     return TileServer(path, port=port, debug=debug)
 
