@@ -68,22 +68,24 @@ class TileServer:
     """
 
     def __init__(self, path: pathlib.Path, port: int = 0, debug: bool = False):
-        self._path = pathlib.Path(path).expanduser()
-        self._server = TileServerThred(self._path, port, debug)
+        self._server = TileServerThred(path, port, debug)
         self._server.start()  # run app threaded
-        self._port = self.server.srv.port
+        # Be careful if assigning any other attributes to avoid cycilical refs
 
-    @property
-    def path(self):
-        return self._path
-
-    @property
-    def port(self):
-        return self._port
+    def __del__(self):
+        self.shutdown()
 
     @property
     def server(self):
         return self._server
+
+    @property
+    def path(self):
+        return self.server.path
+
+    @property
+    def port(self):
+        return self.server.srv.port
 
     @property
     def base_url(self):
