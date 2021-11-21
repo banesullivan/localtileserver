@@ -5,3 +5,5 @@ large_image
 large_image_source_gdal
 requests
 scooby
+pytest
+pytest-cov
