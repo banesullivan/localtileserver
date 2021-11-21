@@ -22,8 +22,34 @@ def get_leaflet_tile_layer(
 
     Parameters
     ----------
+    source : Union[pathlib.Path, TileServer]
+        The source of the tile layer. This can be a path on disk or an already
+        open ``TileServer``
+    port : int
+        The port on your host machine to use for the tile server (if creating
+        a tileserver. This is ignored if a file path is given). This defaults
+        to getting an available port.
+    debug : bool
+        Run the tile server in debug mode (if creating a tileserver. This is
+        ignored if a file path is given).
+    projection : str
+        The Proj projection to use for the tile layer. Default is `EPSG:3857`.
+    band : int
+        The band of the source raster to use (default in None to show RGB if
+        available). Band indexing starts at 1.
+    palette : str
+        The name of the color palette from `palettable` to use when plotting
+        a single band. Default is greyscale.
+    vmin : float
+        The minimum value to use when colormapping the palette when plotting
+        a single band.
+    vmax : float
+        The maximized value to use when colormapping the palette when plotting
+        a single band.
+    nodata : float
+        The value from the band to use to interpret as not valid data.
     **kwargs
-        All additional keyword arguments are passed to TileLayer
+        All additional keyword arguments are passed to ``ipyleaflet.TileLayer``.
 
     Return
     ------
