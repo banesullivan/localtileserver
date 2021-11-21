@@ -2,6 +2,7 @@ import os
 import pathlib
 import re
 import tempfile
+from operator import attrgetter
 
 import palettable
 
@@ -21,5 +22,9 @@ def save_file_from_request(response):
     return path
 
 
-def check_palettable(palette: str):
-    return hasattr(palettable, palette)
+def is_valid_palette(palette: str):
+    try:
+        attrgetter(palette)(palettable)
+    except AttributeError:
+        return False
+    return True
