@@ -3,7 +3,7 @@ from tileserver.run import TileServer
 from typing import Union
 import requests
 
-from tileserver.utilities import check_palettable
+from tileserver.utilities import is_valid_palette
 
 
 def get_leaflet_tile_layer(
@@ -41,7 +41,7 @@ def get_leaflet_tile_layer(
     if band is not None:
         params["band"] = band
     if palette is not None:
-        if not check_palettable(palette):
+        if not is_valid_palette(palette):
             raise ValueError(
                 f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
             )

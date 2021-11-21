@@ -10,7 +10,7 @@ from werkzeug.routing import FloatConverter as BaseFloatConverter
 
 from tileserver import large_image_utilities
 from tileserver.application.paths import get_path
-from tileserver.utilities import check_palettable
+from tileserver.utilities import is_valid_palette
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ class BaseTileView(View):
             if bmax is not None:
                 style["max"] = bmax
             palette = request.args.get("palette", None)
-            if palette and check_palettable(palette):
+            if palette and is_valid_palette(palette):
                 style["palette"] = palette
             elif palette:
                 logger.error(
