@@ -46,7 +46,6 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-activate-base: true
-          activate-environment: ""
           python-version: 3.8
       # Handle GDAL
       - name: Install GDAL
