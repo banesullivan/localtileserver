@@ -79,13 +79,22 @@ def get_leaflet_tile_layer(
     if nodata is not None:
         params["nodata"] = nodata
 
+    _internally_created = False
     # Launch tile server if file path is given
     if not isinstance(source, TileServer):
         source = TileServer(source, port, debug)
+        _internally_created = True
 
     # Check that the tile source is valid and no server errors
-    r = requests.get(source.create_url("metadata"))
-    r.raise_for_status()
+    try:
+        r = requests.get(source.create_url("metadata"))
+        r.raise_for_status()
+    except requests.HTTPError as e:
+        # Make sure to destroy the server and its thread if internally created.
+        if _internally_created:
+            source.shutdown()
+            del source
+        raise e
 
     url = source.get_tile_url(projection=projection)
     for k, v in params.items():
