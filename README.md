@@ -139,3 +139,65 @@ m2
 ```
 
 ![ipyleaflet-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet-roi.png)
+
+
+#### Example Datasets
+
+A few example datasets are included with `tileserver`. A particulary
+useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
+
+```py
+from tileserver import get_leaflet_tile_layer, get_leaflet_tile_layer_from_tile_server, examples
+from ipyleaflet import Map, projections, DrawControl
+
+# Load example tile layer from publically available DEM source
+tile_server = examples.get_elevation()
+
+# Create ipyleaflet tile layer from that server
+t = get_leaflet_tile_layer_from_tile_server(tile_server,
+                                            band=1, vmin=-500, vmax=5000,
+                                            palette='mycarta.Cube1_19',
+                                            opacity=0.75)
+
+m = Map(
+        zoom=2, crs=projections.EPSG3857,
+       )
+m.add_layer(t)
+draw_control = DrawControl()
+m.add_control(draw_control)
+m
+```
+
+![elevation](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/elevation.png)
+
+
+Then you can follow the same routine as described above to extract an ROI.
+
+I zoomed in over Golden, Colorado and drew a polygon of the extent of the DEM I would like to create:
+
+![golden](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/golden-roi.png)
+
+And perfrom the extraction:
+
+```py
+from shapely.geometry import Polygon
+
+# Inspect `draw_control.data` to get the ROI
+bbox = draw_control.data[0]
+p = Polygon([tuple(l) for l in bbox['geometry']['coordinates'][0]])
+left, bottom, right, top = p.bounds
+
+roi_path = tile_server.extract_roi(left, right, bottom, top)
+
+r = get_leaflet_tile_layer(roi_path, band=1,
+                           palette='mycarta.Cube1_19', opacity=0.75)
+
+m2 = Map(
+        center=(39.763427033262175, -105.20614908076823),
+        zoom=12, crs=projections.EPSG3857,
+       )
+m2.add_layer(r)
+m2
+```
+
+![golden-dem](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/golden-dem.png)

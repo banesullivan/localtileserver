@@ -1,3 +1,5 @@
 graft tileserver/application/static
 graft tileserver/application/templates
 global-exclude *.pyc
+graft tileserver/data
+exclude tileserver/data/*.aux.xml
