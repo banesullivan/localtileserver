@@ -63,7 +63,10 @@ class TileBoundsView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         projection = request.args.get("projection", "EPSG:4326")
-        return tile_source.getBounds(srs=projection)
+        return large_image_utilities.get_tile_bounds(
+            tile_source,
+            projection=projection,
+        )
 
 
 class TilesView(BaseTileView):
