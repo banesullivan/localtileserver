@@ -246,3 +246,24 @@ m2
 ```
 
 ![golden-dem](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/golden-dem.png)
+
+Here is another example with the Virtual Earth satellite imagery
+
+```py
+from tileserver import get_leaflet_tile_layer, examples
+from ipyleaflet import Map, DrawControl
+
+# Load example tile layer from publicly available imagery
+tile_server = examples.get_virtualearth()
+
+# Create ipyleaflet tile layer from that server
+t = get_leaflet_tile_layer(tile_server,opacity=1)
+
+m = Map(center=(39.751343612695145, -105.22181306125279), zoom=18)
+m.add_layer(t)
+draw_control = DrawControl()
+m.add_control(draw_control)
+m
+```
+
+![kafadar](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/kafadar.png)
