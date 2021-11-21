@@ -50,7 +50,7 @@ class BaseTileView(View):
                 style["nodata"] = nodata
             style = json.dumps(style)
 
-        return large_image_utilities.get_tilesource(path, projection, style=style)
+        return large_image_utilities.get_tile_source(path, projection, style=style)
 
 
 class TileMetadataView(BaseTileView):
@@ -175,7 +175,7 @@ app.add_url_rule(
 @app.context_processor
 def inject_context():
     path = get_path()
-    tile_source = large_image_utilities.get_tilesource(path)
+    tile_source = large_image_utilities.get_tile_source(path)
     context = large_image_utilities.get_meta_data(tile_source)
     context["bounds"] = large_image_utilities.get_tile_bounds(
         tile_source, projection="EPSG:4326"
