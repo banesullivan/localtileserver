@@ -51,6 +51,11 @@ Otherwise, I recommend using `conda`:
 conda install -c conda-forge GDAL
 ```
 
+## 💭 Feedback
+
+Please share your thoughts and questions on the [Discussions](https://github.com/banesullivan/flask-tileserver/discussions) board.
+If you would like to report any bugs or make feature requests, please open an issue.
+
 ## 🚀 Usage
 
 ### 🖥️ Local Web Application
