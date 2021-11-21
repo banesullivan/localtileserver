@@ -75,7 +75,7 @@ class TilesView(BaseTileView):
         mime_type = tile_source.getTileMimeType()
         return send_file(
             io.BytesIO(tile_binary),
-            attachment_filename=f"{x}.{y}.{z}.png",
+            download_name=f"{x}.{y}.{z}.png",
             mimetype=mime_type,
         )
 
@@ -87,7 +87,7 @@ class ThumbnailView(BaseTileView):
         thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
         return send_file(
             io.BytesIO(thumb_data),
-            attachment_filename="thumbnail.png",
+            download_name="thumbnail.png",
             mimetype=mime_type,
         )
 
