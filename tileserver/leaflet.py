@@ -3,9 +3,14 @@ from tileserver.run import TileServer
 from typing import Union
 import requests
 
+from tileserver.utilities import check_palettable
 
-def get_leaflet_tile_layer_from_tile_server(
-    tile_server: TileServer,
+
+def get_leaflet_tile_layer(
+    source: Union[pathlib.Path, TileServer],
+    port: int = 0,
+    debug: bool = False,
+    projection: str = "EPSG:3857",
     band: int = None,
     palette: str = None,
     vmin: Union[float, int] = None,
@@ -31,16 +36,15 @@ def get_leaflet_tile_layer_from_tile_server(
     except ImportError:
         raise ImportError("Please install `ipyleaflet` and `jupyter`.")
 
-    # Check that the tile source is valid and no server errors
-    r = requests.get(tile_server.create_url("metadata"))
-    r.raise_for_status()
-
+    # First handle query parameters to check for errors
     params = {}
     if band is not None:
         params["band"] = band
     if palette is not None:
-        # TODO: check this value as an incorrect one can lead to server errors
-        #       perhaps we should catch this, server side and ignore bad ones
+        if not check_palettable(palette):
+            raise ValueError(
+                f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
+            )
         params["palette"] = palette
     if vmin is not None:
         params["min"] = vmin
@@ -49,20 +53,16 @@ def get_leaflet_tile_layer_from_tile_server(
     if nodata is not None:
         params["nodata"] = nodata
 
-    url = tile_server.create_url("tiles/{z}/{x}/{y}.png?projection=EPSG:3857")
+    # Launch tile server if file path is given
+    if not isinstance(source, TileServer):
+        source = TileServer(source, port, debug)
 
+    # Check that the tile source is valid and no server errors
+    r = requests.get(source.create_url("metadata"))
+    r.raise_for_status()
+
+    url = source.get_tile_url(projection=projection)
     for k, v in params.items():
         url += f"&{k}={v}"
 
     return TileLayer(url=url, **kwargs)
-
-
-def get_leaflet_tile_layer(
-    source: Union[pathlib.Path, TileServer],
-    port: int = 0,
-    debug: bool = False,
-    **kwargs,
-):
-    if not isinstance(source, TileServer):
-        source = TileServer(source, port, debug)
-    return get_leaflet_tile_layer_from_tile_server(source, **kwargs)

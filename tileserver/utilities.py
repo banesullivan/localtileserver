@@ -3,6 +3,8 @@ import pathlib
 import re
 import tempfile
 
+import palettable
+
 
 def get_cache_dir():
     path = pathlib.Path(os.path.join(tempfile.gettempdir(), "localtileserver"))
@@ -17,3 +19,7 @@ def save_file_from_request(response):
     with open(path, "wb") as f:
         f.write(response.content)
     return path
+
+
+def check_palettable(palette: str):
+    return hasattr(palettable, "palette")
