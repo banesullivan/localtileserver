@@ -22,4 +22,4 @@ def save_file_from_request(response):
 
 
 def check_palettable(palette: str):
-    return hasattr(palettable, "palette")
+    return hasattr(palettable, palette)
