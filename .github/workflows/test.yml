@@ -1,0 +1,33 @@
+name: PyTest
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
+          pip install -r requirements.txt
+      - name: Install tileserver
+        run: pip intall -e .
+      - name: Run Tests
+        run: |
+          pytest -v --cov
+          coverage xml -o coverage.xml
+      - name: Stash coverage
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage.xml
+          path: coverage.xml
+      - uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          verbose: true
