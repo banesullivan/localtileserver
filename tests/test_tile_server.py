@@ -3,6 +3,7 @@ import requests
 
 from tileserver import TileServer
 from tileserver.application.paths import _THREAD_FILE_PATHS
+from tileserver.large_image_utilities import get_tilesource
 
 TOLERANCE = 2e-2
 
@@ -63,3 +64,18 @@ def test_multiple_tile_servers(bahamas, blue_marble):
     thumb_url_a = bahamas.create_url("thumbnail")
     thumb_url_b = blue_marble.create_url("thumbnail")
     assert get_content(thumb_url_a) != get_content(thumb_url_b)
+
+
+def test_extract_roi_world(bahamas):
+    # -78.047, -77.381, 24.056, 24.691
+    path = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691)
+    assert path.exists()
+    source = get_tilesource(path)
+    assert source.getMetadata()["geospatial"]
+
+
+def test_extract_roi_pixel(bahamas):
+    path = bahamas.extract_roi_pixel(100, 500, 300, 600)
+    assert path.exists()
+    source = get_tilesource(path)
+    assert source.getMetadata()["geospatial"]
