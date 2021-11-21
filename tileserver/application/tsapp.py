@@ -1,5 +1,6 @@
 import io
 import json
+import logging
 
 from flask import Flask, render_template, request, send_file
 from flask.views import View
@@ -9,6 +10,9 @@ from werkzeug.routing import FloatConverter as BaseFloatConverter
 
 from tileserver import large_image_utilities
 from tileserver.application.paths import get_path
+from tileserver.utilities import check_palettable
+
+logger = logging.getLogger(__name__)
 
 
 class FloatConverter(BaseFloatConverter):
@@ -35,8 +39,12 @@ class BaseTileView(View):
             if bmax is not None:
                 style["max"] = bmax
             palette = request.args.get("palette", None)
-            if palette:
+            if palette and check_palettable(palette):
                 style["palette"] = palette
+            elif palette:
+                logger.error(
+                    f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
+                )
             nodata = request.args.get("nodata", None)
             if nodata:
                 style["nodata"] = nodata
