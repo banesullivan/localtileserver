@@ -44,6 +44,7 @@ setup(
         "large_image",
         "large_image_source_gdal",
         "requests",
+        "scooby",
     ],
     extras_require={"leaflet": ["ipyleaflet"]},
 )
