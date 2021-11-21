@@ -77,13 +77,37 @@ local file system. Further, I have included a utility for
 automatically launching a tile server and creating an
 `ipyleaflet.TileLayer`. Here is an example:
 
+
+```py
+from tileserver import get_leaflet_tile_layer, TileServer
+from ipyleaflet import Map, ScaleControl, FullScreenControl
+
+# First, create a tile server from local raster file
+tile_server = TileServer('~/Desktop/TC_NG_SFBay_US_Geo.tif')
+
+# Create ipyleaflet tile layer from that server
+t = get_leaflet_tile_layer(tile_server)
+
+# Create ipyleaflet, add layers, add draw control, display
+m = Map(center=tile_server.center())
+
+m.add_layer(t)
+m.add_control(ScaleControl(position='bottomleft'))
+m.add_control(FullScreenControl())
+m
+```
+
+![ipyleaflet](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.png)
+
+#### Two Raster at Once
+
 ```py
 from tileserver import get_leaflet_tile_layer
-from ipyleaflet import Map, projections, ScaleControl, FullScreenControl, SplitMapControl
+from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
 m = Map(
         center=(37.7249511580583, -122.27230466902257),
-        zoom=9, crs=projections.EPSG3857,
+        zoom=9,
        )
 
 # Create 2 tile layers from 2 separate raster files
@@ -100,7 +124,7 @@ m.add_control(FullScreenControl())
 m
 ```
 
-![ipyleaflet](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.gif)
+![ipyleaflet-double](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.gif)
 
 
 Note: the color palette choices come form [`palettable`](https://jiffyclub.github.io/palettable/)
@@ -111,7 +135,7 @@ Note: the color palette choices come form [`palettable`](https://jiffyclub.githu
 
 ```py
 from tileserver import get_leaflet_tile_layer, TileServer
-from ipyleaflet import Map, projections, ScaleControl, FullScreenControl, DrawControl
+from ipyleaflet import Map, ScaleControl, FullScreenControl, DrawControl
 
 # First, create a tile server from local raster file
 tile_server = TileServer('~/Desktop/TC_NG_SFBay_US_Geo.tif')
@@ -122,7 +146,7 @@ t = get_leaflet_tile_layer(tile_server)
 # Create ipyleaflet, add layers, add draw control, display
 m = Map(
         center=(37.7249511580583, -122.27230466902257),
-        zoom=9, crs=projections.EPSG3857,
+        zoom=9,
        )
 m.add_layer(t)
 m.add_control(ScaleControl(position='bottomleft'))
@@ -153,7 +177,7 @@ r = get_leaflet_tile_layer(roi_path)
 
 m2 = Map(
         center=(37.7249511580583, -122.27230466902257),
-        zoom=9, crs=projections.EPSG3857,
+        zoom=9,
        )
 m2.add_layer(r)
 m2.add_control(ScaleControl(position='bottomleft'))
@@ -171,7 +195,7 @@ useful one has global elevation data which you can use to create high resolution
 
 ```py
 from tileserver import get_leaflet_tile_layer, examples
-from ipyleaflet import Map, projections, DrawControl
+from ipyleaflet import Map, DrawControl
 
 # Load example tile layer from publicly available DEM source
 tile_server = examples.get_elevation()
@@ -182,9 +206,7 @@ t = get_leaflet_tile_layer(tile_server,
                            palette='mycarta.Cube1_19',
                            opacity=0.75)
 
-m = Map(
-        zoom=2, crs=projections.EPSG3857,
-       )
+m = Map(zoom=2)
 m.add_layer(t)
 draw_control = DrawControl()
 m.add_control(draw_control)
@@ -217,7 +239,7 @@ r = get_leaflet_tile_layer(roi_path, band=1,
 
 m2 = Map(
         center=(39.763427033262175, -105.20614908076823),
-        zoom=12, crs=projections.EPSG3857,
+        zoom=12,
        )
 m2.add_layer(r)
 m2
