@@ -18,6 +18,8 @@ def run_app(path: pathlib.Path, port: int = 0, debug: bool = False):
 
 
 class TileServerThred(threading.Thread):
+    """This is for internal use only."""
+
     def __init__(self, path: pathlib.Path, port: int = 0, debug: bool = False):
         threading.Thread.__init__(self)
         path = pathlib.Path(path).expanduser()
@@ -51,6 +53,20 @@ class TileServerThred(threading.Thread):
 
 
 class TileServer:
+    """Serve tiles from a local raster file in a background thread.
+
+    Parameters
+    ----------
+    path : pathlib.Path
+        The path on disk to use as the source raster for the tiles.
+    port : int
+        The port on your host machine to use for the tile server. This defaults
+        to getting an available port.
+    debug : bool
+        Run the tile server in debug mode.
+
+    """
+
     def __init__(self, path: pathlib.Path, port: int = 0, debug: bool = False):
         self._path = pathlib.Path(path).expanduser()
         self._server = TileServerThred(self._path, port, debug)
