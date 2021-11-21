@@ -1,0 +1,25 @@
+<GDAL_WMS>
+  <service name="TMS">
+    <ServerUrl>https://s3.amazonaws.com/elevation-tiles-prod/geotiff/${z}/${x}/${y}.tif</ServerUrl>
+  </service>
+  <DataWindow>
+    <UpperLeftX>-20037508.34</UpperLeftX>
+    <UpperLeftY>20037508.34</UpperLeftY>
+    <LowerRightX>20037508.34</LowerRightX>
+    <LowerRightY>-20037508.34</LowerRightY>
+    <TileLevel>14</TileLevel>
+    <YOrigin>top</YOrigin>
+  </DataWindow>
+  <Projection>EPSG:3857</Projection>
+  <BlockSizeX>512</BlockSizeX>
+  <BlockSizeY>512</BlockSizeY>
+  <BandsCount>1</BandsCount>
+  <DataType>Int16</DataType>
+  <ZeroBLockHttpCodes>403,404</ZeroBLockHttpCodes>
+  <DataValues>
+    <NoData>-32768</NoData>
+  </DataValues>
+  <Cache>
+    <Path>./gdalwmscache</Path>
+  </Cache>
+</GDAL_WMS>
