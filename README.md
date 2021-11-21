@@ -4,9 +4,25 @@
 
 This is a simple Flask application for serving raster image tiles locally in the OGC standard.
 
-This uses `large_image` and GeoJS for the web viewer included with the application. You can use the web viewer to select and extract regions of interest from rasters.
+Need to visualize a rather large image (gigabytes) you have locally? This is for you.
 
-This also provides an interface for viewing local rasters with `ipyleaflet`.
+## Highlights
+
+- Create a local tile server for large geospatial images
+- Extract regions of interest (ROIs) interactively
+- View local raster files with `ipyleaflet`
+
+Under the hood, this uses [`large_image`](https://github.com/girder/large_image)
+to launch a tile server in a background thread which will serve raster imagery
+to a tile viewer (see `ipyleaflet` examples below).
+This tile server can efficiently deliver varying levels of detail of your
+raster imagery to your viewer; it helps to have pre-tiled, Cloud Optimized
+GeoTIFFs (COG), but no wories if not as `large_image` will tile and cache for
+you when opening the raster.
+
+There is an included, standalone web viewer leveraging
+[GeoJS](https://opengeoscience.github.io/geojs/). You can use the web viewer
+to select and extract regions of interest from rasters.
 
 ## Installation
 
@@ -18,10 +34,9 @@ pip install flask-tileserver
 
 ### Note on installing GDAL
 
-GDAL can be a pain to install, and you may want to handle GDAL before install `flask-tileserver`.
+GDAL can be a pain to install, and you may want to handle GDAL before installing `flask-tileserver`.
 
-
-If on linux, I highly recommend using the large_image_wheels from Kitware.
+If on linux, I highly recommend using the [large_image_wheels](https://github.com/girder/large_image_wheels) from Kitware.
 
 ```
 pip install --find-links=https://girder.github.io/large_image_wheels GDAL
@@ -50,7 +65,7 @@ python -m tileserver path/to/raster.tif
 ### `ipyleaflet` Tile Layers
 
 There are utilities included here for launching a tile server as a background thread to serve image tiles from any raster file on your
-local file system. Further, I have inlcuded a utility for
+local file system. Further, I have included a utility for
 automatically launching a tile server and creating an
 `ipyleaflet.TileLayer`. Here is an example:
 
@@ -63,7 +78,7 @@ m = Map(
         zoom=9, crs=projections.EPSG3857,
        )
 
-# Create two tile layers from 2 seperate raster files
+# Create 2 tile layers from 2 separate raster files
 l = get_leaflet_tile_layer('~/Desktop/TC_NG_SFBay_US_Geo.tif',
                            band=1, palette='matplotlib.Viridis_20', vmin=50, vmax=200)
 r = get_leaflet_tile_layer('~/Desktop/small.tif',
@@ -80,7 +95,7 @@ m
 ![ipyleaflet](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.gif)
 
 
-Note: the color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/)
+Note: the color palette choices come form [`palettable`](https://jiffyclub.github.io/palettable/)
 
 
 #### Using `ipyleaflet` for ROI Extraction
@@ -150,7 +165,7 @@ useful one has global elevation data which you can use to create high resolution
 from tileserver import get_leaflet_tile_layer, get_leaflet_tile_layer_from_tile_server, examples
 from ipyleaflet import Map, projections, DrawControl
 
-# Load example tile layer from publically available DEM source
+# Load example tile layer from publicly available DEM source
 tile_server = examples.get_elevation()
 
 # Create ipyleaflet tile layer from that server

@@ -98,7 +98,7 @@ class RegionWorldView(BaseTileView):
     def dispatch_request(self, left: float, right: float, bottom: float, top: float):
         tile_source = self.get_tile_source()
         if not isinstance(tile_source, GDALFileTileSource):
-            raise TypeError("Souce image must have geospatial reference.")
+            raise TypeError("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")
         encoding = request.args.get("encoding", "TILED")
         path, mime_type = large_image_utilities.get_region_world(
