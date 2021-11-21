@@ -99,7 +99,7 @@ m
 
 ![ipyleaflet](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.png)
 
-#### Two Raster at Once
+#### 🥓 Two Raster at Once
 
 ```py
 from tileserver import get_leaflet_tile_layer
@@ -130,7 +130,7 @@ m
 Note: the color palette choices come form [`palettable`](https://jiffyclub.github.io/palettable/)
 
 
-#### 📍 Using `ipyleaflet` for ROI Extraction
+#### 🎯 Using `ipyleaflet` for ROI Extraction
 
 
 ```py
