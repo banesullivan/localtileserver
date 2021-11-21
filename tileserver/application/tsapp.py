@@ -176,8 +176,6 @@ def inject_context():
     path = get_path()
     tile_source = utilities.get_tile_source(path)
     context = utilities.get_meta_data(tile_source)
-    context["bounds"] = utilities.get_tile_bounds(
-        tile_source, projection="EPSG:4326"
-    )
+    context["bounds"] = utilities.get_tile_bounds(tile_source, projection="EPSG:4326")
     context["path"] = path
     return context
