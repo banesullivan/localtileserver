@@ -19,7 +19,7 @@ jobs:
         run: pip install -e .
       - name: Run Tests
         run: |
-          pytest -v --cov
+          pytest -v --cov=tileserver
           coverage xml -o coverage.xml
       - name: Stash coverage
         uses: actions/upload-artifact@v2
