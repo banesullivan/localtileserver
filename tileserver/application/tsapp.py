@@ -8,9 +8,8 @@ from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
 from werkzeug.routing import FloatConverter as BaseFloatConverter
 
-from tileserver import large_image_utilities
+from tileserver import utilities
 from tileserver.application.paths import get_path
-from tileserver.utilities import is_valid_palette
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +38,7 @@ class BaseTileView(View):
             if bmax is not None:
                 style["max"] = bmax
             palette = request.args.get("palette", None)
-            if palette and is_valid_palette(palette):
+            if palette and utilities.is_valid_palette(palette):
                 style["palette"] = palette
             elif palette:
                 logger.error(
@@ -50,20 +49,20 @@ class BaseTileView(View):
                 style["nodata"] = nodata
             style = json.dumps(style)
 
-        return large_image_utilities.get_tile_source(path, projection, style=style)
+        return utilities.get_tile_source(path, projection, style=style)
 
 
 class TileMetadataView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
-        return large_image_utilities.get_meta_data(tile_source)
+        return utilities.get_meta_data(tile_source)
 
 
 class TileBoundsView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         projection = request.args.get("projection", "EPSG:4326")
-        return large_image_utilities.get_tile_bounds(
+        return utilities.get_tile_bounds(
             tile_source,
             projection=projection,
         )
@@ -112,7 +111,7 @@ class RegionWorldView(BaseTileView):
             raise TypeError("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")
         encoding = request.args.get("encoding", "TILED")
-        path, mime_type = large_image_utilities.get_region_world(
+        path, mime_type = utilities.get_region_world(
             tile_source,
             left,
             right,
@@ -133,7 +132,7 @@ class RegionPixelView(BaseTileView):
     def dispatch_request(self, left: float, right: float, bottom: float, top: float):
         tile_source = self.get_tile_source()
         encoding = request.args.get("encoding", None)
-        path, mime_type = large_image_utilities.get_region_pixel(
+        path, mime_type = utilities.get_region_pixel(
             tile_source,
             left,
             right,
@@ -175,9 +174,9 @@ app.add_url_rule(
 @app.context_processor
 def inject_context():
     path = get_path()
-    tile_source = large_image_utilities.get_tile_source(path)
-    context = large_image_utilities.get_meta_data(tile_source)
-    context["bounds"] = large_image_utilities.get_tile_bounds(
+    tile_source = utilities.get_tile_source(path)
+    context = utilities.get_meta_data(tile_source)
+    context["bounds"] = utilities.get_tile_bounds(
         tile_source, projection="EPSG:4326"
     )
     context["path"] = path

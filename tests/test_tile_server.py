@@ -3,7 +3,7 @@ import requests
 
 from tileserver import TileServer
 from tileserver.application.paths import _THREAD_FILE_PATHS
-from tileserver.large_image_utilities import get_tile_source
+from tileserver.utilities import get_tile_source
 
 TOLERANCE = 2e-2
 
