@@ -56,6 +56,13 @@ conda install -c conda-forge GDAL
 Please share your thoughts and questions on the [Discussions](https://github.com/banesullivan/flask-tileserver/discussions) board.
 If you would like to report any bugs or make feature requests, please open an issue.
 
+If filing a bug report, please share a scooby `Report`:
+
+```py
+import tileserver
+print(tileserver.Report())
+```
+
 ## 🚀 Usage
 
 ### 🖥️ Local Web Application
