@@ -19,11 +19,11 @@ jobs:
         if: ${{ matrix.os=='ubuntu-latest' }}
         run: |
           pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
-      - name: Test GDAL installation
-        run: python -c "from osgeo import gdal"
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+      - name: Test GDAL installation
+        run: python -c "from osgeo import gdal"
       - name: Install tileserver
         run: pip install -e .
       - name: Run Tests
