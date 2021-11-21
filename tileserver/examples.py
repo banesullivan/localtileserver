@@ -26,3 +26,8 @@ def get_arcgis(port: int = 0, debug: bool = False):
 def get_elevation(port: int = 0, debug: bool = False):
     path = get_data_path("aws_elevation_tiles_prod.xml")
     return TileServer(path, port=port, debug=debug)
+
+
+def get_bahamas(port: int = 0, debug: bool = False):
+    path = get_data_path("bahamas_rgb.tif")
+    return TileServer(path, port=port, debug=debug)
