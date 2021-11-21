@@ -2,6 +2,7 @@ import pytest
 import requests
 
 from tileserver import TileServer
+from tileserver.application.paths import _THREAD_FILE_PATHS
 
 TOLERANCE = 2e-2
 
@@ -27,7 +28,9 @@ def test_server_shutdown(bahamas_tile_server):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
+    assert len(_THREAD_FILE_PATHS) == 1
     bahamas_tile_server.shutdown()
+    assert len(_THREAD_FILE_PATHS) == 0
     with pytest.raises(requests.ConnectionError):
         r = requests.get(tile_url)
         r.raise_for_status()
@@ -38,7 +41,9 @@ def test_server_delete(bahamas_tile_server):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
+    assert len(_THREAD_FILE_PATHS) == 1
     bahamas_tile_server.__del__()  # Using `del` does not always work
+    assert len(_THREAD_FILE_PATHS) == 0
     with pytest.raises(requests.ConnectionError):
         r = requests.get(tile_url)
         r.raise_for_status()
