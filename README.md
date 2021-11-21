@@ -42,7 +42,7 @@ before installing `flask-tileserver`.
 If on linux, I highly recommend using the [large_image_wheels](https://github.com/girder/large_image_wheels) from Kitware.
 
 ```
-pip install --find-links=https://girder.github.io/large_image_wheels GDAL
+pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
 ```
 
 Otherwise, I recommend using `conda`:
