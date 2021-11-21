@@ -58,7 +58,11 @@ def get_leaflet_tile_layer_from_tile_server(
 
 
 def get_leaflet_tile_layer(
-    path: pathlib.Path, port: int = 0, debug: bool = False, **kwargs
+    source: Union[pathlib.Path, TileServer],
+    port: int = 0,
+    debug: bool = False,
+    **kwargs,
 ):
-    tile_server = TileServer(path, port, debug)
-    return get_leaflet_tile_layer_from_tile_server(tile_server, **kwargs)
+    if not isinstance(source, TileServer):
+        source = TileServer(source, port, debug)
+    return get_leaflet_tile_layer_from_tile_server(source, **kwargs)

@@ -110,14 +110,14 @@ Note: the color palette choices come form [`palettable`](https://jiffyclub.githu
 
 
 ```py
-from tileserver import get_leaflet_tile_layer, get_leaflet_tile_layer_from_tile_server, TileServer
+from tileserver import get_leaflet_tile_layer, TileServer
 from ipyleaflet import Map, projections, ScaleControl, FullScreenControl, DrawControl
 
 # First, create a tile server from local raster file
 tile_server = TileServer('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 
 # Create ipyleaflet tile layer from that server
-t = get_leaflet_tile_layer_from_tile_server(tile_server)
+t = get_leaflet_tile_layer(tile_server)
 
 # Create ipyleaflet, add layers, add draw control, display
 m = Map(
@@ -170,17 +170,17 @@ A few example datasets are included with `tileserver`. A particularly
 useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
 
 ```py
-from tileserver import get_leaflet_tile_layer, get_leaflet_tile_layer_from_tile_server, examples
+from tileserver import get_leaflet_tile_layer, examples
 from ipyleaflet import Map, projections, DrawControl
 
 # Load example tile layer from publicly available DEM source
 tile_server = examples.get_elevation()
 
 # Create ipyleaflet tile layer from that server
-t = get_leaflet_tile_layer_from_tile_server(tile_server,
-                                            band=1, vmin=-500, vmax=5000,
-                                            palette='mycarta.Cube1_19',
-                                            opacity=0.75)
+t = get_leaflet_tile_layer(tile_server,
+                           band=1, vmin=-500, vmax=5000,
+                           palette='mycarta.Cube1_19',
+                           opacity=0.75)
 
 m = Map(
         zoom=2, crs=projections.EPSG3857,
