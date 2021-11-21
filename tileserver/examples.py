@@ -1,6 +1,6 @@
 import pathlib
 
-from tileserver.run import TileServer
+from tileserver.server import TileServer
 
 
 def get_data_path(name):

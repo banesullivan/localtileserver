@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from .run import run_app
+from .server import run_app
 
 
 if __name__ == "__main__":

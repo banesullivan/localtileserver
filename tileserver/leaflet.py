@@ -1,5 +1,5 @@
 import pathlib
-from tileserver.run import TileServer
+from tileserver.server import TileServer
 from typing import Union
 import requests
 
