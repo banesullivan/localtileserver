@@ -19,7 +19,7 @@ __version__ = ".".join(map(str, version_info))
 setup(
     name="flask-tileserver",
     version=__version__,
-    description="Locally serve raster image tiles in the Slippy Map standard.",
+    description="Locally serve geospatial raster tiles in the Slippy Map standard.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Bane Sullivan",

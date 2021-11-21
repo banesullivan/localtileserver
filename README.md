@@ -1,4 +1,4 @@
-# 🌐 Local Tile Server
+# 🌐 Local Tile Server for Geospatial Rasters
 
 [![PyPI](https://img.shields.io/pypi/v/flask-tileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/flask-tileserver/)
 
