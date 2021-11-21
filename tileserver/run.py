@@ -5,7 +5,7 @@ import threading
 from werkzeug.serving import make_server
 
 from tileserver.utilities import save_file_from_request
-from tileserver.application.paths import inject_path
+from tileserver.application.paths import inject_path, pop_path
 
 
 def run_app(path: pathlib.Path, port: int = 0, debug: bool = False):
@@ -47,6 +47,7 @@ class TileServerThred(threading.Thread):
     def shutdown(self):
         if self.is_alive():
             self.srv.shutdown()
+            pop_path(self.ident)
 
     def __del__(self):
         self.shutdown()

@@ -22,6 +22,8 @@ def get_path():
         )
 
 
-def pop_path():
+def pop_path(ident: int = None):
     """Remove the path for this thread (cleanup routine)."""
-    return _THREAD_FILE_PATHS.pop(threading.get_ident(), None)
+    if ident is None:
+        ident = threading.get_ident()
+    return _THREAD_FILE_PATHS.pop(ident, None)
