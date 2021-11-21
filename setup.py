@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 dirname = os.path.dirname(__file__)
 readme_file = os.path.join(dirname, "README.md")
 if os.path.exists(readme_file):
-    with io_open(readme_file) as f:
+    with io_open(readme_file, "r", encoding="utf-8") as f:
         long_description = f.read()
 else:
     # When this is first installed in development Docker, README.md is not available
