@@ -1,11 +1,10 @@
 import logging
 import pathlib
-import re
 import requests
 import threading
 from werkzeug.serving import make_server
 
-from tileserver.utilities import get_cache_dir
+from tileserver.utilities import save_file_from_request
 from tileserver.application.paths import inject_path
 
 
@@ -80,14 +79,6 @@ class TileServer:
     def create_url(self, path: str):
         return f"{self.base_url}/{path.lstrip('/')}"
 
-    def _save_file_from_request(self, response):
-        d = response.headers["content-disposition"]
-        fname = re.findall("filename=(.+)", d)[0]
-        path = get_cache_dir() / fname
-        with open(path, "wb") as f:
-            f.write(response.content)
-        return path
-
     def extract_roi(
         self,
         left: float,
@@ -101,7 +92,7 @@ class TileServer:
         path = f"/region/world/{left}/{right}/{bottom}/{top}/region.tif?units={units}&encoding={encoding}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
-        return self._save_file_from_request(r)
+        return save_file_from_request(r)
 
     def extract_roi_pixel(
         self,
@@ -115,4 +106,24 @@ class TileServer:
         path = f"/region/pixel/{left}/{right}/{bottom}/{top}/region.tif?encoding={encoding}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
-        return self._save_file_from_request(r)
+        return save_file_from_request(r)
+
+    def metadata(self):
+        r = requests.get(self.create_url("/metadata"))
+        r.raise_for_status()
+        return r.json()
+
+    def bounds(self, projection: str = "EPSG:4326"):
+        """Get bounds in form of (ymin, ymax, xmin, xmax)."""
+        r = requests.get(self.create_url(f"/bounds?projection={projection}"))
+        r.raise_for_status()
+        bounds = r.json()
+        return (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
+
+    def center(self, projection: str = "EPSG:4326"):
+        """Get center in the form of (y <lat>, x <lon>)."""
+        bounds = self.bounds(projection=projection)
+        return (
+            (bounds[1] - bounds[0]) / 2 + bounds[0],
+            (bounds[3] - bounds[2]) / 2 + bounds[2],
+        )

@@ -5,7 +5,7 @@ from tileserver.run import TileServer
 
 def get_data_path(name):
     dirname = pathlib.Path(__file__).parent
-    return dirname / 'data' / name
+    return dirname / "data" / name
 
 
 def get_bluemarble(port: int = 0, debug: bool = False):
