@@ -1,12 +1,14 @@
-# Local Tile Server
+# 🌐 Local Tile Server
 
 [![PyPI](https://img.shields.io/pypi/v/flask-tileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/flask-tileserver/)
 
-This is a simple Flask application for serving raster image tiles locally in the OGC standard.
+*Need to visualize a rather large raster (gigabytes) you have locally?* **This is for you.**
 
-Need to visualize a rather large image (gigabytes) you have locally? This is for you.
+This is a simple Flask application for serving tiles from local raster files in
+the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
+(e.g. `/zoom/x/y.png`)
 
-## Highlights
+## 🌟 Highlights
 
 - Create a local tile server for large geospatial images
 - Extract regions of interest (ROIs) interactively
@@ -24,7 +26,7 @@ There is an included, standalone web viewer leveraging
 [GeoJS](https://opengeoscience.github.io/geojs/). You can use the web viewer
 to select and extract regions of interest from rasters.
 
-## Installation
+## ⬇️ Installation
 
 Install from PyPI: https://pypi.org/project/flask-tileserver/
 
@@ -32,9 +34,10 @@ Install from PyPI: https://pypi.org/project/flask-tileserver/
 pip install flask-tileserver
 ```
 
-### Note on installing GDAL
+### 📝 A Brief Note on Installing GDAL
 
-GDAL can be a pain to install, and you may want to handle GDAL before installing `flask-tileserver`.
+GDAL can be a pain in the 🍑 to install, and you may want to handle GDAL
+before installing `flask-tileserver`.
 
 If on linux, I highly recommend using the [large_image_wheels](https://github.com/girder/large_image_wheels) from Kitware.
 
@@ -48,9 +51,9 @@ Otherwise, I recommend using `conda`:
 conda install -c conda-forge GDAL
 ```
 
-## Usage
+## 🚀 Usage
 
-### Local Web Application
+### 🖥️ Local Web Application
 
 Launch the tileserver from the commandline to use the included web application where you can view the raster and extract regions of interest.
 
@@ -62,7 +65,7 @@ python -m tileserver path/to/raster.tif
 
 ![webviewer-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer-roi.gif)
 
-### `ipyleaflet` Tile Layers
+### 🍃 `ipyleaflet` Tile Layers
 
 There are utilities included here for launching a tile server as a background thread to serve image tiles from any raster file on your
 local file system. Further, I have included a utility for
@@ -98,7 +101,7 @@ m
 Note: the color palette choices come form [`palettable`](https://jiffyclub.github.io/palettable/)
 
 
-#### Using `ipyleaflet` for ROI Extraction
+#### 📍 Using `ipyleaflet` for ROI Extraction
 
 
 ```py
@@ -156,7 +159,7 @@ m2
 ![ipyleaflet-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet-roi.png)
 
 
-#### Example Datasets
+#### 🗺️ Example Datasets
 
 A few example datasets are included with `tileserver`. A particularly
 useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
