@@ -16,7 +16,7 @@ jobs:
           pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
           pip install -r requirements.txt
       - name: Install tileserver
-        run: pip intall -e .
+        run: pip install -e .
       - name: Run Tests
         run: |
           pytest -v --cov
