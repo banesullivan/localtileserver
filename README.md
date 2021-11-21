@@ -87,7 +87,7 @@ automatically launching a tile server and creating an
 
 ```py
 from tileserver import get_leaflet_tile_layer, TileServer
-from ipyleaflet import Map, ScaleControl, FullScreenControl
+from ipyleaflet import Map
 
 # First, create a tile server from local raster file
 tile_server = TileServer('~/Desktop/TC_NG_SFBay_US_Geo.tif')
@@ -95,27 +95,21 @@ tile_server = TileServer('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_server)
 
-# Create ipyleaflet, add layers, add draw control, display
+# Create ipyleaflet map, add tile layer, and display
 m = Map(center=tile_server.center())
-
 m.add_layer(t)
-m.add_control(ScaleControl(position='bottomleft'))
-m.add_control(FullScreenControl())
 m
 ```
 
 ![ipyleaflet](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.png)
 
-#### 🥓 Two Raster at Once
+#### 🥓 Two Rasters at Once
 
 ```py
 from tileserver import get_leaflet_tile_layer
 from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
-m = Map(
-        center=(37.7249511580583, -122.27230466902257),
-        zoom=9,
-       )
+m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
 
 # Create 2 tile layers from 2 separate raster files
 l = get_leaflet_tile_layer('~/Desktop/TC_NG_SFBay_US_Geo.tif',
@@ -125,7 +119,6 @@ r = get_leaflet_tile_layer('~/Desktop/small.tif',
 
 control = SplitMapControl(left_layer=l, right_layer=r)
 m.add_control(control)
-
 m.add_control(ScaleControl(position='bottomleft'))
 m.add_control(FullScreenControl())
 m
@@ -134,7 +127,7 @@ m
 ![ipyleaflet-double](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.gif)
 
 
-Note: the color palette choices come form [`palettable`](https://jiffyclub.github.io/palettable/)
+Note: the color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/)
 
 
 #### 🎯 Using `ipyleaflet` for ROI Extraction
@@ -150,11 +143,8 @@ tile_server = TileServer('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_server)
 
-# Create ipyleaflet, add layers, add draw control, display
-m = Map(
-        center=(37.7249511580583, -122.27230466902257),
-        zoom=9,
-       )
+# Create ipyleaflet map, add layers, add draw control, display
+m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
 m.add_layer(t)
 m.add_control(ScaleControl(position='bottomleft'))
 m.add_control(FullScreenControl())
