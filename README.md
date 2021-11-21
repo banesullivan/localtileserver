@@ -80,7 +80,7 @@ m
 ![ipyleaflet](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.gif)
 
 
-Note: the color palette choices come form [`palettable`](https://jiffyclub.github.io/palettable/)
+Note: the color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/)
 
 
 #### Using `ipyleaflet` for ROI Extraction
@@ -143,7 +143,7 @@ m2
 
 #### Example Datasets
 
-A few example datasets are included with `tileserver`. A particulary
+A few example datasets are included with `tileserver`. A particularly
 useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
 
 ```py
@@ -177,7 +177,7 @@ I zoomed in over Golden, Colorado and drew a polygon of the extent of the DEM I 
 
 ![golden](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/golden-roi.png)
 
-And perfrom the extraction:
+And perform the extraction:
 
 ```py
 from shapely.geometry import Polygon
