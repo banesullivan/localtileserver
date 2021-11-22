@@ -5,9 +5,12 @@
 
 *Need to visualize a rather large raster (gigabytes) you have locally?* **This is for you.**
 
-This is a simple Flask application for serving tiles from local raster files in
+A Flask application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
-(e.g. `/zoom/x/y.png`)
+(i.e., `/zoom/x/y.png`)
+
+![tile-diagram](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/tile-diagram.png)
+
 
 ## 🌟 Highlights
 
