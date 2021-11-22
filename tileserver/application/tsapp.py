@@ -52,13 +52,13 @@ class BaseTileView(View):
         return utilities.get_tile_source(path, projection, style=style)
 
 
-class TileMetadataView(BaseTileView):
+class MetadataView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         return utilities.get_meta_data(tile_source)
 
 
-class TileBoundsView(BaseTileView):
+class BoundsView(BaseTileView):
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         projection = request.args.get("projection", "EPSG:4326")
@@ -152,10 +152,10 @@ class Viewer(View):
 
 
 app.add_url_rule("/", view_func=Viewer.as_view("index"))
-app.add_url_rule("/metadata", view_func=TileMetadataView.as_view("metadata"))
+app.add_url_rule("/metadata", view_func=MetadataView.as_view("metadata"))
 app.add_url_rule(
     "/bounds",
-    view_func=TileBoundsView.as_view("bounds"),
+    view_func=BoundsView.as_view("bounds"),
 )
 app.add_url_rule(
     "/tiles/<int:z>/<int:x>/<int:y>.png", view_func=TilesView.as_view("tiles")
