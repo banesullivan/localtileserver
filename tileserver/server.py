@@ -109,12 +109,13 @@ class TileServer:
         top: float,
         units: str = "EPSG:4326",
         encoding: str = "TILED",
+        output_path: pathlib.Path = None,
     ):
         """Extract ROI in world coordinates."""
         path = f"/region/world/{left}/{right}/{bottom}/{top}/region.tif?units={units}&encoding={encoding}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
-        return save_file_from_request(r)
+        return save_file_from_request(r, output_path)
 
     def extract_roi_pixel(
         self,
@@ -123,12 +124,13 @@ class TileServer:
         bottom: int,
         top: int,
         encoding: str = "TILED",
+        output_path: pathlib.Path = None,
     ):
         """Extract ROI in world coordinates."""
         path = f"/region/pixel/{left}/{right}/{bottom}/{top}/region.tif?encoding={encoding}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
-        return save_file_from_request(r)
+        return save_file_from_request(r, output_path)
 
     def metadata(self):
         r = requests.get(self.create_url("/metadata"))

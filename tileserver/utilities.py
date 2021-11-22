@@ -3,6 +3,7 @@ from operator import attrgetter
 import os
 import pathlib
 import re
+import requests
 import tempfile
 
 import large_image
@@ -24,13 +25,14 @@ gdal.SetConfigOption(
 )
 
 
-def save_file_from_request(response):
+def save_file_from_request(response: requests.Response, output_path: pathlib.Path):
     d = response.headers["content-disposition"]
     fname = re.findall("filename=(.+)", d)[0]
-    path = get_cache_dir() / fname
-    with open(path, "wb") as f:
+    if not output_path:
+        output_path = get_cache_dir() / fname
+    with open(output_path, "wb") as f:
         f.write(response.content)
-    return path
+    return output_path
 
 
 def is_valid_palette(palette: str):
