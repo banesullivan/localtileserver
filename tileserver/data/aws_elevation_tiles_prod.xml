@@ -19,7 +19,5 @@
   <DataValues>
     <NoData>-32768</NoData>
   </DataValues>
-  <Cache>
-    <Path>./gdalwmscache</Path>
-  </Cache>
+  <Cache/>
 </GDAL_WMS>
