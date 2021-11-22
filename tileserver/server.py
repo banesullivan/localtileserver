@@ -99,7 +99,10 @@ class TileServer:
         return f"{self.base_url}/{path.lstrip('/')}"
 
     def get_tile_url(self, projection: str = "EPSG:3857"):
-        return self.create_url(f"tiles/{{z}}/{{x}}/{{y}}.png?projection={projection}")
+        url = self.create_url(f"tiles/{{z}}/{{x}}/{{y}}.png?")
+        if projection:
+            url += f"projection={projection}"
+        return url
 
     def extract_roi(
         self,
