@@ -101,6 +101,7 @@ def get_leaflet_tile_layer(
         url += f"&{k}={v}"
 
     tile_layer = TileLayer(url=url, **kwargs)
-    # HACK: Prevent the server from being garbage collected
-    tile_layer.tile_server = source
+    if _internally_created:
+        # HACK: Prevent the server from being garbage collected
+        tile_layer.tile_server = source
     return tile_layer
