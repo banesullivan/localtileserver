@@ -2,6 +2,10 @@ name: Tests
 on:
   pull_request:
   push:
+    tags-ignore:
+      - '*'
+    paths-ignore:
+      - README.md
 
 jobs:
   test:
