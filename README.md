@@ -66,18 +66,6 @@ print(tileserver.Report())
 
 ## 🚀 Usage
 
-### 🖥️ Local Web Application
-
-Launch the tileserver from the commandline to use the included web application where you can view the raster and extract regions of interest.
-
-```bash
-python -m tileserver path/to/raster.tif
-```
-
-![webviewer](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer.gif)
-
-![webviewer-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer-roi.gif)
-
 ### 🍃 `ipyleaflet` Tile Layers
 
 There are utilities included here for launching a tile server as a background thread to serve image tiles from any raster file on your
@@ -265,3 +253,16 @@ m
 ```
 
 ![kafadar](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/kafadar.png)
+
+
+### 🖥️ Local Web Application
+
+Launch the tileserver from the commandline to use the included web application where you can view the raster and extract regions of interest.
+
+```bash
+python -m tileserver path/to/raster.tif
+```
+
+![webviewer](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer.gif)
+
+![webviewer-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer-roi.gif)
