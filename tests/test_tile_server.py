@@ -79,3 +79,9 @@ def test_extract_roi_pixel(bahamas):
     assert path.exists()
     source = get_tile_source(path)
     assert source.getMetadata()["geospatial"]
+
+
+def test_caching_query_params(bahamas):
+    thumb_url_a = bahamas.create_url("thumbnail")
+    thumb_url_b = bahamas.create_url("thumbnail?band=1")
+    assert get_content(thumb_url_a) != get_content(thumb_url_b)

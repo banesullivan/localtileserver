@@ -1,6 +1,7 @@
 import io
 import json
 import logging
+import threading
 
 from flask import Flask, render_template, request, send_file
 from flask.views import View
@@ -12,6 +13,7 @@ from tileserver import utilities
 from tileserver.application.paths import get_path
 
 logger = logging.getLogger(__name__)
+REQUEST_TIMEOUT = 120
 
 
 class FloatConverter(BaseFloatConverter):
@@ -21,6 +23,14 @@ class FloatConverter(BaseFloatConverter):
 app = Flask(__name__)
 app.url_map.converters["float"] = FloatConverter
 cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
+
+
+def make_cache_key(*args, **kwargs):
+    path = request.path
+    args = str(hash(frozenset(request.args.items())))
+    source = str(get_path())
+    ident = str(threading.get_ident())
+    return (path + args + ident + source).encode("utf-8")
 
 
 class BaseTileView(View):
@@ -53,6 +63,7 @@ class BaseTileView(View):
 
 
 class MetadataView(BaseTileView):
+    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         return utilities.get_meta_data(tile_source)
@@ -69,7 +80,7 @@ class BoundsView(BaseTileView):
 
 
 class TilesView(BaseTileView):
-    @cache.memoize(timeout=120)
+    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
     def dispatch_request(self, x: int, y: int, z: int):
         projection = request.args.get("projection", "EPSG:3857")
         tile_source = self.get_tile_source(projection=projection)
@@ -83,7 +94,7 @@ class TilesView(BaseTileView):
 
 
 class ThumbnailView(BaseTileView):
-    @cache.memoize(timeout=120)
+    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
