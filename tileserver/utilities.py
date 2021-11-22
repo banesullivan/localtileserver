@@ -8,6 +8,7 @@ import tempfile
 import large_image
 from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
+from osgeo import gdal
 import palettable
 
 
@@ -15,6 +16,12 @@ def get_cache_dir():
     path = pathlib.Path(os.path.join(tempfile.gettempdir(), "localtileserver"))
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
+gdal.SetConfigOption(
+    "GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache")
+)
 
 
 def save_file_from_request(response):
