@@ -38,23 +38,26 @@ class BaseTileView(View):
         """Return the built tile source."""
         path = get_path()
         band = int(request.args.get("band", 0))
+        bmin = request.args.get("min", None)
+        bmax = request.args.get("max", None)
+        palette = request.args.get("palette", None)
+        nodata = request.args.get("nodata", None)
         style = None
+        # Handle when user sets min/max/etc. but forgot band. Defalt to 1
+        if not band and any(v is not None for v in [bmin, bmax, palette, nodata]):
+            band = 1
         if band:
             style = {"band": band}
-            bmin = request.args.get("min", None)
-            bmax = request.args.get("max", None)
             if bmin is not None:
                 style["min"] = bmin
             if bmax is not None:
                 style["max"] = bmax
-            palette = request.args.get("palette", None)
             if palette and utilities.is_valid_palette(palette):
                 style["palette"] = palette
             elif palette:
                 logger.error(
-                    f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
+                    f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package. Ignoring palette choice."
                 )
-            nodata = request.args.get("nodata", None)
             if nodata:
                 style["nodata"] = nodata
             style = json.dumps(style)
