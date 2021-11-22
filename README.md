@@ -9,6 +9,9 @@ A Flask application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`)
 
+***Disclaimer**: I whipped this together over a weekend and I'm definitely going to change a few things moving forward to make it more stable/robust. This means that things will most likely break between minor releases (I use the `major.minor.patch` versioning scheme).*
+
+
 ![tile-diagram](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/tile-diagram.png)
 
 
