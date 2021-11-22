@@ -43,7 +43,7 @@ class BaseTileView(View):
         palette = request.args.get("palette", None)
         nodata = request.args.get("nodata", None)
         style = None
-        # Handle when user sets min/max/etc. but forgot band. Defalt to 1
+        # Handle when user sets min/max/etc. but forgot band. Default to 1
         if not band and any(v is not None for v in [bmin, bmax, palette, nodata]):
             band = 1
         if band:

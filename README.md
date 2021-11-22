@@ -71,10 +71,11 @@ print(tileserver.Report())
 
 ### 🍃 `ipyleaflet` Tile Layers
 
-There are utilities included here for launching a tile server as a background thread to serve image tiles from any raster file on your
-local file system. Further, I have included a utility for
-automatically launching a tile server and creating an
-`ipyleaflet.TileLayer`. Here is an example:
+The `TileServer` class is a nifty tool to launch a tile server as a background
+thread to serve image tiles from any raster file on your local file system.
+Additionally, it can be used in conjunction with the `get_leaflet_tile_layer`
+utility to create an `ipyleaflet.TileLayer` for interactive visualization in
+a Jupyter notebook. Here is an example:
 
 
 ```py
@@ -117,9 +118,6 @@ m
 ```
 
 ![ipyleaflet-double](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.gif)
-
-
-Note: the color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/)
 
 
 #### 🎯 Using `ipyleaflet` for ROI Extraction
@@ -269,3 +267,10 @@ python -m tileserver path/to/raster.tif
 ![webviewer](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer.gif)
 
 ![webviewer-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer-roi.gif)
+
+
+### Usage Notes
+
+- `get_leaflet_tile_layer` accepts either an existing `TileServer` or a
+path from which to create a `TileServer` under the hood.
+- The color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/).
