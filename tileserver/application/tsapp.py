@@ -1,12 +1,14 @@
 import io
 import json
 import logging
+import time
 import threading
 
 from flask import Flask, render_template, request, send_file
 from flask.views import View
 from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
+from PIL import Image, ImageOps
 from werkzeug.routing import FloatConverter as BaseFloatConverter
 
 from tileserver import utilities
@@ -64,6 +66,38 @@ class BaseTileView(View):
 
         return utilities.get_tile_source(path, projection, style=style)
 
+    @staticmethod
+    def add_border_to_image(content):
+        img = Image.open(io.BytesIO(content))
+        img = ImageOps.crop(img, 1)
+        border = ImageOps.expand(img, border=1, fill="black")
+        img_bytes = io.BytesIO()
+        border.save(img_bytes, format="PNG")
+        return img_bytes.getvalue()
+
+
+class TilesDebugView(BaseTileView):
+    """A dummy tile server endpoint that produces borders of the tile grid.
+
+    This is used for testing tile viewers. It returns the same thing on every
+    call. This takes a query parameter `sleep` to delay the response for
+    testing (default is 0.5).
+
+    """
+
+    def dispatch_request(self, x: int, y: int, z: int):
+        img = Image.new("RGBA", (255, 255))
+        img = ImageOps.expand(img, border=1, fill="black")
+        img_bytes = io.BytesIO()
+        img.save(img_bytes, format="PNG")
+        img_bytes.seek(0)
+        time.sleep(float(request.args.get("sleep", 0.5)))
+        return send_file(
+            img_bytes,
+            download_name=f"{x}.{y}.{z}.png",
+            mimetype="image/png",
+        )
+
 
 class MetadataView(BaseTileView):
     @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
@@ -89,6 +123,11 @@ class TilesView(BaseTileView):
         tile_source = self.get_tile_source(projection=projection)
         tile_binary = tile_source.getTile(x, y, z)
         mime_type = tile_source.getTileMimeType()
+        grid = request.args.get("grid", "False")
+        if grid.lower() in ["false", "no", "off"]:
+            grid = False
+        if grid:
+            tile_binary = self.add_border_to_image(tile_binary)
         return send_file(
             io.BytesIO(tile_binary),
             download_name=f"{x}.{y}.{z}.png",
@@ -173,6 +212,10 @@ app.add_url_rule(
 )
 app.add_url_rule(
     "/tiles/<int:z>/<int:x>/<int:y>.png", view_func=TilesView.as_view("tiles")
+)
+app.add_url_rule(
+    "/tiles/debug/<int:z>/<int:x>/<int:y>.png",
+    view_func=TilesDebugView.as_view("tiles-debug"),
 )
 app.add_url_rule("/thumbnail", view_func=ThumbnailView.as_view("thumbnail"))
 app.add_url_rule(
