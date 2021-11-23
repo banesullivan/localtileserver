@@ -29,7 +29,13 @@ class Report(scooby.Report):
         ] + large_image_core
 
         # Optional packages.
-        optional = ["ipyleaflet", "large_image_source_mapnik", "tifftools"]
+        optional = [
+            "ipyleaflet",
+            "large_image_source_mapnik",
+            "large_image_source_pil",
+            "large_image_source_tiff",
+            "tifftools",
+        ]
 
         scooby.Report.__init__(
             self,
