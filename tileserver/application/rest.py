@@ -4,27 +4,20 @@ import logging
 import time
 import threading
 
-from flask import Flask, render_template, request, send_file
+from flask import request, send_file
 from flask.views import View
 from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
 from PIL import Image, ImageOps
-from werkzeug.routing import FloatConverter as BaseFloatConverter
 
 from tileserver import utilities
+from tileserver.application import app
 from tileserver.application.paths import get_path
 
+
+cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 logger = logging.getLogger(__name__)
 REQUEST_TIMEOUT = 120
-
-
-class FloatConverter(BaseFloatConverter):
-    regex = r"-?\d+(\.\d+)?"
-
-
-app = Flask(__name__)
-app.url_map.converters["float"] = FloatConverter
-cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 
 
 def make_cache_key(*args, **kwargs):
@@ -197,42 +190,3 @@ class RegionPixelView(BaseTileView):
             path,
             mimetype=mime_type,
         )
-
-
-class Viewer(View):
-    def dispatch_request(self):
-        return render_template("tileviewer.html")
-
-
-app.add_url_rule("/", view_func=Viewer.as_view("index"))
-app.add_url_rule("/metadata", view_func=MetadataView.as_view("metadata"))
-app.add_url_rule(
-    "/bounds",
-    view_func=BoundsView.as_view("bounds"),
-)
-app.add_url_rule(
-    "/tiles/<int:z>/<int:x>/<int:y>.png", view_func=TilesView.as_view("tiles")
-)
-app.add_url_rule(
-    "/tiles/debug/<int:z>/<int:x>/<int:y>.png",
-    view_func=TilesDebugView.as_view("tiles-debug"),
-)
-app.add_url_rule("/thumbnail", view_func=ThumbnailView.as_view("thumbnail"))
-app.add_url_rule(
-    "/region/world/<float:left>/<float:right>/<float:bottom>/<float:top>/region.tif",
-    view_func=RegionWorldView.as_view("region-world"),
-)
-app.add_url_rule(
-    "/region/pixel/<int:left>/<int:right>/<int:bottom>/<int:top>/region.tif",
-    view_func=RegionPixelView.as_view("region-pixel"),
-)
-
-
-@app.context_processor
-def inject_context():
-    path = get_path()
-    tile_source = utilities.get_tile_source(path)
-    context = utilities.get_meta_data(tile_source)
-    context["bounds"] = utilities.get_tile_bounds(tile_source, projection="EPSG:4326")
-    context["path"] = path
-    return context
