@@ -9,3 +9,4 @@ scooby
 furl
 pytest
 pytest-cov
+ipyleaflet

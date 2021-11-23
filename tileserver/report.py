@@ -23,6 +23,8 @@ class Report(scooby.Report):
             "flask_caching",
             "requests",
             "werkzeug",
+            "furl",
+            "click",
             "scooby",
         ] + large_image_core
 

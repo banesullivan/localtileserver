@@ -2,7 +2,6 @@ import os
 import pathlib
 import re
 import tempfile
-from contextlib import contextmanager
 from operator import attrgetter
 
 import large_image
@@ -57,13 +56,6 @@ def get_tile_source(
     return large_image.open(
         str(path), projection=projection, style=style, encoding="PNG"
     )
-
-
-@contextmanager
-def yeild_tile_source(path: pathlib.Path, projection: str = None) -> FileTileSource:
-    tile_source = get_tile_source(path, projection)
-    yield tile_source
-    tile_source = None
 
 
 def _get_region(tile_source: FileTileSource, region: dict, encoding: str):
