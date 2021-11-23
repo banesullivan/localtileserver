@@ -11,7 +11,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--debug", default=False, type=bool)
     args = parser.parse_args()
 
-    filename = pathlib.Path(args.filename).expanduser()
+    filename = pathlib.Path(args.filename).expanduser().absolute()
     app.config["DEBUG"] = args.debug
     app.config["filename"] = filename
     app.run(host="localhost", port=args.port)
