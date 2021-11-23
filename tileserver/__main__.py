@@ -1,17 +1,27 @@
+import logging
 import pathlib
-from argparse import ArgumentParser
+
+import click
 
 from tileserver.application import app
 
-if __name__ == "__main__":
 
-    parser = ArgumentParser()
-    parser.add_argument("filename")
-    parser.add_argument("-p", "--port", default=0, type=int)
-    parser.add_argument("-d", "--debug", default=False, type=bool)
-    args = parser.parse_args()
-
-    filename = pathlib.Path(args.filename).expanduser().absolute()
-    app.config["DEBUG"] = args.debug
+@click.command()
+@click.argument("filename")
+@click.option("-p", "--port", default=0)
+@click.option("-d", "--debug", default=False)
+def run_app(filename, port=0, debug=False):
+    filename = pathlib.Path(filename).expanduser().absolute()
+    if not filename.exists():
+        raise OSError(f"File does not exist: {filename}")
+    app.config["DEBUG"] = debug
     app.config["filename"] = filename
-    app.run(host="localhost", port=args.port)
+    if debug:
+        logging.getLogger("werkzeug").setLevel(logging.DEBUG)
+        logging.getLogger("gdal").setLevel(logging.DEBUG)
+        logging.getLogger("large_image").setLevel(logging.DEBUG)
+    app.run(host="localhost", port=port)
+
+
+if __name__ == "__main__":
+    run_app()
