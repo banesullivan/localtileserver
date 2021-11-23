@@ -1,7 +1,8 @@
 # 🌐 Local Tile Server for Geospatial Rasters
 
-[![PyPI](https://img.shields.io/pypi/v/flask-tileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/flask-tileserver/)
 [![codecov](https://codecov.io/gh/banesullivan/flask-tileserver/branch/main/graph/badge.svg?token=S0HQ64FW8G)](https://codecov.io/gh/banesullivan/flask-tileserver)
+[![PyPI](https://img.shields.io/pypi/v/flask-tileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/flask-tileserver/)
+[![pypi-activity](https://img.shields.io/pypi/dm/flask-tileserver.svg?label=pypi%20downloads)](https://pypi.org/project/flask-tileserver/)
 
 *Need to visualize a rather large raster (gigabytes) you have locally?* **This is for you.**
 
