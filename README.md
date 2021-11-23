@@ -4,13 +4,16 @@
 [![PyPI](https://img.shields.io/pypi/v/flask-tileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/flask-tileserver/)
 [![pypi-activity](https://img.shields.io/pypi/dm/flask-tileserver.svg?label=pypi%20downloads)](https://pypi.org/project/flask-tileserver/)
 
-*Need to visualize a rather large raster (gigabytes) you have locally?* **This is for you.**
+*Need to visualize a rather large (gigabytes) raster you have locally?* **This is for you.**
 
 A Flask application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`)
 
-**Disclaimer**: I whipped this together over a weekend and I'm definitely going to change a few things moving forward to make it more stable/robust. This means that things will most likely break between minor releases (I use the `major.minor.patch` versioning scheme).
+**Disclaimer**: I put this together over a weekend and I'm definitely going to
+change a few things moving forward to make it more stable/robust. This means
+that things will most likely break between minor releases (I use the
+`major.minor.patch` versioning scheme).
 
 
 ![tile-diagram](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/tile-diagram.png)
