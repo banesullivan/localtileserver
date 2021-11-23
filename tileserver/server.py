@@ -1,6 +1,7 @@
 import logging
 import pathlib
 import threading
+from typing import Union
 
 import requests
 from werkzeug.serving import make_server
@@ -8,6 +9,9 @@ from werkzeug.serving import make_server
 from tileserver.utilities import add_query_parameters, save_file_from_request
 
 _LIVE_SERVERS = {}
+
+
+logger = logging.getLogger(__name__)
 
 
 class TileServerThread(threading.Thread):
@@ -18,7 +22,10 @@ class TileServerThread(threading.Thread):
 
         pass
 
-    def __init__(self, port: int = 0, debug: bool = False):
+    def __init__(self, port: int = 0, debug: bool = False, start: bool = True):
+        if not isinstance(port, int):
+            raise ValueError(f"Port must be an int, not {type(port)}")
+
         threading.Thread.__init__(self)
 
         from tileserver.application import app
@@ -29,11 +36,16 @@ class TileServerThread(threading.Thread):
             logging.getLogger("large_image").setLevel(logging.ERROR)
         else:
             app.config["DEBUG"] = True
+            logging.getLogger("werkzeug").setLevel(logging.DEBUG)
+            logging.getLogger("gdal").setLevel(logging.DEBUG)
+            logging.getLogger("large_image").setLevel(logging.DEBUG)
 
         self.daemon = True  # CRITICAL for safe exit
         self.srv = make_server("localhost", port, app)
         self.ctx = app.app_context()
         self.ctx.push()
+        if start:
+            self.start()
 
     def run(self):
         self.srv.serve_forever()
@@ -45,28 +57,46 @@ class TileServerThread(threading.Thread):
     def __del__(self):
         self.shutdown()
 
+    @property
+    def port(self):
+        return self.srv.port
 
-def launch_server(port: int = 0, debug: bool = False):
-    if port == 0:
-        key = "default"
+    @property
+    def host(self):
+        return self.srv.host
+
+
+def is_server_live(key: Union[int, str]):
+    return key in _LIVE_SERVERS and _LIVE_SERVERS[key].is_alive()
+
+
+def launch_server(port: Union[int, str] = "default", debug: bool = False):
+    if is_server_live(port):
+        logger.error("live and well")
+        return port
+    logger.error(f"about to launch {port}")
+    if port == "default":
+        server = TileServerThread(0, debug)
     else:
-        key = port
-    if key not in _LIVE_SERVERS:
-        _LIVE_SERVERS[key] = TileServerThread(port, debug)
-        _LIVE_SERVERS[key].start()
-    return key
+        server = TileServerThread(port, debug)
+        if port == 0:
+            # Get reallocated port
+            port = server.port
+    _LIVE_SERVERS[port] = server
+    logger.error(f"launched {port}")
+    return port
 
 
 def shutdown_server(key: int, force: bool = False):
     if not force and key == "default":
-        # We do not shut down the defaul server
+        # We do not shut down the default server
         return
     try:
         server = _LIVE_SERVERS.pop(key)
         server.shutdown()
         del server
     except KeyError:
-        pass
+        logger.error(f"Server for key ({key}) not found.")
 
 
 class TileClient:
@@ -84,10 +114,15 @@ class TileClient:
 
     """
 
-    def __init__(self, filename: pathlib.Path, port: int = 0, debug: bool = False):
+    def __init__(
+        self,
+        filename: pathlib.Path,
+        port: Union[int, str] = "default",
+        debug: bool = False,
+    ):
         path = pathlib.Path(filename).expanduser().absolute()
         if not path.exists():
-            raise OSError(f'Source file path does not exist: {path}')
+            raise OSError(f"Source file path does not exist: {path}")
         self._filename = path
         self._key = launch_server(port, debug)
         # Store actual port just in case
@@ -111,11 +146,11 @@ class TileClient:
 
     @property
     def port(self):
-        return self.server.srv.port
+        return self.server.port
 
     @property
     def base_url(self):
-        return f"http://{self.server.srv.host}:{self.port}"
+        return f"http://{self.server.host}:{self.port}"
 
     def shutdown(self, force: bool = False):
         shutdown_server(self._key, force=force)

@@ -9,7 +9,7 @@ from tileserver.utilities import is_valid_palette
 
 def get_leaflet_tile_layer(
     source: Union[pathlib.Path, TileClient],
-    port: int = 0,
+    port: Union[int, str] = "default",
     debug: bool = False,
     projection: str = "EPSG:3857",
     band: int = None,

@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from tileserver.server import _LIVE_SERVERS, TileClient, TileServerThread
+from tileserver.server import _LIVE_SERVERS, TileClient
 from tileserver.utilities import get_tile_source
 
 TOLERANCE = 2e-2
@@ -27,21 +27,6 @@ def test_create_tile_client(bahamas_file):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
-
-
-def test_server_force_shutdown(bahamas):
-    tile_url = bahamas.get_tile_url().format(z=8, x=72, y=110)
-    r = requests.get(tile_url)
-    r.raise_for_status()
-    assert r.content
-    assert len(_LIVE_SERVERS) == 1
-    bahamas.shutdown(force=True)
-    assert len(_LIVE_SERVERS) == 0
-    with pytest.raises(requests.ConnectionError):
-        r = requests.get(tile_url)
-        r.raise_for_status()
-    with pytest.raises(TileServerThread.ServerDownError):
-        bahamas.bounds()
 
 
 def test_multiple_tile_clients_one_server(bahamas, blue_marble):

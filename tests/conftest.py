@@ -9,12 +9,12 @@ def bahamas_file():
 
 
 @pytest.fixture
-def bahamas(port=0, debug=True):
+def bahamas(port="default", debug=True):
     # Using debug True since in a testing environment
     return get_bahamas(port=port, debug=debug)
 
 
 @pytest.fixture
-def blue_marble(port=0, debug=True):
+def blue_marble(port="default", debug=True):
     # Using debug True since in a testing environment
     return get_blue_marble(port=port, debug=debug)
