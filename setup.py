@@ -12,7 +12,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 1, 2
+version_info = 0, 2, 0
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -40,6 +40,7 @@ setup(
     install_requires=[
         "flask",
         "Flask-Caching",
+        "furl",
         "GDAL",
         "large_image",
         "large_image_source_gdal",

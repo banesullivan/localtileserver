@@ -1,8 +1,8 @@
 import io
 import json
 import logging
+import pathlib
 import time
-import threading
 
 from flask import request, send_file
 from flask.views import View
@@ -12,8 +12,6 @@ from PIL import Image, ImageOps
 
 from tileserver import utilities
 from tileserver.application import app
-from tileserver.application.paths import get_path
-
 
 cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 logger = logging.getLogger(__name__)
@@ -23,15 +21,16 @@ REQUEST_TIMEOUT = 120
 def make_cache_key(*args, **kwargs):
     path = request.path
     args = str(hash(frozenset(request.args.items())))
-    source = str(get_path())
-    ident = str(threading.get_ident())
-    return (path + args + ident + source).encode("utf-8")
+    return (path + args).encode("utf-8")
 
 
 class BaseTileView(View):
     def get_tile_source(self, projection="EPSG:3857"):
         """Return the built tile source."""
-        path = get_path()
+        path = pathlib.Path(request.args.get("filename", ""))
+        if not path.exists():
+            raise OSError(f"Path does not exist: {path}")
+
         band = int(request.args.get("band", 0))
         bmin = request.args.get("min", None)
         bmax = request.args.get("max", None)

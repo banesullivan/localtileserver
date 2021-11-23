@@ -17,7 +17,7 @@
 
     tileLayer.idleAfter = 'all';
     tileLayer.visible(true);
-    tileLayer.url(`${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857`)
+    tileLayer.url(`${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename={{ filename|urlencode }}`)
 
     function updateTilesOpacity(e, value) {
       value = Number(value) / 100.0;

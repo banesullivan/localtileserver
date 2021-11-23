@@ -1,16 +1,17 @@
-from contextlib import contextmanager
-from operator import attrgetter
 import os
 import pathlib
 import re
-import requests
 import tempfile
+from contextlib import contextmanager
+from operator import attrgetter
 
 import large_image
+import palettable
+import requests
+from furl import furl
 from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
-import palettable
 
 
 def get_cache_dir():
@@ -41,6 +42,13 @@ def is_valid_palette(palette: str):
     except AttributeError:
         return False
     return True
+
+
+def add_query_parameters(url: str, params: dict):
+    f = furl(url)
+    for k, v in params.items():
+        f.args[k] = v
+    return f.url
 
 
 def get_tile_source(

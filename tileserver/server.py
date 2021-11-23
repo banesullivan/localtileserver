@@ -1,19 +1,25 @@
 import logging
 import pathlib
-import requests
 import threading
+
+import requests
 from werkzeug.serving import make_server
 
-from tileserver.utilities import save_file_from_request
-from tileserver.application.paths import inject_path, pop_path
+from tileserver.utilities import add_query_parameters, save_file_from_request
+
+_LIVE_SERVERS = {}
 
 
-class TileServerThred(threading.Thread):
+class TileServerThread(threading.Thread):
     """This is for internal use only."""
 
-    def __init__(self, path: pathlib.Path, port: int = 0, debug: bool = False):
+    class ServerDownError(Exception):
+        """Raised when a TileServerThread is down."""
+
+        pass
+
+    def __init__(self, port: int = 0, debug: bool = False):
         threading.Thread.__init__(self)
-        path = pathlib.Path(path).expanduser()
 
         from tileserver.application import app
 
@@ -28,23 +34,42 @@ class TileServerThred(threading.Thread):
         self.srv = make_server("localhost", port, app)
         self.ctx = app.app_context()
         self.ctx.push()
-        self.path = path
 
     def run(self):
-        # This is absolutely critical this happens here
-        inject_path(self.ident, self.path)
         self.srv.serve_forever()
 
     def shutdown(self):
         if self.is_alive():
             self.srv.shutdown()
-            pop_path(self.ident)
 
     def __del__(self):
         self.shutdown()
 
 
-class TileServer:
+def launch_server(port: int = 0, debug: bool = False):
+    if port == 0:
+        key = "default"
+    else:
+        key = port
+    if key not in _LIVE_SERVERS:
+        _LIVE_SERVERS[key] = TileServerThread(port, debug)
+        _LIVE_SERVERS[key].start()
+    return key
+
+
+def shutdown_server(key: int, force: bool = False):
+    if not force and key == "default":
+        # We do not shut down the defaul server
+        return
+    try:
+        server = _LIVE_SERVERS.pop(key)
+        server.shutdown()
+        del server
+    except KeyError:
+        pass
+
+
+class TileClient:
     """Serve tiles from a local raster file in a background thread.
 
     Parameters
@@ -59,21 +84,27 @@ class TileServer:
 
     """
 
-    def __init__(self, path: pathlib.Path, port: int = 0, debug: bool = False):
-        self._server = TileServerThred(path, port, debug)
-        self._server.start()  # run app threaded
-        # Be careful if assigning any other attributes to avoid cycilical refs
+    def __init__(self, filename: pathlib.Path, port: int = 0, debug: bool = False):
+        self._key = launch_server(port, debug)
+        # Store actual port just in case
+        self._port = _LIVE_SERVERS[self._key].srv.port
+        self._filename = pathlib.Path(filename).expanduser()
 
     def __del__(self):
         self.shutdown()
 
     @property
-    def server(self):
-        return self._server
+    def filename(self):
+        return self._filename
 
     @property
-    def path(self):
-        return self.server.path
+    def server(self):
+        try:
+            return _LIVE_SERVERS[self._key]
+        except KeyError:
+            raise TileServerThread.ServerDownError(
+                "Tile server for this source has been shutdown."
+            )
 
     @property
     def port(self):
@@ -83,17 +114,20 @@ class TileServer:
     def base_url(self):
         return f"http://{self.server.srv.host}:{self.port}"
 
-    def shutdown(self):
-        self.server.shutdown()
+    def shutdown(self, force: bool = False):
+        shutdown_server(self._key, force=force)
+
+    def _produce_url(self, base: str):
+        return add_query_parameters(base, {"filename": self._filename})
 
     def create_url(self, path: str):
-        return f"{self.base_url}/{path.lstrip('/')}"
+        return self._produce_url(f"{self.base_url}/{path.lstrip('/')}")
 
     def get_tile_url(self, projection: str = "EPSG:3857"):
-        url = self.create_url(f"tiles/{{z}}/{{x}}/{{y}}.png?")
-        if projection:
-            url += f"projection={projection}"
-        return url
+        url = add_query_parameters(
+            self.create_url("__tileserver_path__"), {"projection": projection}
+        )
+        return url.replace("__tileserver_path__", "tiles/{z}/{x}/{y}.png")
 
     def extract_roi(
         self,

@@ -1,13 +1,14 @@
 import pathlib
-from tileserver.server import TileServer
 from typing import Union
+
 import requests
 
+from tileserver.server import TileClient
 from tileserver.utilities import is_valid_palette
 
 
 def get_leaflet_tile_layer(
-    source: Union[pathlib.Path, TileServer],
+    source: Union[pathlib.Path, TileClient],
     port: int = 0,
     debug: bool = False,
     projection: str = "EPSG:3857",
@@ -18,13 +19,13 @@ def get_leaflet_tile_layer(
     nodata: Union[float, int] = None,
     **kwargs,
 ):
-    """Generate an ipyleaflet TileLayer for the given TileServer.
+    """Generate an ipyleaflet TileLayer for the given TileClient.
 
     Parameters
     ----------
-    source : Union[pathlib.Path, TileServer]
+    source : Union[pathlib.Path, TileClient]
         The source of the tile layer. This can be a path on disk or an already
-        open ``TileServer``
+        open ``TileClient``
     port : int
         The port on your host machine to use for the tile server (if creating
         a tileserver. This is ignored if a file path is given). This defaults
@@ -81,8 +82,8 @@ def get_leaflet_tile_layer(
 
     _internally_created = False
     # Launch tile server if file path is given
-    if not isinstance(source, TileServer):
-        source = TileServer(source, port, debug)
+    if not isinstance(source, TileClient):
+        source = TileClient(source, port, debug)
         _internally_created = True
 
     # Check that the tile source is valid and no server errors

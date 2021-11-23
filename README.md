@@ -9,7 +9,7 @@ A Flask application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`)
 
-***Disclaimer**: I whipped this together over a weekend and I'm definitely going to change a few things moving forward to make it more stable/robust. This means that things will most likely break between minor releases (I use the `major.minor.patch` versioning scheme).*
+**Disclaimer**: I whipped this together over a weekend and I'm definitely going to change a few things moving forward to make it more stable/robust. This means that things will most likely break between minor releases (I use the `major.minor.patch` versioning scheme).
 
 
 ![tile-diagram](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/tile-diagram.png)
@@ -74,7 +74,7 @@ print(tileserver.Report())
 
 ### 🍃 `ipyleaflet` Tile Layers
 
-The `TileServer` class is a nifty tool to launch a tile server as a background
+The `TileClient` class is a nifty tool to launch a tile server as a background
 thread to serve image tiles from any raster file on your local file system.
 Additionally, it can be used in conjunction with the `get_leaflet_tile_layer`
 utility to create an `ipyleaflet.TileLayer` for interactive visualization in
@@ -82,17 +82,17 @@ a Jupyter notebook. Here is an example:
 
 
 ```py
-from tileserver import get_leaflet_tile_layer, TileServer
+from tileserver import get_leaflet_tile_layer, TileClient
 from ipyleaflet import Map
 
 # First, create a tile server from local raster file
-tile_server = TileServer('~/Desktop/TC_NG_SFBay_US_Geo.tif')
+tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 
 # Create ipyleaflet tile layer from that server
-t = get_leaflet_tile_layer(tile_server)
+t = get_leaflet_tile_layer(tile_client)
 
 # Create ipyleaflet map, add tile layer, and display
-m = Map(center=tile_server.center())
+m = Map(center=tile_client.center())
 m.add_layer(t)
 m
 ```
@@ -105,14 +105,14 @@ m
 from tileserver import get_leaflet_tile_layer
 from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
-m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
-
 # Create 2 tile layers from 2 separate raster files
 l = get_leaflet_tile_layer('~/Desktop/TC_NG_SFBay_US_Geo.tif',
                            band=1, palette='matplotlib.Viridis_20', vmin=50, vmax=200)
 r = get_leaflet_tile_layer('~/Desktop/small.tif',
                            band=2, palette='matplotlib.Plasma_6', vmin=0, vmax=150)
 
+# Make the ipyleaflet map
+m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
 control = SplitMapControl(left_layer=l, right_layer=r)
 m.add_control(control)
 m.add_control(ScaleControl(position='bottomleft'))
@@ -127,14 +127,14 @@ m
 
 
 ```py
-from tileserver import get_leaflet_tile_layer, TileServer
+from tileserver import get_leaflet_tile_layer, TileClient
 from ipyleaflet import Map, ScaleControl, FullScreenControl, DrawControl
 
 # First, create a tile server from local raster file
-tile_server = TileServer('~/Desktop/TC_NG_SFBay_US_Geo.tif')
+tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 
 # Create ipyleaflet tile layer from that server
-t = get_leaflet_tile_layer(tile_server)
+t = get_leaflet_tile_layer(tile_client)
 
 # Create ipyleaflet map, add layers, add draw control, display
 m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
@@ -158,7 +158,7 @@ bbox = draw_control.data[0]
 p = Polygon([tuple(l) for l in bbox['geometry']['coordinates'][0]])
 left, bottom, right, top = p.bounds
 
-roi_path = tile_server.extract_roi(left, right, bottom, top)
+roi_path = tile_client.extract_roi(left, right, bottom, top)
 roi_path
 ```
 
@@ -188,10 +188,10 @@ from tileserver import get_leaflet_tile_layer, examples
 from ipyleaflet import Map, DrawControl
 
 # Load example tile layer from publicly available DEM source
-tile_server = examples.get_elevation()
+tile_client = examples.get_elevation()
 
 # Create ipyleaflet tile layer from that server
-t = get_leaflet_tile_layer(tile_server,
+t = get_leaflet_tile_layer(tile_client,
                            band=1, vmin=-500, vmax=5000,
                            palette='mycarta.Cube1_19',
                            opacity=0.75)
@@ -222,7 +222,7 @@ bbox = draw_control.data[0]
 p = Polygon([tuple(l) for l in bbox['geometry']['coordinates'][0]])
 left, bottom, right, top = p.bounds
 
-roi_path = tile_server.extract_roi(left, right, bottom, top)
+roi_path = tile_client.extract_roi(left, right, bottom, top)
 
 r = get_leaflet_tile_layer(roi_path, band=1,
                            palette='mycarta.Cube1_19', opacity=0.75)
@@ -244,10 +244,10 @@ from tileserver import get_leaflet_tile_layer, examples
 from ipyleaflet import Map, DrawControl
 
 # Load example tile layer from publicly available imagery
-tile_server = examples.get_virtual_earth()
+tile_client = examples.get_virtual_earth()
 
 # Create ipyleaflet tile layer from that server
-t = get_leaflet_tile_layer(tile_server,opacity=1)
+t = get_leaflet_tile_layer(tile_client, opacity=1)
 
 m = Map(center=(39.751343612695145, -105.22181306125279), zoom=18)
 m.add_layer(t)
@@ -274,6 +274,6 @@ python -m tileserver path/to/raster.tif
 
 ### Usage Notes
 
-- `get_leaflet_tile_layer` accepts either an existing `TileServer` or a
-path from which to create a `TileServer` under the hood.
+- `get_leaflet_tile_layer` accepts either an existing `TileClient` or a
+path from which to create a `TileClient` under the hood.
 - The color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/).

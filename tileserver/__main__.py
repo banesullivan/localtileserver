@@ -1,19 +1,17 @@
-from argparse import ArgumentParser
 import pathlib
+from argparse import ArgumentParser
 
 from tileserver.application import app
-from tileserver.application.paths import inject_path
-
 
 if __name__ == "__main__":
 
     parser = ArgumentParser()
-    parser.add_argument("file")
-    parser.add_argument("--port", default=0, type=int)
-    parser.add_argument("--debug", default=False, type=bool)
+    parser.add_argument("filename")
+    parser.add_argument("-p", "--port", default=0, type=int)
+    parser.add_argument("-d", "--debug", default=False, type=bool)
     args = parser.parse_args()
 
-    path = pathlib.Path(args.file).expanduser()
-    inject_path("default", path)
+    filename = pathlib.Path(args.filename).expanduser()
     app.config["DEBUG"] = args.debug
+    app.config["filename"] = filename
     app.run(host="localhost", port=args.port)

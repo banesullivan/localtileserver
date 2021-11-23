@@ -84,7 +84,7 @@
           return
       }
       // Build a URL for extracting that ROI
-      var url = `${host}/region/world/${roi.left}/${roi.right}/${roi.bottom}/${roi.top}/region.tif?units=EPSG:4326`;
+      var url = `${host}/region/world/${roi.left}/${roi.right}/${roi.bottom}/${roi.top}/region.tif?units=EPSG:4326&filename={{ filename|urlencode }}`;
       download(url, 'region.tif')
     }
 
