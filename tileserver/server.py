@@ -85,10 +85,13 @@ class TileClient:
     """
 
     def __init__(self, filename: pathlib.Path, port: int = 0, debug: bool = False):
+        path = pathlib.Path(filename).expanduser().absolute()
+        if not path.exists():
+            raise OSError(f'Source file path does not exist: {path}')
+        self._filename = path
         self._key = launch_server(port, debug)
         # Store actual port just in case
         self._port = _LIVE_SERVERS[self._key].srv.port
-        self._filename = pathlib.Path(filename).expanduser().absolute()
 
     def __del__(self):
         self.shutdown()
