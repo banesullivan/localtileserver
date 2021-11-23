@@ -18,7 +18,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
       - name: Test GDAL installation
-        run: python -c "from osgeo import gdal"
+        run: |
+          python -c "from osgeo import gdal"
+          gdalinfo --version
       # Install everything else
       - name: Install other dependencies
         run: |
@@ -53,7 +55,9 @@ jobs:
       - name: Install GDAL
         run: conda install -c conda-forge gdal --yes
       - name: Test GDAL installation
-        run: python -c "from osgeo import gdal"
+        run: |
+          python -c "from osgeo import gdal"
+          gdalinfo --version
       # Install everything else
       - name: Install other dependencies
         run: |
