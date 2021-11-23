@@ -1,2 +1,0 @@
-export FLASK_APP=tileserver
-export FLASK_ENV=development
