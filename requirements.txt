@@ -2,8 +2,9 @@ click
 flask
 Flask-Caching
 GDAL
-large_image
-large_image_source_gdal
+large-image
+large-image-source-gdal
+large-image-source-pil
 requests
 scooby
 furl
