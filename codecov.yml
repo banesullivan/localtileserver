@@ -1,1 +1,8 @@
-github_checks: false
+comment:
+  layout: "diff"
+  behavior: default
+
+coverage:
+  status:
+    project: off
+    patch: off
