@@ -72,9 +72,7 @@ def is_server_live(key: Union[int, str]):
 
 def launch_server(port: Union[int, str] = "default", debug: bool = False):
     if is_server_live(port):
-        logger.error("live and well")
         return port
-    logger.error(f"about to launch {port}")
     if port == "default":
         server = TileServerThread(0, debug)
     else:
@@ -83,7 +81,6 @@ def launch_server(port: Union[int, str] = "default", debug: bool = False):
             # Get reallocated port
             port = server.port
     _LIVE_SERVERS[port] = server
-    logger.error(f"launched {port}")
     return port
 
 
