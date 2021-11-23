@@ -8,15 +8,6 @@ from tileserver.utilities import save_file_from_request
 from tileserver.application.paths import inject_path, pop_path
 
 
-def run_app(path: pathlib.Path, port: int = 0, debug: bool = False):
-    from tileserver.application import app
-
-    path = pathlib.Path(path).expanduser()
-    inject_path("default", path)
-    app.config["DEBUG"] = debug
-    return app.run(host="localhost", port=port)
-
-
 class TileServerThred(threading.Thread):
     """This is for internal use only."""
 

@@ -1,5 +1,8 @@
 from argparse import ArgumentParser
-from .server import run_app
+import pathlib
+
+from tileserver.application import app
+from tileserver.application.paths import inject_path
 
 
 if __name__ == "__main__":
@@ -10,4 +13,7 @@ if __name__ == "__main__":
     parser.add_argument("--debug", default=False, type=bool)
     args = parser.parse_args()
 
-    run_app(args.file, args.port, args.debug)
+    path = pathlib.Path(args.file).expanduser()
+    inject_path("default", path)
+    app.config["DEBUG"] = args.debug
+    app.run(host="localhost", port=args.port)
