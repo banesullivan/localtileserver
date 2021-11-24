@@ -186,5 +186,3 @@ viewer = new Cesium.Viewer('cesiumContainer', {
 });
 // Remove the Terrain section of the baseLayerPicker
 viewer.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll()
-// viewer.canvas.webkitRequestFulscreen()
-viewer.canvas.requestFullscreen()
