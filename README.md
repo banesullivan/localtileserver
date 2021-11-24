@@ -22,8 +22,8 @@ that things will most likely break between minor releases (I use the
 ## 🌟 Highlights
 
 - Create a local tile server for large geospatial images
-- Extract regions of interest (ROIs) interactively
 - View local raster files with `ipyleaflet`
+- Extract regions of interest (ROIs) interactively
 
 Under the hood, this uses [`large_image`](https://github.com/girder/large_image)
 to launch a tile server in a background thread which will serve raster imagery
