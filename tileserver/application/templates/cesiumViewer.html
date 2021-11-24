@@ -4,6 +4,11 @@
 
 {% include '_include/cesium.html' %}
 
+<div class="slidecontainer" id="opacityTool">
+    <label for="rasterOpacityRange">Raster Layer Opacity: </label>
+    <input type="range" min="1" max="100" value="100" class="overlay" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)" onInput="updateTilesOpacity(event, value)" style="top: 5px; left: 5px;">
+</div>
+
 <script>
     var extents = JSON.parse('{{ bounds|tojson }}');
     var boxjson = {
@@ -29,6 +34,11 @@
     })
     var layers = viewer.scene.imageryLayers;
     var tileLayer = layers.addImageryProvider(tileProvider);
+
+    function updateTilesOpacity(e, value) {
+        value = Number(value) / 100.0;
+        tileLayer.alpha = value;
+    }
 
     // Compute viewing parameters
     var a = Cesium.Cartesian3.fromDegrees(extents.xmin, extents.ymin, 0)

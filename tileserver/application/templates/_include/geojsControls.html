@@ -9,7 +9,7 @@
     </div>
     <div class="slidecontainer" id="opacityTool">
         <label for="rasterOpacityRange">Raster Layer Opacity: </label>
-        <input type="range" min="1" max="100" value="100" class="slider" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)">
+        <input type="range" min="1" max="100" value="100" class="slider" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)" onInput="updateTilesOpacity(event, value)">
     </div>
     <div class="geojsControls btn-group">
         <div class="control">
