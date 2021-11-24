@@ -129,14 +129,14 @@ m
 
 #### 🎯 Using `ipyleaflet` for ROI Extraction
 
-I have included the `get_leaflet_roi_control` utility to create some leaflet
+I have included the `get_leaflet_roi_controls` utility to create some leaflet
 UI controls for extracting regions of interest from a tile client. You can
 use it as follows and then draw a polygon and click the "Extract ROI" button.
 
 The outputs are save in your working directory by default (next to the Jupyter notebook).
 
 ```py
-from tileserver import get_leaflet_tile_layer, get_leaflet_roi_control, TileClient
+from tileserver import get_leaflet_tile_layer, get_leaflet_roi_controls, TileClient
 from ipyleaflet import Map
 
 # First, create a tile server from local raster file
@@ -145,7 +145,7 @@ tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_client)
 # Create ipyleaflet controls to extract an ROI
-draw_control, roi_control = get_leaflet_roi_control(tile_client)
+draw_control, roi_control = get_leaflet_roi_controls(tile_client)
 
 # Create ipyleaflet map, add layers, add controls, and display
 m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
@@ -164,7 +164,7 @@ A few example datasets are included with `tileserver`. A particularly
 useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
 
 ```py
-from tileserver import get_leaflet_tile_layer, get_leaflet_roi_control, examples
+from tileserver import get_leaflet_tile_layer, get_leaflet_roi_controls, examples
 from ipyleaflet import Map
 
 # Load example tile layer from publicly available DEM source
@@ -177,7 +177,7 @@ t = get_leaflet_tile_layer(tile_client,
                            opacity=0.75)
 
 # Create ipyleaflet controls to extract an ROI
-draw_control, roi_control = get_leaflet_roi_control(tile_client)
+draw_control, roi_control = get_leaflet_roi_controls(tile_client)
 
 m = Map(zoom=2)
 m.add_layer(t)

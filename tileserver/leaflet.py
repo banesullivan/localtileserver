@@ -112,7 +112,7 @@ def get_leaflet_tile_layer(
     return tile_layer
 
 
-def get_leaflet_roi_control(
+def get_leaflet_roi_controls(
     tile_client: TileClient,
     button_position: str = "topright",
     output_directory: pathlib.Path = ".",
