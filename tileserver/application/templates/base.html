@@ -70,10 +70,10 @@
                         <a class="nav-link" href="{{ url_for('roi')}}">ROI Extraction</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('thumbnail')}}?filename=${filename}">Thumbnail</a>
+                        <a class="nav-link" href="{{ url_for('thumbnail')}}?filename={{ filename|urlencode }}">Thumbnail</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('metadata')}}?filename=${filename}">Metadata</a>
+                        <a class="nav-link" href="{{ url_for('metadata')}}?filename={{ filename|urlencode }}">Metadata</a>
                     </li>
                 </ul>
             </div>
