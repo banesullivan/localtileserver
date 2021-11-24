@@ -129,57 +129,33 @@ m
 
 #### 🎯 Using `ipyleaflet` for ROI Extraction
 
+I have included the `get_leaflet_roi_control` utility to create some leaflet
+UI controls for extracting regions of interest from a tile client. You can
+use it as follows and then draw a polygon and click the "Extract ROI" button.
+
+The outputs are save in your working directory by default (next to the Jupyter notebook).
 
 ```py
-from tileserver import get_leaflet_tile_layer, TileClient
-from ipyleaflet import Map, ScaleControl, FullScreenControl, DrawControl
+from tileserver import get_leaflet_tile_layer, get_leaflet_roi_control, TileClient
+from ipyleaflet import Map
 
 # First, create a tile server from local raster file
 tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_client)
+# Create ipyleaflet controls to extract an ROI
+draw_control, roi_control = get_leaflet_roi_control(tile_client)
 
-# Create ipyleaflet map, add layers, add draw control, display
+# Create ipyleaflet map, add layers, add controls, and display
 m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
 m.add_layer(t)
-m.add_control(ScaleControl(position='bottomleft'))
-m.add_control(FullScreenControl())
-draw_control = DrawControl()
 m.add_control(draw_control)
+m.add_control(roi_control)
 m
 ```
 
 ![ipyleaflet-draw-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet-draw-roi.png)
-
-
-
-```py
-from shapely.geometry import Polygon
-
-# Inspect `draw_control.data` to get the ROI
-bbox = draw_control.data[0]
-p = Polygon([tuple(l) for l in bbox['geometry']['coordinates'][0]])
-left, bottom, right, top = p.bounds
-
-roi_path = tile_client.extract_roi(left, right, bottom, top)
-roi_path
-```
-
-```py
-r = get_leaflet_tile_layer(roi_path)
-
-m2 = Map(
-        center=(37.7249511580583, -122.27230466902257),
-        zoom=9,
-       )
-m2.add_layer(r)
-m2.add_control(ScaleControl(position='bottomleft'))
-m2.add_control(FullScreenControl())
-m2
-```
-
-![ipyleaflet-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet-roi.png)
 
 
 #### 🗺️ Example Datasets
@@ -188,8 +164,8 @@ A few example datasets are included with `tileserver`. A particularly
 useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
 
 ```py
-from tileserver import get_leaflet_tile_layer, examples
-from ipyleaflet import Map, DrawControl
+from tileserver import get_leaflet_tile_layer, get_leaflet_roi_control, examples
+from ipyleaflet import Map
 
 # Load example tile layer from publicly available DEM source
 tile_client = examples.get_elevation()
@@ -197,13 +173,16 @@ tile_client = examples.get_elevation()
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_client,
                            band=1, vmin=-500, vmax=5000,
-                           palette='mycarta.Cube1_19',
+                           palette='matplotlib.Plasma_6',
                            opacity=0.75)
+
+# Create ipyleaflet controls to extract an ROI
+draw_control, roi_control = get_leaflet_roi_control(tile_client)
 
 m = Map(zoom=2)
 m.add_layer(t)
-draw_control = DrawControl()
 m.add_control(draw_control)
+m.add_control(roi_control)
 m
 ```
 
@@ -219,17 +198,11 @@ I zoomed in over Golden, Colorado and drew a polygon of the extent of the DEM I 
 And perform the extraction:
 
 ```py
-from shapely.geometry import Polygon
 
-# Inspect `draw_control.data` to get the ROI
-bbox = draw_control.data[0]
-p = Polygon([tuple(l) for l in bbox['geometry']['coordinates'][0]])
-left, bottom, right, top = p.bounds
-
-roi_path = tile_client.extract_roi(left, right, bottom, top)
+roi_path = '...'  # Look in your working directory
 
 r = get_leaflet_tile_layer(roi_path, band=1,
-                           palette='mycarta.Cube1_19', opacity=0.75)
+                           palette='matplotlib.Plasma_6', opacity=0.75)
 
 m2 = Map(
         center=(39.763427033262175, -105.20614908076823),

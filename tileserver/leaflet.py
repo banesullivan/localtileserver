@@ -1,3 +1,5 @@
+import logging
+import os
 import pathlib
 from typing import Union
 
@@ -5,6 +7,8 @@ import requests
 
 from tileserver.server import TileClient
 from tileserver.utilities import is_valid_palette
+
+logger = logging.getLogger(__name__)
 
 
 def get_leaflet_tile_layer(
@@ -60,8 +64,8 @@ def get_leaflet_tile_layer(
     # Safely import ipyleaflet
     try:
         from ipyleaflet import TileLayer
-    except ImportError:
-        raise ImportError("Please install `ipyleaflet` and `jupyter`.")
+    except ImportError as e:
+        raise ImportError(f"Please install `ipyleaflet`: {e}")
 
     # First handle query parameters to check for errors
     params = {}
@@ -106,3 +110,93 @@ def get_leaflet_tile_layer(
         # HACK: Prevent the server from being garbage collected
         tile_layer.tile_server = source
     return tile_layer
+
+
+def get_leaflet_roi_control(
+    tile_client: TileClient,
+    button_position: str = "topright",
+    output_directory: pathlib.Path = ".",
+    debug: bool = False,
+):
+    """Generate an ipyleaflet DrawControl and WidgetControl to add to your map for ROI extraction.
+
+    Parameters
+    ----------
+    button_position : str
+        The button position of the WidgetControl.
+    output_directory : pathlib.Path
+        The directory to save the ROIs. Defaults to working directory.
+    debug : bool
+        Return a `widgets.Output` to debug the ROI extraction callback.
+
+    Returns
+    -------
+    tuple(ipyleaflet.DrawControl, ipyleaflet.WidgetControl)
+
+    """
+    # Safely import ipyleaflet
+    try:
+        import ipywidgets as widgets
+        from ipyleaflet import DrawControl, WidgetControl
+        from shapely.geometry import Polygon
+    except ImportError as e:
+        raise ImportError(f"Please install `ipyleaflet` and `shapely`: {e}")
+    draw_control = DrawControl()
+    # Disable polyline and circle
+    draw_control.polyline = {}
+    draw_control.circlemarker = {}
+    draw_control.polygon = {
+        "shapeOptions": {
+            "fillColor": "#6be5c3",
+            "color": "#6be5c3",
+            "fillOpacity": 0.75,
+        },
+    }
+    draw_control.rectangle = {
+        "shapeOptions": {
+            "fillColor": "#fca45d",
+            "color": "#fca45d",
+            "fillOpacity": 0.75,
+        }
+    }
+
+    # Set up the "Extract ROI" button
+    debug_view = widgets.Output(layout={"border": "1px solid black"})
+
+    @debug_view.capture(clear_output=False)
+    def on_button_clicked(b):
+        logger.error(f"\non_button_clicked {button_position}")
+        # Inspect `draw_control.data` to get the ROI
+        if not draw_control.data:
+            # No ROI to extract
+            logger.error("No polygons on map to use.")
+            return
+        p = None
+        for poly in draw_control.data:
+            t = Polygon([tuple(l) for l in poly["geometry"]["coordinates"][0]])
+            if not p:
+                p = t
+            else:
+                p = p.union(t)
+        left, bottom, right, top = p.bounds
+        # Get filename in working directory
+        split = os.path.basename(tile_client.filename).split(".")
+        ext = split[-1]
+        basename = ".".join(split[:1])
+        output_path = pathlib.Path(output_directory).absolute()
+        output_path.mkdir(parents=True, exist_ok=True)
+        output_path = (
+            output_path / f"roi_{basename}_{left}_{right}_{bottom}_{top}.{ext}"
+        )
+        draw_control.output_path = output_path
+        logger.error(f"output_path: {output_path}")
+        roi_path = tile_client.extract_roi(
+            left, right, bottom, top, output_path=output_path
+        )
+
+    button = widgets.Button(description="Extract ROI")
+    button.on_click(on_button_clicked)
+    button_control = WidgetControl(widget=button, position=button_position)
+    if debug:
+        return draw_control, button_control, debug_view
+    return draw_control, button_control
