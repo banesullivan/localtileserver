@@ -218,7 +218,7 @@ Here is another example with the Virtual Earth satellite imagery
 
 ```py
 from tileserver import get_leaflet_tile_layer, examples
-from ipyleaflet import Map, DrawControl
+from ipyleaflet import Map
 
 # Load example tile layer from publicly available imagery
 tile_client = examples.get_virtual_earth()
@@ -228,8 +228,6 @@ t = get_leaflet_tile_layer(tile_client, opacity=1)
 
 m = Map(center=(39.751343612695145, -105.22181306125279), zoom=18)
 m.add_layer(t)
-draw_control = DrawControl()
-m.add_control(draw_control)
 m
 ```
 
