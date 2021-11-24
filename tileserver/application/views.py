@@ -10,9 +10,14 @@ from tileserver.examples import get_data_path
 logger = logging.getLogger(__name__)
 
 
-class Viewer(View):
+class GeoJSViewer(View):
     def dispatch_request(self):
         return render_template("tileviewer.html")
+
+
+class CesiumViewer(View):
+    def dispatch_request(self):
+        return render_template("cesiumviewer.html")
 
 
 @app.context_processor
