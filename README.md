@@ -136,7 +136,8 @@ use it as follows and then draw a polygon and click the "Extract ROI" button.
 The outputs are save in your working directory by default (next to the Jupyter notebook).
 
 ```py
-from tileserver import get_leaflet_tile_layer, get_leaflet_roi_controls, TileClient
+from tileserver import get_leaflet_tile_layer, get_leaflet_roi_controls
+from tileserver import TileClient
 from ipyleaflet import Map
 
 # First, create a tile server from local raster file
@@ -144,6 +145,7 @@ tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_client)
+
 # Create ipyleaflet controls to extract an ROI
 draw_control, roi_control = get_leaflet_roi_controls(tile_client)
 
