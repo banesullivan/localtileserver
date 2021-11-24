@@ -1,89 +1,95 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/geojs/1.4.3/geo.min.js"></script>
 
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/style.css') }}">
+
     <script>
-      var host = window.location.protocol + "//" + window.location.host;
+        var host = window.location.protocol + "//" + window.location.host;
+        var filename = "{{ filename|urlencode }}"
 
-      function setCookie(cookieName, cookieValue, nDays=365) {
-        var today = new Date();
-        var expire = new Date();
-        if (nDays==null || nDays==0) nDays=1;
-        expire.setTime(today.getTime() + 3600000*24*nDays);
-        document.cookie = cookieName+"="+escape(cookieValue)
-            + ";expires="+expire.toGMTString() + "; path=/";
-      }
-
-      function getCookie(cookieName, defaultValue="") {
-        var theCookie=""+document.cookie;
-        var ind=theCookie.indexOf(cookieName+"=");
-        if (ind==-1 || cookieName=="") {
-          if (defaultValue != "") {
-            setCookie(cookieName, defaultValue);
-          }
-          return defaultValue;
+        function setCookie(cookieName, cookieValue, nDays = 365) {
+            var today = new Date();
+            var expire = new Date();
+            if (nDays == null || nDays == 0) nDays = 1;
+            expire.setTime(today.getTime() + 3600000 * 24 * nDays);
+            document.cookie = cookieName + "=" + escape(cookieValue) +
+                ";expires=" + expire.toGMTString() + "; path=/";
         }
-        var ind1=theCookie.indexOf(";",ind);
-        if (ind1==-1) { ind1=theCookie.length; }
-        return unescape(theCookie.substring(ind+cookieName.length+1,ind1));
-      }
 
-      function download(url, filename) {
-        fetch(url)
-          .then(response => response.blob())
-          .then(blob => {
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.download = filename;
-            link.click();
-        })
-        .catch(console.error);
-      }
+        function getCookie(cookieName, defaultValue = "") {
+            var theCookie = "" + document.cookie;
+            var ind = theCookie.indexOf(cookieName + "=");
+            if (ind == -1 || cookieName == "") {
+                if (defaultValue != "") {
+                    setCookie(cookieName, defaultValue);
+                }
+                return defaultValue;
+            }
+            var ind1 = theCookie.indexOf(";", ind);
+            if (ind1 == -1) {
+                ind1 = theCookie.length;
+            }
+            return unescape(theCookie.substring(ind + cookieName.length + 1, ind1));
+        }
+
+        function download(url, filename) {
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    const link = document.createElement("a");
+                    link.href = URL.createObjectURL(blob);
+                    link.download = filename;
+                    link.click();
+                })
+                .catch(console.error);
+        }
     </script>
 
-
     <title>Tile Viewer</title>
-  </head>
-  <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('index')}}">Tile Viewer</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('thumbnail')}}?filename={{ filename|urlencode }}">Thumbnail</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('metadata')}}?filename={{ filename|urlencode }}">Metadata</a>
-            </li>
-            </ul>
-        </div>
-        <div style="margin-left: auto; margin-right: 0;">
-            {{ path }}
-        </div>
-    </nav>
-    <div>
-        {% block content %} {% endblock %}
-    </div>
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-      {% block uicontrols %} {% endblock %}
-    </nav>
+</head>
 
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
+            <a class="navbar-brand" href="{{ url_for('index')}}">Tile Viewer</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('roi')}}">ROI Extraction</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('thumbnail')}}?filename={{ filename|urlencode }}">Thumbnail</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ url_for('metadata')}}?filename={{ filename|urlencode }}">Metadata</a>
+                    </li>
+                </ul>
+            </div>
+            <div style="margin-left: auto; margin-right: 0;">
+                {{ path }}
+            </div>
+        </nav>
+        <div id="content">
+            {% block content %} {% endblock %}
+        </div>
+    </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  </body>
+</body>
+
 </html>

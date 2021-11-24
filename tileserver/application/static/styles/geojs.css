@@ -1,0 +1,33 @@
+#map {
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    height: calc(100vh - 180px);
+}
+
+.btn-group .button:hover {
+    background-color: #3e8e41;
+}
+
+.geojsControls {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+}
+
+.basemapTool {
+    background-color: #DCDCDC;
+    padding: 2px;
+    border: 2px solid #000;
+    text-align: left;
+    border-radius: 10px;
+}
+
+.slidecontainer {
+    background-color: #DCDCDC;
+    padding: 2px;
+    border: 2px solid #000;
+    text-align: left;
+    border-radius: 10px;
+}

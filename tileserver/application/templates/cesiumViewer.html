@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include '_include/cesium.html' %}
+
+<div class="slidecontainer" id="opacityTool">
+    <label for="rasterOpacityRange">Raster Layer Opacity: </label>
+    <input type="range" min="1" max="100" value="100" class="overlay" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)" onInput="updateTilesOpacity(event, value)" style="top: 5px; left: 5px;">
+</div>
+
+<script>
+    var extents = JSON.parse('{{ bounds|tojson }}');
+    var boxjson = {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [extents.xmin, extents.ymin],
+                [extents.xmin, extents.ymax],
+                [extents.xmax, extents.ymax],
+                [extents.xmax, extents.ymin],
+                [extents.xmin, extents.ymin]
+            ]
+        ]
+    };
+
+    var tileUrl = `${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filename}`
+
+    var tileProvider = new Cesium.UrlTemplateImageryProvider({
+        url: tileUrl,
+        subdomains: null,
+        // minimumLevel: 0,
+        // maximumLevel: 14
+    })
+    var layers = viewer.scene.imageryLayers;
+    var tileLayer = layers.addImageryProvider(tileProvider);
+
+    function updateTilesOpacity(e, value) {
+        value = Number(value) / 100.0;
+        tileLayer.alpha = value;
+    }
+
+    // Compute viewing parameters
+    var a = Cesium.Cartesian3.fromDegrees(extents.xmin, extents.ymin, 0)
+    var b = Cesium.Cartesian3.fromDegrees(extents.xmax, extents.ymax, 0)
+    var length = Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2)
+    if (length <= 100000) {
+        // Zoom out to whole globe
+        length = 20000000;
+    }
+    var center = Cesium.Cartesian3.fromDegrees(
+        ((extents.xmax - extents.xmin) / 2 + extents.xmin),
+        ((extents.ymax - extents.ymin) / 2 + extents.ymin), length)
+    viewer.camera.flyTo({
+        destination: center
+    });
+</script>
+
+{% endblock %}

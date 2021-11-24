@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="geojsControls">
+    {% include '_include/geojs.html' %}
+    {% include '_include/geojsControls.html' %}
+</div>
+
+
+<script>
+    let extents = JSON.parse('{{ bounds|tojson }}');
+    setBounds(extents, false)
+
+    tileLayer.idleAfter = 'all';
+    tileLayer.visible(true);
+    tileLayer.url(`${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filename}`)
+
+    function updateTilesOpacity(e, value) {
+        value = Number(value) / 100.0;
+        tileLayer.opacity(value);
+    }
+
+
+    var boxjson = {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [extents.xmin, extents.ymin],
+                [extents.xmin, extents.ymax],
+                [extents.xmax, extents.ymax],
+                [extents.xmax, extents.ymin],
+                [extents.xmin, extents.ymin]
+            ]
+        ]
+    };
+    reader.read(boxjson, (features) => {
+        features[0].style({
+                strokeColor: 'red',
+                fill: false
+            })
+            .draw();
+    });
+</script>
+
+{% endblock %}

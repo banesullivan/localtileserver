@@ -11,7 +11,8 @@ class FloatConverter(BaseFloatConverter):
 app.url_map.converters["float"] = FloatConverter
 
 # Views/pages
-app.add_url_rule("/", view_func=views.Viewer.as_view("index"))
+app.add_url_rule("/", view_func=views.CesiumViewer.as_view("index"))
+app.add_url_rule("/roi/", view_func=views.GeoJSViewer.as_view("roi"))
 
 # REST endpoints
 app.add_url_rule("/thumbnail", view_func=rest.ThumbnailView.as_view("thumbnail"))

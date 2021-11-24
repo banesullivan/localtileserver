@@ -1,0 +1,29 @@
+{% block viewer_controls %}
+
+<div class="geojsControls">
+    <div id="basemapTool" class="basemapTool">
+        <label for="basemapDropdown">Choose a basemap:</label>
+        <select id="basemapDropdown" onChange='changeBasemap();'>
+            <option>-- none --</option>
+        </select>
+    </div>
+    <div class="slidecontainer" id="opacityTool">
+        <label for="rasterOpacityRange">Raster Layer Opacity: </label>
+        <input type="range" min="1" max="100" value="100" class="slider" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)" onInput="updateTilesOpacity(event, value)">
+    </div>
+    <div class="geojsControls btn-group">
+        <div class="control">
+            <input class="button is-secondary" type="button" value="Draw ROI" id="drawROIButton" onclick="enableDrawROI()">
+        </div>
+        <div class="control">
+            <input class="button is-secondary" type="button" id="extractROIButton" onclick="downloadROI()" value="Download" disabled="true">
+        </div>
+        <div class="control">
+            <input class="button is-secondary" type="button" value="Clear" id="clearROIButton" onclick="clearROI()" disabled="true">
+        </div>
+    </div>
+</div>
+<script src="{{url_for('static', filename='js/geojsControls.js')}}"></script>
+
+
+{% endblock %}

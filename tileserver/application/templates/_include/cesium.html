@@ -1,0 +1,16 @@
+{% block cesium %}
+<!-- Include the CesiumJS JavaScript and CSS files -->
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.87.1/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.87.1/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+
+<!-- Include our custom styles for the Cesium Viewer -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/cesium.css') }}">
+
+<!-- Make the vwidget div -->
+<div id="cesiumContainer"></div>
+
+<!-- Load the script to initialize the viewer -->
+<script src="{{url_for('static', filename='js/cesium.js')}}"></script>
+
+</div>
+{% endblock cesium %}
