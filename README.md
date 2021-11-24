@@ -34,8 +34,8 @@ GeoTIFFs (COG), but no wories if not as `large_image` will tile and cache for
 you when opening the raster.
 
 There is an included, standalone web viewer leveraging
-[GeoJS](https://opengeoscience.github.io/geojs/). You can use the web viewer
-to select and extract regions of interest from rasters.
+[CesiumJS](https://cesium.com/platform/cesiumjs/) and [GeoJS](https://opengeoscience.github.io/geojs/).
+You can use the web viewer to select and extract regions of interest from rasters.
 
 ## ⬇️ Installation
 
@@ -271,7 +271,9 @@ Launch the tileserver from the commandline to use the included web application w
 python -m tileserver path/to/raster.tif
 ```
 
-![webviewer](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer.gif)
+![cesium-viewer](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/cesium-viewer.png)
+
+You can use the web viewer to extract regions of interest:
 
 ![webviewer-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer-roi.gif)
 
