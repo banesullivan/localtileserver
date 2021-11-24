@@ -11,3 +11,4 @@ furl
 pytest
 pytest-cov
 ipyleaflet
+shapely
