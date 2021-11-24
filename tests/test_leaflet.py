@@ -1,10 +1,10 @@
 import pytest
 
-from tileserver import get_leaflet_tile_layer
+from tileserver import get_leaflet_roi_controls, get_leaflet_tile_layer
 
 skip_leaflet = False
 try:
-    from ipyleaflet import TileLayer
+    from ipyleaflet import DrawControl, TileLayer, WidgetControl
 except ImportError:
     skip_leaflet = True
 
@@ -25,3 +25,10 @@ def test_leaflet_tile_layer(bahamas):
 def test_leaflet_tile_layer_from_path(bahamas_file):
     layer = get_leaflet_tile_layer(bahamas_file)
     assert isinstance(layer, TileLayer)
+
+
+@pytest.mark.skipif(skip_leaflet, reason="ipyleaflet not installed")
+def test_get_leaflet_roi_controls(bahamas):
+    draw_control, button_control = get_leaflet_roi_controls(bahamas)
+    assert isinstance(draw_control, DrawControl)
+    assert isinstance(button_control, WidgetControl)
