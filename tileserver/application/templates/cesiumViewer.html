@@ -44,6 +44,10 @@
     var a = Cesium.Cartesian3.fromDegrees(extents.xmin, extents.ymin, 0)
     var b = Cesium.Cartesian3.fromDegrees(extents.xmax, extents.ymax, 0)
     var length = Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2)
+    if (length <= 100000) {
+        // Zoom out to whole globe
+        length = 20000000;
+    }
     var center = Cesium.Cartesian3.fromDegrees(
         ((extents.xmax - extents.xmin) / 2 + extents.xmin),
         ((extents.ymax - extents.ymin) / 2 + extents.ymin), length)
