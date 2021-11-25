@@ -1,8 +1,8 @@
 import pytest
 import requests
 
-from tileserver.server import _LIVE_SERVERS, TileClient, TileServerThread
-from tileserver.utilities import get_tile_source
+from localtileserver.server import _LIVE_SERVERS, TileClient, TileServerThread
+from localtileserver.utilities import get_tile_source
 
 TOLERANCE = 2e-2
 

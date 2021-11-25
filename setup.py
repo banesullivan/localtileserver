@@ -18,14 +18,14 @@ version_info = 0, 2, 3
 __version__ = ".".join(map(str, version_info))
 
 setup(
-    name="flask-tileserver",
+    name="localtileserver",
     version=__version__,
     description="Locally serve geospatial raster tiles in the Slippy Map standard.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Bane Sullivan",
     author_email="banesullivan@gmail.com",
-    url="https://github.com/banesullivan/flask-tileserver",
+    url="https://github.com/banesullivan/localtileserver",
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,

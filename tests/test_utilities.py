@@ -1,5 +1,5 @@
-from tileserver import Report
-from tileserver.utilities import is_valid_palette
+from localtileserver import Report
+from localtileserver.utilities import is_valid_palette
 
 
 def test_is_valid_palette():

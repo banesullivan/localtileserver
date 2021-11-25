@@ -1,8 +1,8 @@
 # 🌐 Local Tile Server for Geospatial Rasters
 
-[![codecov](https://codecov.io/gh/banesullivan/flask-tileserver/branch/main/graph/badge.svg?token=S0HQ64FW8G)](https://codecov.io/gh/banesullivan/flask-tileserver)
-[![PyPI](https://img.shields.io/pypi/v/flask-tileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/flask-tileserver/)
-[![pypi-activity](https://img.shields.io/pypi/dm/flask-tileserver.svg?label=pypi%20downloads)](https://pypi.org/project/flask-tileserver/)
+[![codecov](https://codecov.io/gh/banesullivan/localtileserver/branch/main/graph/badge.svg?token=S0HQ64FW8G)](https://codecov.io/gh/banesullivan/localtileserver)
+[![PyPI](https://img.shields.io/pypi/v/localtileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/localtileserver/)
+[![pypi-activity](https://img.shields.io/pypi/dm/localtileserver.svg?label=pypi%20downloads)](https://pypi.org/project/localtileserver/)
 
 *Need to visualize a rather large (gigabytes) raster you have locally?* **This is for you.**
 
@@ -10,7 +10,7 @@ A Flask application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`)
 
-![tile-diagram](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/tile-diagram.gif)
+![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/tile-diagram.gif)
 
 
 ## 🌟 Highlights
@@ -43,16 +43,16 @@ that things will most likely break between minor releases (I use the
 
 ## ⬇️ Installation
 
-Install from PyPI: https://pypi.org/project/flask-tileserver/
+Install from PyPI: https://pypi.org/project/localtileserver/
 
 ```
-pip install flask-tileserver
+pip install localtileserver
 ```
 
 ### 📝 A Brief Note on Installing GDAL
 
 GDAL can be a pain in the 🍑 to install, and you may want to handle GDAL
-before installing `flask-tileserver`.
+before installing `localtileserver`.
 
 If on linux, I highly recommend using the [large_image_wheels](https://github.com/girder/large_image_wheels) from Kitware.
 
@@ -68,13 +68,13 @@ conda install -c conda-forge GDAL
 
 ## 💭 Feedback
 
-Please share your thoughts and questions on the [Discussions](https://github.com/banesullivan/flask-tileserver/discussions) board.
+Please share your thoughts and questions on the [Discussions](https://github.com/banesullivan/localtileserver/discussions) board.
 If you would like to report any bugs or make feature requests, please open an issue.
 
 If filing a bug report, please share a scooby `Report`:
 
 ```py
-import tileserver
+import localtileserver
 print(tileserver.Report())
 ```
 
@@ -90,7 +90,7 @@ a Jupyter notebook. Here is an example:
 
 
 ```py
-from tileserver import get_leaflet_tile_layer, TileClient
+from localtileserver import get_leaflet_tile_layer, TileClient
 from ipyleaflet import Map
 
 # First, create a tile server from local raster file
@@ -105,12 +105,12 @@ m.add_layer(t)
 m
 ```
 
-![ipyleaflet](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.png)
+![ipyleaflet](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet.png)
 
 #### 🥓 Two Rasters at Once
 
 ```py
-from tileserver import get_leaflet_tile_layer
+from localtileserver import get_leaflet_tile_layer
 from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
 # Create 2 tile layers from 2 separate raster files
@@ -128,7 +128,7 @@ m.add_control(FullScreenControl())
 m
 ```
 
-![ipyleaflet-double](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet.gif)
+![ipyleaflet-double](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet.gif)
 
 
 #### 🎯 Using `ipyleaflet` for ROI Extraction
@@ -140,8 +140,8 @@ use it as follows and then draw a polygon and click the "Extract ROI" button.
 The outputs are save in your working directory by default (next to the Jupyter notebook).
 
 ```py
-from tileserver import get_leaflet_tile_layer, get_leaflet_roi_controls
-from tileserver import TileClient
+from localtileserver import get_leaflet_tile_layer, get_leaflet_roi_controls
+from localtileserver import TileClient
 from ipyleaflet import Map
 
 # First, create a tile server from local raster file
@@ -161,7 +161,7 @@ m.add_control(roi_control)
 m
 ```
 
-![ipyleaflet-draw-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/ipyleaflet-draw-roi.png)
+![ipyleaflet-draw-roi](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-draw-roi.png)
 
 
 #### 🗺️ Example Datasets
@@ -170,7 +170,7 @@ A few example datasets are included with `tileserver`. A particularly
 useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
 
 ```py
-from tileserver import get_leaflet_tile_layer, get_leaflet_roi_controls, examples
+from localtileserver import get_leaflet_tile_layer, get_leaflet_roi_controls, examples
 from ipyleaflet import Map
 
 # Load example tile layer from publicly available DEM source
@@ -192,14 +192,14 @@ m.add_control(roi_control)
 m
 ```
 
-![elevation](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/elevation.png)
+![elevation](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png)
 
 
 Then you can follow the same routine as described above to extract an ROI.
 
 I zoomed in over Golden, Colorado and drew a polygon of the extent of the DEM I would like to create:
 
-![golden](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/golden-roi.png)
+![golden](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-roi.png)
 
 And perform the extraction:
 
@@ -218,12 +218,12 @@ m2.add_layer(r)
 m2
 ```
 
-![golden-dem](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/golden-dem.png)
+![golden-dem](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-dem.png)
 
 Here is another example with the Virtual Earth satellite imagery
 
 ```py
-from tileserver import get_leaflet_tile_layer, examples
+from localtileserver import get_leaflet_tile_layer, examples
 from ipyleaflet import Map
 
 # Load example tile layer from publicly available imagery
@@ -237,7 +237,7 @@ m.add_layer(t)
 m
 ```
 
-![kafadar](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/kafadar.png)
+![kafadar](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/kafadar.png)
 
 
 ### 🖥️ Local Web Application
@@ -248,11 +248,11 @@ Launch the tileserver from the commandline to use the included web application w
 python -m tileserver path/to/raster.tif
 ```
 
-![cesium-viewer](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/cesium-viewer.png)
+![cesium-viewer](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/cesium-viewer.png)
 
 You can use the web viewer to extract regions of interest:
 
-![webviewer-roi](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/webviewer-roi.gif)
+![webviewer-roi](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/webviewer-roi.gif)
 
 
 ### Usage Notes

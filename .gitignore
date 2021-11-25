@@ -12,3 +12,4 @@ electron
 notebooks
 
 tileserver/data/*.aux.xml
+localtileserver/data/*.aux.xml
