@@ -1,6 +1,6 @@
-from tileserver._version import __version__  # noqa
-from tileserver.leaflet import get_leaflet_roi_controls  # noqa
-from tileserver.leaflet import get_leaflet_tile_layer
-from tileserver.report import Report  # noqa
-from tileserver.server import TileClient  # noqa
-from tileserver.utilities import get_cache_dir  # noqa
+from localtileserver._version import __version__  # noqa
+from localtileserver.leaflet import get_leaflet_roi_controls  # noqa
+from localtileserver.leaflet import get_leaflet_tile_layer
+from localtileserver.report import Report  # noqa
+from localtileserver.server import TileClient  # noqa
+from localtileserver.utilities import get_cache_dir  # noqa

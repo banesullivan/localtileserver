@@ -3,9 +3,9 @@ import logging
 from flask import render_template
 from flask.views import View
 
-from tileserver import utilities
-from tileserver.application import app
-from tileserver.examples import get_data_path
+from localtileserver import utilities
+from localtileserver.application import app
+from localtileserver.examples import get_data_path
 
 logger = logging.getLogger(__name__)
 

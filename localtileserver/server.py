@@ -6,7 +6,7 @@ from typing import Union
 import requests
 from werkzeug.serving import make_server
 
-from tileserver.utilities import add_query_parameters, save_file_from_request
+from localtileserver.utilities import add_query_parameters, save_file_from_request
 
 _LIVE_SERVERS = {}
 
@@ -28,7 +28,7 @@ class TileServerThread(threading.Thread):
 
         threading.Thread.__init__(self)
 
-        from tileserver.application import app
+        from localtileserver.application import app
 
         if not debug:
             logging.getLogger("werkzeug").setLevel(logging.ERROR)

@@ -1,6 +1,6 @@
 from werkzeug.routing import FloatConverter as BaseFloatConverter
 
-from tileserver.application import app, rest, views
+from localtileserver.application import app, rest, views
 
 
 class FloatConverter(BaseFloatConverter):

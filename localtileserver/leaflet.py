@@ -5,8 +5,8 @@ from typing import Union
 
 import requests
 
-from tileserver.server import TileClient
-from tileserver.utilities import is_valid_palette
+from localtileserver.server import TileClient
+from localtileserver.utilities import is_valid_palette
 
 logger = logging.getLogger(__name__)
 
