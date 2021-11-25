@@ -75,7 +75,7 @@ If filing a bug report, please share a scooby `Report`:
 
 ```py
 import localtileserver
-print(tileserver.Report())
+print(localtileserver.Report())
 ```
 
 ## 🚀 Usage
