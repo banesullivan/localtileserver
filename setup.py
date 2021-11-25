@@ -50,4 +50,9 @@ setup(
         "scooby",
     ],
     extras_require={"leaflet": ["ipyleaflet"]},
+    entry_points={
+        "console_scripts": [
+            "localtileserver = localtileserver.__main__:run_app",
+        ],
+    },
 )

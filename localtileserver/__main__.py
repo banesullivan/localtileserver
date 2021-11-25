@@ -13,6 +13,12 @@ from localtileserver.examples import get_data_path
 @click.option("-p", "--port", default=0)
 @click.option("-d", "--debug", default=False)
 def run_app(filename, port=0, debug=False):
+    """Serve tiles from the raster at `filename`.
+
+    You can also pass the name of one of the example datasets: `elevation`,
+    `blue_marble`, `virtual_earth`, `arcgis` or `bahamas`.
+
+    """
     filename = pathlib.Path(filename).expanduser().absolute()
     if not filename.exists():
         name = os.path.basename(filename)
