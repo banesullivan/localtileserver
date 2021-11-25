@@ -18,7 +18,7 @@ the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 - Create a local tile server for large geospatial images
 - View local raster files with `ipyleaflet`
 - Extract regions of interest (ROIs) interactively
-- Use include example dataset to generate Digital Elevation Models
+- Use the example datasets to generate Digital Elevation Models
 - Visualize rasters with the included CesiumJS web viewer 
 
 ## ℹ️ Overview
