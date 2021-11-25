@@ -162,7 +162,7 @@ class TileClient:
         url = add_query_parameters(
             self.create_url("__localtileserver_path__"), {"projection": projection}
         )
-        return url.replace("__localtileserverr_path__", "tiles/{z}/{x}/{y}.png")
+        return url.replace("__localtileserver_path__", "tiles/{z}/{x}/{y}.png")
 
     def extract_roi(
         self,
