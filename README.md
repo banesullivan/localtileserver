@@ -10,12 +10,6 @@ A Flask application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`)
 
-**Disclaimer**: I put this together over a weekend and I'm definitely going to
-change a few things moving forward to make it more stable/robust. This means
-that things will most likely break between minor releases (I use the
-`major.minor.patch` versioning scheme).
-
-
 ![tile-diagram](https://raw.githubusercontent.com/banesullivan/flask-tileserver/main/imgs/tile-diagram.png)
 
 
@@ -24,6 +18,10 @@ that things will most likely break between minor releases (I use the
 - Create a local tile server for large geospatial images
 - View local raster files with `ipyleaflet`
 - Extract regions of interest (ROIs) interactively
+- Use include example dataset to generate Digital Elevation Models
+- Visualize rasters with the included CesiumJS web viewer 
+
+## ℹ️ Overview
 
 Under the hood, this uses [`large_image`](https://github.com/girder/large_image)
 to launch a tile server in a background thread which will serve raster imagery
@@ -36,6 +34,12 @@ you when opening the raster.
 There is an included, standalone web viewer leveraging
 [CesiumJS](https://cesium.com/platform/cesiumjs/) and [GeoJS](https://opengeoscience.github.io/geojs/).
 You can use the web viewer to select and extract regions of interest from rasters.
+
+**Disclaimer**: I put this together over a weekend and I'm definitely going to
+change a few things moving forward to make it more stable/robust. This means
+that things will most likely break between minor releases (I use the
+`major.minor.patch` versioning scheme).
+
 
 ## ⬇️ Installation
 
