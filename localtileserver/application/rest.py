@@ -10,8 +10,8 @@ from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
 from PIL import Image, ImageOps
 
-from tileserver import utilities
-from tileserver.application import app
+from localtileserver import utilities
+from localtileserver.application import app
 
 cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 logger = logging.getLogger(__name__)

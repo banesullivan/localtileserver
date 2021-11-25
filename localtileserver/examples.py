@@ -1,7 +1,7 @@
 import pathlib
 from typing import Union
 
-from tileserver.server import TileClient
+from localtileserver.server import TileClient
 
 
 def get_data_path(name):

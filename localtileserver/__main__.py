@@ -3,7 +3,7 @@ import pathlib
 
 import click
 
-from tileserver.application import app
+from localtileserver.application import app
 
 
 @click.command()

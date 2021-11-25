@@ -18,7 +18,7 @@ class Report(scooby.Report):
             "osgeo.gdal",
         ]
         core = [
-            "tileserver",
+            "localtileserver",
             "flask",
             "flask_caching",
             "requests",

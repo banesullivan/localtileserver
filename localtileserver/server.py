@@ -6,7 +6,8 @@ from typing import Union
 import requests
 from werkzeug.serving import make_server
 
-from tileserver.utilities import add_query_parameters, save_file_from_request
+from localtileserver.utilities import (add_query_parameters,
+                                       save_file_from_request)
 
 _LIVE_SERVERS = {}
 
@@ -28,7 +29,7 @@ class TileServerThread(threading.Thread):
 
         threading.Thread.__init__(self)
 
-        from tileserver.application import app
+        from localtileserver.application import app
 
         if not debug:
             logging.getLogger("werkzeug").setLevel(logging.ERROR)
@@ -160,9 +161,9 @@ class TileClient:
 
     def get_tile_url(self, projection: str = "EPSG:3857"):
         url = add_query_parameters(
-            self.create_url("__tileserver_path__"), {"projection": projection}
+            self.create_url("__localtileserver_path__"), {"projection": projection}
         )
-        return url.replace("__tileserver_path__", "tiles/{z}/{x}/{y}.png")
+        return url.replace("__localtileserver_path__", "tiles/{z}/{x}/{y}.png")
 
     def extract_roi(
         self,

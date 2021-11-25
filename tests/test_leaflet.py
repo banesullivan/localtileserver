@@ -1,6 +1,6 @@
 import pytest
 
-from tileserver import get_leaflet_roi_controls, get_leaflet_tile_layer
+from localtileserver import get_leaflet_roi_controls, get_leaflet_tile_layer
 
 skip_leaflet = False
 try:
