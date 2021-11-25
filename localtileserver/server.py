@@ -160,9 +160,9 @@ class TileClient:
 
     def get_tile_url(self, projection: str = "EPSG:3857"):
         url = add_query_parameters(
-            self.create_url("__tileserver_path__"), {"projection": projection}
+            self.create_url("__localtileserver_path__"), {"projection": projection}
         )
-        return url.replace("__tileserver_path__", "tiles/{z}/{x}/{y}.png")
+        return url.replace("__localtileserverr_path__", "tiles/{z}/{x}/{y}.png")
 
     def extract_roi(
         self,

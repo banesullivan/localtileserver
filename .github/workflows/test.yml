@@ -25,11 +25,11 @@ jobs:
       - name: Install other dependencies
         run: |
           pip install -r requirements.txt
-      - name: Install tileserver
+      - name: Install localtileserver
         run: pip install -e .
       - name: Run Tests
         run: |
-          pytest -v --cov=tileserver
+          pytest -v --cov=localtileserver
           coverage xml -o coverage.xml
       - name: Stash coverage
         uses: actions/upload-artifact@v2
@@ -62,7 +62,7 @@ jobs:
       - name: Install other dependencies
         run: |
           pip install -r requirements.txt
-      - name: Install tileserver
+      - name: Install localtileserver
         run: pip install -e .
       - name: Run Tests
-        run: pytest -v --cov=tileserver
+        run: pytest -v --cov=localtileserver

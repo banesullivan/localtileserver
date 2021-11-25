@@ -166,7 +166,7 @@ m
 
 #### 🗺️ Example Datasets
 
-A few example datasets are included with `tileserver`. A particularly
+A few example datasets are included with `localtileserver`. A particularly
 useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
 
 ```py
