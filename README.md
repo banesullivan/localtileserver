@@ -245,7 +245,7 @@ m
 Launch the tileserver from the commandline to use the included web application where you can view the raster and extract regions of interest.
 
 ```bash
-python -m tileserver path/to/raster.tif
+python -m localtileserver path/to/raster.tif
 ```
 
 ![cesium-viewer](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/cesium-viewer.png)
@@ -253,6 +253,21 @@ python -m tileserver path/to/raster.tif
 You can use the web viewer to extract regions of interest:
 
 ![webviewer-roi](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/webviewer-roi.gif)
+
+
+You can also launch the web viewer with any of the available example datasets:
+
+```py
+python -m localtileserver dem
+```
+
+Available choices are:
+
+- `dem` or `elevation`: global elevation dataset
+- `blue_marble`: Blue Marble satellite imagery
+- `virtual_earth`: Microsoft's satellite/aerial imagery
+- `arcgis`: ArcGIS World Street Map
+- `bahamas`: Sample raster over the Bahamas
 
 
 ### Usage Notes
