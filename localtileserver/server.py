@@ -6,7 +6,8 @@ from typing import Union
 import requests
 from werkzeug.serving import make_server
 
-from localtileserver.utilities import add_query_parameters, save_file_from_request
+from localtileserver.utilities import (add_query_parameters,
+                                       save_file_from_request)
 
 _LIVE_SERVERS = {}
 
