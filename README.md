@@ -16,7 +16,7 @@ the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 ## 🌟 Highlights
 
 - Create a local tile server for large geospatial images
-- View local raster files with `ipyleaflet`
+- View local raster files with `ipyleaflet` or `folium`
 - Extract regions of interest (ROIs) interactively
 - Use the example datasets to generate Digital Elevation Models
 - Visualize rasters with the included CesiumJS web viewer
@@ -25,7 +25,7 @@ the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 
 Under the hood, this uses [`large_image`](https://github.com/girder/large_image)
 to launch a tile server in a background thread which will serve raster imagery
-to a tile viewer (see `ipyleaflet` examples below).
+to a tile viewer (see `ipyleaflet` and `folium` examples below).
 This tile server can efficiently deliver varying levels of detail of your
 raster imagery to your viewer; it helps to have pre-tiled, Cloud Optimized
 GeoTIFFs (COG), but no wories if not as `large_image` will tile and cache for
@@ -162,6 +162,34 @@ m
 ```
 
 ![ipyleaflet-draw-roi](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-draw-roi.png)
+
+
+#### 🌳 `folium` Tile Layers
+
+Similarly to the support provided for `ipyleaflet`, I have included a utility
+to generate a [`folium.TileLayer`](https://python-visualization.github.io/folium/modules.html#folium.raster_layers.TileLayer)
+with `get_folium_tile_layer`. Here is an example with almost the exact same
+code as the `ipyleaflet` example, just note that `Map` is imported from
+`folium` and we use `add_child` instead of `add_layer`:
+
+
+```py
+from localtileserver import get_folium_tile_layer
+from localtileserver import TileClient
+from folium import Map
+
+# First, create a tile server from local raster file
+tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
+
+# Create folium tile layer from that server
+t = get_folium_tile_layer(tile_client)
+
+m = Map(location=tile_client.center())
+m.add_child(t)
+m
+```
+
+![folium](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/folium.png)
 
 
 #### 🗺️ Example Datasets
