@@ -178,7 +178,7 @@ def get_folium_tile_layer(
     vmin: Union[float, int] = None,
     vmax: Union[float, int] = None,
     nodata: Union[float, int] = None,
-    attribution: str = None,
+    attr: str = None,
     **kwargs,
 ):
     """Generate a folium TileLayer for the given TileClient.
@@ -236,7 +236,7 @@ def get_folium_tile_layer(
         vmax=vmax,
         nodata=nodata,
     )
-    if attribution is None:
+    if attr is None:
         attr = DEFAULT_ATTRIBUTION
     tile_layer = TileLayer(tiles=url, attr=attr, **kwargs)
     if created:
