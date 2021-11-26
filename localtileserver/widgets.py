@@ -6,7 +6,7 @@ from typing import Union
 from localtileserver.server import TileClient, get_or_create_tile_client
 
 logger = logging.getLogger(__name__)
-DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesullivan/localtileserver'>localtileserver</a>."
+DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesullivan/localtileserver' target='_blank'>localtileserver</a>."
 
 
 def get_leaflet_tile_layer(
@@ -19,6 +19,7 @@ def get_leaflet_tile_layer(
     vmin: Union[float, int] = None,
     vmax: Union[float, int] = None,
     nodata: Union[float, int] = None,
+    attribution: str = None,
     **kwargs,
 ):
     """Generate an ipyleaflet TileLayer for the given TileClient.
@@ -51,6 +52,9 @@ def get_leaflet_tile_layer(
         a single band.
     nodata : float
         The value from the band to use to interpret as not valid data.
+    attribution : str
+        Attribution for the source raster. This
+        defaults to a message about it being a local file.
     **kwargs
         All additional keyword arguments are passed to ``ipyleaflet.TileLayer``.
 
@@ -73,7 +77,9 @@ def get_leaflet_tile_layer(
         vmax=vmax,
         nodata=nodata,
     )
-    tile_layer = TileLayer(url=url, **kwargs)
+    if attribution is None:
+        attribution = DEFAULT_ATTRIBUTION
+    tile_layer = TileLayer(url=url, attribution=attribution, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source
