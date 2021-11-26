@@ -2,7 +2,6 @@
 
 [![codecov](https://codecov.io/gh/banesullivan/localtileserver/branch/main/graph/badge.svg?token=S0HQ64FW8G)](https://codecov.io/gh/banesullivan/localtileserver)
 [![PyPI](https://img.shields.io/pypi/v/localtileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/localtileserver/)
-[![pypi-activity](https://img.shields.io/pypi/dm/localtileserver.svg?label=pypi%20downloads)](https://pypi.org/project/localtileserver/)
 
 *Need to visualize a rather large (gigabytes) raster you have locally?* **This is for you.**
 
