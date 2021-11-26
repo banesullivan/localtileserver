@@ -12,3 +12,4 @@ pytest
 pytest-cov
 ipyleaflet
 shapely
+folium
