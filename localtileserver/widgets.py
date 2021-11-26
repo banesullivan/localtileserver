@@ -166,3 +166,80 @@ def get_leaflet_roi_controls(
     if debug:
         return draw_control, button_control, debug_view
     return draw_control, button_control
+
+
+def get_folium_tile_layer(
+    source: Union[pathlib.Path, TileClient],
+    port: Union[int, str] = "default",
+    debug: bool = False,
+    projection: str = "EPSG:3857",
+    band: int = None,
+    palette: str = None,
+    vmin: Union[float, int] = None,
+    vmax: Union[float, int] = None,
+    nodata: Union[float, int] = None,
+    attribution: str = None,
+    **kwargs,
+):
+    """Generate a folium TileLayer for the given TileClient.
+
+    Parameters
+    ----------
+    source : Union[pathlib.Path, TileClient]
+        The source of the tile layer. This can be a path on disk or an already
+        open ``TileClient``
+    port : int
+        The port on your host machine to use for the tile server (if creating
+        a tileserver. This is ignored if a file path is given). This defaults
+        to getting an available port.
+    debug : bool
+        Run the tile server in debug mode (if creating a tileserver. This is
+        ignored if a file path is given).
+    projection : str
+        The Proj projection to use for the tile layer. Default is `EPSG:3857`.
+    band : int
+        The band of the source raster to use (default in None to show RGB if
+        available). Band indexing starts at 1.
+    palette : str
+        The name of the color palette from `palettable` to use when plotting
+        a single band. Default is greyscale.
+    vmin : float
+        The minimum value to use when colormapping the palette when plotting
+        a single band.
+    vmax : float
+        The maximized value to use when colormapping the palette when plotting
+        a single band.
+    nodata : float
+        The value from the band to use to interpret as not valid data.
+    attr : str
+        Folium requires the custom tile source have an attribution. This
+        defaults to a message about it being a local file.
+    **kwargs
+        All additional keyword arguments are passed to ``folium.TileLayer``.
+
+    Return
+    ------
+    folium.TileLayer
+
+    """
+    # Safely import folium
+    try:
+        from folium import TileLayer
+    except ImportError as e:
+        raise ImportError(f"Please install `folium`: {e}")
+    source, created = get_or_create_tile_client(source, port=port, debug=debug)
+    url = source.get_tile_url(
+        projection=projection,
+        band=band,
+        palette=palette,
+        vmin=vmin,
+        vmax=vmax,
+        nodata=nodata,
+    )
+    if attribution is None:
+        attr = DEFAULT_ATTRIBUTION
+    tile_layer = TileLayer(tiles=url, attr=attr, **kwargs)
+    if created:
+        # HACK: Prevent the client from being garbage collected
+        tile_layer.tile_server = source
+    return tile_layer
