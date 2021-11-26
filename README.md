@@ -181,7 +181,7 @@ from folium import Map
 # First, create a tile server from local raster file
 tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
 
-# Create ipyleaflet tile layer from that server
+# Create folium tile layer from that server
 t = get_folium_tile_layer(tile_client)
 
 m = Map(location=tile_client.center())
