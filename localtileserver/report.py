@@ -31,6 +31,8 @@ class Report(scooby.Report):
         # Optional packages.
         optional = [
             "ipyleaflet",
+            "shapely",
+            "folium",
             "large_image_source_mapnik",
             "large_image_source_pil",
             "large_image_source_tiff",

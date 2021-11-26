@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 3, 1
+version_info = 0, 3, 2
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -49,7 +49,7 @@ setup(
         "requests",
         "scooby",
     ],
-    extras_require={"leaflet": ["ipyleaflet"]},
+    extras_require={"leaflet": ["ipyleaflet"], "folium": ["folium"]},
     entry_points={
         "console_scripts": [
             "localtileserver = localtileserver.__main__:run_app",
