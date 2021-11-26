@@ -164,7 +164,7 @@ m
 ![ipyleaflet-draw-roi](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-draw-roi.png)
 
 
-#### 🔥 `folium` Tile Layers
+#### 🌳 `folium` Tile Layers
 
 Similarly to the support provided for `ipyleaflet`, I have included a utility
 to generate a [`folium.TileLayer`](https://python-visualization.github.io/folium/modules.html#folium.raster_layers.TileLayer)
