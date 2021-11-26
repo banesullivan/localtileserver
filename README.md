@@ -16,7 +16,7 @@ the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 ## 🌟 Highlights
 
 - Create a local tile server for large geospatial images
-- View local raster files with `ipyleaflet`
+- View local raster files with `ipyleaflet` or `folium`
 - Extract regions of interest (ROIs) interactively
 - Use the example datasets to generate Digital Elevation Models
 - Visualize rasters with the included CesiumJS web viewer
@@ -25,7 +25,7 @@ the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 
 Under the hood, this uses [`large_image`](https://github.com/girder/large_image)
 to launch a tile server in a background thread which will serve raster imagery
-to a tile viewer (see `ipyleaflet` examples below).
+to a tile viewer (see `ipyleaflet` and `folium` examples below).
 This tile server can efficiently deliver varying levels of detail of your
 raster imagery to your viewer; it helps to have pre-tiled, Cloud Optimized
 GeoTIFFs (COG), but no wories if not as `large_image` will tile and cache for
