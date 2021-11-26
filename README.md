@@ -164,6 +164,34 @@ m
 ![ipyleaflet-draw-roi](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-draw-roi.png)
 
 
+#### 🔥 `folium` Tile Layers
+
+Similarly to the support provided for `ipyleaflet`, I have included a utility
+to generate a [`folium.TileLayer`](https://python-visualization.github.io/folium/modules.html#folium.raster_layers.TileLayer)
+with `get_folium_tile_layer`. Here is an example with almost the exact same
+code as the `ipyleaflet` example, just note that `Map` is imported from
+`folium` and we use `add_child` instead of `add_layer`:
+
+
+```py
+from localtileserver import get_folium_tile_layer
+from localtileserver import TileClient
+from folium import Map
+
+# First, create a tile server from local raster file
+tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
+
+# Create ipyleaflet tile layer from that server
+t = get_folium_tile_layer(tile_client, tms=False)
+
+m = Map(location=tile_client.center())
+m.add_child(t)
+m
+```
+
+![folium](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/folium.png)
+
+
 #### 🗺️ Example Datasets
 
 A few example datasets are included with `localtileserver`. A particularly
