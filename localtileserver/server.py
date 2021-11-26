@@ -6,7 +6,7 @@ from typing import Union
 import requests
 from werkzeug.serving import make_server
 
-from localtileserver.utilities import (add_query_parameters,
+from localtileserver.utilities import (add_query_parameters, is_valid_palette,
                                        save_file_from_request)
 
 _LIVE_SERVERS = {}
@@ -159,10 +159,57 @@ class TileClient:
     def create_url(self, path: str):
         return self._produce_url(f"{self.base_url}/{path.lstrip('/')}")
 
-    def get_tile_url(self, projection: str = "EPSG:3857"):
-        url = add_query_parameters(
-            self.create_url("__localtileserver_path__"), {"projection": projection}
-        )
+    def get_tile_url(
+        self,
+        projection: str = "EPSG:3857",
+        band: int = None,
+        palette: str = None,
+        vmin: Union[float, int] = None,
+        vmax: Union[float, int] = None,
+        nodata: Union[float, int] = None,
+    ):
+        """
+
+        Parameters
+        ----------
+        projection : str
+            The Proj projection to use for the tile layer. Default is `EPSG:3857`.
+        band : int
+            The band of the source raster to use (default in None to show RGB if
+            available). Band indexing starts at 1.
+        palette : str
+            The name of the color palette from `palettable` to use when plotting
+            a single band. Default is greyscale.
+        vmin : float
+            The minimum value to use when colormapping the palette when plotting
+            a single band.
+        vmax : float
+            The maximized value to use when colormapping the palette when plotting
+            a single band.
+        nodata : float
+            The value from the band to use to interpret as not valid data.
+
+        """
+        # First handle query parameters to check for errors
+        params = {}
+        if band is not None:
+            params["band"] = band
+        if palette is not None:
+            if not is_valid_palette(palette):
+                raise ValueError(
+                    f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
+                )
+            params["palette"] = palette
+        if vmin is not None:
+            params["min"] = vmin
+        if vmax is not None:
+            params["max"] = vmax
+        if nodata is not None:
+            params["nodata"] = nodata
+        if projection is not None:
+            params["projection"] = projection
+        # `{z}/{x}/{y}`` is reformatted by `furl` so do this hackery with `__localtileserver_path__`
+        url = add_query_parameters(self.create_url("__localtileserver_path__"), params)
         return url.replace("__localtileserver_path__", "tiles/{z}/{x}/{y}.png")
 
     def extract_roi(
@@ -215,3 +262,35 @@ class TileClient:
             (bounds[1] - bounds[0]) / 2 + bounds[0],
             (bounds[3] - bounds[2]) / 2 + bounds[2],
         )
+
+
+def get_or_create_tile_client(
+    source: Union[pathlib.Path, TileClient],
+    port: Union[int, str] = "default",
+    debug: bool = False,
+):
+    """A helper to safely get a TileClient from a path on disk.
+
+    To Do
+    -----
+    There should eventually be a check to see if a TileClient instance exists
+    for the given filename. For now, it is not really a big deal because the
+    default is for all TileClient's to share a single server.
+
+    """
+    _internally_created = False
+    # Launch tile server if file path is given
+    if not isinstance(source, TileClient):
+        source = TileClient(source, port, debug)
+        _internally_created = True
+    # Check that the tile source is valid and no server errors
+    try:
+        r = requests.get(source.create_url("metadata"))
+        r.raise_for_status()
+    except requests.HTTPError as e:
+        # Make sure to destroy the server and its thread if internally created.
+        if _internally_created:
+            source.shutdown()
+            del source
+        raise e
+    return source, _internally_created

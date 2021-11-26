@@ -3,12 +3,10 @@ import os
 import pathlib
 from typing import Union
 
-import requests
-
-from localtileserver.server import TileClient
-from localtileserver.utilities import is_valid_palette
+from localtileserver.server import TileClient, get_or_create_tile_client
 
 logger = logging.getLogger(__name__)
+DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesullivan/localtileserver'>localtileserver</a>."
 
 
 def get_leaflet_tile_layer(
@@ -66,48 +64,18 @@ def get_leaflet_tile_layer(
         from ipyleaflet import TileLayer
     except ImportError as e:
         raise ImportError(f"Please install `ipyleaflet`: {e}")
-
-    # First handle query parameters to check for errors
-    params = {}
-    if band is not None:
-        params["band"] = band
-    if palette is not None:
-        if not is_valid_palette(palette):
-            raise ValueError(
-                f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
-            )
-        params["palette"] = palette
-    if vmin is not None:
-        params["min"] = vmin
-    if vmax is not None:
-        params["max"] = vmax
-    if nodata is not None:
-        params["nodata"] = nodata
-
-    _internally_created = False
-    # Launch tile server if file path is given
-    if not isinstance(source, TileClient):
-        source = TileClient(source, port, debug)
-        _internally_created = True
-
-    # Check that the tile source is valid and no server errors
-    try:
-        r = requests.get(source.create_url("metadata"))
-        r.raise_for_status()
-    except requests.HTTPError as e:
-        # Make sure to destroy the server and its thread if internally created.
-        if _internally_created:
-            source.shutdown()
-            del source
-        raise e
-
-    url = source.get_tile_url(projection=projection)
-    for k, v in params.items():
-        url += f"&{k}={v}"
-
+    source, created = get_or_create_tile_client(source, port=port, debug=debug)
+    url = source.get_tile_url(
+        projection=projection,
+        band=band,
+        palette=palette,
+        vmin=vmin,
+        vmax=vmax,
+        nodata=nodata,
+    )
     tile_layer = TileLayer(url=url, **kwargs)
-    if _internally_created:
-        # HACK: Prevent the server from being garbage collected
+    if created:
+        # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source
     return tile_layer
 
@@ -190,9 +158,7 @@ def get_leaflet_roi_controls(
         )
         draw_control.output_path = output_path
         logger.error(f"output_path: {output_path}")
-        roi_path = tile_client.extract_roi(
-            left, right, bottom, top, output_path=output_path
-        )
+        tile_client.extract_roi(left, right, bottom, top, output_path=output_path)
 
     button = widgets.Button(description="Extract ROI")
     button.on_click(on_button_clicked)
