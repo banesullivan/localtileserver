@@ -191,7 +191,7 @@ m
 ![folium](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/folium.png)
 
 
-#### Remote Cloud Optimized GeoTiffs (COGs)
+#### ☁️ Remote Cloud Optimized GeoTiffs (COGs)
 
 While `localtileserver` is intended to be used only with raster files existing
 on your local filesystem, there is support for URL files through GDAL's
