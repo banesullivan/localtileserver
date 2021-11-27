@@ -3,6 +3,7 @@ import os
 import pathlib
 import re
 import tempfile
+from typing import Union
 from urllib.parse import urlencode, urlparse
 
 from furl import furl
@@ -50,7 +51,7 @@ def add_query_parameters(url: str, params: dict):
 
 
 def get_tile_source(
-    path: pathlib.Path, projection: str = None, style: str = None
+    path: Union[pathlib.Path, str], projection: str = None, style: str = None
 ) -> FileTileSource:
     return large_image.open(str(path), projection=projection, style=style, encoding="PNG")
 

@@ -10,7 +10,7 @@ DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesul
 
 
 def get_leaflet_tile_layer(
-    source: Union[pathlib.Path, TileClient],
+    source: Union[pathlib.Path, str, TileClient],
     port: Union[int, str] = "default",
     debug: bool = False,
     projection: str = "EPSG:3857",
@@ -26,7 +26,7 @@ def get_leaflet_tile_layer(
 
     Parameters
     ----------
-    source : Union[pathlib.Path, TileClient]
+    source : Union[pathlib.Path, str, TileClient]
         The source of the tile layer. This can be a path on disk or an already
         open ``TileClient``
     port : int
@@ -173,7 +173,7 @@ def get_leaflet_roi_controls(
 
 
 def get_folium_tile_layer(
-    source: Union[pathlib.Path, TileClient],
+    source: Union[pathlib.Path, str, TileClient],
     port: Union[int, str] = "default",
     debug: bool = False,
     projection: str = "EPSG:3857",
@@ -189,7 +189,7 @@ def get_folium_tile_layer(
 
     Parameters
     ----------
-    source : Union[pathlib.Path, TileClient]
+    source : Union[pathlib.Path, str, TileClient]
         The source of the tile layer. This can be a path on disk or an already
         open ``TileClient``
     port : int

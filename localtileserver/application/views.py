@@ -23,7 +23,7 @@ class CesiumViewer(View):
 @app.context_processor
 def inject_context():
     try:
-        filename = app.config["filename"]
+        filename = utilities.get_clean_filename(app.config["filename"])
     except KeyError:
         logger.error("No filename set in app config. Using sample data.")
         filename = get_data_path("bahamas_rgb.tif")

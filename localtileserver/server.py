@@ -106,7 +106,7 @@ class TileClient:
 
     Parameters
     ----------
-    path : pathlib.Path
+    path : pathlib.Path, str
         The path on disk to use as the source raster for the tiles.
     port : int
         The port on your host machine to use for the tile server. This defaults
@@ -118,7 +118,7 @@ class TileClient:
 
     def __init__(
         self,
-        filename: pathlib.Path,
+        filename: Union[pathlib.Path, str],
         port: Union[int, str] = "default",
         debug: bool = False,
     ):
@@ -264,7 +264,7 @@ class TileClient:
 
 
 def get_or_create_tile_client(
-    source: Union[pathlib.Path, TileClient],
+    source: Union[pathlib.Path, str, TileClient],
     port: Union[int, str] = "default",
     debug: bool = False,
 ):
