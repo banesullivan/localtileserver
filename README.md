@@ -15,10 +15,12 @@ the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 ## 🌟 Highlights
 
 - Create a local tile server for large geospatial images
-- View local raster files with `ipyleaflet` or `folium`
+- View local or remote* raster files with `ipyleaflet` or `folium`
 - Extract regions of interest (ROIs) interactively
 - Use the example datasets to generate Digital Elevation Models
 - Visualize rasters with the included CesiumJS web viewer
+
+**remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
 
 ## ℹ️ Overview
 
