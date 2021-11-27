@@ -31,6 +31,9 @@ jobs:
         run: |
           pytest -v --cov=localtileserver
           coverage xml -o coverage.xml
+      # - name: Run Doc Tests
+      #   run: |
+      #     make doctest
       - name: Stash coverage
         uses: actions/upload-artifact@v2
         with:
