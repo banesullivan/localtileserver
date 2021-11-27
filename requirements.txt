@@ -1,5 +1,5 @@
 click
-flask
+flask>=2.0.0
 Flask-Caching
 GDAL
 large-image
