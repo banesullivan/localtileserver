@@ -110,8 +110,8 @@ def get_leaflet_roi_controls(
     """
     # Safely import ipyleaflet
     try:
-        import ipywidgets as widgets
         from ipyleaflet import DrawControl, WidgetControl
+        import ipywidgets as widgets
         from shapely.geometry import Polygon
     except ImportError as e:
         raise ImportError(f"Please install `ipyleaflet` and `shapely`: {e}")
@@ -159,9 +159,7 @@ def get_leaflet_roi_controls(
         basename = ".".join(split[:1])
         output_path = pathlib.Path(output_directory).absolute()
         output_path.mkdir(parents=True, exist_ok=True)
-        output_path = (
-            output_path / f"roi_{basename}_{left}_{right}_{bottom}_{top}.{ext}"
-        )
+        output_path = output_path / f"roi_{basename}_{left}_{right}_{bottom}_{top}.{ext}"
         draw_control.output_path = output_path
         logger.error(f"output_path: {output_path}")
         tile_client.extract_roi(left, right, bottom, top, output_path=output_path)

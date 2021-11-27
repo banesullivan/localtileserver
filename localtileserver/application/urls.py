@@ -21,9 +21,7 @@ app.add_url_rule(
     "/bounds",
     view_func=rest.BoundsView.as_view("bounds"),
 )
-app.add_url_rule(
-    "/tiles/<int:z>/<int:x>/<int:y>.png", view_func=rest.TilesView.as_view("tiles")
-)
+app.add_url_rule("/tiles/<int:z>/<int:x>/<int:y>.png", view_func=rest.TilesView.as_view("tiles"))
 app.add_url_rule(
     "/tiles/debug/<int:z>/<int:x>/<int:y>.png",
     view_func=rest.TilesDebugView.as_view("tiles-debug"),

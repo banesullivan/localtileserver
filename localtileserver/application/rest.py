@@ -4,11 +4,11 @@ import logging
 import pathlib
 import time
 
+from PIL import Image, ImageOps
 from flask import request, send_file
 from flask.views import View
 from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
-from PIL import Image, ImageOps
 
 from localtileserver import utilities
 from localtileserver.application import app

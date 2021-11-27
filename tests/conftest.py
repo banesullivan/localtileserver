@@ -1,7 +1,6 @@
 import pytest
 
-from localtileserver.examples import (get_bahamas, get_blue_marble,
-                                      get_data_path)
+from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path
 
 
 @pytest.fixture

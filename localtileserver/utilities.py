@@ -1,16 +1,16 @@
+from operator import attrgetter
 import os
 import pathlib
 import re
 import tempfile
-from operator import attrgetter
 
-import large_image
-import palettable
-import requests
 from furl import furl
+import large_image
 from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
+import palettable
+import requests
 
 
 def get_cache_dir():
@@ -20,9 +20,7 @@ def get_cache_dir():
 
 
 gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
-gdal.SetConfigOption(
-    "GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache")
-)
+gdal.SetConfigOption("GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache"))
 
 
 def save_file_from_request(response: requests.Response, output_path: pathlib.Path):
@@ -53,9 +51,7 @@ def add_query_parameters(url: str, params: dict):
 def get_tile_source(
     path: pathlib.Path, projection: str = None, style: str = None
 ) -> FileTileSource:
-    return large_image.open(
-        str(path), projection=projection, style=style, encoding="PNG"
-    )
+    return large_image.open(str(path), projection=projection, style=style, encoding="PNG")
 
 
 def _get_region(tile_source: FileTileSource, region: dict, encoding: str):

@@ -6,8 +6,7 @@ from typing import Union
 import requests
 from werkzeug.serving import make_server
 
-from localtileserver.utilities import (add_query_parameters, is_valid_palette,
-                                       save_file_from_request)
+from localtileserver.utilities import add_query_parameters, is_valid_palette, save_file_from_request
 
 _LIVE_SERVERS = {}
 
@@ -138,9 +137,7 @@ class TileClient:
         try:
             return _LIVE_SERVERS[self._key]
         except KeyError:
-            raise TileServerThread.ServerDownError(
-                "Tile server for this source has been shutdown."
-            )
+            raise TileServerThread.ServerDownError("Tile server for this source has been shutdown.")
 
     @property
     def port(self):
