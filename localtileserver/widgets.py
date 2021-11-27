@@ -147,7 +147,7 @@ def get_leaflet_roi_controls(
             return
         p = None
         for poly in draw_control.data:
-            t = Polygon([tuple(l) for l in poly["geometry"]["coordinates"][0]])
+            t = Polygon([tuple(coord) for coord in poly["geometry"]["coordinates"][0]])
             if not p:
                 p = t
             else:
