@@ -1,7 +1,6 @@
 import io
 import json
 import logging
-import pathlib
 import time
 
 from PIL import Image, ImageOps
@@ -27,9 +26,7 @@ def make_cache_key(*args, **kwargs):
 class BaseTileView(View):
     def get_tile_source(self, projection="EPSG:3857"):
         """Return the built tile source."""
-        path = pathlib.Path(request.args.get("filename", ""))
-        if not path.exists():
-            raise OSError(f"Path does not exist: {path}")
+        filename = utilities.get_clean_filename(request.args.get("filename", ""))
 
         band = int(request.args.get("band", 0))
         bmin = request.args.get("min", None)
@@ -56,7 +53,7 @@ class BaseTileView(View):
                 style["nodata"] = nodata
             style = json.dumps(style)
 
-        return utilities.get_tile_source(path, projection, style=style)
+        return utilities.get_tile_source(filename, projection, style=style)
 
     @staticmethod
     def add_border_to_image(content):

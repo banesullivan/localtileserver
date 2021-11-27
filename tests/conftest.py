@@ -18,3 +18,8 @@ def bahamas(port="default", debug=True):
 def blue_marble(port="default", debug=True):
     # Using debug True since in a testing environment
     return get_blue_marble(port=port, debug=debug)
+
+
+@pytest.fixture
+def remote_file_url():
+    return "https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif"

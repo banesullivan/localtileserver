@@ -3,6 +3,8 @@ import os
 import pathlib
 import re
 import tempfile
+from typing import Union
+from urllib.parse import urlencode, urlparse
 
 from furl import furl
 import large_image
@@ -49,7 +51,7 @@ def add_query_parameters(url: str, params: dict):
 
 
 def get_tile_source(
-    path: pathlib.Path, projection: str = None, style: str = None
+    path: Union[pathlib.Path, str], projection: str = None, style: str = None
 ) -> FileTileSource:
     return large_image.open(str(path), projection=projection, style=style, encoding="PNG")
 
@@ -121,3 +123,31 @@ def get_meta_data(tile_source: FileTileSource):
     meta = tile_source.getMetadata()
     meta.update(tile_source.getInternalMetadata())
     return meta
+
+
+def make_vsi(url: str, **options):
+    if str(url).startswith("s3://"):
+        s3_path = url.replace("s3://", "")
+        vsi = f"/vsis3/{s3_path}"
+    else:
+        gdal_options = {
+            "url": str(url),
+            "use_head": "no",
+            "list_dir": "no",
+        }
+        gdal_options.update(options)
+        vsi = f"/vsicurl?{urlencode(gdal_options)}"
+    return vsi
+
+
+def get_clean_filename(filename: str):
+    if str(filename).startswith("/vsi"):
+        return filename
+    parsed = urlparse(str(filename))
+    if parsed.scheme in ["http", "https", "s3"]:
+        return make_vsi(filename)
+    # Otherwise, treat as local path on Disk
+    filename = pathlib.Path(filename).expanduser().absolute()
+    if not filename.exists():
+        raise OSError(f"Path does not exist: {filename}")
+    return filename
