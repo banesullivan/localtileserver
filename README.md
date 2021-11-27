@@ -200,9 +200,8 @@ Simply pass your `http<s>://` or `s3://` URL to the `TileClient`. This will
 work quite well for pre-tiled Cloud Optimized GeoTiffs, but I do not recommend
 doing this with non-tiled raster formats.
 
-For example, below raster at the url below is ~3GB but because it is pretiled,
-we can serve tiles from it very efficiently and have smooth rendering of this
-remote file in a Jupyter notebook.
+For example, the raster at the url below is ~3GiB but because it is pre-tiled,
+we can view tiles of the remote file very efficiently in a Jupyter notebook.
 
 ```py
 from localtileserver import get_folium_tile_layer
