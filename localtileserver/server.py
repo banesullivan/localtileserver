@@ -27,9 +27,18 @@ class TileServerThread(threading.Thread):
 
         pass
 
-    def __init__(self, port: int = 0, debug: bool = False, start: bool = True):
+    def __init__(
+        self,
+        port: int = 0,
+        debug: bool = False,
+        start: bool = True,
+        threaded: bool = True,
+        processes: int = 1,
+    ):
         if not isinstance(port, int):
             raise ValueError(f"Port must be an int, not {type(port)}")
+        if threaded and processes > 1:
+            threaded = False
 
         threading.Thread.__init__(self)
 
@@ -44,9 +53,10 @@ class TileServerThread(threading.Thread):
             logging.getLogger("werkzeug").setLevel(logging.DEBUG)
             logging.getLogger("gdal").setLevel(logging.DEBUG)
             logging.getLogger("large_image").setLevel(logging.DEBUG)
+            # make_server -> passthrough_errors ?
 
         self.daemon = True  # CRITICAL for safe exit
-        self.srv = make_server("localhost", port, app)
+        self.srv = make_server("localhost", port, app, threaded=threaded, processes=processes)
         self.ctx = app.app_context()
         self.ctx.push()
         if start:
@@ -75,13 +85,18 @@ def is_server_live(key: Union[int, str]):
     return key in _LIVE_SERVERS and _LIVE_SERVERS[key].is_alive()
 
 
-def launch_server(port: Union[int, str] = "default", debug: bool = False):
+def launch_server(
+    port: Union[int, str] = "default",
+    debug: bool = False,
+    threaded: bool = True,
+    processes: int = 1,
+):
     if is_server_live(port):
         return port
     if port == "default":
-        server = TileServerThread(0, debug)
+        server = TileServerThread(0, debug, threaded=threaded, processes=processes)
     else:
-        server = TileServerThread(port, debug)
+        server = TileServerThread(port, debug, threaded=threaded, processes=processes)
         if port == 0:
             # Get reallocated port
             port = server.port
@@ -113,6 +128,10 @@ class TileClient:
         to getting an available port.
     debug : bool
         Run the tile server in debug mode.
+    threaded : bool
+        Run the background server as a ThreadedWSGIServer. Default True.
+    processes : int
+        If processes is greater than 1, run background server as ForkingWSGIServer
 
     """
 
@@ -121,9 +140,11 @@ class TileClient:
         filename: Union[pathlib.Path, str],
         port: Union[int, str] = "default",
         debug: bool = False,
+        threaded: bool = True,
+        processes: int = 1,
     ):
         self._filename = get_clean_filename(filename)
-        self._key = launch_server(port, debug)
+        self._key = launch_server(port, debug, threaded=threaded, processes=processes)
         # Store actual port just in case
         self._port = _LIVE_SERVERS[self._key].srv.port
 
