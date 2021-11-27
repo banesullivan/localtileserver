@@ -40,7 +40,7 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "click",
-        "flask",
+        "flask>=2.0.0",
         "Flask-Caching",
         "furl",
         "GDAL",
