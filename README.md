@@ -196,7 +196,13 @@ m
 While `localtileserver` is intended to be used only with raster files existing
 on your local filesystem, there is support for URL files through GDAL's
 [Virtual Storage Interface](https://gdal.org/user/virtual_file_systems.html).
-Simply pass your `http<s>://` or `s3://` URL to the `TileClient`:
+Simply pass your `http<s>://` or `s3://` URL to the `TileClient`. This will
+work quite well for pre-tiled Cloud Optimized GeoTiffs, but I do not recommend
+doing this with non-tiled raster formats.
+
+For example, below raster at the url below is ~3GB but because it is pretiled,
+we can serve tiles from it very efficiently and have smooth rendering of this
+remote file in a Jupyter notebook.
 
 ```py
 from localtileserver import get_folium_tile_layer
@@ -204,6 +210,7 @@ from localtileserver import TileClient
 from folium import Map
 
 url = 'https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif'
+
 # First, create a tile server from local raster file
 tile_client = TileClient(url)
 
@@ -216,9 +223,6 @@ m
 ```
 
 ![vsi](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/vsi-raster.png)
-
-This will work quite well for pre-tiled Cloud Optimized GeoTiffs, but I do not
-recommend using it for non-tiled raster formats.
 
 Note that the Virtual Storage Interface is a complex API, and `TileClient`
 currently only handles `vsis3` and `vsicurl`. If you need a different VFS
