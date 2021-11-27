@@ -1,11 +1,11 @@
 import logging
 import os
-import pathlib
 
 import click
 
 from localtileserver.application import app
 from localtileserver.examples import get_data_path
+from localtileserver.utilities import get_clean_filename
 
 
 @click.command()
@@ -19,21 +19,22 @@ def run_app(filename, port=0, debug=False):
     `blue_marble`, `virtual_earth`, `arcgis` or `bahamas`.
 
     """
-    filename = pathlib.Path(filename).expanduser().absolute()
-    if not filename.exists():
-        name = os.path.basename(filename)
-        if name == "blue_marble":
-            filename = get_data_path("frmt_wms_bluemarble_s3_tms.xml")
-        elif name == "virtual_earth":
-            filename = get_data_path("frmt_wms_virtualearth.xml")
-        elif name == "arcgis":
-            filename = get_data_path("frmt_wms_arcgis_mapserver_tms.xml")
-        elif name in ["elevation", "dem", "topo"]:
-            filename = get_data_path("aws_elevation_tiles_prod.xml")
-        elif name == "bahamas":
-            filename = get_data_path("bahamas_rgb.tif")
-        else:
-            raise OSError(f"File does not exist: {filename}")
+    filename = get_clean_filename(filename)
+    if not str(filename).startswith("/vsi"):
+        if not filename.exists():
+            name = os.path.basename(filename)
+            if name == "blue_marble":
+                filename = get_data_path("frmt_wms_bluemarble_s3_tms.xml")
+            elif name == "virtual_earth":
+                filename = get_data_path("frmt_wms_virtualearth.xml")
+            elif name == "arcgis":
+                filename = get_data_path("frmt_wms_arcgis_mapserver_tms.xml")
+            elif name in ["elevation", "dem", "topo"]:
+                filename = get_data_path("aws_elevation_tiles_prod.xml")
+            elif name == "bahamas":
+                filename = get_data_path("bahamas_rgb.tif")
+            else:
+                raise OSError(f"File does not exist: {filename}")
     app.config["DEBUG"] = debug
     app.config["filename"] = filename
     if debug:

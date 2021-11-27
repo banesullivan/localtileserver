@@ -6,7 +6,12 @@ from typing import Union
 import requests
 from werkzeug.serving import make_server
 
-from localtileserver.utilities import add_query_parameters, is_valid_palette, save_file_from_request
+from localtileserver.utilities import (
+    add_query_parameters,
+    get_clean_filename,
+    is_valid_palette,
+    save_file_from_request,
+)
 
 _LIVE_SERVERS = {}
 
@@ -117,10 +122,7 @@ class TileClient:
         port: Union[int, str] = "default",
         debug: bool = False,
     ):
-        path = pathlib.Path(filename).expanduser().absolute()
-        if not path.exists():
-            raise OSError(f"Source file path does not exist: {path}")
-        self._filename = path
+        self._filename = get_clean_filename(filename)
         self._key = launch_server(port, debug)
         # Store actual port just in case
         self._port = _LIVE_SERVERS[self._key].srv.port
