@@ -49,7 +49,10 @@ setup(
         "requests",
         "scooby",
     ],
-    extras_require={"leaflet": ["ipyleaflet"], "folium": ["folium"]},
+    extras_require={
+        "leaflet": ["ipyleaflet"],
+        "folium": ["folium"],
+    },
     entry_points={
         "console_scripts": [
             "localtileserver = localtileserver.__main__:run_app",

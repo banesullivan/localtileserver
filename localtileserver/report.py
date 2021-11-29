@@ -36,7 +36,10 @@ class Report(scooby.Report):
             "large_image_source_mapnik",
             "large_image_source_pil",
             "large_image_source_tiff",
+            "large_image_converter",
             "tifftools",
+            "psutil",
+            "pyvips",
         ]
 
         scooby.Report.__init__(
