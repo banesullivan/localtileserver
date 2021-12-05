@@ -116,9 +116,9 @@ from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
 # Create 2 tile layers from 2 separate raster files
 l = get_leaflet_tile_layer('~/Desktop/TC_NG_SFBay_US_Geo.tif',
-                           band=1, palette='matplotlib.Viridis_20', vmin=50, vmax=200)
+                           band=1, palette='viridis', vmin=50, vmax=200)
 r = get_leaflet_tile_layer('~/Desktop/small.tif',
-                           band=2, palette='matplotlib.Plasma_6', vmin=0, vmax=150)
+                           band=2, palette='plasma', vmin=0, vmax=150)
 
 # Make the ipyleaflet map
 m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
@@ -276,7 +276,7 @@ tile_client = examples.get_elevation()
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_client,
                            band=1, vmin=-500, vmax=5000,
-                           palette='matplotlib.Plasma_6',
+                           palette='plasma',
                            opacity=0.75)
 
 # Create ipyleaflet controls to extract an ROI
@@ -305,7 +305,7 @@ And perform the extraction:
 roi_path = '...'  # Look in your working directory
 
 r = get_leaflet_tile_layer(roi_path, band=1,
-                           palette='matplotlib.Plasma_6', opacity=0.75)
+                           palette='plasma', opacity=0.75)
 
 m2 = Map(
         center=(39.763427033262175, -105.20614908076823),
@@ -372,3 +372,4 @@ Available choices are:
 - `get_leaflet_tile_layer` accepts either an existing `TileClient` or a
 path from which to create a `TileClient` under the hood.
 - The color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/).
+- If matplotlib is installed, any matplotlib colormap name cane be used a palette choice

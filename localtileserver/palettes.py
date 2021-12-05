@@ -1,6 +1,9 @@
+import logging
 from operator import attrgetter
 
 import palettable
+
+logger = logging.getLogger(__name__)
 
 SIMPLE_PALETTES = {
     "red": ["#000", "#f00"],
@@ -27,8 +30,11 @@ def is_mpl_cmap(name: str):
 
         matplotlib.cm.get_cmap(name)
         return True
-    except (ImportError, ValueError):
-        return False
+    except ImportError:
+        logger.error("Install matplotlib for additional colormap choices.")
+    except ValueError:
+        pass
+    return False
 
 
 def is_valid_palette_name(name: str):
