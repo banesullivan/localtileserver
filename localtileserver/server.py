@@ -1,7 +1,7 @@
 import logging
 import pathlib
 import threading
-from typing import Union
+from typing import List, Union
 
 import requests
 from werkzeug.serving import make_server
@@ -182,11 +182,11 @@ class TileClient:
     def get_tile_url(
         self,
         projection: str = "EPSG:3857",
-        band: int = None,
-        palette: str = None,
-        vmin: Union[float, int] = None,
-        vmax: Union[float, int] = None,
-        nodata: Union[float, int] = None,
+        band: Union[int, List[int]] = None,
+        palette: Union[str, List[str]] = None,
+        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
     ):
         """
 
@@ -196,7 +196,8 @@ class TileClient:
             The Proj projection to use for the tile layer. Default is `EPSG:3857`.
         band : int
             The band of the source raster to use (default in None to show RGB if
-            available). Band indexing starts at 1.
+            available). Band indexing starts at 1. This can also be a list of
+            integers to set which 3 bands to use for RGB.
         palette : str
             The name of the color palette from `palettable` to use when plotting
             a single band. Default is greyscale.

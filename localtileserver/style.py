@@ -2,7 +2,7 @@ from collections.abc import Iterable
 import json
 import logging
 from operator import attrgetter
-from typing import Union
+from typing import Any, List, Union
 
 import palettable
 
@@ -78,7 +78,7 @@ def make_single_band_style(
     return style
 
 
-def safe_get(obj, index):
+def safe_get(obj: Any, index: int):
     if isinstance(obj, (list, tuple)):
         try:
             return obj[index]
@@ -87,7 +87,13 @@ def safe_get(obj, index):
     return obj
 
 
-def make_style(band, vmin=None, vmax=None, palette=None, nodata=None):
+def make_style(
+    band: Union[int, List[int]],
+    palette: Union[str, List[str]] = None,
+    vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+    vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+    nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+):
     style = None
     # Handle when user sets min/max/etc. but forgot band. Default to 1
     if not band and any(v is not None for v in [vmin, vmax, palette, nodata]):
