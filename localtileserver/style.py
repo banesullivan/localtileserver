@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Any, List, Union
 
-from localtileserver.palettes import is_palettable_palette, SIMPLE_PALETTES
+from localtileserver.palettes import get_palette_by_name
 
 logger = logging.getLogger(__name__)
 
@@ -43,16 +43,12 @@ def make_single_band_style(
             style["max"] = vmax
         if nodata:
             style["nodata"] = nodata
-
-        if palette and is_palettable_palette(palette):
-            style["palette"] = palette
-        elif palette in SIMPLE_PALETTES:
-            style["palette"] = SIMPLE_PALETTES[palette]
-        else:
-            logger.error(
-                f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package. Ignoring palette choice."
-            )
-
+        if palette:
+            try:
+                style["palette"] = get_palette_by_name(palette)
+            except ValueError as e:
+                # Safely catch bad color palettes to avoid server errors
+                logger.error(e)
     return style
 
 

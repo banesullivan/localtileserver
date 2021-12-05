@@ -51,6 +51,7 @@ setup(
     extras_require={
         "leaflet": ["ipyleaflet"],
         "folium": ["folium"],
+        "mpl": ["matplotlib"],
     },
     entry_points={
         "console_scripts": [

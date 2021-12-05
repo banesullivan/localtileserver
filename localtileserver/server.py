@@ -6,7 +6,7 @@ from typing import List, Union
 import requests
 from werkzeug.serving import make_server
 
-from localtileserver.palettes import is_valid_palette
+from localtileserver.palettes import palette_valid_or_raise
 from localtileserver.utilities import (
     add_query_parameters,
     get_clean_filename,
@@ -199,8 +199,8 @@ class TileClient:
             available). Band indexing starts at 1. This can also be a list of
             integers to set which 3 bands to use for RGB.
         palette : str
-            The name of the color palette from `palettable` to use when plotting
-            a single band. Default is greyscale.
+            The name of the color palette from `palettable` or colormap from
+            matplotlib to use when plotting a single band. Default is greyscale.
         vmin : float
             The minimum value to use when colormapping the palette when plotting
             a single band.
@@ -216,16 +216,8 @@ class TileClient:
         if band is not None:
             params["band"] = band
         if palette is not None:
-            if isinstance(palette, (list, tuple)):
-                for v in palette:
-                    if not is_valid_palette(v):
-                        raise ValueError(
-                            f"Palette choice of {v} is invalid. Check available palettes in the `palettable` package."
-                        )
-            elif not is_valid_palette(palette):
-                raise ValueError(
-                    f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
-                )
+            # make sure palette is valid
+            palette_valid_or_raise(palette)
             params["palette"] = palette
         if vmin is not None:
             params["min"] = vmin
