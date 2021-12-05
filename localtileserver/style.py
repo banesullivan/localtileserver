@@ -29,7 +29,7 @@ def reformat_style_query_parameters(args: dict):
     # If not multiple, remove list
     for k, v in out.items():
         if len(v) == 1:
-            out[k] = v
+            out[k] = v[0]
     return out
 
 
@@ -47,8 +47,8 @@ def is_valid_palette(palette: str):
 
 def make_single_band_style(
     band: int,
-    bmin: Union[int, float] = None,
-    bmax: Union[int, float] = None,
+    vmin: Union[int, float] = None,
+    vmax: Union[int, float] = None,
     palette: str = None,
     nodata: Union[int, float] = None,
 ):
@@ -59,10 +59,10 @@ def make_single_band_style(
         if band == 0:
             raise ValueError("0 is an invalid band index. Bands start at 1.")
         style = {"band": band}
-        if bmin is not None:
-            style["min"] = bmin
-        if bmax is not None:
-            style["max"] = bmax
+        if vmin is not None:
+            style["min"] = vmin
+        if vmax is not None:
+            style["max"] = vmax
         if nodata:
             style["nodata"] = nodata
 
@@ -79,23 +79,25 @@ def make_single_band_style(
 
 
 def safe_get(obj, index):
-    try:
-        return obj[index]
-    except (TypeError, IndexError):
-        return None
+    if isinstance(obj, (list, tuple)):
+        try:
+            return obj[index]
+        except (TypeError, IndexError):
+            return None
+    return obj
 
 
-def make_style(band, bmin=None, bmax=None, palette=None, nodata=None):
+def make_style(band, vmin=None, vmax=None, palette=None, nodata=None):
     style = None
     # Handle when user sets min/max/etc. but forgot band. Default to 1
-    if not band and any(v is not None for v in [bmin, bmax, palette, nodata]):
+    if not band and any(v is not None for v in [vmin, vmax, palette, nodata]):
         band = 1
     elif band == 0:
         return
 
     if isinstance(band, int):
         # Handle viewing single band
-        style = make_single_band_style(band, bmin, bmax, palette, nodata)
+        style = make_single_band_style(band, vmin, vmax, palette, nodata)
     elif isinstance(band, Iterable):
         # Handle viewing multiple bands together
         style = {"bands": []}
@@ -103,12 +105,12 @@ def make_style(band, bmin=None, bmax=None, palette=None, nodata=None):
             # Handle setting RGB by default
             palette = ["r", "g", "b"]
         for i, b in enumerate(band):
-            bmi = safe_get(bmin, i)
-            bma = safe_get(bmax, i)
+            vmi = safe_get(vmin, i)
+            vma = safe_get(vmax, i)
             p = safe_get(palette, i)
             nod = safe_get(nodata, i)
             style["bands"].append(
-                make_single_band_style(band[i], bmin=bmi, bmax=bma, palette=p, nodata=nod),
+                make_single_band_style(band[i], vmin=vmi, vmax=vma, palette=p, nodata=nod),
             )
     # Return JSON encoded
     if style:

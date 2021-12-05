@@ -28,11 +28,14 @@ class BaseTileView(View):
         filename = utilities.get_clean_filename(request.args.get("filename", ""))
         style_args = style.reformat_style_query_parameters(request.args)
         band = style_args.get("band", 0)
-        bmin = style_args.get("min", None)
-        bmax = style_args.get("max", None)
+        vmin = style_args.get("min", None)
+        vmax = style_args.get("max", None)
         palette = style_args.get("palette", None)
         nodata = style_args.get("nodata", None)
-        sty = style.make_style(band, bmin=bmin, bmax=bmax, palette=palette, nodata=nodata)
+        sty = style.make_style(band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata)
+
+        logger.error(sty)
+
         return utilities.get_tile_source(filename, projection, style=sty)
 
     @staticmethod
