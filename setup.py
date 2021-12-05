@@ -42,7 +42,6 @@ setup(
         "click",
         "flask>=2.0.0",
         "Flask-Caching",
-        "furl",
         "GDAL",
         "large_image",
         "large_image_source_gdal",
