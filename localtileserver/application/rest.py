@@ -33,9 +33,6 @@ class BaseTileView(View):
         palette = style_args.get("palette", None)
         nodata = style_args.get("nodata", None)
         sty = style.make_style(band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata)
-
-        logger.error(sty)
-
         return utilities.get_tile_source(filename, projection, style=sty)
 
     @staticmethod
