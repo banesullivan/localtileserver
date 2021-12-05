@@ -48,7 +48,7 @@ def palette_valid_or_raise(name: str):
 
 
 def mpl_to_palette(cmap: str, n_colors: int = 255):
-    """Conver Matplotlib colormap to a palette."""
+    """Convert Matplotlib colormap to a palette."""
     import matplotlib
     import matplotlib.colors as mcolors
 
