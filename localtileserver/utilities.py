@@ -1,4 +1,3 @@
-from operator import attrgetter
 import os
 import pathlib
 import re
@@ -7,12 +6,10 @@ import tempfile
 from typing import Union
 from urllib.parse import urlencode, urlparse
 
-from furl import furl
 import large_image
 from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
-import palettable
 import requests
 
 
@@ -47,19 +44,16 @@ def save_file_from_request(response: requests.Response, output_path: pathlib.Pat
     return output_path
 
 
-def is_valid_palette(palette: str):
-    try:
-        attrgetter(palette)(palettable)
-    except AttributeError:
-        return False
-    return True
-
-
 def add_query_parameters(url: str, params: dict):
-    f = furl(url)
+    if len(params) and "?" not in url:
+        url += "?"
     for k, v in params.items():
-        f.args[k] = v
-    return f.url
+        if isinstance(v, (list, tuple)):
+            for i, sub in enumerate(v):
+                url += "&" + urlencode({f"{k}.{i}": sub})
+        else:
+            url += "&" + urlencode({k: v})
+    return url
 
 
 def get_tile_source(

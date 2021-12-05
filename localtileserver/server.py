@@ -6,10 +6,10 @@ from typing import Union
 import requests
 from werkzeug.serving import make_server
 
+from localtileserver.style import is_valid_palette
 from localtileserver.utilities import (
     add_query_parameters,
     get_clean_filename,
-    is_valid_palette,
     save_file_from_request,
 )
 
@@ -215,7 +215,13 @@ class TileClient:
         if band is not None:
             params["band"] = band
         if palette is not None:
-            if not is_valid_palette(palette):
+            if isinstance(palette, (list, tuple)):
+                for v in palette:
+                    if not is_valid_palette(v):
+                        raise ValueError(
+                            f"Palette choice of {v} is invalid. Check available palettes in the `palettable` package."
+                        )
+            elif not is_valid_palette(palette):
                 raise ValueError(
                     f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
                 )
@@ -228,9 +234,7 @@ class TileClient:
             params["nodata"] = nodata
         if projection is not None:
             params["projection"] = projection
-        # `{z}/{x}/{y}`` is reformatted by `furl` so do this hackery with `__localtileserver_path__`
-        url = add_query_parameters(self.create_url("__localtileserver_path__"), params)
-        return url.replace("__localtileserver_path__", "tiles/{z}/{x}/{y}.png")
+        return add_query_parameters(self.create_url("tiles/{z}/{x}/{y}.png"), params)
 
     def extract_roi(
         self,
