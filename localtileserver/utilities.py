@@ -2,6 +2,7 @@ from operator import attrgetter
 import os
 import pathlib
 import re
+import shutil
 import tempfile
 from typing import Union
 from urllib.parse import urlencode, urlparse
@@ -23,6 +24,17 @@ def get_cache_dir():
 
 gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
 gdal.SetConfigOption("GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache"))
+
+
+def purge_cache():
+    """Completely purge all files from the file cache.
+
+    This should be used with caution, it could delete files that are in use.
+    """
+    cache = get_cache_dir()
+    shutil.rmtree(cache)
+    # Return the cache dir so that a fresh directory is created.
+    return get_cache_dir()
 
 
 def save_file_from_request(response: requests.Response, output_path: pathlib.Path):
