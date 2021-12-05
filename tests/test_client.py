@@ -62,7 +62,6 @@ def test_extract_roi_world(bahamas):
     assert source.getMetadata()["geospatial"]
 
 
-@pytest.mark.skip
 def test_extract_roi_pixel(bahamas):
     path = bahamas.extract_roi_pixel(100, 500, 300, 600)
     assert path.exists()
