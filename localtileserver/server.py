@@ -6,7 +6,7 @@ from typing import List, Union
 import requests
 from werkzeug.serving import make_server
 
-from localtileserver.style import is_valid_palette
+from localtileserver.palettes import is_valid_palette
 from localtileserver.utilities import (
     add_query_parameters,
     get_clean_filename,

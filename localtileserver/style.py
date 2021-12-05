@@ -1,21 +1,11 @@
 from collections.abc import Iterable
 import json
 import logging
-from operator import attrgetter
 from typing import Any, List, Union
 
-import palettable
+from localtileserver.palettes import is_palettable_palette, SIMPLE_PALETTES
 
 logger = logging.getLogger(__name__)
-
-SIMPLE_PALETTES = {
-    "red": ["#000", "#f00"],
-    "r": ["#000", "#f00"],
-    "green": ["#000", "#0f0"],
-    "g": ["#000", "#0f0"],
-    "blue": ["#000", "#00f"],
-    "b": ["#000", "#00f"],
-}
 
 
 def reformat_style_query_parameters(args: dict):
@@ -31,18 +21,6 @@ def reformat_style_query_parameters(args: dict):
         if len(v) == 1:
             out[k] = v[0]
     return out
-
-
-def is_palettable_palette(palette: str):
-    try:
-        attrgetter(palette)(palettable)
-    except AttributeError:
-        return False
-    return True
-
-
-def is_valid_palette(palette: str):
-    return is_palettable_palette(palette) or palette in SIMPLE_PALETTES
 
 
 def make_single_band_style(

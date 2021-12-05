@@ -1,5 +1,5 @@
 from localtileserver import Report
-from localtileserver.style import is_valid_palette
+from localtileserver.palettes import is_valid_palette
 
 
 def test_is_valid_palette():
