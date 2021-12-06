@@ -13,3 +13,4 @@ ipyleaflet
 shapely
 folium
 matplotlib
+gunicorn
