@@ -27,6 +27,15 @@ def test_create_tile_client(bahamas_file):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
+    tile_url = tile_client.get_tile_url(palette="matplotlib.Plasma_6").format(z=8, x=72, y=110)
+    r = requests.get(tile_url)
+    r.raise_for_status()
+    assert r.content
+
+
+def test_create_tile_client_bad_filename():
+    with pytest.raises(OSError):
+        tile_client = TileClient("foo.tif", debug=True)
 
 
 def test_client_force_shutdown(bahamas):

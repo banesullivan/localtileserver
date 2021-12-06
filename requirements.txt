@@ -12,3 +12,4 @@ pytest-cov
 ipyleaflet
 shapely
 folium
+matplotlib
