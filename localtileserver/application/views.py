@@ -27,7 +27,10 @@ def inject_context():
     except KeyError:
         pass
     try:
-        filename = utilities.get_clean_filename(request.args.get("filename"))
+        f = request.args.get("filename")
+        if not f:
+            raise KeyError
+        filename = utilities.get_clean_filename(f)
     except KeyError:
         logger.error("No filename set in app config. Using sample data.")
         filename = get_data_path("bahamas_rgb.tif")
