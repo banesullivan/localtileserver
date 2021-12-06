@@ -1,6 +1,6 @@
 import pytest
 
-from localtileserver import Report, utilities
+from localtileserver import Report
 from localtileserver.palettes import get_palette_by_name, is_valid_palette_name, mpl_to_palette
 
 has_mpl = False
@@ -27,7 +27,3 @@ def test_mpl_colormaps():
 
 def test_report():
     assert Report()
-
-
-# def test_purge_cache():
-#     utilities.purge_cache()
