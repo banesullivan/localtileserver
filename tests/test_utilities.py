@@ -29,5 +29,5 @@ def test_report():
     assert Report()
 
 
-def test_purge_cache():
-    utilities.purge_cache()
+# def test_purge_cache():
+#     utilities.purge_cache()
