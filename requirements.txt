@@ -1,7 +1,7 @@
 click
 flask>=2.0.0
 Flask-Caching
-GDAL
+--find-links https://girder.github.io/large_image_wheels GDAL 
 large-image
 large-image-source-gdal
 large-image-source-pil
@@ -13,3 +13,4 @@ ipyleaflet
 shapely
 folium
 matplotlib
+gunicorn

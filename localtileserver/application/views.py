@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template
+from flask import render_template, request
 from flask.views import View
 
 from localtileserver import utilities
@@ -25,8 +25,15 @@ def inject_context():
     try:
         filename = utilities.get_clean_filename(app.config["filename"])
     except KeyError:
+        pass
+    try:
+        f = request.args.get("filename")
+        if not f:
+            raise KeyError
+        filename = utilities.get_clean_filename(f)
+    except KeyError:
         logger.error("No filename set in app config. Using sample data.")
-        filename = get_data_path("bahamas_rgb.tif")
+        filename = get_data_path("landsat.tif")
     tile_source = utilities.get_tile_source(filename)
     context = utilities.get_meta_data(tile_source)
     context["bounds"] = utilities.get_tile_bounds(tile_source, projection="EPSG:4326")

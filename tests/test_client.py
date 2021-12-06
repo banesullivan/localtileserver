@@ -1,6 +1,9 @@
+import os
+
 import pytest
 import requests
 
+from localtileserver.client import DEMO_REMOTE_TILE_SERVER, RemoteTileClient
 from localtileserver.server import _LIVE_SERVERS, TileClient, TileServerThread
 from localtileserver.utilities import get_tile_source
 
@@ -31,6 +34,8 @@ def test_create_tile_client(bahamas_file):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
+    path = tile_client.thumbnail()
+    assert os.path.exists(path)
 
 
 def test_create_tile_client_bad_filename():
@@ -108,3 +113,8 @@ def test_multiband(bahamas):
         nodata=0,
     ).format(z=8, x=72, y=110)
     assert get_content(url)  # just make sure it doesn't fail
+
+
+def test_remote_client(remote_file_url):
+    tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
+    assert tile_client.metadata()
