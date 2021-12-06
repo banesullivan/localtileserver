@@ -41,6 +41,7 @@ def run_app(filename, port=0, debug=False):
         logging.getLogger("werkzeug").setLevel(logging.DEBUG)
         logging.getLogger("gdal").setLevel(logging.DEBUG)
         logging.getLogger("large_image").setLevel(logging.DEBUG)
+        logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
     app.run(host="localhost", port=port)
 
 

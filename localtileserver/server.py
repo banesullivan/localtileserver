@@ -53,6 +53,7 @@ class TileServerThread(threading.Thread):
             logging.getLogger("werkzeug").setLevel(logging.DEBUG)
             logging.getLogger("gdal").setLevel(logging.DEBUG)
             logging.getLogger("large_image").setLevel(logging.DEBUG)
+            logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
             # make_server -> passthrough_errors ?
 
         self.daemon = True  # CRITICAL for safe exit
