@@ -280,8 +280,30 @@ class TileClient:
             (bounds[3] - bounds[2]) / 2 + bounds[2],
         )
 
-    def thumbnail(self, output_path: pathlib.Path = None):
-        r = requests.get(self.create_url('thumbnail'))
+    def thumbnail(
+        self,
+        band: Union[int, List[int]] = None,
+        palette: Union[str, List[str]] = None,
+        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        output_path: pathlib.Path = None,
+    ):
+        params = {}
+        if band is not None:
+            params["band"] = band
+        if palette is not None:
+            # make sure palette is valid
+            palette_valid_or_raise(palette)
+            params["palette"] = palette
+        if vmin is not None:
+            params["min"] = vmin
+        if vmax is not None:
+            params["max"] = vmax
+        if nodata is not None:
+            params["nodata"] = nodata
+        url = add_query_parameters(self.create_url("thumbnail"), params)
+        r = requests.get(url)
         r.raise_for_status()
         return save_file_from_request(r, output_path)
 
