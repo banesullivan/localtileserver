@@ -31,6 +31,8 @@ jobs:
           pip install -r requirements.txt
       - name: Install localtileserver
         run: pip install -e .
+      - name: Scooby Report
+        run: python -c "import localtileserver;print(localtileserver.Report())"
       - name: Run Tests
         run: |
           pytest -v --cov=localtileserver
@@ -71,5 +73,7 @@ jobs:
           pip install -r requirements.txt
       - name: Install localtileserver
         run: pip install -e .
+      - name: Scooby Report
+        run: python -c "import localtileserver;print(localtileserver.Report())"
       - name: Run Tests
         run: pytest -v --cov=localtileserver
