@@ -2,6 +2,7 @@
 
 [![codecov](https://codecov.io/gh/banesullivan/localtileserver/branch/main/graph/badge.svg?token=S0HQ64FW8G)](https://codecov.io/gh/banesullivan/localtileserver)
 [![PyPI](https://img.shields.io/pypi/v/localtileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/localtileserver/)
+[![conda](https://img.shields.io/conda/vn/conda-forge/localtileserver.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/localtileserver)
 
 *Need to visualize a rather large (gigabytes) raster you have locally?* **This is for you.**
 
@@ -44,16 +45,29 @@ that things will most likely break between minor releases (I use the
 
 ## ⬇️ Installation
 
-Install from PyPI: https://pypi.org/project/localtileserver/
+
+### 🐍 Installing with `conda`
+
+Conda makes managing `localtileserver`'s dependencies across platforms quite
+easy and this is the recommended method to install:
+
+```bash
+conda install -c conda-forge localtileserver
+```
+
+### 🎡 Installing with `pip`
+
+If you prefer pip, and know how to install GDAL on your system, then you can
+install from PyPI: https://pypi.org/project/localtileserver/
 
 ```
 pip install localtileserver
 ```
 
-### 📝 A Brief Note on Installing GDAL
+#### 📝 A Brief Note on Installing GDAL
 
-GDAL can be a pain in the 🍑 to install, and you may want to handle GDAL
-before installing `localtileserver`.
+GDAL can be a pain in the 🍑 to install, so you may want to handle GDAL
+before installing `localtileserver` when using `pip`.
 
 If on linux, I highly recommend using the [large_image_wheels](https://github.com/girder/large_image_wheels) from Kitware.
 
@@ -61,11 +75,6 @@ If on linux, I highly recommend using the [large_image_wheels](https://github.co
 pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
 ```
 
-Otherwise, I recommend using `conda`:
-
-```
-conda install -c conda-forge GDAL
-```
 
 ## 💭 Feedback
 
