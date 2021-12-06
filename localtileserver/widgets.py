@@ -1,7 +1,7 @@
 import logging
 import os
 import pathlib
-from typing import Union
+from typing import List, Union
 
 from localtileserver.server import TileClient, get_or_create_tile_client
 
@@ -14,11 +14,11 @@ def get_leaflet_tile_layer(
     port: Union[int, str] = "default",
     debug: bool = False,
     projection: str = "EPSG:3857",
-    band: int = None,
-    palette: str = None,
-    vmin: Union[float, int] = None,
-    vmax: Union[float, int] = None,
-    nodata: Union[float, int] = None,
+    band: Union[int, List[int]] = None,
+    palette: Union[str, List[str]] = None,
+    vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+    vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+    nodata: Union[Union[float, int], List[Union[float, int]]] = None,
     attribution: str = None,
     **kwargs,
 ):
@@ -40,7 +40,8 @@ def get_leaflet_tile_layer(
         The Proj projection to use for the tile layer. Default is `EPSG:3857`.
     band : int
         The band of the source raster to use (default in None to show RGB if
-        available). Band indexing starts at 1.
+        available). Band indexing starts at 1. This can also be a list of
+        integers to set which 3 bands to use for RGB.
     palette : str
         The name of the color palette from `palettable` to use when plotting
         a single band. Default is greyscale.
@@ -177,11 +178,11 @@ def get_folium_tile_layer(
     port: Union[int, str] = "default",
     debug: bool = False,
     projection: str = "EPSG:3857",
-    band: int = None,
-    palette: str = None,
-    vmin: Union[float, int] = None,
-    vmax: Union[float, int] = None,
-    nodata: Union[float, int] = None,
+    band: Union[int, List[int]] = None,
+    palette: Union[str, List[str]] = None,
+    vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+    vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+    nodata: Union[Union[float, int], List[Union[float, int]]] = None,
     attr: str = None,
     **kwargs,
 ):
@@ -203,7 +204,8 @@ def get_folium_tile_layer(
         The Proj projection to use for the tile layer. Default is `EPSG:3857`.
     band : int
         The band of the source raster to use (default in None to show RGB if
-        available). Band indexing starts at 1.
+        available). Band indexing starts at 1. This can also be a list of
+        integers to set which 3 bands to use for RGB.
     palette : str
         The name of the color palette from `palettable` to use when plotting
         a single band. Default is greyscale.

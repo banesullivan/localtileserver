@@ -77,3 +77,25 @@ def test_caching_query_params(bahamas):
     thumb_url_a = bahamas.create_url("thumbnail")
     thumb_url_b = bahamas.create_url("thumbnail?band=1")
     assert get_content(thumb_url_a) != get_content(thumb_url_b)
+
+
+def test_multiband(bahamas):
+    # Create an RGB tile in several ways and make sure all same
+    url_a = bahamas.get_tile_url(
+        band=[1, 2, 3],
+    ).format(z=8, x=72, y=110)
+    url_b = bahamas.get_tile_url(
+        band=[3, 2, 1],
+        palette=["b", "g", "r"],
+    ).format(z=8, x=72, y=110)
+    url_c = bahamas.get_tile_url().format(z=8, x=72, y=110)
+    assert get_content(url_a) == get_content(url_b) == get_content(url_c)
+    # Check that other options are well handled
+    url = bahamas.get_tile_url(
+        band=[1, 2, 3],
+        palette=["b", "g", "r"],
+        vmin=0,
+        vmax=300,
+        nodata=0,
+    ).format(z=8, x=72, y=110)
+    assert get_content(url)  # just make sure it doesn't fail

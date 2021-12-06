@@ -1,15 +1,15 @@
 import logging
 import pathlib
 import threading
-from typing import Union
+from typing import List, Union
 
 import requests
 from werkzeug.serving import make_server
 
+from localtileserver.palettes import palette_valid_or_raise
 from localtileserver.utilities import (
     add_query_parameters,
     get_clean_filename,
-    is_valid_palette,
     save_file_from_request,
 )
 
@@ -182,11 +182,11 @@ class TileClient:
     def get_tile_url(
         self,
         projection: str = "EPSG:3857",
-        band: int = None,
-        palette: str = None,
-        vmin: Union[float, int] = None,
-        vmax: Union[float, int] = None,
-        nodata: Union[float, int] = None,
+        band: Union[int, List[int]] = None,
+        palette: Union[str, List[str]] = None,
+        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
     ):
         """
 
@@ -196,10 +196,11 @@ class TileClient:
             The Proj projection to use for the tile layer. Default is `EPSG:3857`.
         band : int
             The band of the source raster to use (default in None to show RGB if
-            available). Band indexing starts at 1.
+            available). Band indexing starts at 1. This can also be a list of
+            integers to set which 3 bands to use for RGB.
         palette : str
-            The name of the color palette from `palettable` to use when plotting
-            a single band. Default is greyscale.
+            The name of the color palette from `palettable` or colormap from
+            matplotlib to use when plotting a single band. Default is greyscale.
         vmin : float
             The minimum value to use when colormapping the palette when plotting
             a single band.
@@ -215,10 +216,8 @@ class TileClient:
         if band is not None:
             params["band"] = band
         if palette is not None:
-            if not is_valid_palette(palette):
-                raise ValueError(
-                    f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package."
-                )
+            # make sure palette is valid
+            palette_valid_or_raise(palette)
             params["palette"] = palette
         if vmin is not None:
             params["min"] = vmin
@@ -228,9 +227,7 @@ class TileClient:
             params["nodata"] = nodata
         if projection is not None:
             params["projection"] = projection
-        # `{z}/{x}/{y}`` is reformatted by `furl` so do this hackery with `__localtileserver_path__`
-        url = add_query_parameters(self.create_url("__localtileserver_path__"), params)
-        return url.replace("__localtileserver_path__", "tiles/{z}/{x}/{y}.png")
+        return add_query_parameters(self.create_url("tiles/{z}/{x}/{y}.png"), params)
 
     def extract_roi(
         self,

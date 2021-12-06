@@ -42,7 +42,6 @@ setup(
         "click",
         "flask>=2.0.0",
         "Flask-Caching",
-        "furl",
         "GDAL",
         "large_image",
         "large_image_source_gdal",
@@ -52,6 +51,7 @@ setup(
     extras_require={
         "leaflet": ["ipyleaflet"],
         "folium": ["folium"],
+        "mpl": ["matplotlib"],
     },
     entry_points={
         "console_scripts": [

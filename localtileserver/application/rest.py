@@ -1,5 +1,4 @@
 import io
-import json
 import logging
 import time
 
@@ -9,7 +8,7 @@ from flask.views import View
 from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
 
-from localtileserver import utilities
+from localtileserver import style, utilities
 from localtileserver.application import app
 
 cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
@@ -27,33 +26,14 @@ class BaseTileView(View):
     def get_tile_source(self, projection="EPSG:3857"):
         """Return the built tile source."""
         filename = utilities.get_clean_filename(request.args.get("filename", ""))
-
-        band = int(request.args.get("band", 0))
-        bmin = request.args.get("min", None)
-        bmax = request.args.get("max", None)
-        palette = request.args.get("palette", None)
-        nodata = request.args.get("nodata", None)
-        style = None
-        # Handle when user sets min/max/etc. but forgot band. Default to 1
-        if not band and any(v is not None for v in [bmin, bmax, palette, nodata]):
-            band = 1
-        if band:
-            style = {"band": band}
-            if bmin is not None:
-                style["min"] = bmin
-            if bmax is not None:
-                style["max"] = bmax
-            if palette and utilities.is_valid_palette(palette):
-                style["palette"] = palette
-            elif palette:
-                logger.error(
-                    f"Palette choice of {palette} is invalid. Check available palettes in the `palettable` package. Ignoring palette choice."
-                )
-            if nodata:
-                style["nodata"] = nodata
-            style = json.dumps(style)
-
-        return utilities.get_tile_source(filename, projection, style=style)
+        style_args = style.reformat_style_query_parameters(request.args)
+        band = style_args.get("band", 0)
+        vmin = style_args.get("min", None)
+        vmax = style_args.get("max", None)
+        palette = style_args.get("palette", None)
+        nodata = style_args.get("nodata", None)
+        sty = style.make_style(band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata)
+        return utilities.get_tile_source(filename, projection, style=sty)
 
     @staticmethod
     def add_border_to_image(content):

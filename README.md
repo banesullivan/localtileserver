@@ -116,9 +116,9 @@ from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
 # Create 2 tile layers from 2 separate raster files
 l = get_leaflet_tile_layer('~/Desktop/TC_NG_SFBay_US_Geo.tif',
-                           band=1, palette='matplotlib.Viridis_20', vmin=50, vmax=200)
+                           band=1, palette='viridis', vmin=50, vmax=200)
 r = get_leaflet_tile_layer('~/Desktop/small.tif',
-                           band=2, palette='matplotlib.Plasma_6', vmin=0, vmax=150)
+                           band=2, palette='plasma', vmin=0, vmax=150)
 
 # Make the ipyleaflet map
 m = Map(center=(37.7249511580583, -122.27230466902257), zoom=9)
@@ -130,6 +130,38 @@ m
 ```
 
 ![ipyleaflet-double](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet.gif)
+
+
+#### 🧮 Controlling the RGB Bands
+
+The `ipyleaflet` and `folium` tile layer utilities support setting which bands
+to view as the RGB channels. To set the RGB bands, pass a length three list
+of the band indices to the `band` argument.
+
+Here is an example where I create two tile layers from the same raster but
+viewing a different set of bands:
+
+```py
+from localtileserver import get_leaflet_tile_layer, TileClient
+from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
+
+# First, create a tile server from local raster file
+tile_client = TileClient('landsat.tif')
+
+# Create 2 tile layers from same raster viewing different bands
+l = get_leaflet_tile_layer(tile_client, band=[7, 5, 4])
+r = get_leaflet_tile_layer(tile_client, band=[5, 3, 2])
+
+# Make the ipyleaflet map
+m = Map(center=tile_client.center(), zoom=12)
+control = SplitMapControl(left_layer=l, right_layer=r)
+m.add_control(control)
+m.add_control(ScaleControl(position='bottomleft'))
+m.add_control(FullScreenControl())
+m
+```
+
+![ipyleaflet-multi-bands](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-multi-bands.png)
 
 
 #### 🎯 Using `ipyleaflet` for ROI Extraction
@@ -244,7 +276,7 @@ tile_client = examples.get_elevation()
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_client,
                            band=1, vmin=-500, vmax=5000,
-                           palette='matplotlib.Plasma_6',
+                           palette='plasma',
                            opacity=0.75)
 
 # Create ipyleaflet controls to extract an ROI
@@ -273,7 +305,7 @@ And perform the extraction:
 roi_path = '...'  # Look in your working directory
 
 r = get_leaflet_tile_layer(roi_path, band=1,
-                           palette='matplotlib.Plasma_6', opacity=0.75)
+                           palette='plasma', opacity=0.75)
 
 m2 = Map(
         center=(39.763427033262175, -105.20614908076823),
@@ -340,3 +372,4 @@ Available choices are:
 - `get_leaflet_tile_layer` accepts either an existing `TileClient` or a
 path from which to create a `TileClient` under the hood.
 - The color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/).
+- If matplotlib is installed, any matplotlib colormap name cane be used a palette choice

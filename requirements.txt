@@ -7,7 +7,6 @@ large-image-source-gdal
 large-image-source-pil
 requests
 scooby
-furl
 pytest
 pytest-cov
 ipyleaflet
