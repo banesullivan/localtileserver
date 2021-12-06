@@ -52,6 +52,7 @@ setup(
         "leaflet": ["ipyleaflet"],
         "folium": ["folium"],
         "mpl": ["matplotlib"],
+        "sources": ["large-image-source-pil", "large-image-source-tiff"],
     },
     entry_points={
         "console_scripts": [

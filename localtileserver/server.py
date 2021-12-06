@@ -280,6 +280,11 @@ class TileClient:
             (bounds[3] - bounds[2]) / 2 + bounds[2],
         )
 
+    def thumbnail(self, output_path: pathlib.Path = None):
+        r = requests.get(self.create_url('thumbnail'))
+        r.raise_for_status()
+        return save_file_from_request(r, output_path)
+
 
 def get_or_create_tile_client(
     source: Union[pathlib.Path, str, TileClient],
