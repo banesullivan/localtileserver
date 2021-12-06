@@ -1,6 +1,6 @@
 import logging
 
-from flask import render_template
+from flask import render_template, request
 from flask.views import View
 
 from localtileserver import utilities
@@ -24,6 +24,10 @@ class CesiumViewer(View):
 def inject_context():
     try:
         filename = utilities.get_clean_filename(app.config["filename"])
+    except KeyError:
+        pass
+    try:
+        filename = utilities.get_clean_filename(request.args.get("filename"))
     except KeyError:
         logger.error("No filename set in app config. Using sample data.")
         filename = get_data_path("bahamas_rgb.tif")
