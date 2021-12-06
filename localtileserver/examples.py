@@ -41,3 +41,8 @@ def get_bahamas(port: Union[int, str] = "default", debug: bool = False):
 def get_pine_gulch(port: Union[int, str] = "default", debug: bool = False):
     path = get_pine_gulch_url()
     return TileClient(path, port=port, debug=debug)
+
+
+def get_landsat(port: Union[int, str] = "default", debug: bool = False):
+    path = get_data_path("landsat.tif")
+    return TileClient(path, port=port, debug=debug)
