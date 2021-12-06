@@ -35,7 +35,7 @@ def test_create_tile_client(bahamas_file):
 
 def test_create_tile_client_bad_filename():
     with pytest.raises(OSError):
-        tile_client = TileClient("foo.tif", debug=True)
+        TileClient("foo.tif", debug=True)
 
 
 def test_client_force_shutdown(bahamas):
