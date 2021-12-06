@@ -179,7 +179,7 @@ class BaseTileClient:
 
 
 class RemoteTileClient(BaseTileClient):
-    """Connect to a localtileserver instance.
+    """Connect to a remote localtileserver instance at a given host URL.
 
     Parameters
     ----------
@@ -199,9 +199,8 @@ class RemoteTileClient(BaseTileClient):
         if host is None:
             host = DEMO_REMOTE_TILE_SERVER
             logger.error(
-                "WARNING: You are using a demo remote tileserver that has incredibly limited resources. It can be unreliable and prone to crash. Please launch your own remote instance of localtileserver."
+                "WARNING: You are using a demo instance of localtileserver that has incredibly limited resources: it is unreliable and prone to crash. Please launch your own remote instance of localtileserver."
             )
-
         self._host = host
 
     @property
