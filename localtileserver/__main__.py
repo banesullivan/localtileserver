@@ -1,4 +1,7 @@
 import logging
+import socket
+import threading
+import webbrowser
 
 import click
 
@@ -11,7 +14,8 @@ from localtileserver.utilities import get_clean_filename
 @click.argument("filename")
 @click.option("-p", "--port", default=0)
 @click.option("-d", "--debug", default=False)
-def run_app(filename, port=0, debug=False):
+@click.option("-b", "--browser", default=True)
+def run_app(filename, port: int = 0, debug: bool = False, browser: bool = True):
     """Serve tiles from the raster at `filename`.
 
     You can also pass the name of one of the example datasets: `elevation`,
@@ -42,7 +46,16 @@ def run_app(filename, port=0, debug=False):
         logging.getLogger("gdal").setLevel(logging.DEBUG)
         logging.getLogger("large_image").setLevel(logging.DEBUG)
         logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
-    app.run(host="localhost", port=port)
+
+    if port == 0:
+        sock = socket.socket()
+        sock.bind(("localhost", 0))
+        port = sock.getsockname()[1]
+        sock.close()
+
+    url = f"http://localhost:{port}"
+    threading.Timer(1, lambda: webbrowser.open(url)).start()
+    app.run(host="localhost", port=port, debug=debug)
 
 
 if __name__ == "__main__":
