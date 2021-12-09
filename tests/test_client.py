@@ -115,6 +115,7 @@ def test_multiband(bahamas):
     assert get_content(url)  # just make sure it doesn't fail
 
 
+@pytest.mark.xfail
 def test_remote_client(remote_file_url):
     tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
     assert tile_client.metadata()
