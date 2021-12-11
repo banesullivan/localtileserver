@@ -20,6 +20,6 @@
     position: absolute;
     opacity: 0.75;
     z-index: 100;
-    top: 5px;
-    left: 5px;
+    bottom: 5px;
+    right: 5px;
 }
