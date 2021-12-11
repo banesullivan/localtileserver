@@ -23,6 +23,7 @@ def get_content(url):
 
 @pytest.mark.parametrize("processes", [1, 5])
 def test_create_tile_client(bahamas_file, processes):
+    assert len(_LIVE_SERVERS) == 0
     tile_client = TileClient(bahamas_file, processes=processes, debug=True)
     assert tile_client.filename == bahamas_file
     assert tile_client.port
@@ -50,6 +51,7 @@ def test_create_tile_client(bahamas_file, processes):
     assert r.content
     path = tile_client.thumbnail()
     assert os.path.exists(path)
+    tile_client.shutdown(force=True)
 
 
 def test_create_tile_client_bad(bahamas_file):

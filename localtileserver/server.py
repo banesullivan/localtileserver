@@ -174,6 +174,8 @@ def get_or_create_tile_client(
     source: Union[pathlib.Path, str, TileClient],
     port: Union[int, str] = "default",
     debug: bool = False,
+    threaded: bool = True,
+    processes: int = 1,
 ):
     """A helper to safely get a TileClient from a path on disk.
 
@@ -189,7 +191,7 @@ def get_or_create_tile_client(
     _internally_created = False
     # Launch tile server if file path is given
     if not isinstance(source, TileClient):
-        source = TileClient(source, port, debug)
+        source = TileClient(source, port=port, debug=debug, threaded=threaded, processes=processes)
         _internally_created = True
     # Check that the tile source is valid and no server errors
     try:

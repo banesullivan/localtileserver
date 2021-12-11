@@ -19,13 +19,17 @@ def bahamas_file():
 @pytest.fixture
 def bahamas(port="default", debug=True):
     # Using debug True since in a testing environment
-    return get_bahamas(port=port, debug=debug)
+    tile_client = get_bahamas(port=port, debug=debug)
+    yield tile_client
+    tile_client.shutdown(force=True)
 
 
 @pytest.fixture
 def blue_marble(port="default", debug=True):
     # Using debug True since in a testing environment
-    return get_blue_marble(port=port, debug=debug)
+    tile_client = get_blue_marble(port=port, debug=debug)
+    yield tile_client
+    tile_client.shutdown(force=True)
 
 
 @pytest.fixture
