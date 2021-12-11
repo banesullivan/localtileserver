@@ -9,7 +9,6 @@ from localtileserver.server import (
     ServerDownError,
     ServerManager,
     TileClient,
-    TileServerThread,
     get_or_create_tile_client,
 )
 
