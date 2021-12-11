@@ -7,7 +7,7 @@ from flask import request, send_file
 from flask.views import View
 from large_image_source_gdal import GDALFileTileSource
 
-from localtileserver import style, utilities
+from localtileserver.application import style, utilities
 from localtileserver.application.blueprint import cache
 
 logger = logging.getLogger(__name__)

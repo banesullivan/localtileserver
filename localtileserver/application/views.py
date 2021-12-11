@@ -3,7 +3,7 @@ import logging
 from flask import current_app, render_template, request
 from flask.views import View
 
-from localtileserver import utilities
+from localtileserver.application import utilities
 from localtileserver.application.blueprint import tileserver
 from localtileserver.examples import get_data_path
 

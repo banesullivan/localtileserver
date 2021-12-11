@@ -4,8 +4,8 @@ from typing import List, Union
 
 import requests
 
-from localtileserver.palettes import palette_valid_or_raise
-from localtileserver.utilities import (
+from localtileserver.application.palettes import palette_valid_or_raise
+from localtileserver.application.utilities import (
     add_query_parameters,
     get_clean_filename,
     save_file_from_request,

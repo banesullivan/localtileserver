@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Any, List, Union
 
-from localtileserver.palettes import get_palette_by_name
+from localtileserver.application.palettes import get_palette_by_name
 
 logger = logging.getLogger(__name__)
 
