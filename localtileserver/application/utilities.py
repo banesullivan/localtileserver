@@ -1,6 +1,5 @@
 import os
 import pathlib
-import re
 import shutil
 import tempfile
 from typing import Union
@@ -10,7 +9,6 @@ import large_image
 from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
-import requests
 
 
 def get_cache_dir():
@@ -32,28 +30,6 @@ def purge_cache():
     shutil.rmtree(cache)
     # Return the cache dir so that a fresh directory is created.
     return get_cache_dir()
-
-
-def save_file_from_request(response: requests.Response, output_path: pathlib.Path):
-    d = response.headers["content-disposition"]
-    fname = re.findall("filename=(.+)", d)[0]
-    if not output_path:
-        output_path = get_cache_dir() / fname
-    with open(output_path, "wb") as f:
-        f.write(response.content)
-    return output_path
-
-
-def add_query_parameters(url: str, params: dict):
-    if len(params) and "?" not in url:
-        url += "?"
-    for k, v in params.items():
-        if isinstance(v, (list, tuple)):
-            for i, sub in enumerate(v):
-                url += "&" + urlencode({f"{k}.{i}": sub})
-        else:
-            url += "&" + urlencode({k: v})
-    return url
 
 
 def get_tile_source(
