@@ -1,4 +1,3 @@
-import pathlib
 from typing import Union
 
 from localtileserver.server import TileClient
