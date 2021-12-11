@@ -17,44 +17,44 @@ class ServerDownError(Exception):
     pass
 
 
-class Data:
+class ServerManager:
     _LIVE_SERVERS = {}
     _APP = None
 
     def __init__(self):
-        raise NotImplementedError("The data class cannot be instantiated.")
+        raise NotImplementedError("The ServerManager class cannot be instantiated.")
 
     @staticmethod
     def get_or_create_app():
         from localtileserver.application import create_app
 
-        if not Data._APP:
-            Data._APP = create_app()
-        return Data._APP
+        if not ServerManager._APP:
+            ServerManager._APP = create_app()
+        return ServerManager._APP
 
     @staticmethod
     def server_count():
-        return len(Data._LIVE_SERVERS)
+        return len(ServerManager._LIVE_SERVERS)
 
     @staticmethod
     def is_server_live(key: Union[int, str]):
-        return key in Data._LIVE_SERVERS and Data._LIVE_SERVERS[key].is_alive()
+        return key in ServerManager._LIVE_SERVERS and ServerManager._LIVE_SERVERS[key].is_alive()
 
     @staticmethod
     def add_server(key, val):
-        Data._LIVE_SERVERS[key] = val
+        ServerManager._LIVE_SERVERS[key] = val
 
     @staticmethod
     def pop_server(key):
         try:
-            return Data._LIVE_SERVERS.pop(key)
+            return ServerManager._LIVE_SERVERS.pop(key)
         except KeyError:
             raise ServerDownError("Tile server for this source has been shutdown.")
 
     @staticmethod
     def get_server(key):
         try:
-            return Data._LIVE_SERVERS[key]
+            return ServerManager._LIVE_SERVERS[key]
         except KeyError:
             raise ServerDownError("Tile server for this source has been shutdown.")
 
@@ -64,7 +64,7 @@ class Data:
             # We do not shut down the default server
             return
         try:
-            server = Data.pop_server(key)
+            server = ServerManager.pop_server(key)
             server.shutdown()
             del server
         except ServerDownError:
@@ -89,7 +89,7 @@ class TileServerThread(threading.Thread):
 
         threading.Thread.__init__(self)
 
-        app = Data.get_or_create_app()
+        app = ServerManager.get_or_create_app()
 
         if not debug:
             logging.getLogger("werkzeug").setLevel(logging.ERROR)
@@ -135,7 +135,7 @@ def launch_server(
     threaded: bool = True,
     processes: int = 1,
 ):
-    if Data.is_server_live(port):
+    if ServerManager.is_server_live(port):
         return port
     if port == "default":
         server = TileServerThread(0, debug, threaded=threaded, processes=processes)
@@ -144,7 +144,7 @@ def launch_server(
         if port == 0:
             # Get reallocated port
             port = server.port
-    Data.add_server(port, server)
+    ServerManager.add_server(port, server)
     return port
 
 
@@ -178,14 +178,14 @@ class TileClient(BaseTileClient):
         super().__init__(filename)
         self._key = launch_server(port, debug, threaded=threaded, processes=processes)
         # Store actual port just in case
-        self._port = Data.get_server(self._key).srv.port
+        self._port = ServerManager.get_server(self._key).srv.port
 
     def __del__(self):
         self.shutdown()
 
     @property
     def server(self):
-        return Data.get_server(self._key)
+        return ServerManager.get_server(self._key)
 
     @property
     def port(self):
@@ -200,7 +200,7 @@ class TileClient(BaseTileClient):
         return f"http://{self.host}:{self.port}"
 
     def shutdown(self, force: bool = False):
-        Data.shutdown_server(self._key, force=force)
+        ServerManager.shutdown_server(self._key, force=force)
 
 
 def get_or_create_tile_client(
