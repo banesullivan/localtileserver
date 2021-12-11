@@ -1,7 +1,14 @@
 from osgeo import gdal
 import pytest
 
+from localtileserver.application import app
 from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path
+
+
+@pytest.fixture
+def flask_client():
+    with app.test_client() as client:
+        yield client
 
 
 @pytest.fixture
