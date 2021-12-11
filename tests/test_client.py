@@ -6,7 +6,8 @@ import requests
 from localtileserver.application.utilities import get_tile_source
 from localtileserver.client import DEMO_REMOTE_TILE_SERVER, RemoteTileClient
 from localtileserver.server import (
-    _LIVE_SERVERS,
+    Data,
+    ServerDownError,
     TileClient,
     TileServerThread,
     get_or_create_tile_client,
@@ -23,7 +24,7 @@ def get_content(url):
 
 @pytest.mark.parametrize("processes", [1, 5])
 def test_create_tile_client(bahamas_file, processes):
-    assert len(_LIVE_SERVERS) == 0
+    assert Data.server_count() == 0
     tile_client = TileClient(bahamas_file, processes=processes, debug=True)
     assert tile_client.filename == bahamas_file
     assert tile_client.port
@@ -66,18 +67,18 @@ def test_client_force_shutdown(bahamas):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
-    assert len(_LIVE_SERVERS) == 1
+    assert Data.server_count() == 1
     bahamas.shutdown(force=True)
-    assert len(_LIVE_SERVERS) == 0
+    assert Data.server_count() == 0
     with pytest.raises(requests.ConnectionError):
         r = requests.get(tile_url)
         r.raise_for_status()
-    with pytest.raises(TileServerThread.ServerDownError):
+    with pytest.raises(ServerDownError):
         bahamas.bounds()
 
 
 def test_multiple_tile_clients_one_server(bahamas, blue_marble):
-    assert len(_LIVE_SERVERS) == 1
+    assert Data.server_count() == 1
     tile_url_a = bahamas.get_tile_url().format(z=8, x=72, y=110)
     tile_url_b = blue_marble.get_tile_url().format(z=8, x=72, y=110)
     assert get_content(tile_url_a) != get_content(tile_url_b)

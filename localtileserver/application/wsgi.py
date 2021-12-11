@@ -1,6 +1,6 @@
 import logging
 
-from localtileserver.application import app
+from localtileserver.application import create_app
 
 if __name__ == "__main__":
 
@@ -9,4 +9,5 @@ if __name__ == "__main__":
     logging.getLogger("large_image").setLevel(logging.DEBUG)
     logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
 
+    app = create_app()
     app.run()
