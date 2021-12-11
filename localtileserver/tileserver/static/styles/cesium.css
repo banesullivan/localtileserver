@@ -19,7 +19,7 @@
     border-radius: 10px;
     position: absolute;
     opacity: 0.75;
-    z-index: 100;
+    z-index: 11;
     bottom: 5px;
     right: 5px;
 }

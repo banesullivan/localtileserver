@@ -59,12 +59,16 @@
 
 <body>
     <div id="wrapper">
-        <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <nav class="navbar navbar-expand-md navbar-light">
             <a class="navbar-brand" href="{{ url_for('tileserver.index')}}?filename={{ filename|urlencode }}">Tile Viewer</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-trigger="#main_nav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-collapse" id="main_nav">
+                <div class="offcanvas-header mt-3">
+                    <button class="btn btn-close float-right"> &times Close </button>
+                    <h5 class="py-2">Main navbar</h5>
+                </div>
                 <ul class="navbar-nav">
                     <li class="nav-item active">
                         <a class="nav-link" href="{{ url_for('tileserver.roi')}}?filename={{ filename|urlencode }}">ROI Extraction</a>
@@ -77,10 +81,22 @@
                     </li>
                 </ul>
             </div>
-            <div style="margin-left: auto; margin-right: 0;">
-                {{ path }}
-            </div>
         </nav>
+
+        <script>
+            $("[data-trigger]").on("click", function() {
+                var trigger_id = $(this).attr('data-trigger');
+                $(trigger_id).toggleClass("show");
+                $('body').toggleClass("offcanvas-active");
+            });
+
+            // close button
+            $(".btn-close").click(function(e) {
+                $(".navbar-collapse").removeClass("show");
+                $("body").removeClass("offcanvas-active");
+            });
+        </script>
+
         <div id="content">
             {% block content %} {% endblock %}
         </div>
