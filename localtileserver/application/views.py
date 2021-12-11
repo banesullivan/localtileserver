@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 class GeoJSViewer(View):
     def dispatch_request(self):
-        return render_template("geojsViewer.html")
+        return render_template("tileserver/geojsViewer.html")
 
 
 class CesiumViewer(View):
     def dispatch_request(self):
-        return render_template("cesiumViewer.html")
+        return render_template("tileserver/cesiumViewer.html")
 
 
 @tileserver.context_processor
