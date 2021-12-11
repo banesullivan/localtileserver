@@ -1,6 +1,6 @@
 from typing import Union
 
-from localtileserver.server import TileClient
+from localtileserver.client import TileClient
 from localtileserver.tileserver import get_data_path
 
 

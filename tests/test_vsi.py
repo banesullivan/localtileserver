@@ -1,4 +1,4 @@
-from localtileserver.server import TileClient
+from localtileserver.client import TileClient
 
 
 def test_tileclient_with_vsi(remote_file_url):

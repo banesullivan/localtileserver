@@ -3,7 +3,7 @@ import os
 import pathlib
 from typing import List, Union
 
-from localtileserver.server import TileClient, get_or_create_tile_client
+from localtileserver.client import TileClient, get_or_create_tile_client
 
 logger = logging.getLogger(__name__)
 DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesullivan/localtileserver' target='_blank'>localtileserver</a>."

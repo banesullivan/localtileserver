@@ -4,6 +4,7 @@ from typing import List, Union
 
 import requests
 
+from localtileserver.server import ServerManager, launch_server
 from localtileserver.tileserver import get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import add_query_parameters, save_file_from_request
 
@@ -216,3 +217,95 @@ class RemoteTileClient(BaseTileClient):
     @property
     def base_url(self):
         return self.host
+
+
+class TileClient(BaseTileClient):
+    """Serve tiles from a local raster file in a background thread.
+
+    Parameters
+    ----------
+    path : pathlib.Path, str
+        The path on disk to use as the source raster for the tiles.
+    port : int
+        The port on your host machine to use for the tile server. This defaults
+        to getting an available port.
+    debug : bool
+        Run the tile server in debug mode.
+    threaded : bool
+        Run the background server as a ThreadedWSGIServer. Default True.
+    processes : int
+        If processes is greater than 1, run background server as ForkingWSGIServer
+
+    """
+
+    def __init__(
+        self,
+        filename: Union[pathlib.Path, str],
+        port: Union[int, str] = "default",
+        debug: bool = False,
+        threaded: bool = True,
+        processes: int = 1,
+    ):
+        super().__init__(filename)
+        self._key = launch_server(port, debug, threaded=threaded, processes=processes)
+        # Store actual port just in case
+        self._port = ServerManager.get_server(self._key).srv.port
+
+    def __del__(self):
+        self.shutdown()
+
+    @property
+    def server(self):
+        return ServerManager.get_server(self._key)
+
+    @property
+    def port(self):
+        return self.server.port
+
+    @property
+    def host(self):
+        return self.server.host
+
+    @property
+    def base_url(self):
+        return f"http://{self.host}:{self.port}"
+
+    def shutdown(self, force: bool = False):
+        if hasattr(self, "_key"):
+            ServerManager.shutdown_server(self._key, force=force)
+
+
+def get_or_create_tile_client(
+    source: Union[pathlib.Path, str, TileClient],
+    port: Union[int, str] = "default",
+    debug: bool = False,
+    threaded: bool = True,
+    processes: int = 1,
+):
+    """A helper to safely get a TileClient from a path on disk.
+
+    To Do
+    -----
+    There should eventually be a check to see if a TileClient instance exists
+    for the given filename. For now, it is not really a big deal because the
+    default is for all TileClient's to share a single server.
+
+    """
+    if isinstance(source, RemoteTileClient):
+        return source, False
+    _internally_created = False
+    # Launch tile server if file path is given
+    if not isinstance(source, TileClient):
+        source = TileClient(source, port=port, debug=debug, threaded=threaded, processes=processes)
+        _internally_created = True
+    # Check that the tile source is valid and no server errors
+    try:
+        r = requests.get(source.create_url("metadata"))
+        r.raise_for_status()
+    except requests.HTTPError as e:
+        # Make sure to destroy the server and its thread if internally created.
+        if _internally_created:
+            source.shutdown()
+            del source
+        raise e
+    return source, _internally_created
