@@ -11,7 +11,7 @@ from localtileserver.application import style, utilities
 from localtileserver.application.blueprint import cache
 
 logger = logging.getLogger(__name__)
-REQUEST_TIMEOUT = 120
+REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
 
 
 def make_cache_key(*args, **kwargs):
@@ -67,7 +67,7 @@ class TilesDebugView(BaseTileView):
 
 
 class MetadataView(BaseTileView):
-    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         return utilities.get_meta_data(tile_source)
@@ -84,7 +84,7 @@ class BoundsView(BaseTileView):
 
 
 class TilesView(BaseTileView):
-    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def dispatch_request(self, x: int, y: int, z: int):
         projection = request.args.get("projection", "EPSG:3857")
         tile_source = self.get_tile_source(projection=projection)
@@ -103,7 +103,7 @@ class TilesView(BaseTileView):
 
 
 class ThumbnailView(BaseTileView):
-    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def dispatch_request(self):
         tile_source = self.get_tile_source()
         thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
