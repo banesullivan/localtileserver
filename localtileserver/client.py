@@ -110,7 +110,7 @@ class BaseTileClient:
         output_path: pathlib.Path = None,
     ):
         """Extract ROI in world coordinates."""
-        path = f"/region/world/{left}/{right}/{bottom}/{top}/region.tif?units={units}&encoding={encoding}"
+        path = f"/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
         return save_file_from_request(r, output_path)
@@ -125,7 +125,7 @@ class BaseTileClient:
         output_path: pathlib.Path = None,
     ):
         """Extract ROI in world coordinates."""
-        path = f"/region/pixel/{left}/{right}/{bottom}/{top}/region.tif?encoding={encoding}"
+        path = f"/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
         return save_file_from_request(r, output_path)

@@ -1,10 +1,10 @@
 import logging
 
-from flask import render_template, request
+from flask import current_app, render_template, request
 from flask.views import View
 
 from localtileserver import utilities
-from localtileserver.application import app
+from localtileserver.application.blueprint import tileserver
 from localtileserver.examples import get_data_path
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ class CesiumViewer(View):
         return render_template("cesiumViewer.html")
 
 
-@app.context_processor
+@tileserver.context_processor
 def inject_context():
     try:
         # First look for filename in URL params
@@ -31,7 +31,7 @@ def inject_context():
     except KeyError:
         # Backup to app.config
         try:
-            filename = utilities.get_clean_filename(app.config["filename"])
+            filename = utilities.get_clean_filename(current_app.config["filename"])
         except KeyError:
             # Fallback to sample data
             logger.error("No filename set in app config or URL params. Using sample data.")

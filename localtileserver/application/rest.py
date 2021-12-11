@@ -5,13 +5,11 @@ import time
 from PIL import Image, ImageOps
 from flask import request, send_file
 from flask.views import View
-from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
 
 from localtileserver import style, utilities
-from localtileserver.application import app
+from localtileserver.application.blueprint import cache
 
-cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 logger = logging.getLogger(__name__)
 REQUEST_TIMEOUT = 120
 
@@ -116,7 +114,16 @@ class ThumbnailView(BaseTileView):
         )
 
 
-class RegionWorldView(BaseTileView):
+class BaseRegionView(BaseTileView):
+    def get_bounds(self):
+        left = float(request.args.get("left"))
+        right = float(request.args.get("right"))
+        bottom = float(request.args.get("bottom"))
+        top = float(request.args.get("top"))
+        return (left, right, bottom, top)
+
+
+class RegionWorldView(BaseRegionView):
     """Returns region tile binary from world coordinates in given EPSG.
 
     Note
@@ -127,12 +134,14 @@ class RegionWorldView(BaseTileView):
 
     """
 
-    def dispatch_request(self, left: float, right: float, bottom: float, top: float):
+    def dispatch_request(self):
+
         tile_source = self.get_tile_source()
         if not isinstance(tile_source, GDALFileTileSource):
             raise TypeError("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")
         encoding = request.args.get("encoding", "TILED")
+        left, right, bottom, top = self.get_bounds()
         path, mime_type = utilities.get_region_world(
             tile_source,
             left,
@@ -148,12 +157,13 @@ class RegionWorldView(BaseTileView):
         )
 
 
-class RegionPixelView(BaseTileView):
+class RegionPixelView(BaseRegionView):
     """Returns region tile binary from pixel coordinates."""
 
-    def dispatch_request(self, left: float, right: float, bottom: float, top: float):
+    def dispatch_request(self):
         tile_source = self.get_tile_source()
         encoding = request.args.get("encoding", None)
+        left, right, bottom, top = self.get_bounds()
         path, mime_type = utilities.get_region_pixel(
             tile_source,
             left,
