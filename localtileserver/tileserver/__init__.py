@@ -3,7 +3,8 @@ from flask import Flask
 
 from localtileserver.tileserver import rest, urls, views
 from localtileserver.tileserver.blueprint import cache, tileserver
-from localtileserver.tileserver.utilities import get_cache_dir, make_vsi, purge_cache
+from localtileserver.tileserver.data import get_data_path
+from localtileserver.tileserver.utilities import get_cache_dir, make_vsi, purge_cache, get_clean_filename
 
 
 def create_app(url_prefix="/"):
