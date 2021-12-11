@@ -1,12 +1,7 @@
-import pathlib
 from typing import Union
 
 from localtileserver.server import TileClient
-
-
-def get_data_path(name):
-    dirname = pathlib.Path(__file__).parent
-    return dirname / "data" / name
+from localtileserver.tileserver import get_data_path
 
 
 def get_pine_gulch_url():

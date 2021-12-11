@@ -3,7 +3,6 @@ import os
 import pytest
 import requests
 
-from localtileserver.tileserver.utilities import get_tile_source
 from localtileserver.client import DEMO_REMOTE_TILE_SERVER, RemoteTileClient
 from localtileserver.server import (
     ServerDownError,
@@ -11,6 +10,7 @@ from localtileserver.server import (
     TileClient,
     get_or_create_tile_client,
 )
+from localtileserver.tileserver.utilities import get_tile_source
 
 TOLERANCE = 2e-2
 
