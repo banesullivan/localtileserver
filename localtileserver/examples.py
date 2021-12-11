@@ -2,7 +2,7 @@ import pathlib
 from typing import Union
 
 from localtileserver.server import TileClient
-from localtileserver.tileserver.data import get_data_path
+from localtileserver.tileserver import get_data_path
 
 
 def get_pine_gulch_url():

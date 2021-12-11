@@ -5,7 +5,7 @@ from flask.views import View
 
 from localtileserver.tileserver import utilities
 from localtileserver.tileserver.blueprint import tileserver
-from localtileserver.examples import get_data_path
+from localtileserver.tileserver.data import get_data_path
 
 logger = logging.getLogger(__name__)
 

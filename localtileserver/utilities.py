@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 import requests
 
-from localtileserver.tileserver.utilities import get_cache_dir
+from localtileserver.tileserver import get_cache_dir
 
 
 def save_file_from_request(response: requests.Response, output_path: pathlib.Path):
