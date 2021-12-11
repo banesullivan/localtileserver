@@ -5,7 +5,12 @@ import requests
 
 from localtileserver.application.utilities import get_tile_source
 from localtileserver.client import DEMO_REMOTE_TILE_SERVER, RemoteTileClient
-from localtileserver.server import _LIVE_SERVERS, TileClient, TileServerThread
+from localtileserver.server import (
+    _LIVE_SERVERS,
+    TileClient,
+    TileServerThread,
+    get_or_create_tile_client,
+)
 
 TOLERANCE = 2e-2
 
@@ -16,8 +21,9 @@ def get_content(url):
     return r.content
 
 
-def test_create_tile_client(bahamas_file):
-    tile_client = TileClient(bahamas_file, debug=True)
+@pytest.mark.parametrize("processes", [1, 5])
+def test_create_tile_client(bahamas_file, processes):
+    tile_client = TileClient(bahamas_file, processes=processes, debug=True)
     assert tile_client.filename == bahamas_file
     assert tile_client.port
     assert tile_client.base_url
@@ -30,6 +36,14 @@ def test_create_tile_client(bahamas_file):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
+    tile_url = tile_client.get_tile_url(grid=True).format(z=8, x=72, y=110)
+    r = requests.get(tile_url)
+    r.raise_for_status()
+    assert r.content
+    tile_url = tile_client.create_url("/tiles/debug/{z}/{x}/{y}.png".format(z=8, x=72, y=110))
+    r = requests.get(tile_url)
+    r.raise_for_status()
+    assert r.content
     tile_url = tile_client.get_tile_url(palette="matplotlib.Plasma_6").format(z=8, x=72, y=110)
     r = requests.get(tile_url)
     r.raise_for_status()
@@ -38,9 +52,11 @@ def test_create_tile_client(bahamas_file):
     assert os.path.exists(path)
 
 
-def test_create_tile_client_bad_filename():
+def test_create_tile_client_bad(bahamas_file):
     with pytest.raises(OSError):
         TileClient("foo.tif", debug=True)
+    with pytest.raises(ValueError):
+        TileClient(bahamas_file, port="0", debug=True)
 
 
 def test_client_force_shutdown(bahamas):
@@ -91,6 +107,8 @@ def test_caching_query_params(bahamas):
     thumb_url_a = bahamas.create_url("thumbnail")
     thumb_url_b = bahamas.create_url("thumbnail?band=1")
     assert get_content(thumb_url_a) != get_content(thumb_url_b)
+    thumb_url_c = bahamas.create_url("thumbnail")
+    assert get_content(thumb_url_a) == get_content(thumb_url_c)
 
 
 def test_multiband(bahamas):
@@ -119,3 +137,26 @@ def test_multiband(bahamas):
 def test_remote_client(remote_file_url):
     tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
     assert tile_client.metadata()
+
+
+def test_launch_non_default_server(bahamas_file):
+    default = TileClient(bahamas_file)
+    diff = TileClient(bahamas_file, port=0)
+    assert default.server != diff.server
+    assert default.port != diff.port
+
+
+def test_get_or_create_tile_client(bahamas_file, remote_file_url):
+    tile_client, _ = get_or_create_tile_client(bahamas_file)
+    same, created = get_or_create_tile_client(tile_client)
+    assert not created
+    assert tile_client == same
+    diff, created = get_or_create_tile_client(bahamas_file)
+    assert created
+    assert tile_client != diff
+    with pytest.raises(requests.HTTPError):
+        _, _ = get_or_create_tile_client(__file__)
+    tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
+    same, created = get_or_create_tile_client(tile_client)
+    assert not created
+    assert tile_client == same
