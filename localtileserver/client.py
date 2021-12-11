@@ -54,6 +54,7 @@ class BaseTileClient:
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
         vmax: Union[Union[float, int], List[Union[float, int]]] = None,
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        grid: bool = False,
     ):
         """
 
@@ -76,6 +77,9 @@ class BaseTileClient:
             a single band.
         nodata : float
             The value from the band to use to interpret as not valid data.
+        grid : bool
+            Show the outline of each tile. This is useful when debugging your
+            tile viewer.
 
         """
         # First handle query parameters to check for errors
@@ -94,6 +98,8 @@ class BaseTileClient:
             params["nodata"] = nodata
         if projection is not None:
             params["projection"] = projection
+        if grid:
+            params["grid"] = True
         return add_query_parameters(self.create_url("tiles/{z}/{x}/{y}.png"), params)
 
     def extract_roi(
