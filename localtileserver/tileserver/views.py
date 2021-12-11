@@ -1,10 +1,10 @@
 import logging
 
-from flask import render_template, request
+from flask import current_app, render_template, request
 from flask.views import View
 
-from localtileserver import utilities
-from localtileserver.application import app
+from localtileserver.tileserver import utilities
+from localtileserver.tileserver.blueprint import tileserver
 from localtileserver.examples import get_data_path
 
 logger = logging.getLogger(__name__)
@@ -12,15 +12,15 @@ logger = logging.getLogger(__name__)
 
 class GeoJSViewer(View):
     def dispatch_request(self):
-        return render_template("geojsViewer.html")
+        return render_template("tileserver/geojsViewer.html")
 
 
 class CesiumViewer(View):
     def dispatch_request(self):
-        return render_template("cesiumViewer.html")
+        return render_template("tileserver/cesiumViewer.html")
 
 
-@app.context_processor
+@tileserver.context_processor
 def inject_context():
     try:
         # First look for filename in URL params
@@ -31,7 +31,7 @@ def inject_context():
     except KeyError:
         # Backup to app.config
         try:
-            filename = utilities.get_clean_filename(app.config["filename"])
+            filename = utilities.get_clean_filename(current_app.config["filename"])
         except KeyError:
             # Fallback to sample data
             logger.error("No filename set in app config or URL params. Using sample data.")

@@ -85,7 +85,7 @@ function downloadROI() {
         return
     }
     // Build a URL for extracting that ROI
-    var url = `${host}/region/world/${roi.left}/${roi.right}/${roi.bottom}/${roi.top}/region.tif?units=EPSG:4326&filename=${filename}&encoding=PNG`;
+    var url = `${host}/world/region.tif?units=EPSG:4326&left=${roi.left}&right=${roi.right}&bottom=${roi.bottom}&top=${roi.top}&filename=${filename}`;
     download(url, 'region.tif')
 }
 

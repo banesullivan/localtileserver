@@ -10,6 +10,5 @@ htmlcov
 
 electron
 notebooks
-
-tileserver/data/*.aux.xml
-localtileserver/data/*.aux.xml
+.pytest_cache
+.ipynb_checkpoints

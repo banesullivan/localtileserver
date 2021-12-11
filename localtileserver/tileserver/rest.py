@@ -5,15 +5,13 @@ import time
 from PIL import Image, ImageOps
 from flask import request, send_file
 from flask.views import View
-from flask_caching import Cache
 from large_image_source_gdal import GDALFileTileSource
 
-from localtileserver import style, utilities
-from localtileserver.application import app
+from localtileserver.tileserver import style, utilities
+from localtileserver.tileserver.blueprint import cache
 
-cache = Cache(app, config={"CACHE_TYPE": "SimpleCache"})
 logger = logging.getLogger(__name__)
-REQUEST_TIMEOUT = 120
+REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
 
 
 def make_cache_key(*args, **kwargs):
@@ -22,7 +20,7 @@ def make_cache_key(*args, **kwargs):
     return (path + args).encode("utf-8")
 
 
-class BaseTileView(View):
+class BaseImageView(View):
     def get_tile_source(self, projection="EPSG:3857"):
         """Return the built tile source."""
         filename = utilities.get_clean_filename(request.args.get("filename", ""))
@@ -35,6 +33,37 @@ class BaseTileView(View):
         sty = style.make_style(band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata)
         return utilities.get_tile_source(filename, projection, style=sty)
 
+
+class MetadataView(BaseImageView):
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
+    def dispatch_request(self):
+        tile_source = self.get_tile_source()
+        return utilities.get_meta_data(tile_source)
+
+
+class BoundsView(BaseImageView):
+    def dispatch_request(self):
+        tile_source = self.get_tile_source()
+        projection = request.args.get("projection", "EPSG:4326")
+        return utilities.get_tile_bounds(
+            tile_source,
+            projection=projection,
+        )
+
+
+class ThumbnailView(BaseImageView):
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
+    def dispatch_request(self):
+        tile_source = self.get_tile_source()
+        thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
+        return send_file(
+            io.BytesIO(thumb_data),
+            download_name="thumbnail.png",
+            mimetype=mime_type,
+        )
+
+
+class BaseTileView(BaseImageView):
     @staticmethod
     def add_border_to_image(content):
         img = Image.open(io.BytesIO(content))
@@ -45,7 +74,7 @@ class BaseTileView(View):
         return img_bytes.getvalue()
 
 
-class TilesDebugView(BaseTileView):
+class TileDebugView(BaseTileView):
     """A dummy tile server endpoint that produces borders of the tile grid.
 
     This is used for testing tile viewers. It returns the same thing on every
@@ -55,7 +84,7 @@ class TilesDebugView(BaseTileView):
     """
 
     def dispatch_request(self, x: int, y: int, z: int):
-        img = Image.new("RGBA", (255, 255))
+        img = Image.new("RGBA", (254, 254))
         img = ImageOps.expand(img, border=1, fill="black")
         img_bytes = io.BytesIO()
         img.save(img_bytes, format="PNG")
@@ -68,25 +97,8 @@ class TilesDebugView(BaseTileView):
         )
 
 
-class MetadataView(BaseTileView):
-    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
-    def dispatch_request(self):
-        tile_source = self.get_tile_source()
-        return utilities.get_meta_data(tile_source)
-
-
-class BoundsView(BaseTileView):
-    def dispatch_request(self):
-        tile_source = self.get_tile_source()
-        projection = request.args.get("projection", "EPSG:4326")
-        return utilities.get_tile_bounds(
-            tile_source,
-            projection=projection,
-        )
-
-
-class TilesView(BaseTileView):
-    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
+class TileView(BaseTileView):
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def dispatch_request(self, x: int, y: int, z: int):
         projection = request.args.get("projection", "EPSG:3857")
         tile_source = self.get_tile_source(projection=projection)
@@ -104,19 +116,16 @@ class TilesView(BaseTileView):
         )
 
 
-class ThumbnailView(BaseTileView):
-    @cache.cached(timeout=REQUEST_TIMEOUT, key_prefix=make_cache_key)
-    def dispatch_request(self):
-        tile_source = self.get_tile_source()
-        thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
-        return send_file(
-            io.BytesIO(thumb_data),
-            download_name="thumbnail.png",
-            mimetype=mime_type,
-        )
+class BaseRegionView(BaseImageView):
+    def get_bounds(self):
+        left = float(request.args.get("left"))
+        right = float(request.args.get("right"))
+        bottom = float(request.args.get("bottom"))
+        top = float(request.args.get("top"))
+        return (left, right, bottom, top)
 
 
-class RegionWorldView(BaseTileView):
+class RegionWorldView(BaseRegionView):
     """Returns region tile binary from world coordinates in given EPSG.
 
     Note
@@ -127,12 +136,14 @@ class RegionWorldView(BaseTileView):
 
     """
 
-    def dispatch_request(self, left: float, right: float, bottom: float, top: float):
+    def dispatch_request(self):
+
         tile_source = self.get_tile_source()
         if not isinstance(tile_source, GDALFileTileSource):
             raise TypeError("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")
         encoding = request.args.get("encoding", "TILED")
+        left, right, bottom, top = self.get_bounds()
         path, mime_type = utilities.get_region_world(
             tile_source,
             left,
@@ -148,12 +159,13 @@ class RegionWorldView(BaseTileView):
         )
 
 
-class RegionPixelView(BaseTileView):
+class RegionPixelView(BaseRegionView):
     """Returns region tile binary from pixel coordinates."""
 
-    def dispatch_request(self, left: float, right: float, bottom: float, top: float):
+    def dispatch_request(self):
         tile_source = self.get_tile_source()
         encoding = request.args.get("encoding", None)
+        left, right, bottom, top = self.get_bounds()
         path, mime_type = utilities.get_region_pixel(
             tile_source,
             left,

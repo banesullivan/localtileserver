@@ -5,9 +5,9 @@ import webbrowser
 
 import click
 
-from localtileserver.application import app
+from localtileserver.tileserver import create_app
+from localtileserver.tileserver.utilities import get_clean_filename
 from localtileserver.examples import get_data_path, get_pine_gulch_url
-from localtileserver.utilities import get_clean_filename
 
 
 @click.command()
@@ -39,6 +39,7 @@ def run_app(filename, port: int = 0, debug: bool = False, browser: bool = True):
         filename = get_clean_filename(filename)
         if not str(filename).startswith("/vsi") and not filename.exists():
             raise OSError(f"File does not exist: {filename}")
+    app = create_app()
     app.config["DEBUG"] = debug
     app.config["filename"] = filename
     if debug:
@@ -54,7 +55,8 @@ def run_app(filename, port: int = 0, debug: bool = False, browser: bool = True):
         sock.close()
 
     url = f"http://localhost:{port}"
-    threading.Timer(1, lambda: webbrowser.open(url)).start()
+    if browser:
+        threading.Timer(1, lambda: webbrowser.open(url)).start()
     app.run(host="localhost", port=port, debug=debug)
 
 

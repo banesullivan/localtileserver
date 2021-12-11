@@ -1,7 +1,15 @@
 from osgeo import gdal
 import pytest
 
+from localtileserver.tileserver import create_app
 from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path
+
+
+@pytest.fixture
+def flask_client():
+    app = create_app()
+    with app.test_client() as client:
+        yield client
 
 
 @pytest.fixture
@@ -12,13 +20,17 @@ def bahamas_file():
 @pytest.fixture
 def bahamas(port="default", debug=True):
     # Using debug True since in a testing environment
-    return get_bahamas(port=port, debug=debug)
+    tile_client = get_bahamas(port=port, debug=debug)
+    yield tile_client
+    tile_client.shutdown(force=True)
 
 
 @pytest.fixture
 def blue_marble(port="default", debug=True):
     # Using debug True since in a testing environment
-    return get_blue_marble(port=port, debug=debug)
+    tile_client = get_blue_marble(port=port, debug=debug)
+    yield tile_client
+    tile_client.shutdown(force=True)
 
 
 @pytest.fixture

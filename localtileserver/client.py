@@ -4,12 +4,9 @@ from typing import List, Union
 
 import requests
 
-from localtileserver.palettes import palette_valid_or_raise
-from localtileserver.utilities import (
-    add_query_parameters,
-    get_clean_filename,
-    save_file_from_request,
-)
+from localtileserver.tileserver.palettes import palette_valid_or_raise
+from localtileserver.tileserver.utilities import get_clean_filename
+from localtileserver.utilities import add_query_parameters, save_file_from_request
 
 DEMO_REMOTE_TILE_SERVER = "https://localtileserver-demo.herokuapp.com/"
 logger = logging.getLogger(__name__)
@@ -57,6 +54,7 @@ class BaseTileClient:
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
         vmax: Union[Union[float, int], List[Union[float, int]]] = None,
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        grid: bool = False,
     ):
         """
 
@@ -79,6 +77,9 @@ class BaseTileClient:
             a single band.
         nodata : float
             The value from the band to use to interpret as not valid data.
+        grid : bool
+            Show the outline of each tile. This is useful when debugging your
+            tile viewer.
 
         """
         # First handle query parameters to check for errors
@@ -97,6 +98,8 @@ class BaseTileClient:
             params["nodata"] = nodata
         if projection is not None:
             params["projection"] = projection
+        if grid:
+            params["grid"] = True
         return add_query_parameters(self.create_url("tiles/{z}/{x}/{y}.png"), params)
 
     def extract_roi(
@@ -110,7 +113,7 @@ class BaseTileClient:
         output_path: pathlib.Path = None,
     ):
         """Extract ROI in world coordinates."""
-        path = f"/region/world/{left}/{right}/{bottom}/{top}/region.tif?units={units}&encoding={encoding}"
+        path = f"/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
         return save_file_from_request(r, output_path)
@@ -125,7 +128,7 @@ class BaseTileClient:
         output_path: pathlib.Path = None,
     ):
         """Extract ROI in world coordinates."""
-        path = f"/region/pixel/{left}/{right}/{bottom}/{top}/region.tif?encoding={encoding}"
+        path = f"/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
         return save_file_from_request(r, output_path)

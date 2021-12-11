@@ -206,7 +206,7 @@ m
 ![ipyleaflet-draw-roi](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-draw-roi.png)
 
 
-#### 🌳 `folium` Tile Layers
+### 🌳 `folium` Tile Layers
 
 Similarly to the support provided for `ipyleaflet`, I have included a utility
 to generate a [`folium.TileLayer`](https://python-visualization.github.io/folium/modules.html#folium.raster_layers.TileLayer)
@@ -234,7 +234,7 @@ m
 ![folium](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/folium.png)
 
 
-#### ☁️ Remote Cloud Optimized GeoTiffs (COGs)
+### ☁️ Remote Cloud Optimized GeoTiffs (COGs)
 
 While `localtileserver` is intended to be used only with raster files existing
 on your local filesystem, there is support for URL files through GDAL's
@@ -270,7 +270,7 @@ Note that the Virtual Storage Interface is a complex API, and `TileClient`
 currently only handles `vsis3` and `vsicurl`. If you need a different VFS
 mechanism, simply create your `/vsi` path and pass that to `TileClient`.
 
-#### 🗺️ Example Datasets
+### 🗺️ Example Datasets
 
 A few example datasets are included with `localtileserver`. A particularly
 useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.
@@ -376,9 +376,26 @@ Available choices are:
 - `bahamas`: Sample raster over the Bahamas
 
 
-### Usage Notes
+### 🗒️ Usage Notes
 
 - `get_leaflet_tile_layer` accepts either an existing `TileClient` or a
 path from which to create a `TileClient` under the hood.
 - The color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/).
 - If matplotlib is installed, any matplotlib colormap name cane be used a palette choice
+
+
+### 🧬 Using the Flask Blueprint
+
+Under the hood, `localtileserver` is a basic Flask Blueprint that can be easily
+incorporated into any Flask application. To utilize in your own application:
+
+```py
+from flask import Flask
+from localtileserver.tileserver.blueprint import cache, tileserver
+
+app = Flask(__name__)
+cache.init_app(app)
+app.register_blueprint(tileserver, url_prefix='/')
+```
+
+There is an example Flask application and deployment in [`banesullivan/remotetileserver`](https://github.com/banesullivan/remotetileserver)
