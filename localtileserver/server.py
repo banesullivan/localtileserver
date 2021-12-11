@@ -1,4 +1,5 @@
 import logging
+import os
 import pathlib
 import threading
 from typing import Union
@@ -84,6 +85,10 @@ class TileServerThread(threading.Thread):
     ):
         if not isinstance(port, int):
             raise ValueError(f"Port must be an int, not {type(port)}")
+        if processes > 1 and not hasattr(os, "fork"):
+            logger.error("Your platform does not support forking. Failing to multithreading.")
+            processes = 1
+            threaded = True
         if threaded and processes > 1:
             threaded = False
 
@@ -200,7 +205,7 @@ class TileClient(BaseTileClient):
         return f"http://{self.host}:{self.port}"
 
     def shutdown(self, force: bool = False):
-        if hasattr(self, '_key'):
+        if hasattr(self, "_key"):
             ServerManager.shutdown_server(self._key, force=force)
 
 
