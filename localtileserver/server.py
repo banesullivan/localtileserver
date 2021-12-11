@@ -200,7 +200,8 @@ class TileClient(BaseTileClient):
         return f"http://{self.host}:{self.port}"
 
     def shutdown(self, force: bool = False):
-        ServerManager.shutdown_server(self._key, force=force)
+        if hasattr(self, '_key'):
+            ServerManager.shutdown_server(self._key, force=force)
 
 
 def get_or_create_tile_client(
