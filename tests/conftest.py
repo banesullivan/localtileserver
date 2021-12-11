@@ -1,7 +1,7 @@
 from osgeo import gdal
 import pytest
 
-from localtileserver.application import create_app
+from localtileserver.tileserver import create_app
 from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path
 
 

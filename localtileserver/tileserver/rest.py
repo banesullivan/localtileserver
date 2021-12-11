@@ -7,8 +7,8 @@ from flask import request, send_file
 from flask.views import View
 from large_image_source_gdal import GDALFileTileSource
 
-from localtileserver.application import style, utilities
-from localtileserver.application.blueprint import cache
+from localtileserver.tileserver import style, utilities
+from localtileserver.tileserver.blueprint import cache
 
 logger = logging.getLogger(__name__)
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2

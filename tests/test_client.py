@@ -3,7 +3,7 @@ import os
 import pytest
 import requests
 
-from localtileserver.application.utilities import get_tile_source
+from localtileserver.tileserver.utilities import get_tile_source
 from localtileserver.client import DEMO_REMOTE_TILE_SERVER, RemoteTileClient
 from localtileserver.server import (
     ServerDownError,

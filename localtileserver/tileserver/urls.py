@@ -1,5 +1,5 @@
-from localtileserver.application import rest, views
-from localtileserver.application.blueprint import tileserver
+from localtileserver.tileserver import rest, views
+from localtileserver.tileserver.blueprint import tileserver
 
 # Views/pages
 tileserver.add_url_rule("/", view_func=views.CesiumViewer.as_view("index"))

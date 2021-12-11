@@ -1,6 +1,6 @@
 import logging
 
-from localtileserver.application import create_app
+from localtileserver.tileserver import create_app
 
 if __name__ == "__main__":
 

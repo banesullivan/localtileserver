@@ -5,8 +5,8 @@ import webbrowser
 
 import click
 
-from localtileserver.application import create_app
-from localtileserver.application.utilities import get_clean_filename
+from localtileserver.tileserver import create_app
+from localtileserver.tileserver.utilities import get_clean_filename
 from localtileserver.examples import get_data_path, get_pine_gulch_url
 
 

@@ -391,7 +391,7 @@ incorporated into any Flask application. To utilize in your own application:
 
 ```py
 from flask import Flask
-from localtileserver.application.blueprint import cache, tileserver
+from localtileserver.tileserver.blueprint import cache, tileserver
 
 app = Flask(__name__)
 cache.init_app(app)

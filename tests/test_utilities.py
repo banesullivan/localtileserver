@@ -1,7 +1,7 @@
 import pytest
 
 from localtileserver import Report
-from localtileserver.application.palettes import (
+from localtileserver.tileserver.palettes import (
     get_palette_by_name,
     is_valid_palette_name,
     mpl_to_palette,

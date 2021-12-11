@@ -27,7 +27,7 @@ class ServerManager:
 
     @staticmethod
     def get_or_create_app():
-        from localtileserver.application import create_app
+        from localtileserver.tileserver import create_app
 
         if not ServerManager._APP:
             ServerManager._APP = create_app()
