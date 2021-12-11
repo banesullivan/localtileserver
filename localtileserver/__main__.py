@@ -54,7 +54,8 @@ def run_app(filename, port: int = 0, debug: bool = False, browser: bool = True):
         sock.close()
 
     url = f"http://localhost:{port}"
-    threading.Timer(1, lambda: webbrowser.open(url)).start()
+    if browser:
+        threading.Timer(1, lambda: webbrowser.open(url)).start()
     app.run(host="localhost", port=port, debug=debug)
 
 
