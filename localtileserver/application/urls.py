@@ -13,11 +13,11 @@ tileserver.add_url_rule(
     view_func=rest.BoundsView.as_view("bounds"),
 )
 tileserver.add_url_rule(
-    "/tiles/<int:z>/<int:x>/<int:y>.png", view_func=rest.TilesView.as_view("tiles")
+    "/tiles/<int:z>/<int:x>/<int:y>.png", view_func=rest.TileView.as_view("tiles")
 )
 tileserver.add_url_rule(
     "/tiles/debug/<int:z>/<int:x>/<int:y>.png",
-    view_func=rest.TilesDebugView.as_view("tiles-debug"),
+    view_func=rest.TileDebugView.as_view("tiles-debug"),
 )
 tileserver.add_url_rule(
     "/world/region.tif",

@@ -20,7 +20,7 @@ def make_cache_key(*args, **kwargs):
     return (path + args).encode("utf-8")
 
 
-class BaseTileView(View):
+class BaseImageView(View):
     def get_tile_source(self, projection="EPSG:3857"):
         """Return the built tile source."""
         filename = utilities.get_clean_filename(request.args.get("filename", ""))
@@ -33,6 +33,37 @@ class BaseTileView(View):
         sty = style.make_style(band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata)
         return utilities.get_tile_source(filename, projection, style=sty)
 
+
+class MetadataView(BaseImageView):
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
+    def dispatch_request(self):
+        tile_source = self.get_tile_source()
+        return utilities.get_meta_data(tile_source)
+
+
+class BoundsView(BaseImageView):
+    def dispatch_request(self):
+        tile_source = self.get_tile_source()
+        projection = request.args.get("projection", "EPSG:4326")
+        return utilities.get_tile_bounds(
+            tile_source,
+            projection=projection,
+        )
+
+
+class ThumbnailView(BaseImageView):
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
+    def dispatch_request(self):
+        tile_source = self.get_tile_source()
+        thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
+        return send_file(
+            io.BytesIO(thumb_data),
+            download_name="thumbnail.png",
+            mimetype=mime_type,
+        )
+
+
+class BaseTileView(BaseImageView):
     @staticmethod
     def add_border_to_image(content):
         img = Image.open(io.BytesIO(content))
@@ -43,7 +74,7 @@ class BaseTileView(View):
         return img_bytes.getvalue()
 
 
-class TilesDebugView(BaseTileView):
+class TileDebugView(BaseTileView):
     """A dummy tile server endpoint that produces borders of the tile grid.
 
     This is used for testing tile viewers. It returns the same thing on every
@@ -53,7 +84,7 @@ class TilesDebugView(BaseTileView):
     """
 
     def dispatch_request(self, x: int, y: int, z: int):
-        img = Image.new("RGBA", (255, 255))
+        img = Image.new("RGBA", (254, 254))
         img = ImageOps.expand(img, border=1, fill="black")
         img_bytes = io.BytesIO()
         img.save(img_bytes, format="PNG")
@@ -66,24 +97,7 @@ class TilesDebugView(BaseTileView):
         )
 
 
-class MetadataView(BaseTileView):
-    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
-    def dispatch_request(self):
-        tile_source = self.get_tile_source()
-        return utilities.get_meta_data(tile_source)
-
-
-class BoundsView(BaseTileView):
-    def dispatch_request(self):
-        tile_source = self.get_tile_source()
-        projection = request.args.get("projection", "EPSG:4326")
-        return utilities.get_tile_bounds(
-            tile_source,
-            projection=projection,
-        )
-
-
-class TilesView(BaseTileView):
+class TileView(BaseTileView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def dispatch_request(self, x: int, y: int, z: int):
         projection = request.args.get("projection", "EPSG:3857")
@@ -102,19 +116,7 @@ class TilesView(BaseTileView):
         )
 
 
-class ThumbnailView(BaseTileView):
-    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
-    def dispatch_request(self):
-        tile_source = self.get_tile_source()
-        thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
-        return send_file(
-            io.BytesIO(thumb_data),
-            download_name="thumbnail.png",
-            mimetype=mime_type,
-        )
-
-
-class BaseRegionView(BaseTileView):
+class BaseRegionView(BaseImageView):
     def get_bounds(self):
         left = float(request.args.get("left"))
         right = float(request.args.get("right"))
