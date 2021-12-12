@@ -1,4 +1,5 @@
 from flask import Blueprint
+from flask_caching import Cache
 
 from localtileserver.tileserver.utilities import get_memcache_config
 
@@ -12,24 +13,18 @@ tileserver = Blueprint(
 
 
 def create_cache(url: str, username: str = None, password: str = None):
-    try:
-        from flask_caching import MemcachedCache, SASLMemcachedCache
-
-        if url:
-            config = {"CACHE_MEMCACHED_SERVERS": url}
-            if username and password:
-                config["CACHE_MEMCACHED_USERNAME"] = username
-                config["CACHE_MEMCACHED_PASSWORD"] = password
-                cache = SASLMemcachedCache(config=config)
-            else:
-                cache = MemcachedCache(config=config)
+    if url:
+        config = {"CACHE_MEMCACHED_SERVERS": url}
+        if username and password:
+            config["CACHE_TYPE"] = "SASLMemcachedCache"
+            config["CACHE_MEMCACHED_USERNAME"] = username
+            config["CACHE_MEMCACHED_PASSWORD"] = password
         else:
-            raise ImportError
-    except ImportError:
-        from flask_caching import Cache
+            config["CACHE_TYPE"] = "MemcachedCache"
 
-        cache = Cache(config={"CACHE_TYPE": "SimpleCache"})
-    return cache
+    else:
+        config = {"CACHE_TYPE": "SimpleCache"}
+    return Cache(config=config)
 
 
 cache = create_cache(*get_memcache_config())
