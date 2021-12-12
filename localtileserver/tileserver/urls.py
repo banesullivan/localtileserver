@@ -27,3 +27,7 @@ tileserver.add_url_rule(
     "/pixel/region.tif",
     view_func=rest.RegionPixelView.as_view("region-pixel"),
 )
+tileserver.add_url_rule(
+    "/colors",
+    view_func=rest.ListColors.as_view("colors"),
+)

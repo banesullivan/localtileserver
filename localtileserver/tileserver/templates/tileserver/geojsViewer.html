@@ -1,5 +1,6 @@
-{% extends "tileserver/base.html" %}
-{% block content %}
+{% extends "tileserver/baseTileViewer.html" %}
+
+{% block tileViewer %}
 
 <div class="geojsControls">
     {% include 'tileserver/_include/geojs.html' %}
@@ -13,7 +14,11 @@
 
     tileLayer.idleAfter = 'all';
     tileLayer.visible(true);
-    tileLayer.url(`${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filename}`)
+    tileLayer.url(tileUrl)
+
+    function updateTileLayer() {
+        tileLayer.url(tileUrl)
+    }
 
     function updateTilesOpacity(e, value) {
         value = Number(value) / 100.0;

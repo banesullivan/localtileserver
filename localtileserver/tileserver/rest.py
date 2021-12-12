@@ -9,6 +9,7 @@ from large_image_source_gdal import GDALFileTileSource
 
 from localtileserver.tileserver import style, utilities
 from localtileserver.tileserver.blueprint import cache
+from localtileserver.tileserver.palettes import get_palettes
 
 logger = logging.getLogger(__name__)
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
@@ -18,6 +19,12 @@ def make_cache_key(*args, **kwargs):
     path = request.path
     args = str(hash(frozenset(request.args.items())))
     return (path + args).encode("utf-8")
+
+
+class ListColors(View):
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT)
+    def dispatch_request(self):
+        return get_palettes()
 
 
 class BaseImageView(View):

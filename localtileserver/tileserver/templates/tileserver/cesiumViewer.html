@@ -1,39 +1,33 @@
-{% extends "tileserver/base.html" %}
+{% extends "tileserver/baseTileViewer.html" %}
 
-{% block content %}
+{% block tileViewer %}
 
 {% include 'tileserver/_include/cesium.html' %}
 
 <div class="slidecontainer" id="opacityTool">
     <label for="rasterOpacityRange">Raster Layer Opacity: </label>
     <input type="range" min="1" max="100" value="100" class="overlay" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)" onInput="updateTilesOpacity(event, value)" style="top: 5px; left: 5px;">
+    <br />
+    {% include 'tileserver/_include/colors.html' %}
 </div>
 
 <script>
     var extents = JSON.parse('{{ bounds|tojson }}');
-    var boxjson = {
-        "type": "Polygon",
-        "coordinates": [
-            [
-                [extents.xmin, extents.ymin],
-                [extents.xmin, extents.ymax],
-                [extents.xmax, extents.ymax],
-                [extents.xmax, extents.ymin],
-                [extents.xmin, extents.ymin]
-            ]
-        ]
-    };
-
-    var tileUrl = `${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filename}`
-
-    var tileProvider = new Cesium.UrlTemplateImageryProvider({
-        url: tileUrl,
-        subdomains: null,
-        // minimumLevel: 0,
-        // maximumLevel: 14
-    })
+    var tileProvider;
+    var tileLayer;
     var layers = viewer.scene.imageryLayers;
-    var tileLayer = layers.addImageryProvider(tileProvider);
+
+    function updateTileLayer() {
+        layers.remove(tileLayer)
+
+        tileProvider = new Cesium.UrlTemplateImageryProvider({
+            url: tileUrl,
+            subdomains: null,
+        });
+        tileLayer = layers.addImageryProvider(tileProvider);
+    }
+    // initial call to add tile layer
+    updateTileLayer();
 
     function updateTilesOpacity(e, value) {
         value = Number(value) / 100.0;

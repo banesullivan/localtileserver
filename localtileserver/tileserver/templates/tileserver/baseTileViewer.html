@@ -1,0 +1,27 @@
+{% extends "tileserver/base.html" %}
+
+{% block content %}
+
+<script>
+    var tileUrl = `${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filename}`;
+
+    function updateTileUrlOption(option, value) {
+        var url = new URL(tileUrl);
+        var search_params = url.searchParams;
+        if (value === undefined) {
+            search_params.delete(option)
+        } else {
+            search_params.set(option, value)
+        }
+        const tileFormatEncoded = '/%7Bz%7D/%7Bx%7D/%7By%7D.';
+        const tileFormat = '/{z}/{x}/{y}.';
+        tileUrl = url.toString().replace(tileFormatEncoded, tileFormat);
+    }
+
+    // MUST implement updateTileLayer()
+</script>
+
+{% block tileViewer %}
+{% endblock %}
+
+{% endblock %}

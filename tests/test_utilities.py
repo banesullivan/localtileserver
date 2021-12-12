@@ -3,6 +3,7 @@ import pytest
 from localtileserver import Report
 from localtileserver.tileserver.palettes import (
     get_palette_by_name,
+    get_palettes,
     is_valid_palette_name,
     mpl_to_palette,
 )
@@ -31,3 +32,7 @@ def test_mpl_colormaps():
 
 def test_report():
     assert Report()
+
+
+def test_get_palettes():
+    assert isinstance(get_palettes(), dict)

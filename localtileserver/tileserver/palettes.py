@@ -78,3 +78,21 @@ def get_palette_by_name(name: str):
         return SIMPLE_PALETTES[name]
     if is_mpl_cmap(name):
         return mpl_to_palette(name)
+
+
+def get_palettes():
+    """List of available palettes.
+
+    This does not currently list the palettable palettes there isn't a clean
+    way to list all of them.
+
+    """
+    cmaps = {}
+    try:
+        import matplotlib.pyplot
+
+        cmaps["matplotlib"] = list(matplotlib.pyplot.colormaps())
+    except ImportError:
+        logger.error("Install matplotlib for additional colormap choices.")
+    cmaps["simple"] = [s for s in SIMPLE_PALETTES.keys() if len(s) > 1]
+    return cmaps

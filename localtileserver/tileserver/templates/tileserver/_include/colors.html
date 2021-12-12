@@ -1,0 +1,80 @@
+{% block colormaps %}
+
+<label for="bandChoice">Choose a band:</label>
+<select id="bandChoice" onChange='bandChange();'>
+    <option>-- none --</option>
+</select>
+<br />
+<div id='colorsSubGroup' style="display: none;">
+    <label for="colors">Choose a colormap:</label>
+    <select id="colors" onChange='changeColors();'>
+        <option>-- none --</option>
+    </select>
+    <br />
+    <input id="mincolor" type="number" step="0.01" onChange='changeColors();'>
+    <input id="maxcolor" type="number" step="0.01" onChange='changeColors();'>
+</div>
+<script>
+    var colorsSubGroup = document.getElementById('colorsSubGroup');
+    var colorsDropdown = document.getElementById('colors');
+    var bandDropdown = document.getElementById('bandChoice');
+    var colorsMin = document.getElementById('mincolor');
+    var colorsMax = document.getElementById('maxcolor');
+    const bands = JSON.parse('{{ bands|tojson }}')
+
+    for (const [source, values] of Object.entries(bands)) {
+        const interp = values['interpretation']
+        var newOption = document.createElement('option');
+        newOption.value = source;
+        newOption.text = interp ? `${source}: ${interp}` : source;
+        bandDropdown.appendChild(newOption)
+    }
+
+    fetch(`${host}/colors`)
+        .then(response => response.json())
+        .then(data => {
+            for (const [source, indices] of Object.entries(data)) {
+                for (const index in indices) {
+                    const option = data[source][index];
+                    var newOption = document.createElement('option');
+                    newOption.value = option;
+                    newOption.text = option;
+                    colorsDropdown.appendChild(newOption);
+                }
+            }
+        });
+
+    function changeColors() {
+        colorsSubGroup.display = 'block';
+        var cmap;
+        if (colorsDropdown.value == '-- none --') {
+            cmap = undefined;
+        } else {
+            cmap = colorsDropdown.value;
+        }
+        updateTileUrlOption('palette', cmap);
+        updateTileUrlOption('min', colorsMin.value);
+        updateTileUrlOption('max', colorsMax.value);
+        updateTileLayer();
+    }
+
+    function bandChange() {
+        if (bandDropdown.value == '-- none --') {
+            updateTileUrlOption('palette', undefined);
+            updateTileUrlOption('band', undefined);
+            updateTileUrlOption('min', undefined);
+            updateTileUrlOption('max', undefined);
+            colorsSubGroup.style.display = 'none';
+            updateTileLayer();
+        } else {
+            colorsSubGroup.style.display = 'block';
+            band = bandDropdown.value;
+            console.log(bands[band])
+            colorsMin.placeholder = bands[band]['min'];
+            colorsMax.placeholder = bands[band]['max'];
+            changeColors();
+        }
+    }
+</script>
+
+{% endblock %}
