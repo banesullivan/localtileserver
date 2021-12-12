@@ -14,7 +14,7 @@ tileserver = Blueprint(
 
 def create_cache(url: str, username: str = None, password: str = None):
     if url:
-        config = {"CACHE_MEMCACHED_SERVERS": url.split(',')}
+        config = {"CACHE_MEMCACHED_SERVERS": url.split(",")}
         if username and password:
             config["CACHE_TYPE"] = "SASLMemcachedCache"
             config["CACHE_MEMCACHED_USERNAME"] = username
