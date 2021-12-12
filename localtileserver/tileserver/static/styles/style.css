@@ -58,3 +58,13 @@ p {
     margin: 0;
     padding: 0 0 1em 0;
 }
+
+.sm-icons {
+    flex-direction: row;
+}
+
+@media only screen and (max-width: 767px) {
+    .sm-icons .nav-item {
+        padding-right: 1em;
+    }
+}

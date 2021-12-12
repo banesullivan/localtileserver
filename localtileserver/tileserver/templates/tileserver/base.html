@@ -12,6 +12,9 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('tileserver.static',filename='styles/style.css') }}">
 
+    <!-- For GitHub stars button -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
     <script>
         var host = window.location.protocol + "//" + window.location.host;
         var filename = "{{ filename|urlencode }}"
@@ -54,20 +57,20 @@
         }
     </script>
 
-    <title>Tile Viewer</title>
+    <title>Tile Server</title>
 </head>
 
 <body>
     <div id="wrapper">
         <nav class="navbar navbar-expand-md navbar-light">
-            <a class="navbar-brand" href="{{ url_for('tileserver.index')}}?filename={{ filename|urlencode }}">Tile Viewer</a>
+            <a class="navbar-brand" href="{{ url_for('tileserver.index')}}?filename={{ filename|urlencode }}">Tile Server</a>
             <button class="navbar-toggler" type="button" data-trigger="#main_nav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse" id="main_nav">
+            <div class="collapse navbar-collapse" id="main_nav">
                 <div class="offcanvas-header mt-3">
                     <button class="btn btn-close float-right"> &times Close </button>
-                    <h5 class="py-2">Main navbar</h5>
+                    <h5 class="py-2">Tile Server</h5>
                 </div>
                 <ul class="navbar-nav">
                     <li class="nav-item active">
@@ -89,6 +92,12 @@
                         <a class="nav-link" href="{{ url_for('tileserver.index')}}?filename={{ filename_virtualearth|urlencode }}">Virtual Earth</a>
                     </li>
                 </ul>
+                <div>
+                    <ul class="navbar-nav sm-icons">
+                        <li class="nav-item"><a class="nav-link" href="https://github.com/banesullivan/localtileserver"> </a><a class="github-button" href="https://github.com/banesullivan/localtileserver" data-size="large" data-show-count="true"
+                                aria-label="Star banesullivan/localtileserver on GitHub">Star</a></li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
