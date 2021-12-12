@@ -2,7 +2,7 @@ click
 flask>=2.0.0
 Flask-Caching
 --find-links https://girder.github.io/large_image_wheels GDAL
-large-image
+large-image[memcached]
 large-image-source-gdal
 large-image-source-pil
 requests
@@ -14,4 +14,3 @@ shapely
 folium
 matplotlib
 gunicorn
-pylibmc
