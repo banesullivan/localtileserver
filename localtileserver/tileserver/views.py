@@ -40,4 +40,8 @@ def inject_context():
     context = utilities.get_meta_data(tile_source)
     context["bounds"] = utilities.get_tile_bounds(tile_source, projection="EPSG:4326")
     context["filename"] = filename
+    # Sample data
+    context["filename_dem"] = get_data_path("aws_elevation_tiles_prod.xml")
+    context["filename_bluemarble"] = get_data_path("frmt_wms_bluemarble_s3_tms.xml")
+    context["filename_virtualearth"] = get_data_path("frmt_wms_virtualearth.xml")
     return context
