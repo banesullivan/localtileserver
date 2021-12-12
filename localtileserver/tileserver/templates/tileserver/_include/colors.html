@@ -22,12 +22,23 @@
     var colorsMax = document.getElementById('maxcolor');
     const bands = JSON.parse('{{ bands|tojson }}')
 
+    if (windowSearchParams['min']) {
+        colorsMin.value = windowSearchParams['min']
+    }
+    if (windowSearchParams['max']) {
+        colorsMax.value = windowSearchParams['max']
+    }
+
     for (const [source, values] of Object.entries(bands)) {
         const interp = values['interpretation']
         var newOption = document.createElement('option');
         newOption.value = source;
         newOption.text = interp ? `${source}: ${interp}` : source;
         bandDropdown.appendChild(newOption)
+    }
+    if (windowSearchParams['band']) {
+        bandDropdown.value = windowSearchParams['band'] ? windowSearchParams['band'] : '-- none --';
+        colorsSubGroup.style.display = 'block';
     }
 
     fetch(`${host}/colors`)
@@ -42,6 +53,7 @@
                     colorsDropdown.appendChild(newOption);
                 }
             }
+            colorsDropdown.value = windowSearchParams['palette'] ? windowSearchParams['palette'] : '-- none --';
         });
 
     function changeColors() {
@@ -69,7 +81,7 @@
         } else {
             colorsSubGroup.style.display = 'block';
             band = bandDropdown.value;
-            console.log(bands[band])
+            updateTileUrlOption('band', band);
             colorsMin.placeholder = bands[band]['min'];
             colorsMax.placeholder = bands[band]['max'];
             changeColors();
