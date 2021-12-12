@@ -180,6 +180,7 @@ viewer = new Cesium.Viewer('cesiumContainer', {
     geocoder: false,
     fullscreenButton: false,
     selectionIndicator: false,
+    terrainProvider : Cesium.Ion.defaultAccessToken ? Cesium.createWorldTerrain(): undefined,
 });
 
 // if no token, remove terrain
