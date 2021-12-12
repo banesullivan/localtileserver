@@ -1,3 +1,4 @@
+import logging
 import os
 import pathlib
 import shutil
@@ -10,6 +11,33 @@ from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
 
+logger = logging.getLogger(__name__)
+
+
+def get_memcache_config():
+    url, username, password = None, None, None
+    if os.environ.get("MEMCACHED_URL", ""):
+        url = os.environ.get("MEMCACHED_URL")
+        if os.environ.get("MEMCACHED_USERNAME", "") and os.environ.get("MEMCACHED_PASSWORD", ""):
+            username = os.environ.get("MEMCACHED_USERNAME")
+            password = os.environ.get("MEMCACHED_PASSWORD")
+    elif os.environ.get("MEMCACHIER_SERVERS", ""):
+        url = os.environ.get("MEMCACHIER_SERVERS")
+        if os.environ.get("MEMCACHIER_USERNAME", "") and os.environ.get("MEMCACHIER_PASSWORD", ""):
+            username = os.environ.get("MEMCACHIER_USERNAME")
+            password = os.environ.get("MEMCACHIER_PASSWORD")
+    return url, username, password
+
+
+def configure_large_image_memcache(url: str, username: str = None, password: str = None):
+    if url:
+        large_image.config.setConfig("cache_memcached_url", url)
+        if username and password:
+            large_image.config.setConfig("cache_memcached_username", username)
+            large_image.config.setConfig("cache_memcached_password", password)
+        large_image.config.setConfig("cache_backend", "memcached")
+        logger.info("large_image is configured for memcached.")
+
 
 def get_cache_dir():
     path = pathlib.Path(os.path.join(tempfile.gettempdir(), "localtileserver"))
@@ -17,6 +45,7 @@ def get_cache_dir():
     return path
 
 
+configure_large_image_memcache(*get_memcache_config())
 gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
 gdal.SetConfigOption("GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache"))
 
