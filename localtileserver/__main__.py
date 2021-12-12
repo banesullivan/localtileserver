@@ -14,7 +14,10 @@ from localtileserver.tileserver import create_app, get_clean_filename, get_data_
 @click.option("-p", "--port", default=0)
 @click.option("-d", "--debug", default=False)
 @click.option("-b", "--browser", default=True)
-def run_app(filename, port: int = 0, debug: bool = False, browser: bool = True):
+@click.option("-t", "--cesium-token", default="")
+def run_app(
+    filename, port: int = 0, debug: bool = False, browser: bool = True, cesium_token: str = ""
+):
     """Serve tiles from the raster at `filename`.
 
     You can also pass the name of one of the example datasets: `elevation`,
@@ -41,6 +44,7 @@ def run_app(filename, port: int = 0, debug: bool = False, browser: bool = True):
     app = create_app()
     app.config["DEBUG"] = debug
     app.config["filename"] = filename
+    app.config["cesium_token"] = cesium_token
     if debug:
         logging.getLogger("werkzeug").setLevel(logging.DEBUG)
         logging.getLogger("gdal").setLevel(logging.DEBUG)

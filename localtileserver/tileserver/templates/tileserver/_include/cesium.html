@@ -9,6 +9,14 @@
 <!-- Make the vwidget div -->
 <div id="cesiumContainer"></div>
 
+<script>
+    // Set the Cesium Ion token to `null` to avoid warnings
+    const userCesiumToken = "{{ cesium_token }}";
+    if (userCesiumToken) {
+        Cesium.Ion.defaultAccessToken = "{{ cesium_token }}";
+    }
+</script>
+
 <!-- Load the script to initialize the viewer -->
 <script src="{{url_for('tileserver.static', filename='js/cesium.js')}}"></script>
 

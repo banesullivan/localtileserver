@@ -17,12 +17,15 @@
     var tileLayer;
     var layers = viewer.scene.imageryLayers;
 
+    var rectangle = Cesium.Rectangle.fromDegrees(extents.xmin, extents.ymin, extents.xmax, extents.ymax)
+
     function updateTileLayer() {
         layers.remove(tileLayer)
 
         tileProvider = new Cesium.UrlTemplateImageryProvider({
             url: tileUrl,
             subdomains: null,
+            rectangle: rectangle,
         });
         tileLayer = layers.addImageryProvider(tileProvider);
     }
@@ -34,20 +37,12 @@
         tileLayer.alpha = value;
     }
 
-    // Compute viewing parameters
-    var a = Cesium.Cartesian3.fromDegrees(extents.xmin, extents.ymin, 0)
-    var b = Cesium.Cartesian3.fromDegrees(extents.xmax, extents.ymax, 0)
-    var length = Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2)
-    if (length <= 5000) {
-        // Zoom out to whole globe
-        length = 20000000;
-    }
-    var center = Cesium.Cartesian3.fromDegrees(
-        ((extents.xmax - extents.xmin) / 2 + extents.xmin),
-        ((extents.ymax - extents.ymin) / 2 + extents.ymin), length)
     viewer.camera.flyTo({
-        destination: center
+        destination: rectangle,
     });
+
+    Cesium.Camera.DEFAULT_VIEW_RECTANGLE = rectangle;
+    Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
 </script>
 
 {% endblock %}

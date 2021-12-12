@@ -1,6 +1,3 @@
-// Set the Cesium Ion token to `null` to avoid warnings
-Cesium.Ion.defaultAccessToken = null;
-
 /* Stamen's website (http://maps.stamen.com) as of 2019-08-28 says that the
  * maps they host may be used free of charge.  For http access, use a url like
  * http://{s}.tile.stamen.com/toner-lite/{z}/{x}/{y}.png */
@@ -180,9 +177,13 @@ viewer = new Cesium.Viewer('cesiumContainer', {
     animation: false,
     timeline: false,
     infoBox: false,
-    homeButton: false,
+    geocoder: false,
     fullscreenButton: false,
     selectionIndicator: false,
 });
-// Remove the Terrain section of the baseLayerPicker
-viewer.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll()
+
+// if no token, remove terrain
+if (Cesium.Ion.defaultAccessToken === undefined) {
+    // Remove the Terrain section of the baseLayerPicker
+    viewer.baseLayerPicker.viewModel.terrainProviderViewModels.removeAll()
+}

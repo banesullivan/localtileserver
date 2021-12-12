@@ -44,4 +44,5 @@ def inject_context():
     context["filename_dem"] = get_data_path("aws_elevation_tiles_prod.xml")
     context["filename_bluemarble"] = get_data_path("frmt_wms_bluemarble_s3_tms.xml")
     context["filename_virtualearth"] = get_data_path("frmt_wms_virtualearth.xml")
+    context["cesium_token"] = current_app.config.get("cesium_token", "")
     return context
