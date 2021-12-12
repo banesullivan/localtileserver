@@ -384,7 +384,7 @@ path from which to create a `TileClient` under the hood.
 - If matplotlib is installed, any matplotlib colormap name cane be used a palette choice
 
 
-### 🧬 Using the Flask Blueprint
+### 🧬 Flask Blueprint
 
 Under the hood, `localtileserver` is a basic Flask Blueprint that can be easily
 incorporated into any Flask application. To utilize in your own application:
@@ -399,3 +399,9 @@ app.register_blueprint(tileserver, url_prefix='/')
 ```
 
 There is an example Flask application and deployment in [`banesullivan/remotetileserver`](https://github.com/banesullivan/remotetileserver)
+
+
+### ⚛️ Standalone Electron App
+
+I have created an experimental Electron App for launching localtileserver
+as a standalone application in [`banesullivan/localtileserver-electron`](https://github.com/banesullivan/localtileserver-electron)
