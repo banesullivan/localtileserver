@@ -1,0 +1,12 @@
+click
+flask>=2.0.0
+Flask-Caching
+large-image
+large-image-source-gdal
+large-image-source-pil
+requests
+scooby
+pytest
+pytest-cov
+folium
+matplotlib
