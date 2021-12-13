@@ -1,0 +1,15 @@
+{% extends "tileserver/base.html" %}
+
+{% block content %}
+
+<section>
+    <center>
+        <h1>Raster file cannot be opened</h1>
+        <p>We are unable to open the file<br>resource you provided:<br>{{ filename }}</p>
+        <div>
+            <p><a href="{{ url_for('tileserver.index') }}">Head back to the homepage.</a>
+        </div>
+    </center>
+</section>
+
+{% endblock %}
