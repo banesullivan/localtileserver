@@ -12,6 +12,15 @@
     let extents = JSON.parse('{{ bounds|tojson }}');
     setBounds(extents, false)
 
+    // Make sure regions outside the extent of the raster do not load null tiles
+    //   this relieves strain on the tile server
+    tileLayer.isValid = (index) => {
+        const tileBounds = tileLayer.gcsTileBounds(index);
+        return tileBounds.left <= extents.xmax &&
+            tileBounds.right >= extents.xmin &&
+            tileBounds.top >= extents.ymin &&
+            tileBounds.bottom <= extents.ymax;
+    }
     tileLayer.idleAfter = 'all';
     tileLayer.visible(true);
     tileLayer.url(tileUrl)
