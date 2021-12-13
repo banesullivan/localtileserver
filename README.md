@@ -15,36 +15,39 @@ the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 
 ## 🌟 Highlights
 
-- Create a local tile server for large geospatial images
-- View local or remote* raster files with `ipyleaflet` or `folium`
+- Create a tile server for large geospatial images
+- View local or remote* raster files with `ipyleaflet`, `folium`, CesiumJS, and more!
 - Extract regions of interest (ROIs) interactively
 - Use the example datasets to generate Digital Elevation Models
-- Visualize rasters with the included CesiumJS web viewer
 
 **remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
 
 ## ℹ️ Overview
 
-Under the hood, this uses [`large_image`](https://github.com/girder/large_image)
-to launch a tile server in a background thread which will serve raster imagery
-to a tile viewer (see `ipyleaflet` and `folium` examples below).
+This is a Flask application (blueprint) for serving tiles of large images.
+The `TileClient` class can be used to to launch a tile server in a background
+thread which will serve raster imagery to a viewer (see `ipyleaflet` and
+`folium` Jupyter notebook examples below).
+
 This tile server can efficiently deliver varying levels of detail of your
 raster imagery to your viewer; it helps to have pre-tiled, Cloud Optimized
-GeoTIFFs (COG), but no wories if not as `large_image` will tile and cache for
-you when opening the raster.
+GeoTIFFs (COG), but no wories if not as the backing libraries,
+[`large_image`](https://github.com/girder/large_image),
+will tile and cache for you when opening the raster.
 
 There is an included, standalone web viewer leveraging
 [CesiumJS](https://cesium.com/platform/cesiumjs/) and [GeoJS](https://opengeoscience.github.io/geojs/).
 You can use the web viewer to select and extract regions of interest from rasters.
 
-**Disclaimer**: I put this together over a weekend and I'm definitely going to
-change a few things moving forward to make it more stable/robust. This means
-that things will most likely break between minor releases (I use the
+**Disclaimer**: This is a hobby project and I am doing my best to make it
+more stable/robust. Things might break between minor releases (I use the
 `major.minor.patch` versioning scheme).
 
 
 ## ⬇️ Installation
 
+Get started with `localtileserver` to view rasters locally in Jupyter or
+deploy in your own Flask application.
 
 ### 🐍 Installing with `conda`
 
@@ -74,6 +77,29 @@ If on linux, I highly recommend using the [large_image_wheels](https://github.co
 ```
 pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
 ```
+
+### 🧬 Flask Blueprint
+
+Under the hood, `localtileserver` is a basic Flask Blueprint that can be easily
+incorporated into any Flask application. To utilize in your own application:
+
+```py
+from flask import Flask
+from localtileserver.tileserver.blueprint import cache, tileserver
+
+app = Flask(__name__)
+cache.init_app(app)
+app.register_blueprint(tileserver, url_prefix='/')
+```
+
+There is an example Flask application and deployment in
+[`banesullivan/remotetileserver`](https://github.com/banesullivan/remotetileserver)
+
+### ⚛️ Standalone Electron App
+
+If you're interested in using `localtileserver` as a standalone application,
+check out this experimental Electron app:
+[`banesullivan/localtileserver-electron`](https://github.com/banesullivan/localtileserver-electron)
 
 
 ## 💭 Feedback
@@ -382,26 +408,3 @@ Available choices are:
 path from which to create a `TileClient` under the hood.
 - The color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/).
 - If matplotlib is installed, any matplotlib colormap name cane be used a palette choice
-
-
-### 🧬 Flask Blueprint
-
-Under the hood, `localtileserver` is a basic Flask Blueprint that can be easily
-incorporated into any Flask application. To utilize in your own application:
-
-```py
-from flask import Flask
-from localtileserver.tileserver.blueprint import cache, tileserver
-
-app = Flask(__name__)
-cache.init_app(app)
-app.register_blueprint(tileserver, url_prefix='/')
-```
-
-There is an example Flask application and deployment in [`banesullivan/remotetileserver`](https://github.com/banesullivan/remotetileserver)
-
-
-### ⚛️ Standalone Electron App
-
-I have created an experimental Electron App for launching localtileserver
-as a standalone application in [`banesullivan/localtileserver-electron`](https://github.com/banesullivan/localtileserver-electron)
