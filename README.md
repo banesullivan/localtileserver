@@ -116,6 +116,13 @@ print(localtileserver.Report())
 
 ## 🚀 Usage
 
+`localtileserver` can be used in a few different ways:
+
+- In a Jupyter notebook with [`ipyleaflet`](#-ipyleaflet-tile-layers) or [`folium`](#-folium-tile-layers)
+- From the [commandline in a web browser](#%EF%B8%8F-local-web-application)
+- With remote [Cloud Optimized GeoTiffs](#%EF%B8%8F-remote-cloud-optimized-geotiffs-cogs)
+
+
 ### 🍃 `ipyleaflet` Tile Layers
 
 The `TileClient` class is a nifty tool to launch a tile server as a background
