@@ -14,3 +14,5 @@ shapely
 folium
 matplotlib
 gunicorn
+colorcet
+cmocean
