@@ -2,122 +2,122 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('tileserver.static',filename='styles/style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('tileserver.static',filename='styles/style.css') }}">
 
-    <!-- For GitHub stars button -->
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  <!-- For GitHub stars button -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
 
-    <script>
-        var host = window.location.protocol + "//" + window.location.host;
-        var filename = "{{ filename|urlencode }}"
+  <script>
+    var host = window.location.protocol + "//" + window.location.host;
+    var filename = "{{ filename|urlencode }}"
 
-        function setCookie(cookieName, cookieValue, nDays = 365) {
-            var today = new Date();
-            var expire = new Date();
-            if (nDays == null || nDays == 0) nDays = 1;
-            expire.setTime(today.getTime() + 3600000 * 24 * nDays);
-            document.cookie = cookieName + "=" + escape(cookieValue) +
-                ";expires=" + expire.toGMTString() + "; path=/";
+    function setCookie(cookieName, cookieValue, nDays = 365) {
+      var today = new Date();
+      var expire = new Date();
+      if (nDays == null || nDays == 0) nDays = 1;
+      expire.setTime(today.getTime() + 3600000 * 24 * nDays);
+      document.cookie = cookieName + "=" + escape(cookieValue) +
+        ";expires=" + expire.toGMTString() + "; path=/";
+    }
+
+    function getCookie(cookieName, defaultValue = "") {
+      var theCookie = "" + document.cookie;
+      var ind = theCookie.indexOf(cookieName + "=");
+      if (ind == -1 || cookieName == "") {
+        if (defaultValue != "") {
+          setCookie(cookieName, defaultValue);
         }
+        return defaultValue;
+      }
+      var ind1 = theCookie.indexOf(";", ind);
+      if (ind1 == -1) {
+        ind1 = theCookie.length;
+      }
+      return unescape(theCookie.substring(ind + cookieName.length + 1, ind1));
+    }
 
-        function getCookie(cookieName, defaultValue = "") {
-            var theCookie = "" + document.cookie;
-            var ind = theCookie.indexOf(cookieName + "=");
-            if (ind == -1 || cookieName == "") {
-                if (defaultValue != "") {
-                    setCookie(cookieName, defaultValue);
-                }
-                return defaultValue;
-            }
-            var ind1 = theCookie.indexOf(";", ind);
-            if (ind1 == -1) {
-                ind1 = theCookie.length;
-            }
-            return unescape(theCookie.substring(ind + cookieName.length + 1, ind1));
-        }
+    function download(url, filename) {
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = filename;
+          link.click();
+        })
+        .catch(console.error);
+    }
+  </script>
 
-        function download(url, filename) {
-            fetch(url)
-                .then(response => response.blob())
-                .then(blob => {
-                    const link = document.createElement("a");
-                    link.href = URL.createObjectURL(blob);
-                    link.download = filename;
-                    link.click();
-                })
-                .catch(console.error);
-        }
-    </script>
-
-    <title>Tile Server</title>
+  <title>Tile Server</title>
 </head>
 
 <body>
-    <div id="wrapper">
-        <nav class="navbar navbar-expand-md navbar-light">
-            <a class="navbar-brand" href="{{ url_for('tileserver.index')}}?filename={{ filename|urlencode }}">Tile Server</a>
-            <button class="navbar-toggler" type="button" data-trigger="#main_nav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="main_nav">
-                <div class="offcanvas-header mt-3">
-                    <button class="btn btn-close float-right"> &times Close </button>
-                    <h5 class="py-2">Tile Server</h5>
-                </div>
-                <ul class="navbar-nav">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('tileserver.roi')}}?filename={{ filename|urlencode }}">ROI Extraction</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('tileserver.thumbnail')}}?filename={{ filename|urlencode }}">Thumbnail</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('tileserver.metadata')}}?filename={{ filename|urlencode }}">Metadata</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('tileserver.examples')}}">Examples</a>
-                    </li>
-                </ul>
-                <div>
-                    <ul class="navbar-nav sm-icons">
-                        <li class="nav-item"><a class="nav-link" href="https://github.com/banesullivan/localtileserver"> </a><a class="github-button" href="https://github.com/banesullivan/localtileserver" data-size="large" data-show-count="true"
-                                aria-label="Star banesullivan/localtileserver on GitHub">Star</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-
-        <script>
-            $("[data-trigger]").on("click", function() {
-                var trigger_id = $(this).attr('data-trigger');
-                $(trigger_id).toggleClass("show");
-                $('body').toggleClass("offcanvas-active");
-            });
-
-            // close button
-            $(".btn-close").click(function(e) {
-                $(".navbar-collapse").removeClass("show");
-                $("body").removeClass("offcanvas-active");
-            });
-        </script>
-
-        <div id="content">
-            {% block content %} {% endblock %}
+  <div id="wrapper">
+    <nav class="navbar navbar-expand-md navbar-light">
+      <a class="navbar-brand" href="{{ url_for('tileserver.index')}}?filename={{ filename|urlencode }}">Tile Server</a>
+      <button class="navbar-toggler" type="button" data-trigger="#main_nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="main_nav">
+        <div class="offcanvas-header mt-3">
+          <button class="btn btn-close float-right"> &times Close </button>
+          <h5 class="py-2">Tile Server</h5>
         </div>
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('tileserver.roi')}}?filename={{ filename|urlencode }}">ROI Extraction</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('tileserver.thumbnail')}}?filename={{ filename|urlencode }}">Thumbnail</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('tileserver.metadata')}}?filename={{ filename|urlencode }}">Metadata</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{{ url_for('tileserver.examples')}}">Examples</a>
+          </li>
+        </ul>
+        <div>
+          <ul class="navbar-nav sm-icons">
+            <li class="nav-item"><a class="nav-link" href="https://github.com/banesullivan/localtileserver"> </a><a class="github-button" href="https://github.com/banesullivan/localtileserver" data-size="large" data-show-count="true"
+                aria-label="Star banesullivan/localtileserver on GitHub">Star</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <script>
+      $("[data-trigger]").on("click", function() {
+        var trigger_id = $(this).attr('data-trigger');
+        $(trigger_id).toggleClass("show");
+        $('body').toggleClass("offcanvas-active");
+      });
+
+      // close button
+      $(".btn-close").click(function(e) {
+        $(".navbar-collapse").removeClass("show");
+        $("body").removeClass("offcanvas-active");
+      });
+    </script>
+
+    <div id="content">
+      {% block content %} {% endblock %}
     </div>
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  </div>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 
 </html>

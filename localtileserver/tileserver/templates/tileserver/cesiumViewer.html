@@ -5,44 +5,44 @@
 {% include 'tileserver/_include/cesium.html' %}
 
 <div class="slidecontainer" id="opacityTool">
-    <label for="rasterOpacityRange">Raster Layer Opacity: </label>
-    <input type="range" min="1" max="100" value="100" class="overlay" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)" onInput="updateTilesOpacity(event, value)" style="top: 5px; left: 5px;">
-    <br />
-    {% include 'tileserver/_include/colors.html' %}
+  <label for="rasterOpacityRange">Raster Layer Opacity: </label>
+  <input type="range" min="1" max="100" value="100" class="overlay" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)" onInput="updateTilesOpacity(event, value)" style="top: 5px; left: 5px;">
+  <br />
+  {% include 'tileserver/_include/colors.html' %}
 </div>
 
 <script>
-    var extents = JSON.parse('{{ bounds|tojson }}');
-    var tileProvider;
-    var tileLayer;
-    var layers = viewer.scene.imageryLayers;
+  var extents = JSON.parse('{{ bounds|tojson }}');
+  var tileProvider;
+  var tileLayer;
+  var layers = viewer.scene.imageryLayers;
 
-    var rectangle = Cesium.Rectangle.fromDegrees(extents.xmin, extents.ymin, extents.xmax, extents.ymax)
+  var rectangle = Cesium.Rectangle.fromDegrees(extents.xmin, extents.ymin, extents.xmax, extents.ymax)
 
-    function updateTileLayer() {
-        layers.remove(tileLayer)
+  function updateTileLayer() {
+    layers.remove(tileLayer)
 
-        tileProvider = new Cesium.UrlTemplateImageryProvider({
-            url: tileUrl,
-            subdomains: null,
-            rectangle: rectangle,
-        });
-        tileLayer = layers.addImageryProvider(tileProvider);
-    }
-    // initial call to add tile layer
-    updateTileLayer();
-
-    function updateTilesOpacity(e, value) {
-        value = Number(value) / 100.0;
-        tileLayer.alpha = value;
-    }
-
-    viewer.camera.flyTo({
-        destination: rectangle,
+    tileProvider = new Cesium.UrlTemplateImageryProvider({
+      url: tileUrl,
+      subdomains: null,
+      rectangle: rectangle,
     });
+    tileLayer = layers.addImageryProvider(tileProvider);
+  }
+  // initial call to add tile layer
+  updateTileLayer();
 
-    Cesium.Camera.DEFAULT_VIEW_RECTANGLE = rectangle;
-    Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
+  function updateTilesOpacity(e, value) {
+    value = Number(value) / 100.0;
+    tileLayer.alpha = value;
+  }
+
+  viewer.camera.flyTo({
+    destination: rectangle,
+  });
+
+  Cesium.Camera.DEFAULT_VIEW_RECTANGLE = rectangle;
+  Cesium.Camera.DEFAULT_VIEW_FACTOR = 0;
 </script>
 
 {% endblock %}
