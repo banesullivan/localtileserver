@@ -5,8 +5,8 @@ import webbrowser
 
 import click
 
-from localtileserver.examples import get_pine_gulch_url
 from localtileserver.tileserver import create_app, get_clean_filename, get_data_path
+from localtileserver.tileserver.data import get_pine_gulch_url
 
 
 @click.command()

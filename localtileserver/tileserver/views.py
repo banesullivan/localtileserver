@@ -4,9 +4,8 @@ from flask import current_app, render_template, request
 from flask.views import View
 from large_image.exceptions import TileSourceFileNotFoundError
 
-from localtileserver.tileserver import utilities
+from localtileserver.tileserver import data, utilities
 from localtileserver.tileserver.blueprint import tileserver
-from localtileserver.tileserver.data import get_data_path
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,7 @@ def _get_clean_filename_from_request():
         except KeyError:
             # Fallback to sample data
             logger.error("No filename set in app config or URL params. Using sample data.")
-            filename = get_data_path("landsat.tif")
+            filename = data.get_data_path("landsat.tif")
     return filename
 
 
@@ -52,6 +51,11 @@ class CesiumViewer(BaseViewer):
         return self.render_or_404("tileserver/cesiumViewer.html")
 
 
+class ExampleChoices(View):
+    def dispatch_request(self):
+        return render_template("tileserver/exampleChoices.html")
+
+
 @tileserver.context_processor
 def raster_context():
     try:
@@ -72,8 +76,10 @@ def raster_context():
 @tileserver.context_processor
 def sample_data_context():
     context = {}
-    context["filename_dem"] = get_data_path("aws_elevation_tiles_prod.xml")
-    context["filename_bluemarble"] = get_data_path("frmt_wms_bluemarble_s3_tms.xml")
-    context["filename_virtualearth"] = get_data_path("frmt_wms_virtualearth.xml")
+    context["filename_dem"] = data.get_data_path("aws_elevation_tiles_prod.xml")
+    context["filename_bluemarble"] = data.get_data_path("frmt_wms_bluemarble_s3_tms.xml")
+    context["filename_virtualearth"] = data.get_data_path("frmt_wms_virtualearth.xml")
+    context["filename_pine_gulch"] = data.get_pine_gulch_url()
+    context["filename_sf_bay"] = data.get_sf_bay_url()
     context["cesium_token"] = current_app.config.get("cesium_token", "")
     return context

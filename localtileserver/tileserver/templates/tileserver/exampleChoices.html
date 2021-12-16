@@ -1,0 +1,36 @@
+{% extends "tileserver/base.html" %}
+
+{% block content %}
+
+<section>
+  <center>
+    <h1>Sample Data</h1>
+    <p>The following are a few sample datasets:</p>
+    <div>
+      <ul>
+        <li>
+          <a href="{{ url_for('tileserver.index')}}">Salt Lake Landsat</a>
+        </li>
+        <li>
+          <a href="{{ url_for('tileserver.index')}}?filename={{ filename_sf_bay|urlencode }}">San Francisco Bay</a>
+        </li>
+        <li>
+          <a href="{{ url_for('tileserver.index')}}?filename={{ filename_pine_gulch|urlencode }}">Pine Gulch Fire</a>
+        </li>
+        <li>
+          <a href="{{ url_for('tileserver.index')}}?filename={{ filename_dem|urlencode }}">Elevation</a>
+        </li>
+        <li>
+          <a href="{{ url_for('tileserver.index')}}?filename={{ filename_bluemarble|urlencode }}">Blue Marble</a>
+        </li>
+        <li>
+          <a href="{{ url_for('tileserver.index')}}?filename={{ filename_virtualearth|urlencode }}">Virtual Earth</a>
+        </li>
+      </ul>
+
+
+    </div>
+  </center>
+</section>
+
+{% endblock %}

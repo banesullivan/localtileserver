@@ -1,70 +1,75 @@
 html,
 body {
-    min-height: 100%;
-    padding: 0;
-    margin: 0;
+  min-height: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 #wrapper {
-    padding: 0 0;
-    position: absolute;
-    top: 50px;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  padding: 0 0;
+  position: absolute;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 #content {
-    min-height: 100%;
+  min-height: 100%;
 }
 
 .navbar {
-    margin-top: -50px;
-    height: 50px;
-    z-index: 100;
-    background-color: #DCDCDC;
+  margin-top: -50px;
+  height: 50px;
+  z-index: 100;
+  background-color: #DCDCDC;
 }
 
 .offcanvas-header {
-    display: none;
+  display: none;
 }
 
 @media (max-width: 767px) {
-    .offcanvas-header {
-        display: block;
-    }
+  .offcanvas-header {
+    display: block;
+  }
 
-    .navbar-collapse {
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 100%;
-        width: 100%;
-        padding-right: 1rem;
-        padding-left: 1rem;
-        overflow-y: auto;
-        visibility: hidden;
-        background-color: #DCDCDC;
-        transition: visibility .2s ease-in-out, -webkit-transform .2s ease-in-out;
-    }
+  .navbar-collapse {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 100%;
+    width: 100%;
+    padding-right: 1rem;
+    padding-left: 1rem;
+    overflow-y: auto;
+    visibility: hidden;
+    background-color: #DCDCDC;
+    transition: visibility .2s ease-in-out, -webkit-transform .2s ease-in-out;
+  }
 
-    .navbar-collapse.show {
-        visibility: visible;
-        transform: translateX(-100%);
-    }
+  .navbar-collapse.show {
+    visibility: visible;
+    transform: translateX(-100%);
+  }
 }
 
 p {
-    margin: 0;
-    padding: 0 0 1em 0;
+  margin: 0;
+  padding: 0 0 1em 0;
 }
 
 .sm-icons {
-    flex-direction: row;
+  flex-direction: row;
 }
 
 @media only screen and (max-width: 767px) {
-    .sm-icons .nav-item {
-        padding-right: 1em;
-    }
+  .sm-icons .nav-item {
+    padding-right: 1em;
+  }
+}
+
+ul {
+  text-align: center;
+  list-style-position: inside;
 }

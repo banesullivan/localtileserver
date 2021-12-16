@@ -83,13 +83,7 @@
                         <a class="nav-link" href="{{ url_for('tileserver.metadata')}}?filename={{ filename|urlencode }}">Metadata</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('tileserver.index')}}?filename={{ filename_dem|urlencode }}">Elevation</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('tileserver.index')}}?filename={{ filename_bluemarble|urlencode }}">Blue Marble</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="{{ url_for('tileserver.index')}}?filename={{ filename_virtualearth|urlencode }}">Virtual Earth</a>
+                        <a class="nav-link" href="{{ url_for('tileserver.examples')}}">Examples</a>
                     </li>
                 </ul>
                 <div>

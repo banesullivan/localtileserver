@@ -4,6 +4,7 @@ from localtileserver.tileserver.blueprint import tileserver
 # Views/pages
 tileserver.add_url_rule("/", view_func=views.CesiumViewer.as_view("index"))
 tileserver.add_url_rule("/roi/", view_func=views.GeoJSViewer.as_view("roi"))
+tileserver.add_url_rule("/examples", view_func=views.ExampleChoices.as_view("examples"))
 
 # REST endpoints
 tileserver.add_url_rule("/thumbnail", view_func=rest.ThumbnailView.as_view("thumbnail"))

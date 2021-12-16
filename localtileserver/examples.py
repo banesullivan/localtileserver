@@ -1,11 +1,7 @@
 from typing import Union
 
 from localtileserver.client import TileClient
-from localtileserver.tileserver import get_data_path
-
-
-def get_pine_gulch_url():
-    return "https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif"
+from localtileserver.tileserver import get_data_path, get_pine_gulch_url
 
 
 def get_blue_marble(port: Union[int, str] = "default", debug: bool = False):
