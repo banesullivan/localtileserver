@@ -9,7 +9,7 @@
     <div>
       <ul>
         <li>
-          <a href="{{ url_for('tileserver.index')}}">Salt Lake Landsat</a>
+          <a href="{{ url_for('tileserver.index')}}?band=4&min=&max=130&palette=cmo.tarn">Salt Lake Landsat</a>
         </li>
         <li>
           <a href="{{ url_for('tileserver.index')}}?filename={{ filename_sf_bay|urlencode }}">San Francisco Bay</a>
@@ -18,7 +18,7 @@
           <a href="{{ url_for('tileserver.index')}}?filename={{ filename_pine_gulch|urlencode }}">Pine Gulch Fire</a>
         </li>
         <li>
-          <a href="{{ url_for('tileserver.index')}}?filename={{ filename_dem|urlencode }}">Elevation</a>
+          <a href="{{ url_for('tileserver.index')}}?filename={{ filename_dem|urlencode }}&band=1&min=-5000&max=5000&palette=cmo.topo">Elevation</a>
         </li>
         <li>
           <a href="{{ url_for('tileserver.index')}}?filename={{ filename_bluemarble|urlencode }}">Blue Marble</a>
