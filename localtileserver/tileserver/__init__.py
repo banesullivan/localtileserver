@@ -17,4 +17,5 @@ def create_app(url_prefix="/"):
     app = Flask(__name__)
     cache.init_app(app)
     app.register_blueprint(tileserver, url_prefix=url_prefix)
+    app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
     return app
