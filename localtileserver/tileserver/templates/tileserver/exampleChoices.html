@@ -9,7 +9,7 @@
     <div>
       <ul>
         <li>
-          <a href="{{ url_for('tileserver.index')}}?band=4&min=&max=130&palette=cmo.tarn">Salt Lake Landsat</a>
+          <a href="{{ url_for('tileserver.index')}}?filename={{ filename_landsat_salt_lake|urlencode }}&band=4&min=&max=130&palette=cmo.tarn">Salt Lake Landsat</a>
         </li>
         <li>
           <a href="{{ url_for('tileserver.index')}}?filename={{ filename_sf_bay|urlencode }}">San Francisco Bay</a>
