@@ -173,7 +173,7 @@ imageryViewModels.push(new Cesium.ProviderViewModel({
 // Initialize the viewer - this works without a token!
 viewer = new Cesium.Viewer('cesiumContainer', {
     imageryProviderViewModels: imageryViewModels,
-    selectedImageryProviderViewModel: imageryViewModels[0],
+    selectedImageryProviderViewModel: imageryViewModels[8],  // Terrain
     animation: false,
     timeline: false,
     infoBox: false,
@@ -181,7 +181,10 @@ viewer = new Cesium.Viewer('cesiumContainer', {
     fullscreenButton: false,
     selectionIndicator: false,
     terrainProvider : Cesium.Ion.defaultAccessToken ? Cesium.createWorldTerrain(): undefined,
+    navigationInstructionsInitiallyVisible: false,
 });
+viewer.scene.fog.enabled = false;
+
 
 // if no token, remove terrain
 if (Cesium.Ion.defaultAccessToken === undefined) {
