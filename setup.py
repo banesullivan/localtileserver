@@ -51,7 +51,7 @@ setup(
     extras_require={
         "leaflet": ["ipyleaflet"],
         "folium": ["folium"],
-        "mpl": ["matplotlib"],
+        "colormaps": ["matplotlib", "colorcet", "cmocean"],
         "sources": ["large-image-source-pil", "large-image-source-tiff"],
     },
     entry_points={
