@@ -29,15 +29,19 @@ class Report(scooby.Report):
 
         # Optional packages.
         optional = [
+            "gunicorn",
+            "pylibmc",
             "ipyleaflet",
             "shapely",
             "folium",
+            "matplotlib",
+            "colorcet",
+            "cmocean",
             "large_image_source_mapnik",
             "large_image_source_pil",
             "large_image_source_tiff",
             "large_image_converter",
             "tifftools",
-            "psutil",
             "pyvips",
         ]
 
