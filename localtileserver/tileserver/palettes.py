@@ -3,6 +3,15 @@ from operator import attrgetter
 
 import palettable
 
+try:
+    import cmocean  # noqa
+except ImportError:
+    pass
+try:
+    import colorcet  # noqa
+except ImportError:
+    pass
+
 logger = logging.getLogger(__name__)
 
 SIMPLE_PALETTES = {
