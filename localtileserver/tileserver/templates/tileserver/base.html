@@ -13,15 +13,18 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('tileserver.static',filename='styles/style.css') }}">
 
   {% if google_analytics_mid %}
-      <!-- Global site tag (gtag.js) - Google Analytics -->
-      <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_mid }}"></script>
-      <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics_mid }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-        gtag('config', '{{ google_analytics_mid }}');
-      </script>
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+
+    gtag('config', '{{ google_analytics_mid }}');
+  </script>
   {% endif %}
 
   <!-- For GitHub stars button -->
