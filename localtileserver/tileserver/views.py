@@ -1,4 +1,5 @@
 import logging
+import os
 
 from flask import current_app, render_template, request
 from flask.views import View
@@ -83,4 +84,13 @@ def sample_data_context():
     context["filename_sf_bay"] = data.get_sf_bay_url()
     context["filename_landsat_salt_lake"] = data.get_data_path("landsat.tif")
     context["cesium_token"] = current_app.config.get("cesium_token", "")
+    return context
+
+
+@tileserver.context_processor
+def google_analytics_context():
+    context = {}
+    mid = os.environ.get("GOOGLE_ANALYTICS_MID", "")
+    if mid:
+        context["google_analytics_mid"] = mid
     return context
