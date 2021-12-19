@@ -125,8 +125,8 @@ class MetadataView(BaseImageView):
 
 @api.doc(
     params={
-        "projection": {
-            "description": "The projection to open the image in (default is `EPSG:4326`).",
+        "units": {
+            "description": "The projection of the bounds (default is `EPSG:4326`).",
             "in": "query",
             "type": "str",
         }
@@ -136,10 +136,10 @@ class BoundsView(BaseImageView):
     def get(self):
         tile_source = self.get_tile_source()
         # Override default projection for bounds
-        projection = request.args.get("projection", "EPSG:4326")
+        units = request.args.get("units", "EPSG:4326")
         return utilities.get_tile_bounds(
             tile_source,
-            projection=projection,
+            projection=units,
         )
 
 

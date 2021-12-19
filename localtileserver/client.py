@@ -140,7 +140,7 @@ class BaseTileClient:
 
     def bounds(self, projection: str = "EPSG:4326"):
         """Get bounds in form of (ymin, ymax, xmin, xmax)."""
-        r = requests.get(self.create_url(f"/bounds?projection={projection}"))
+        r = requests.get(self.create_url(f"/bounds?units={projection}"))
         r.raise_for_status()
         bounds = r.json()
         return (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
