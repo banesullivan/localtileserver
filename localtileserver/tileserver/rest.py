@@ -94,7 +94,7 @@ def make_cache_key(*args, **kwargs):
     return (path + args).encode("utf-8")
 
 
-class ListColors(View):
+class ListPalettes(View):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT)
     def get(self):
         return get_palettes()

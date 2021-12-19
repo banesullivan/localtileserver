@@ -43,7 +43,7 @@ rest.api.add_resource(
     endpoint="region-pixel",
 )
 rest.api.add_resource(
-    rest.ListColors,
-    "/colors",
-    endpoint="colors",
+    rest.ListPalettes,
+    "/palettes",
+    endpoint="palettes",
 )

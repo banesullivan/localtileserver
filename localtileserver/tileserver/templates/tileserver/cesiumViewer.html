@@ -8,7 +8,7 @@
   <label for="rasterOpacityRange">Raster Layer Opacity: </label>
   <input type="range" min="1" max="100" value="100" class="overlay" id="rasterOpacityRange" onChange="updateTilesOpacity(event, value)" onInput="updateTilesOpacity(event, value)" style="top: 5px; left: 5px;">
   <br />
-  {% include 'tileserver/_include/colors.html' %}
+  {% include 'tileserver/_include/palettes.html' %}
 </div>
 
 <script>
