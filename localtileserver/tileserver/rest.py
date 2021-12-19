@@ -17,7 +17,7 @@ api = Api(tileserver, doc="/swagger/", title="localtileserver", version=__versio
 
 BASE_PARAMS = {
     "filename": {
-        "description": "The local path or URL to the image file to use",
+        "description": "The local path or URL to the image to use.",
         "in": "query",
         "type": "str",
     },
@@ -170,13 +170,13 @@ class BaseTileView(BaseImageView):
 @api.doc(
     params={
         "sleep": {
-            "description": "The time is seconds to delay serving each tile (useful when debugging to slow things down).",
+            "description": "The time in seconds to delay serving each tile (useful when debugging to slow things down).",
             "in": "query",
             "type": "float",
         }
     }
 )
-class TileDebugView(BaseTileView):
+class TileDebugView(View):
     """A dummy tile server endpoint that produces borders of the tile grid.
 
     This is used for testing tile viewers. It returns the same thing on every
