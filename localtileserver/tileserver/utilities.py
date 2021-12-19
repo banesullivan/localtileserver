@@ -6,10 +6,13 @@ import tempfile
 from typing import Union
 from urllib.parse import urlencode, urlparse
 
+from flask import current_app, request
 import large_image
 from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
+
+from localtileserver.tileserver.data import get_data_path
 
 logger = logging.getLogger(__name__)
 
@@ -152,6 +155,8 @@ def make_vsi(url: str, **options):
 
 
 def get_clean_filename(filename: str):
+    if not filename:
+        raise OSError("Empty path given")
     if str(filename).startswith("/vsi"):
         return filename
     parsed = urlparse(str(filename))
@@ -161,4 +166,22 @@ def get_clean_filename(filename: str):
     filename = pathlib.Path(filename).expanduser().absolute()
     if not filename.exists():
         raise OSError(f"Path does not exist: {filename}")
+    return filename
+
+
+def get_clean_filename_from_request():
+    try:
+        # First look for filename in URL params
+        f = request.args.get("filename")
+        if not f:
+            raise KeyError
+        filename = get_clean_filename(f)
+    except KeyError:
+        # Backup to app.config
+        try:
+            filename = get_clean_filename(current_app.config["filename"])
+        except KeyError:
+            # Fallback to sample data
+            logger.error("No filename set in app config or URL params. Using sample data.")
+            filename = get_data_path("landsat.tif")
     return filename
