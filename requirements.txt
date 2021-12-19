@@ -1,6 +1,7 @@
 click
 flask>=2.0.0
 Flask-Caching
+flask-restx
 --find-links https://girder.github.io/large_image_wheels GDAL
 large-image[memcached]
 large-image-source-gdal
