@@ -7,28 +7,43 @@ tileserver.add_url_rule("/roi/", view_func=views.GeoJSViewer.as_view("roi"))
 tileserver.add_url_rule("/examples", view_func=views.ExampleChoices.as_view("examples"))
 
 # REST endpoints
-tileserver.add_url_rule("/thumbnail", view_func=rest.ThumbnailView.as_view("thumbnail"))
-tileserver.add_url_rule("/metadata", view_func=rest.MetadataView.as_view("metadata"))
-tileserver.add_url_rule(
+rest.api.add_resource(
+    rest.ThumbnailView,
+    "/thumbnail",
+    endpoint="thumbnail",
+)
+rest.api.add_resource(
+    rest.MetadataView,
+    "/metadata",
+    endpoint="metadata",
+)
+rest.api.add_resource(
+    rest.BoundsView,
     "/bounds",
-    view_func=rest.BoundsView.as_view("bounds"),
+    endpoint="bounds",
 )
-tileserver.add_url_rule(
-    "/tiles/<int:z>/<int:x>/<int:y>.png", view_func=rest.TileView.as_view("tiles")
+rest.api.add_resource(
+    rest.TileView,
+    "/tiles/<int:z>/<int:x>/<int:y>.png",
+    endpoint="tiles",
 )
-tileserver.add_url_rule(
+rest.api.add_resource(
+    rest.TileDebugView,
     "/tiles/debug/<int:z>/<int:x>/<int:y>.png",
-    view_func=rest.TileDebugView.as_view("tiles-debug"),
+    endpoint="tiles-debug",
 )
-tileserver.add_url_rule(
+rest.api.add_resource(
+    rest.RegionWorldView,
     "/world/region.tif",
-    view_func=rest.RegionWorldView.as_view("region-world"),
+    endpoint="region-world",
 )
-tileserver.add_url_rule(
+rest.api.add_resource(
+    rest.RegionPixelView,
     "/pixel/region.tif",
-    view_func=rest.RegionPixelView.as_view("region-pixel"),
+    endpoint="region-pixel",
 )
-tileserver.add_url_rule(
-    "/colors",
-    view_func=rest.ListColors.as_view("colors"),
+rest.api.add_resource(
+    rest.ListPalettes,
+    "/palettes",
+    endpoint="palettes",
 )

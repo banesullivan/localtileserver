@@ -11,31 +11,13 @@ from localtileserver.tileserver.blueprint import tileserver
 logger = logging.getLogger(__name__)
 
 
-def _get_clean_filename_from_request():
-    try:
-        # First look for filename in URL params
-        f = request.args.get("filename")
-        if not f:
-            raise KeyError
-        filename = utilities.get_clean_filename(f)
-    except KeyError:
-        # Backup to app.config
-        try:
-            filename = utilities.get_clean_filename(current_app.config["filename"])
-        except KeyError:
-            # Fallback to sample data
-            logger.error("No filename set in app config or URL params. Using sample data.")
-            filename = data.get_data_path("landsat.tif")
-    return filename
-
-
 class BaseViewer(View):
     def render_or_404(self, template: str):
         """Check the file in the arguments and 404 if invalid."""
         projection = request.args.get("projection", None)
         # Check opening the file with large image
         try:
-            filename = _get_clean_filename_from_request()
+            filename = utilities.get_clean_filename_from_request()
             _ = utilities.get_tile_source(filename, projection=projection)
         except (OSError, AttributeError, TileSourceFileNotFoundError):
             return render_template("tileserver/404file.html"), 404
@@ -60,7 +42,7 @@ class ExampleChoices(View):
 @tileserver.context_processor
 def raster_context():
     try:
-        filename = _get_clean_filename_from_request()
+        filename = utilities.get_clean_filename_from_request()
     except OSError:
         filename = request.args.get("filename", "")
     context = {}

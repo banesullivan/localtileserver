@@ -21,6 +21,7 @@ class Report(scooby.Report):
             "localtileserver",
             "flask",
             "flask_caching",
+            "flask_restx",
             "requests",
             "werkzeug",
             "click",
