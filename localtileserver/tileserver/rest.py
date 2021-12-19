@@ -13,18 +13,28 @@ from localtileserver.tileserver.palettes import get_palettes
 
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
 
-api = Api(tileserver, doc="/swagger/", title="localtileserver", version=__version__)
+api = Api(
+    tileserver,
+    doc="/swagger/",
+    title="localtileserver",
+    version=__version__,
+    default="localtileserver",
+    default_label="localtileserver namespace",
+    description="<a href='https://github.com/banesullivan/localtileserver' target='_blank'>Learn more about localtileserver</a>",
+)
 
 BASE_PARAMS = {
     "filename": {
         "description": "The local path or URL to the image to use.",
         "in": "query",
         "type": "str",
+        "example": "s3://sentinel-cogs/sentinel-s2-l2a-cogs/2020/S2A_31QHU_20200714_0_L2A/B01.tif",
     },
     "projection": {
-        "description": "The projection to open the image in (default is `EPSG:3857`).",
+        "description": "The projection in which to open the image.",
         "in": "query",
         "type": "str",
+        "default": "EPSG:3857",
     },
 }
 STYLE_PARAMS = {
@@ -59,31 +69,37 @@ REGION_PARAMS = {
         "description": "The left bound (X).",
         "in": "query",
         "type": "float",
+        "required": True,
     },
     "right": {
         "description": "The right bound (X).",
         "in": "query",
         "type": "float",
+        "required": True,
     },
     "bottom": {
         "description": "The bottom bound (Y).",
         "in": "query",
         "type": "float",
+        "required": True,
     },
     "top": {
         "description": "The top bound (Y).",
         "in": "query",
         "type": "float",
+        "required": True,
     },
     "units": {
-        "description": "The projection/units of the coordinates (default is `EPSG:4326`)",
+        "description": "The projection/units of the coordinates.",
         "in": "query",
         "type": "str",
+        "default": "EPSG:4326",
     },
     "encoding": {
-        "description": "The encoding of the output image (default is `TILED`)",
+        "description": "The encoding of the output image.",
         "in": "query",
         "type": "str",
+        "default": "TILED",
     },
 }
 
@@ -126,9 +142,10 @@ class MetadataView(BaseImageView):
 @api.doc(
     params={
         "units": {
-            "description": "The projection of the bounds (default is `EPSG:4326`).",
+            "description": "The projection of the bounds.",
             "in": "query",
             "type": "str",
+            "default": "EPSG:4326",
         }
     }
 )
@@ -173,6 +190,7 @@ class BaseTileView(BaseImageView):
             "description": "The time in seconds to delay serving each tile (useful when debugging to slow things down).",
             "in": "query",
             "type": "float",
+            "default": 0.5,
         }
     }
 )
@@ -205,6 +223,7 @@ class TileDebugView(View):
             "description": "Show a grid/outline around each tile. This is useful for debugging viewers.",
             "in": "query",
             "type": "bool",
+            "default": False,
         }
     }
 )
