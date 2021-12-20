@@ -321,7 +321,7 @@ class RegionPixelView(BaseRegionView):
 @api.doc(
     params={
         "projection": {
-            "description": "The projection in which to open the image (defualt None).",
+            "description": "The projection in which to open the image (default None).",
             "in": "query",
             "type": "str",
             "default": None,
