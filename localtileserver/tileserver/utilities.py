@@ -136,6 +136,8 @@ def get_tile_bounds(
 def get_meta_data(tile_source: FileTileSource):
     meta = tile_source.getMetadata()
     meta.update(tile_source.getInternalMetadata())
+    # Override bounds for EPSG:4326
+    meta["bounds"] = get_tile_bounds(tile_source)
     return meta
 
 

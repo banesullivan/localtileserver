@@ -136,7 +136,9 @@ class MetadataView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self):
         tile_source = self.get_tile_source()
-        return utilities.get_meta_data(tile_source)
+        meta = utilities.get_meta_data(tile_source)
+        meta["filename"] = tile_source.largeImagePath
+        return meta
 
 
 @api.doc(
@@ -154,10 +156,12 @@ class BoundsView(BaseImageView):
         tile_source = self.get_tile_source()
         # Override default projection for bounds
         units = request.args.get("units", "EPSG:4326")
-        return utilities.get_tile_bounds(
+        bounds = utilities.get_tile_bounds(
             tile_source,
             projection=units,
         )
+        bounds["filename"] = tile_source.largeImagePath
+        return bounds
 
 
 class ThumbnailView(BaseImageView):
