@@ -349,7 +349,10 @@ class PixelView(BasePixelOperation):
 
     def get(self, left: int, top: int):
         tile_source = self.get_tile_source(projection=None)
-        return tile_source.getPixel(region={"left": left, "top": top, "units": "pixels"})
+        region = {"left": left, "top": top, "units": "pixels"}
+        pixel = tile_source.getPixel(region=region)
+        pixel.update(region)
+        return pixel
 
 
 @api.doc(
