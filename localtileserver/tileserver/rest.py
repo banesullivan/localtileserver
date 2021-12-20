@@ -237,9 +237,7 @@ class TileView(BaseTileView):
         tile_source = self.get_tile_source()
         tile_binary = tile_source.getTile(x, y, z)
         mime_type = tile_source.getTileMimeType()
-        grid = request.args.get("grid", "False")
-        if grid.lower() in ["false", "no", "off"]:
-            grid = False
+        grid = utilities.str_to_bool(request.args.get("grid", "False"))
         if grid:
             tile_binary = self.add_border_to_image(tile_binary)
         return send_file(
@@ -310,3 +308,74 @@ class RegionPixelView(BaseRegionView):
             path,
             mimetype=mime_type,
         )
+
+
+@api.doc(
+    params={
+        "projection": {
+            "description": "The projection in which to open the image (defualt None).",
+            "in": "query",
+            "type": "str",
+            "default": None,
+        },
+    }
+)
+class BasePixelOperation(BaseImageView):
+    pass
+
+
+@api.doc(
+    params={
+        "left": {
+            "description": "X coordinate from left of image in pixel space.",
+            "type": "int",
+        },
+        "top": {
+            "description": "Y coordinate from top of image in pixel space.",
+            "type": "int",
+        },
+    }
+)
+class PixelView(BasePixelOperation):
+    """Returns single pixel."""
+
+    def get(self, left: int, top: int):
+        tile_source = self.get_tile_source(projection=None)
+        return tile_source.getPixel(region={"left": left, "top": top, "units": "pixels"})
+
+
+@api.doc(
+    params={
+        "bins": {
+            "type": "int",
+            "default": 256,
+        },
+        "density": {
+            "type": "bool",
+            "default": False,
+        },
+        "format": {
+            "type": "str",
+        },
+    }
+)
+class HistogramView(BasePixelOperation):
+    """Returns histogram."""
+
+    def get(self):
+        kwargs = dict(
+            bins=int(request.args.get("bins", 256)),
+            density=utilities.str_to_bool(request.args.get("density", "False")),
+            format=request.args.get("format", None),
+        )
+        tile_source = self.get_tile_source(projection=None)
+        result = tile_source.histogram(**kwargs)
+        result = result["histogram"]
+        for entry in result:
+            for key in {"bin_edges", "hist", "range"}:
+                if key in entry:
+                    entry[key] = [float(val) for val in list(entry[key])]
+            for key in {"min", "max", "samples"}:
+                if key in entry:
+                    entry[key] = float(entry[key])
+        return result

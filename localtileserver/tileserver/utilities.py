@@ -17,6 +17,10 @@ from localtileserver.tileserver.data import get_data_path
 logger = logging.getLogger(__name__)
 
 
+def str_to_bool(v):
+    return v.lower() in ("yes", "true", "t", "1", "on")
+
+
 def get_memcache_config():
     url, username, password = None, None, None
     if os.environ.get("MEMCACHED_URL", ""):

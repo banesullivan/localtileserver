@@ -47,3 +47,13 @@ rest.api.add_resource(
     "/palettes",
     endpoint="palettes",
 )
+rest.api.add_resource(
+    rest.PixelView,
+    "/pixel/<int:left>/<int:top>",
+    endpoint="pixel",
+)
+rest.api.add_resource(
+    rest.HistogramView,
+    "/histogram",
+    endpoint="histogram",
+)
