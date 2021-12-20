@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 3, 11
+version_info = 0, 3, 12
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
