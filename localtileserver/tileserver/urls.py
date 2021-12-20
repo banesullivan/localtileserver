@@ -57,3 +57,8 @@ rest.api.add_resource(
     "/histogram",
     endpoint="histogram",
 )
+rest.api.add_resource(
+    rest.ListTileSources,
+    "/sources",
+    endpoint="sources",
+)

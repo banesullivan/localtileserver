@@ -4,6 +4,7 @@ import time
 from PIL import Image, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
+import large_image
 from large_image_source_gdal import GDALFileTileSource
 
 from localtileserver import __version__
@@ -114,6 +115,13 @@ class ListPalettes(View):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT)
     def get(self):
         return get_palettes()
+
+
+class ListTileSources(View):
+    def get(self):
+        large_image.tilesource.loadTileSources()
+        sources = large_image.tilesource.AvailableTileSources
+        return {k: str(v) for k, v in sources.items()}
 
 
 @api.doc(params=BASE_PARAMS)
