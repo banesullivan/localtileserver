@@ -37,7 +37,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
         "click",
         "flask>=2.0.0",
