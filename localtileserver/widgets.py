@@ -67,8 +67,14 @@ def get_leaflet_tile_layer(
     # Safely import ipyleaflet
     try:
         from ipyleaflet import TileLayer
+        from traitlets import Tuple
     except ImportError as e:
         raise ImportError(f"Please install `ipyleaflet`: {e}")
+
+    class BoundTileLayer(TileLayer):
+        # https://github.com/jupyter-widgets/ipyleaflet/issues/888
+        bounds = Tuple(default_value=None, allow_none=True).tag(sync=True, o=True)
+
     source, created = get_or_create_tile_client(source, port=port, debug=debug)
     url = source.get_tile_url(
         projection=projection,
@@ -80,7 +86,7 @@ def get_leaflet_tile_layer(
     )
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
-    tile_layer = TileLayer(url=url, attribution=attribution, **kwargs)
+    tile_layer = BoundTileLayer(url=url, attribution=attribution, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source
