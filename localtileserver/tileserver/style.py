@@ -90,7 +90,7 @@ def make_style(
             p = safe_get(palette, i)
             nod = safe_get(nodata, i)
             style["bands"].append(
-                make_single_band_style(band[i], vmin=vmi, vmax=vma, palette=p, nodata=nod),
+                make_single_band_style(b, vmin=vmi, vmax=vma, palette=p, nodata=nod),
             )
     # Return JSON encoded
     if style:
