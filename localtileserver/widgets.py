@@ -67,6 +67,7 @@ def get_leaflet_tile_layer(
     # Safely import ipyleaflet
     try:
         from ipyleaflet import TileLayer
+        from traitlets import Tuple
     except ImportError as e:
         raise ImportError(f"Please install `ipyleaflet`: {e}")
 
