@@ -127,7 +127,7 @@ class BaseTileClient:
         encoding: str = "TILED",
         output_path: pathlib.Path = None,
     ):
-        """Extract ROI in world coordinates."""
+        """Extract ROI in pixel coordinates."""
         path = f"/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
@@ -179,6 +179,31 @@ class BaseTileClient:
         r = requests.get(url)
         r.raise_for_status()
         return save_file_from_request(r, output_path)
+
+    def pixel(self, x: float, y: float, units: str = "pixels", projection: str = None):
+        """Get pixel values for each band given coordinates in pixel or world space."""
+        params = {}
+        params["x"] = x
+        params["y"] = y
+        params["units"] = units
+        if projection is not None:
+            params["projection"] = projection
+        url = add_query_parameters(self.create_url("pixel"), params)
+        r = requests.get(url)
+        r.raise_for_status()
+        return r.json()
+
+    def histogram(self, bins: int = 256, density: bool = False, format: str = None):
+        """Get a histoogram for each band."""
+        params = {}
+        params["density"] = density
+        params["bins"] = bins
+        if format is not None:
+            params["format"] = format
+        url = add_query_parameters(self.create_url("histogram"), params)
+        r = requests.get(url)
+        r.raise_for_status()
+        return r.json()
 
 
 class RemoteTileClient(BaseTileClient):
