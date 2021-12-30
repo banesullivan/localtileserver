@@ -188,7 +188,7 @@ class BaseTileClient:
         y : float
             The Y coordinate (from top of image if `pixels` units or latitude if using EPSG)
         x : float
-            The Y coordinate (from left of image if `pixels` units or longitude if using EPSG)
+            The X coordinate (from left of image if `pixels` units or longitude if using EPSG)
         units : str
             The units of the coordinates (`pixels` or `EPSG:4326`).
         projection : str, optional
