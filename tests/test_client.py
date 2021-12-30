@@ -169,3 +169,8 @@ def test_pixel(bahamas):
     assert "bands" in pix
     pix = bahamas.pixel(-77.76, 24.56, units="EPSG:4326")  # world coordinates
     assert "bands" in pix
+
+
+def test_histogram(bahamas):
+    hist = bahamas.histogram()
+    assert len(hist)
