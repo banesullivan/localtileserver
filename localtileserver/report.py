@@ -33,6 +33,7 @@ class Report(scooby.Report):
             "gunicorn",
             "pylibmc",
             "ipyleaflet",
+            "traitlets",
             "shapely",
             "folium",
             "matplotlib",
