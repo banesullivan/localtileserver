@@ -49,7 +49,7 @@ rest.api.add_resource(
 )
 rest.api.add_resource(
     rest.PixelView,
-    "/pixel/<int:left>/<int:top>",
+    "/pixel",
     endpoint="pixel",
 )
 rest.api.add_resource(

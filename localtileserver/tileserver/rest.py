@@ -275,7 +275,6 @@ class RegionWorldView(BaseRegionView):
     """
 
     def get(self):
-
         tile_source = self.get_tile_source()
         if not isinstance(tile_source, GDALFileTileSource):
             raise TypeError("Source image must have geospatial reference.")
@@ -334,22 +333,37 @@ class BasePixelOperation(BaseImageView):
 
 @api.doc(
     params={
-        "left": {
-            "description": "X coordinate from left of image in pixel space.",
-            "type": "int",
+        "x": {
+            "description": "X coordinate (from left of image if in pixel space).",
+            "in": "query",
+            "type": "float",
+            "required": True,
         },
-        "top": {
-            "description": "Y coordinate from top of image in pixel space.",
-            "type": "int",
+        "y": {
+            "description": "Y coordinate (from top of image if in pixel space).",
+            "in": "query",
+            "type": "float",
+            "required": True,
+        },
+        "units": {
+            "description": "The projection/units of the coordinates.",
+            "in": "query",
+            "type": "str",
+            "default": "pixels",
+            "example": "EPSG:4326",
         },
     }
 )
 class PixelView(BasePixelOperation):
     """Returns single pixel."""
 
-    def get(self, left: int, top: int):
-        tile_source = self.get_tile_source(projection=None)
-        region = {"left": left, "top": top, "units": "pixels"}
+    def get(self):
+        projection = request.args.get("projection", None)
+        x = float(request.args.get("x"))
+        y = float(request.args.get("y"))
+        units = request.args.get("units", "pixels")
+        tile_source = self.get_tile_source(projection=projection)
+        region = {"left": x, "top": y, "units": units}
         pixel = tile_source.getPixel(region=region)
         pixel.update(region)
         return pixel

@@ -162,3 +162,15 @@ def test_get_or_create_tile_client(bahamas_file, remote_file_url):
     same, created = get_or_create_tile_client(tile_client)
     assert not created
     assert tile_client == same
+
+
+def test_pixel(bahamas):
+    pix = bahamas.pixel(0, 0)  # pixel space
+    assert "bands" in pix
+    pix = bahamas.pixel(24.56, -77.76, units="EPSG:4326")  # world coordinates
+    assert "bands" in pix
+
+
+def test_histogram(bahamas):
+    hist = bahamas.histogram()
+    assert len(hist)
