@@ -56,7 +56,7 @@ class BaseTileClient:
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
         grid: bool = False,
     ):
-        """
+        """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
 
         Parameters
         ----------
@@ -180,8 +180,21 @@ class BaseTileClient:
         r.raise_for_status()
         return save_file_from_request(r, output_path)
 
-    def pixel(self, x: float, y: float, units: str = "pixels", projection: str = None):
-        """Get pixel values for each band given coordinates in pixel or world space."""
+    def pixel(self, y: float, x: float, units: str = "pixels", projection: str = None):
+        """Get pixel values for each band at the given coordinates (y <lat>, x <lon>).
+
+        Parameters
+        ----------
+        y : float
+            The Y coordinate (from top of image if `pixels` units or latitude if using EPSG)
+        x : float
+            The Y coordinate (from left of image if `pixels` units or longitude if using EPSG)
+        units : str
+            The units of the coordinates (`pixels` or `EPSG:4326`).
+        projection : str, optional
+            The projection in which to open the image.
+
+        """
         params = {}
         params["x"] = x
         params["y"] = y
