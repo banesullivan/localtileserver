@@ -39,6 +39,28 @@ class ExampleChoices(View):
         return render_template("tileserver/exampleChoices.html")
 
 
+class CesiumSplitViewer(View):
+    def dispatch_request(self):
+        try:
+            filename = utilities.get_clean_filename_from_request("filenameA", strict=True)
+            _ = utilities.get_tile_source(filename)
+        except (OSError, AttributeError, TileSourceFileNotFoundError):
+            f = request.args.get("filenameA")
+            return render_template("tileserver/404file.html", filename=f), 404
+        try:
+            filename = utilities.get_clean_filename_from_request("filenameB", strict=True)
+            _ = utilities.get_tile_source(filename)
+        except (OSError, AttributeError, TileSourceFileNotFoundError):
+            f = request.args.get("filenameB")
+            return render_template("tileserver/404file.html", filename=f), 404
+        return render_template("tileserver/cesiumSplitViewer.html")
+
+
+class SplitViewForm(View):
+    def dispatch_request(self):
+        return render_template("tileserver/splitForm.html")
+
+
 @tileserver.context_processor
 def raster_context():
     try:

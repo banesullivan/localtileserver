@@ -1,0 +1,19 @@
+{% extends "tileserver/base.html" %}
+
+{% block content %}
+
+<section>
+  <center>
+    <h1>Comparison</h1>
+    <p>Enter the two files you would like to compare</p>
+    <form action="/split/" method="GET">
+      <input name="filenameA" />
+      <br />
+      <input name="filenameB" />
+      <br />
+      <input type="submit" />
+    </form>
+  </center>
+</section>
+
+{% endblock %}
