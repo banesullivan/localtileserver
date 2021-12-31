@@ -56,6 +56,11 @@ class CesiumSplitViewer(View):
         return render_template("tileserver/cesiumSplitViewer.html")
 
 
+class SplitViewForm(View):
+    def dispatch_request(self):
+        return render_template("tileserver/splitForm.html")
+
+
 @tileserver.context_processor
 def raster_context():
     try:
