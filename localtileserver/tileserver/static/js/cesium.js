@@ -180,7 +180,7 @@ viewer = new Cesium.Viewer('cesiumContainer', {
   geocoder: false,
   fullscreenButton: false,
   selectionIndicator: false,
-  terrainProvider: Cesium.Ion.defaultAccessToken ? Cesium.createWorldTerrain() : undefined,
+  terrainProvider: undefined,  //Cesium.Ion.defaultAccessToken ? Cesium.createWorldTerrain() : undefined,
   navigationInstructionsInitiallyVisible: false,
 });
 viewer.scene.fog.enabled = false;
