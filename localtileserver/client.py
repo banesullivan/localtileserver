@@ -100,7 +100,7 @@ class BaseTileClient:
             params["projection"] = projection
         if grid:
             params["grid"] = True
-        return add_query_parameters(self.create_url("tiles/{z}/{x}/{y}.png"), params)
+        return add_query_parameters(self.create_url("api/tiles/{z}/{x}/{y}.png"), params)
 
     def extract_roi(
         self,
@@ -113,7 +113,7 @@ class BaseTileClient:
         output_path: pathlib.Path = None,
     ):
         """Extract ROI in world coordinates."""
-        path = f"/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
+        path = f"api/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
         return save_file_from_request(r, output_path)
@@ -128,19 +128,19 @@ class BaseTileClient:
         output_path: pathlib.Path = None,
     ):
         """Extract ROI in pixel coordinates."""
-        path = f"/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
+        path = f"/api/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
         return save_file_from_request(r, output_path)
 
     def metadata(self):
-        r = requests.get(self.create_url("/metadata"))
+        r = requests.get(self.create_url("/api/metadata"))
         r.raise_for_status()
         return r.json()
 
     def bounds(self, projection: str = "EPSG:4326"):
         """Get bounds in form of (ymin, ymax, xmin, xmax)."""
-        r = requests.get(self.create_url(f"/bounds?units={projection}"))
+        r = requests.get(self.create_url(f"/api/bounds?units={projection}"))
         r.raise_for_status()
         bounds = r.json()
         return (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
@@ -175,7 +175,7 @@ class BaseTileClient:
             params["max"] = vmax
         if nodata is not None:
             params["nodata"] = nodata
-        url = add_query_parameters(self.create_url("thumbnail"), params)
+        url = add_query_parameters(self.create_url("api/thumbnail"), params)
         r = requests.get(url)
         r.raise_for_status()
         return save_file_from_request(r, output_path)
@@ -201,7 +201,7 @@ class BaseTileClient:
         params["units"] = units
         if projection is not None:
             params["projection"] = projection
-        url = add_query_parameters(self.create_url("pixel"), params)
+        url = add_query_parameters(self.create_url("api/pixel"), params)
         r = requests.get(url)
         r.raise_for_status()
         return r.json()
@@ -213,7 +213,7 @@ class BaseTileClient:
         params["bins"] = bins
         if format is not None:
             params["format"] = format
-        url = add_query_parameters(self.create_url("histogram"), params)
+        url = add_query_parameters(self.create_url("api/histogram"), params)
         r = requests.get(url)
         r.raise_for_status()
         return r.json()
@@ -338,7 +338,7 @@ def get_or_create_tile_client(
         _internally_created = True
     # Check that the tile source is valid and no server errors
     try:
-        r = requests.get(source.create_url("metadata"))
+        r = requests.get(source.create_url("api/metadata"))
         r.raise_for_status()
     except requests.HTTPError as e:
         # Make sure to destroy the server and its thread if internally created.

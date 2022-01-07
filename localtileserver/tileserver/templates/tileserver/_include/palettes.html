@@ -41,7 +41,7 @@
     colorsSubGroup.style.display = 'block';
   }
 
-  fetch(`${host}/palettes`)
+  fetch(`${host}/api/palettes`)
     .then(response => response.json())
     .then(data => {
       for (const [source, indices] of Object.entries(data)) {

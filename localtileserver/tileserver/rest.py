@@ -22,6 +22,7 @@ api = Api(
     default="localtileserver",
     default_label="localtileserver namespace",
     description="<a href='https://github.com/banesullivan/localtileserver' target='_blank'>Learn more about localtileserver</a>",
+    prefix="api",
 )
 
 BASE_PARAMS = {

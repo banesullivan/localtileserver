@@ -79,10 +79,10 @@
   var tileLayerB;
   var layers = viewer.scene.imageryLayers;
 
-  var tileUrlA = `${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filenameA}`;
-  var tileUrlB = `${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filenameB}`;
+  var tileUrlA = `${host}/api/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filenameA}`;
+  var tileUrlB = `${host}/api/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filenameB}`;
 
-  fetch(`${host}/metadata?filename=${filenameA}`)
+  fetch(`${host}/api/metadata?filename=${filenameA}`)
     .then(response => response.json())
     .then(data => {
       var extents = data["bounds"];
@@ -101,7 +101,7 @@
       });
     });
 
-  fetch(`${host}/metadata?filename=${filenameB}`)
+  fetch(`${host}/api/metadata?filename=${filenameB}`)
     .then(response => response.json())
     .then(data => {
       var extents = data["bounds"];

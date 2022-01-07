@@ -41,7 +41,7 @@ def test_create_tile_client(bahamas_file, processes):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
-    tile_url = tile_client.create_url("/tiles/debug/{z}/{x}/{y}.png".format(z=8, x=72, y=110))
+    tile_url = tile_client.create_url("api/tiles/debug/{z}/{x}/{y}.png".format(z=8, x=72, y=110))
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
@@ -81,8 +81,8 @@ def test_multiple_tile_clients_one_server(bahamas, blue_marble):
     tile_url_a = bahamas.get_tile_url().format(z=8, x=72, y=110)
     tile_url_b = blue_marble.get_tile_url().format(z=8, x=72, y=110)
     assert get_content(tile_url_a) != get_content(tile_url_b)
-    thumb_url_a = bahamas.create_url("thumbnail")
-    thumb_url_b = blue_marble.create_url("thumbnail")
+    thumb_url_a = bahamas.create_url("api/thumbnail")
+    thumb_url_b = blue_marble.create_url("api/thumbnail")
     assert get_content(thumb_url_a) != get_content(thumb_url_b)
 
 
@@ -106,10 +106,10 @@ def test_extract_roi_pixel(bahamas):
 
 
 def test_caching_query_params(bahamas):
-    thumb_url_a = bahamas.create_url("thumbnail")
-    thumb_url_b = bahamas.create_url("thumbnail?band=1")
+    thumb_url_a = bahamas.create_url("api/thumbnail")
+    thumb_url_b = bahamas.create_url("api/thumbnail?band=1")
     assert get_content(thumb_url_a) != get_content(thumb_url_b)
-    thumb_url_c = bahamas.create_url("thumbnail")
+    thumb_url_c = bahamas.create_url("api/thumbnail")
     assert get_content(thumb_url_a) == get_content(thumb_url_c)
 
 
