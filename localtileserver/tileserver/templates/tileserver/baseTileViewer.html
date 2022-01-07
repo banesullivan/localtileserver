@@ -3,7 +3,7 @@
 {% block content %}
 
 <script>
-  var tileUrl = `${host}/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filename}`;
+  var tileUrl = `${host}/api/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filename}`;
 
   function insertWindowUrlParam(key, value) {
     if (history.pushState) {
