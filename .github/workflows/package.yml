@@ -1,18 +1,21 @@
-
 name: Docker Package
 on:
   push:
-    branches:
-      - main
+    tags: "*"
+    branches: "*"
+  pull_request:
 
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Build and Publish head Docker image
-      uses: DrSkunk/gp-docker-action@1.1.9
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        image-name: localtileserver
-        image-tag: latest
+      - uses: actions/checkout@v2
+      - name: Docker Meta
+        id: meta
+        uses: docker/metadata-action@v3
+      - name: Build and Publish head Docker image
+        uses: DrSkunk/gp-docker-action@1.1.9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          image-name: localtileserver
+          image-tag: ${{ steps.meta.outputs.tags }}
