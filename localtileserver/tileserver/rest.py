@@ -173,6 +173,7 @@ class BoundsView(BaseImageView):
         return bounds
 
 
+@api.doc(params=STYLE_PARAMS)
 class ThumbnailView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self):
