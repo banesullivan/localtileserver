@@ -174,3 +174,12 @@ def test_pixel(bahamas):
 def test_histogram(bahamas):
     hist = bahamas.histogram()
     assert len(hist)
+
+
+def test_custom_palette(bahamas):
+    palette = ["#006633", "#E5FFCC", "#662A00", "#D8D8D8", "#F5F5F5"]
+    thumbnail = bahamas.thumbnail(
+        band=1,
+        palette=palette,
+    )
+    assert thumbnail  # TODO: check colors in produced image

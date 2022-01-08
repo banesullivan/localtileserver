@@ -27,7 +27,7 @@ def make_single_band_style(
     band: int,
     vmin: Union[int, float] = None,
     vmax: Union[int, float] = None,
-    palette: str = None,
+    palette: Union[str, List[str]] = None,
     nodata: Union[int, float] = None,
 ):
     style = None
@@ -44,11 +44,15 @@ def make_single_band_style(
         if nodata:
             style["nodata"] = nodata
         if palette:
-            try:
-                style["palette"] = get_palette_by_name(palette)
-            except ValueError as e:
-                # Safely catch bad color palettes to avoid server errors
-                logger.error(e)
+            if isinstance(palette, str):
+                try:
+                    style["palette"] = get_palette_by_name(palette)
+                except ValueError as e:
+                    # Safely catch bad color palettes to avoid server errors
+                    logger.error(e)
+            else:
+                # TODO: check contents to make sure its a list of valid HEX colors
+                style["palette"] = palette
     return style
 
 
@@ -75,7 +79,7 @@ def make_style(
     elif band == 0:
         return
 
-    if isinstance(band, int):
+    if isinstance(band, (int, str)):
         # Handle viewing single band
         style = make_single_band_style(band, vmin, vmax, palette, nodata)
     elif isinstance(band, Iterable):

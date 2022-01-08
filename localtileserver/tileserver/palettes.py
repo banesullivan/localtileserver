@@ -1,5 +1,6 @@
 import logging
 from operator import attrgetter
+import re
 
 import palettable
 
@@ -22,6 +23,13 @@ SIMPLE_PALETTES = {
     "blue": ["#000", "#00f"],
     "b": ["#000", "#00f"],
 }
+
+
+def is_hex_str(color: str):
+    """Check if str is hex color."""
+    if re.search(r"^#(?:[0-9a-fA-F]{3}){1,2}$", color):
+        return True
+    return False
 
 
 def is_palettable_palette(name: str):
@@ -55,7 +63,7 @@ def palette_valid_or_raise(name: str):
     if isinstance(name, str):
         status = is_valid_palette_name(name)
     elif isinstance(name, (list, tuple)):
-        status = all([is_valid_palette_name(p) for p in name])
+        status = all([is_valid_palette_name(p) for p in name]) or all([is_hex_str(p) for p in name])
     if not status:
         raise ValueError(
             f"Please use a valid matplotlib colormap name or palettable palette name. Invalid: {name}"

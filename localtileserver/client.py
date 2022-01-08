@@ -69,6 +69,8 @@ class BaseTileClient:
         palette : str
             The name of the color palette from `palettable` or colormap from
             matplotlib to use when plotting a single band. Default is greyscale.
+            If viewing a single band, a list of hex colors can be passed for a
+            user-defined color palette.
         vmin : float
             The minimum value to use when colormapping the palette when plotting
             a single band.
