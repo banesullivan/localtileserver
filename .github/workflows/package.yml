@@ -13,6 +13,8 @@ jobs:
       - name: Docker Meta
         id: meta
         uses: docker/metadata-action@v3
+        with:
+          image: ghcr.io/banesullivan/localtileserver
       - name: Build and Publish head Docker image
         uses: DrSkunk/gp-docker-action@1.1.9
         with:
