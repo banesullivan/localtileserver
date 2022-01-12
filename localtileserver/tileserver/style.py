@@ -41,8 +41,8 @@ def make_single_band_style(
             style["min"] = vmin
         if vmax is not None:
             style["max"] = vmax
-        if nodata:
-            style["nodata"] = nodata
+        if nodata is not None:
+            style["nodata"] = float(nodata)
         if palette:
             if isinstance(palette, str):
                 try:

@@ -131,6 +131,7 @@ class BaseImageView(View):
         """Return the built tile source."""
         filename = utilities.get_clean_filename_from_request()
         projection = request.args.get("projection", projection)
+        encoding = request.args.get("encoding", "PNG")
         style_args = style.reformat_style_query_parameters(request.args)
         band = style_args.get("band", 0)
         vmin = style_args.get("min", None)
@@ -138,7 +139,7 @@ class BaseImageView(View):
         palette = style_args.get("palette", None)
         nodata = style_args.get("nodata", None)
         sty = style.make_style(band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata)
-        return utilities.get_tile_source(filename, projection, style=sty)
+        return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
 
 
 class MetadataView(BaseImageView):
@@ -178,7 +179,8 @@ class ThumbnailView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self):
         tile_source = self.get_tile_source()
-        thumb_data, mime_type = tile_source.getThumbnail(encoding="PNG")
+        encoding = request.args.get("encoding", "PNG")
+        thumb_data, mime_type = tile_source.getThumbnail(encoding=encoding)
         return send_file(
             io.BytesIO(thumb_data),
             download_name="thumbnail.png",

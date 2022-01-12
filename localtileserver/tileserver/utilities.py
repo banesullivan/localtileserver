@@ -69,9 +69,9 @@ def purge_cache():
 
 
 def get_tile_source(
-    path: Union[pathlib.Path, str], projection: str = None, style: str = None
+    path: Union[pathlib.Path, str], projection: str = None, style: str = None, encoding: str = "PNG"
 ) -> FileTileSource:
-    return large_image.open(str(path), projection=projection, style=style, encoding="PNG")
+    return large_image.open(str(path), projection=projection, style=style, encoding=encoding)
 
 
 def _get_region(tile_source: FileTileSource, region: dict, encoding: str):
