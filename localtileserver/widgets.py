@@ -19,6 +19,7 @@ def get_leaflet_tile_layer(
     vmin: Union[Union[float, int], List[Union[float, int]]] = None,
     vmax: Union[Union[float, int], List[Union[float, int]]] = None,
     nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+    scheme: Union[str, List[str]] = None,
     attribution: str = None,
     **kwargs,
 ):
@@ -53,6 +54,13 @@ def get_leaflet_tile_layer(
         a single band.
     nodata : float
         The value from the band to use to interpret as not valid data.
+    scheme : str
+        This is either ``linear`` (the default) or ``discrete``. If a
+        palette is specified, ``linear`` uses a piecewise linear
+        interpolation, and ``discrete`` uses exact colors from the palette
+        with the range of the data mapped into the specified number of
+        colors (e.g., a palette with two colors will split exactly halfway
+        between the min and max values).
     attribution : str
         Attribution for the source raster. This
         defaults to a message about it being a local file.
@@ -84,6 +92,7 @@ def get_leaflet_tile_layer(
         vmin=vmin,
         vmax=vmax,
         nodata=nodata,
+        scheme=scheme,
     )
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
@@ -190,6 +199,7 @@ def get_folium_tile_layer(
     vmin: Union[Union[float, int], List[Union[float, int]]] = None,
     vmax: Union[Union[float, int], List[Union[float, int]]] = None,
     nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+    scheme: Union[str, List[str]] = None,
     attr: str = None,
     **kwargs,
 ):
@@ -224,6 +234,13 @@ def get_folium_tile_layer(
         a single band.
     nodata : float
         The value from the band to use to interpret as not valid data.
+    scheme : str
+        This is either ``linear`` (the default) or ``discrete``. If a
+        palette is specified, ``linear`` uses a piecewise linear
+        interpolation, and ``discrete`` uses exact colors from the palette
+        with the range of the data mapped into the specified number of
+        colors (e.g., a palette with two colors will split exactly halfway
+        between the min and max values).
     attr : str
         Folium requires the custom tile source have an attribution. This
         defaults to a message about it being a local file.
@@ -248,6 +265,7 @@ def get_folium_tile_layer(
         vmin=vmin,
         vmax=vmax,
         nodata=nodata,
+        scheme=scheme,
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION
