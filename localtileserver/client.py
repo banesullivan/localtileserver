@@ -54,6 +54,7 @@ class BaseTileClient:
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
         vmax: Union[Union[float, int], List[Union[float, int]]] = None,
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        scheme: Union[str, List[str]] = None,
         grid: bool = False,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
@@ -79,6 +80,13 @@ class BaseTileClient:
             a single band.
         nodata : float
             The value from the band to use to interpret as not valid data.
+        scheme : str
+            This is either ``linear`` (the default) or ``discrete``. If a
+            palette is specified, ``linear`` uses a piecewise linear
+            interpolation, and ``discrete`` uses exact colors from the palette
+            with the range of the data mapped into the specified number of
+            colors (e.g., a palette with two colors will split exactly halfway
+            between the min and max values).
         grid : bool
             Show the outline of each tile. This is useful when debugging your
             tile viewer.
@@ -102,6 +110,8 @@ class BaseTileClient:
             params["projection"] = projection
         if grid:
             params["grid"] = True
+        if scheme is not None:
+            params["scheme"] = scheme
         return add_query_parameters(self.create_url("api/tiles/{z}/{x}/{y}.png"), params)
 
     def extract_roi(
@@ -162,6 +172,7 @@ class BaseTileClient:
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
         vmax: Union[Union[float, int], List[Union[float, int]]] = None,
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        scheme: Union[str, List[str]] = None,
         output_path: pathlib.Path = None,
     ):
         params = {}
@@ -177,6 +188,8 @@ class BaseTileClient:
             params["max"] = vmax
         if nodata is not None:
             params["nodata"] = nodata
+        if scheme is not None:
+            params["scheme"] = scheme
         url = add_query_parameters(self.create_url("api/thumbnail"), params)
         r = requests.get(url)
         r.raise_for_status()
