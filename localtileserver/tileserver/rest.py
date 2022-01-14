@@ -145,16 +145,9 @@ class BaseImageView(View):
         palette = style_args.get("palette", None)
         scheme = style_args.get("scheme", None)
         nodata = style_args.get("nodata", None)
-        import logging
-
-        logger = logging.getLogger(__name__)
-        logger.error(f"->>>>>>>>>> {scheme}")
-        logger.error(f"->>>>>>>>>> {request.args}")
         sty = style.make_style(
             band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata, scheme=scheme
         )
-        logger.error(f"->>>>>>>>>> {sty}")
-        logger.error(f"->>>>>>>>>> {style_args}")
         return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
 
 
