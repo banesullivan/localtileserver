@@ -1,5 +1,8 @@
 {% block colormaps %}
 
+<label for="nodata">No data value:</label>
+<input id="nodata" type="number" step="0.01" onChange='changeColors();'>
+<br />
 <label for="bandChoice">Choose a band:</label>
 <select id="bandChoice" onChange='bandChange();'>
   <option>-- none --</option>
@@ -15,6 +18,7 @@
   <input id="maxcolor" type="number" step="0.01" onChange='changeColors();'>
 </div>
 <script>
+  var nodata = document.getElementById('nodata');
   var colorsSubGroup = document.getElementById('colorsSubGroup');
   var colorsDropdown = document.getElementById('colors');
   var bandDropdown = document.getElementById('bandChoice');
@@ -27,6 +31,9 @@
   }
   if (windowSearchParams['max']) {
     colorsMax.value = windowSearchParams['max']
+  }
+  if (windowSearchParams['nodata']) {
+    nodata.value = windowSearchParams['nodata']
   }
 
   for (const [source, values] of Object.entries(bands)) {
@@ -64,6 +71,7 @@
     } else {
       cmap = colorsDropdown.value;
     }
+    updateTileUrlOption('nodata', nodata.value);
     updateTileUrlOption('palette', cmap);
     updateTileUrlOption('min', colorsMin.value);
     updateTileUrlOption('max', colorsMax.value);
