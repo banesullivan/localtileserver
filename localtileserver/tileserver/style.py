@@ -74,12 +74,13 @@ def make_style(
 ):
     style = None
     # Handle when user sets min/max/etc. but forgot band. Default to 1
-    if not band and any(v is not None for v in [vmin, vmax, palette, nodata]):
+    if not band and any(v is not None for v in [vmin, vmax, palette]):
         band = 1
-    elif band == 0:
-        return
 
-    if isinstance(band, (int, str)):
+    if band == 0:
+        if nodata is not None:
+            style = {"nodata": nodata}
+    elif isinstance(band, (int, str)):
         # Handle viewing single band
         style = make_single_band_style(band, vmin, vmax, palette, nodata)
     elif isinstance(band, Iterable):
