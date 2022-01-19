@@ -8,7 +8,7 @@
   function insertWindowUrlParam(key, value) {
     if (history.pushState) {
       let searchParams = new URLSearchParams(window.location.search);
-      if (value === undefined) {
+      if (value === undefined || value === "") {
         searchParams.delete(key);
       } else {
         searchParams.set(key, value);
@@ -24,7 +24,7 @@
     const url = new URL(tileUrl);
     const urlParams = new URLSearchParams(window.location.search);
     var searchParams = url.searchParams;
-    if (value === undefined) {
+    if (value === undefined || value === "") {
       searchParams.delete(option);
     } else {
       searchParams.set(option, value);
