@@ -6,9 +6,6 @@ on:
       - main
   pull_request:
 
-permissions:
-  packages: write
-
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
@@ -29,6 +26,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
+          push: github.event.pull_request.head.repo.full_name == github.repository
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
