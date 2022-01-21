@@ -18,12 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Log into the Container registry
-        uses: docker/login-action@v1
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: token
-          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to registry
+        run: docker login https://${{ env.REGISTRY }} -u token --password-stdin <<< ${{ github.GITHUB_TOKEN }}
       - name: Extract metadata for the Docker image
         id: meta
         uses: docker/metadata-action@v3
