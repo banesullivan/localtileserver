@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Login to registry
-        run: docker login https://${{ env.REGISTRY }} -u token --password-stdin <<< ${{ github.GITHUB_TOKEN }}
+        run: docker login https://${{ env.REGISTRY }} -u token --password-stdin <<< ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata for the Docker image
         id: meta
         uses: docker/metadata-action@v3
