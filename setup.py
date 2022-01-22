@@ -44,8 +44,8 @@ setup(
         "Flask-Caching",
         "flask-restx>=0.5.0",
         "GDAL",
-        "large_image",
-        "large_image_source_gdal",
+        "large-image>=1.10",
+        "large-image-source-gdal>=1.10",
         "requests",
         "scooby",
     ],
@@ -53,7 +53,7 @@ setup(
         "leaflet": ["ipyleaflet"],
         "folium": ["folium"],
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
-        "sources": ["large-image-source-pil", "large-image-source-tiff"],
+        "sources": ["large-image-source-pil>=1.10", "large-image-source-tiff>=1.10"],
     },
     entry_points={
         "console_scripts": [
