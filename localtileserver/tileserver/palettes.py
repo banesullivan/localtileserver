@@ -80,13 +80,15 @@ def mpl_to_palette(cmap: str, n_colors: int = 255):
     return color_list
 
 
-def get_palette_by_name(name: str):
+def get_palette_by_name(name: str, n_colors: int = 255):
     """Get a palette by name.
 
     This supports matplotlib colormaps and palettable palettes.
 
     If the palette is a valid palettable name, return that name. Otherwise,
     this will generate a full palette from the given name.
+
+    ``n_colors`` is only used if fetching a Matplotlib colormap.
     """
     palette_valid_or_raise(name)
     if is_palettable_palette(name):
@@ -94,7 +96,7 @@ def get_palette_by_name(name: str):
     if name in SIMPLE_PALETTES:
         return SIMPLE_PALETTES[name]
     if is_mpl_cmap(name):
-        return mpl_to_palette(name)
+        return mpl_to_palette(name, n_colors=n_colors)
 
 
 def get_palettes():

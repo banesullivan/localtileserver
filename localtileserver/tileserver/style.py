@@ -29,6 +29,8 @@ def make_single_band_style(
     vmax: Union[int, float] = None,
     palette: Union[str, List[str]] = None,
     nodata: Union[int, float] = None,
+    scheme: str = None,
+    n_colors: int = 255,
 ):
     style = None
     if isinstance(band, (int, str)):
@@ -46,13 +48,15 @@ def make_single_band_style(
         if palette:
             if isinstance(palette, str):
                 try:
-                    style["palette"] = get_palette_by_name(palette)
+                    style["palette"] = get_palette_by_name(palette, n_colors=n_colors)
                 except ValueError as e:
                     # Safely catch bad color palettes to avoid server errors
                     logger.error(e)
             else:
                 # TODO: check contents to make sure its a list of valid HEX colors
                 style["palette"] = palette
+        if scheme is not None:
+            style["scheme"] = scheme
     return style
 
 
@@ -71,6 +75,8 @@ def make_style(
     vmin: Union[Union[float, int], List[Union[float, int]]] = None,
     vmax: Union[Union[float, int], List[Union[float, int]]] = None,
     nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+    scheme: Union[str, List[str]] = None,
+    n_colors: int = 255,
 ):
     style = None
     # Handle when user sets min/max/etc. but forgot band. Default to 1
@@ -81,7 +87,15 @@ def make_style(
 
     if isinstance(band, (int, str)):
         # Handle viewing single band
-        style = make_single_band_style(band, vmin, vmax, palette, nodata)
+        style = make_single_band_style(
+            band,
+            vmin=vmin,
+            vmax=vmax,
+            palette=palette,
+            nodata=nodata,
+            scheme=scheme,
+            n_colors=n_colors,
+        )
     elif isinstance(band, Iterable):
         # Handle viewing multiple bands together
         style = {"bands": []}
@@ -94,7 +108,7 @@ def make_style(
             p = safe_get(palette, i)
             nod = safe_get(nodata, i)
             style["bands"].append(
-                make_single_band_style(b, vmin=vmi, vmax=vma, palette=p, nodata=nod),
+                make_single_band_style(b, vmin=vmi, vmax=vma, palette=p, nodata=nod, scheme=scheme),
             )
     # Return JSON encoded
     if style:

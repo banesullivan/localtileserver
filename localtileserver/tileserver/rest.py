@@ -50,6 +50,19 @@ STYLE_PARAMS = {
         "in": "query",
         "type": "str",
     },
+    "scheme": {
+        "description": "This is either ``linear`` (the default) or ``discrete``. If a palette is specified, ``linear`` uses a piecewise linear interpolation, and ``discrete`` uses exact colors from the palette with the range of the data mapped into the specified number of colors (e.g., a palette with two colors will split exactly halfway between the min and max values).",
+        "in": "query",
+        "type": "str",
+        "default": "linear",
+    },
+    "n_colors": {
+        "description": "The number (positive integer) of colors to discretize the matplotlib color palettes when used.",
+        "in": "query",
+        "type": "int",
+        "example": 24,
+        "default": 255,
+    },
     "min": {
         "description": "The minimum value for the color mapping.",
         "in": "query",
@@ -137,8 +150,21 @@ class BaseImageView(View):
         vmin = style_args.get("min", None)
         vmax = style_args.get("max", None)
         palette = style_args.get("palette", None)
+        scheme = style_args.get("scheme", None)
         nodata = style_args.get("nodata", None)
-        sty = style.make_style(band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata)
+        if style_args.get("n_colors", ""):
+            n_colors = int(style_args.get("n_colors"))
+        else:
+            n_colors = 255
+        sty = style.make_style(
+            band,
+            vmin=vmin,
+            vmax=vmax,
+            palette=palette,
+            nodata=nodata,
+            scheme=scheme,
+            n_colors=n_colors,
+        )
         return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
 
 
