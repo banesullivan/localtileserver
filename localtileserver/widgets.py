@@ -20,6 +20,7 @@ def get_leaflet_tile_layer(
     vmax: Union[Union[float, int], List[Union[float, int]]] = None,
     nodata: Union[Union[float, int], List[Union[float, int]]] = None,
     scheme: Union[str, List[str]] = None,
+    n_colors: int = 255,
     attribution: str = None,
     **kwargs,
 ):
@@ -61,6 +62,9 @@ def get_leaflet_tile_layer(
         with the range of the data mapped into the specified number of
         colors (e.g., a palette with two colors will split exactly halfway
         between the min and max values).
+    n_colors : int
+        The number (positive integer) of colors to discretize the matplotlib
+        color palettes when used.
     attribution : str
         Attribution for the source raster. This
         defaults to a message about it being a local file.
@@ -93,6 +97,7 @@ def get_leaflet_tile_layer(
         vmax=vmax,
         nodata=nodata,
         scheme=scheme,
+        n_colors=n_colors,
     )
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
@@ -200,6 +205,7 @@ def get_folium_tile_layer(
     vmax: Union[Union[float, int], List[Union[float, int]]] = None,
     nodata: Union[Union[float, int], List[Union[float, int]]] = None,
     scheme: Union[str, List[str]] = None,
+    n_colors: int = 255,
     attr: str = None,
     **kwargs,
 ):
@@ -241,6 +247,9 @@ def get_folium_tile_layer(
         with the range of the data mapped into the specified number of
         colors (e.g., a palette with two colors will split exactly halfway
         between the min and max values).
+    n_colors : int
+        The number (positive integer) of colors to discretize the matplotlib
+        color palettes when used.
     attr : str
         Folium requires the custom tile source have an attribution. This
         defaults to a message about it being a local file.
@@ -266,6 +275,7 @@ def get_folium_tile_layer(
         vmax=vmax,
         nodata=nodata,
         scheme=scheme,
+        n_colors=n_colors,
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION

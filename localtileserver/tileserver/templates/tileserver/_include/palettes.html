@@ -19,11 +19,15 @@
     <option>linear</option>
     <option>discrete</option>
   </select>
+  <br />
+  <label for="nColors">Number of colors:</label>
+  <input id="nColors" type="number" step="1" onChange='changeColors();'>
 </div>
 <script>
   var colorsSubGroup = document.getElementById('colorsSubGroup');
   var colorsDropdown = document.getElementById('colors');
   var schemeDropdown = document.getElementById('scheme');
+  var nColors = document.getElementById('nColors');
   var bandDropdown = document.getElementById('bandChoice');
   var colorsMin = document.getElementById('mincolor');
   var colorsMax = document.getElementById('maxcolor');
@@ -37,6 +41,9 @@
   }
   if (windowSearchParams['scheme']) {
     schemeDropdown.value = windowSearchParams['scheme']
+  }
+  if (windowSearchParams['n_colors']) {
+    nColors.value = windowSearchParams['n_colors']
   }
 
   for (const [source, values] of Object.entries(bands)) {
@@ -78,6 +85,7 @@
     updateTileUrlOption('min', colorsMin.value);
     updateTileUrlOption('max', colorsMax.value);
     updateTileUrlOption('scheme', schemeDropdown.value)
+    updateTileUrlOption('n_colors', nColors.value)
     updateTileLayer();
   }
 
@@ -88,6 +96,7 @@
       updateTileUrlOption('min', undefined);
       updateTileUrlOption('max', undefined);
       updateTileUrlOption('scheme', undefined)
+      updateTileUrlOption('n_colors', undefined)
       colorsSubGroup.style.display = 'none';
       updateTileLayer();
     } else {

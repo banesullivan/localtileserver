@@ -56,6 +56,13 @@ STYLE_PARAMS = {
         "type": "str",
         "default": "linear",
     },
+    "n_colors": {
+        "description": "The number (positive integer) of colors to discretize the matplotlib color palettes when used.",
+        "in": "query",
+        "type": "int",
+        "example": 24,
+        "default": 255,
+    },
     "min": {
         "description": "The minimum value for the color mapping.",
         "in": "query",
@@ -145,8 +152,15 @@ class BaseImageView(View):
         palette = style_args.get("palette", None)
         scheme = style_args.get("scheme", None)
         nodata = style_args.get("nodata", None)
+        n_colors = int(style_args.get("n_colors", 255))
         sty = style.make_style(
-            band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata, scheme=scheme
+            band,
+            vmin=vmin,
+            vmax=vmax,
+            palette=palette,
+            nodata=nodata,
+            scheme=scheme,
+            n_colors=n_colors,
         )
         return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
 
