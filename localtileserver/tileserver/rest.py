@@ -152,7 +152,10 @@ class BaseImageView(View):
         palette = style_args.get("palette", None)
         scheme = style_args.get("scheme", None)
         nodata = style_args.get("nodata", None)
-        n_colors = int(style_args.get("n_colors", 255))
+        if style_args.get("n_colors", ""):
+            n_colors = int(style_args.get("n_colors"))
+        else:
+            n_colors = 255
         sty = style.make_style(
             band,
             vmin=vmin,
