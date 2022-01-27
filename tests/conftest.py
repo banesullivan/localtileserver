@@ -41,4 +41,4 @@ def remote_file_url():
 @pytest.fixture
 def remote_file_s3():
     gdal.SetConfigOption("AWS_NO_SIGN_REQUEST", "YES")
-    return "s3://sentinel-cogs/sentinel-s2-l2a-cogs/2020/S2A_31QHU_20200714_0_L2A/B01.tif"
+    return "s3://sentinel-cogs/sentinel-s2-l2a-cogs/2020/S2A_34JCL_20200309_0_L2A/B01.tif"
