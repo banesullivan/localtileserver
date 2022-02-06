@@ -371,9 +371,7 @@ class TileClient(BaseTileClient):
 
     @property
     def client_host(self):
-        if self._client_host:
-            return self._client_host
-        return self.server_host
+        return self._client_host
 
     @client_host.setter
     def client_host(self, value):
@@ -389,16 +387,21 @@ class TileClient(BaseTileClient):
 
     @property
     def client_base_url(self):
-        if self.client_port is not None:
+        if self.client_port is not None and self.client_host is not None:
             base = f"http://{self.client_host}:{self.client_port}"
-        elif self.client_port is None:
+        elif self.client_port is not None and self.client_host is None:
+            base = f"http://{self.server_host}:{self.client_port}"
+        elif self.client_port is None and self.client_host is not None:
             base = f"http://{self.client_host}"
+        else:
+            # Fallback to server
+            base = self.server_base_url
         if self.client_prefix is not None:
             return f"{base}/{self.client_prefix}"
         return base
 
     def create_url(self, path: str, client: bool = False):
-        if client and self.client_port is not None:
+        if client:
             return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
