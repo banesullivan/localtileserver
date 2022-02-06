@@ -10,6 +10,7 @@ def _get_example_client(
     debug: bool = False,
     client_port: int = None,
     client_host: str = None,
+    client_prefix: str = None,
 ):
     raise NotImplementedError
 

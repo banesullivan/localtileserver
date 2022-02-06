@@ -324,6 +324,7 @@ class TileClient(BaseTileClient):
         processes: int = 1,
         client_port: int = None,
         client_host: str = None,
+        client_prefix: str = None,
     ):
         super().__init__(filename)
         self._key = launch_server(port, debug, threaded=threaded, processes=processes)
@@ -331,6 +332,7 @@ class TileClient(BaseTileClient):
         self._port = ServerManager.get_server(self._key).srv.port
         self._client_port = client_port
         self._client_host = client_host
+        self._client_prefix = client_prefix
 
     def shutdown(self, force: bool = False):
         if hasattr(self, "_key"):
@@ -357,8 +359,6 @@ class TileClient(BaseTileClient):
 
     @property
     def client_port(self):
-        if self._client_port is None:
-            return self.server_port
         return self._client_port
 
     @client_port.setter
@@ -376,11 +376,25 @@ class TileClient(BaseTileClient):
         self._client_host = value
 
     @property
+    def client_prefix(self):
+        return self._client_prefix
+
+    @client_prefix.setter
+    def client_prefix(self, value):
+        self._client_prefix = value
+
+    @property
     def client_base_url(self):
-        return f"http://{self.client_host}:{self.client_port}"
+        if self.client_port is not None:
+            base = f"http://{self.client_host}:{self.client_port}"
+        elif self.client_port is None:
+            base = f"http://{self.client_host}"
+        if self.client_prefix is not None:
+            return f"{base}/{self.client_prefix}"
+        return base
 
     def create_url(self, path: str, client: bool = False):
-        if client:
+        if client and self.client_port is not None:
             return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
