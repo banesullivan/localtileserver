@@ -5,7 +5,7 @@ from typing import Union
 
 from werkzeug.serving import make_server
 
-from localtileserver.port import get_default_port
+from localtileserver.configure import get_default_port
 
 logger = logging.getLogger(__name__)
 

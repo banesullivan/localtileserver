@@ -5,6 +5,7 @@ from typing import List, Union
 
 import requests
 
+from localtileserver.configure import get_default_client_params
 from localtileserver.server import ServerManager, launch_server
 from localtileserver.tileserver import get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import add_query_parameters, save_file_from_request
@@ -330,8 +331,11 @@ class TileClient(BaseTileClient):
         self._key = launch_server(port, debug, threaded=threaded, processes=processes)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
-        self._client_port = client_port
+        client_host, client_port, client_prefix = get_default_client_params(
+            client_host, client_port, client_prefix
+        )
         self._client_host = client_host
+        self._client_port = client_port
         self._client_prefix = client_prefix
 
     def shutdown(self, force: bool = False):
