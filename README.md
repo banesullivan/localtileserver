@@ -135,11 +135,10 @@ http://localhost:8000/?filename=/data/TC_NG_SFBay_US_Geo.tif
 #### 📓 Jupyter in Docker
 
 There is also a pre-built image with localtileserver configured to be used in
-Jupyer from a Docker container. You must forward two ports to your host in
-order to run the notebooks and view the tiles.
+Jupyer from a Docker container.
 
 ```
-docker run -p 8888:8888 -p 5555:5555 ghcr.io/banesullivan/localtileserver-jupyter:latest
+docker run -p 8888:8888 ghcr.io/banesullivan/localtileserver-jupyter:latest
 ```
 
 
