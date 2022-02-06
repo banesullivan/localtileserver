@@ -8,7 +8,7 @@ from localtileserver.server import ServerManager, launch_server
 from localtileserver.tileserver import get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import add_query_parameters, save_file_from_request
 
-DEMO_REMOTE_TILE_SERVER = "https://localtileserver-demo.herokuapp.com/"
+DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
 logger = logging.getLogger(__name__)
 
 
