@@ -398,7 +398,9 @@ class TileClient(BaseTileClient):
         else:
             base = "/"  # Use relative path
         if self.client_prefix is not None:
-            return f"{base}{self.client_prefix}"
+            base = f"{base}{self.client_prefix}"
+        if base.startswith("/"):
+            base = f"/{base.lstrip('/')}"
         return base
 
     def create_url(self, path: str, client: bool = False):
