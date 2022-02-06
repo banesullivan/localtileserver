@@ -398,6 +398,8 @@ class TileClient(BaseTileClient):
         else:
             base = ""  # Use relative path
         if self.client_prefix is not None:
+            if not base:
+                return self.client_prefix
             return f"{base}/{self.client_prefix}"
         return base
 
