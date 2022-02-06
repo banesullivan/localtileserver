@@ -1,3 +1,4 @@
+# flake8: noqa: W503
 from functools import wraps
 import logging
 import pathlib
@@ -401,7 +402,11 @@ class TileClient(BaseTileClient):
         return base
 
     def create_url(self, path: str, client: bool = False):
-        if client:
+        if client and (
+            self.client_port is not None
+            or self.client_host is not None
+            or self.client_prefix is not None
+        ):
             return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
