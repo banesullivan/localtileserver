@@ -9,7 +9,8 @@ WORKDIR /build-context
 RUN python -m pip install --upgrade pip
 
 COPY requirements.txt /build-context/
-RUN pip install -r requirements.txt
+COPY requirements_jupyter.txt /build-context/
+RUN pip install -r requirements_jupyter.txt
 
 COPY setup.py /build-context/
 COPY MANIFEST.in /build-context/

@@ -10,9 +10,6 @@ requests
 scooby
 pytest
 pytest-cov
-ipyleaflet
-shapely
-folium
 matplotlib
 gunicorn
 cmocean
