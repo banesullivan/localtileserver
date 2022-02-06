@@ -31,6 +31,20 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
+          file: Dockerfile
           push: ${{ github.actor != 'dependabot[bot]' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: Extract metadata for the Jupyter Docker image
+        id: meta_jupyter
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-jupyter
+      - name: Build and push the Jupyter Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: jupyter.Dockerfile
+          push: ${{ github.actor != 'dependabot[bot]' }}
+          tags: ${{ steps.meta_jupyter.outputs.tags }}
+          labels: ${{ steps.meta_jupyter.outputs.labels }}

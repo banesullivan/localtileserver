@@ -101,7 +101,7 @@ If you're interested in using `localtileserver` as a standalone application,
 check out this experimental Electron app:
 [`banesullivan/localtileserver-electron`](https://github.com/banesullivan/localtileserver-electron)
 
-### 🐳 Docker Service
+### 🐳 Docker
 
 Included in this repository's packages is a pre-built Docker image that can be
 used as a local tile serving service. To use, pull the image and run it by
@@ -131,6 +131,16 @@ Then add the `?filename=` parameter to the URL in your browser to access the
 local files. Since this is mounted under `/data/` in the container, you must
 build the path as `/data/<filename on Desktop>`, such that the URL would be:
 http://localhost:8000/?filename=/data/TC_NG_SFBay_US_Geo.tif
+
+#### 📓 Jupyter in Docker
+
+There is also a pre-built image with localtileserver configured to be used in
+Jupyer from a Docker container. You must forward two ports to your host in
+order to run the notebooks and view the tiles.
+
+```
+docker run -p 8888:8888 -p 5555:5555 ghcr.io/banesullivan/localtileserver-jupyter:latest
+```
 
 
 ## 💭 Feedback
