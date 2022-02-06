@@ -2,3 +2,4 @@
 ipyleaflet
 shapely
 folium
+jupyter-server-proxy
