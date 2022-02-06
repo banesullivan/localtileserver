@@ -10,17 +10,20 @@ A Flask application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`)
 
-![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/tile-diagram.gif)
+Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinder [![MyBinder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD)
 
 
 ## 🌟 Highlights
 
-- Create a tile server for large geospatial images
-- View local or remote* raster files with `ipyleaflet`, `folium`, CesiumJS, and more!
+- Launch a tile server for large geospatial images
+- View local or remote* raster files with `ipyleaflet` or `folium` in Jupyter
+- View rasters with CesiumJS with the built-in Flask web application
 - Extract regions of interest (ROIs) interactively
 - Use the example datasets to generate Digital Elevation Models
 
 **remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
+
+![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/tile-diagram.gif)
 
 ## ℹ️ Overview
 
@@ -77,70 +80,6 @@ If on linux, I highly recommend using the [large_image_wheels](https://github.co
 ```
 pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
 ```
-
-### 🧬 Flask Blueprint
-
-Under the hood, `localtileserver` is a basic Flask Blueprint that can be easily
-incorporated into any Flask application. To utilize in your own application:
-
-```py
-from flask import Flask
-from localtileserver.tileserver.blueprint import cache, tileserver
-
-app = Flask(__name__)
-cache.init_app(app)
-app.register_blueprint(tileserver, url_prefix='/')
-```
-
-There is an example Flask application and deployment in
-[`banesullivan/remotetileserver`](https://github.com/banesullivan/remotetileserver)
-
-### ⚛️ Standalone Electron App
-
-If you're interested in using `localtileserver` as a standalone application,
-check out this experimental Electron app:
-[`banesullivan/localtileserver-electron`](https://github.com/banesullivan/localtileserver-electron)
-
-### 🐳 Docker
-
-Included in this repository's packages is a pre-built Docker image that can be
-used as a local tile serving service. To use, pull the image and run it by
-mounting your local volume where the imagery is stored and forward port 8000.
-
-This is particularly useful if you do not want to install GDAL on your system
-or want a dedicated and isolated service for tile serving.
-
-To use the docker image:
-
-```
-docker pull ghcr.io/banesullivan/localtileserver:latest
-docker run -p 8000:8000 ghcr.io/banesullivan/localtileserver:latest
-```
-
-Then visit http://localhost:8000 in your browser. You can pass the `?filename=`
-argument in the URL parameters to access any URL/S3 raster image file.
-
-You can mount your local file system to access files on your filesystem. For
-example, mount your Desktop by:
-
-```
-docker run -p 8000:8000 -v /Users/bane/Desktop/:/data/ ghcr.io/banesullivan/localtileserver:latest
-```
-
-Then add the `?filename=` parameter to the URL in your browser to access the
-local files. Since this is mounted under `/data/` in the container, you must
-build the path as `/data/<filename on Desktop>`, such that the URL would be:
-http://localhost:8000/?filename=/data/TC_NG_SFBay_US_Geo.tif
-
-#### 📓 Jupyter in Docker
-
-There is also a pre-built image with localtileserver configured to be used in
-Jupyer from a Docker container.
-
-```
-docker run -p 8888:8888 ghcr.io/banesullivan/localtileserver-jupyter:latest
-```
-
 
 ## 💭 Feedback
 
@@ -455,3 +394,68 @@ Available choices are:
 path from which to create a `TileClient` under the hood.
 - The color palette choices come from [`palettable`](https://jiffyclub.github.io/palettable/).
 - If matplotlib is installed, any matplotlib colormap name cane be used a palette choice
+
+
+### 🐳 Docker
+
+Included in this repository's packages is a pre-built Docker image that can be
+used as a local tile serving service. To use, pull the image and run it by
+mounting your local volume where the imagery is stored and forward port 8000.
+
+This is particularly useful if you do not want to install GDAL on your system
+or want a dedicated and isolated service for tile serving.
+
+To use the docker image:
+
+```
+docker pull ghcr.io/banesullivan/localtileserver:latest
+docker run -p 8000:8000 ghcr.io/banesullivan/localtileserver:latest
+```
+
+Then visit http://localhost:8000 in your browser. You can pass the `?filename=`
+argument in the URL parameters to access any URL/S3 raster image file.
+
+You can mount your local file system to access files on your filesystem. For
+example, mount your Desktop by:
+
+```
+docker run -p 8000:8000 -v /Users/bane/Desktop/:/data/ ghcr.io/banesullivan/localtileserver:latest
+```
+
+Then add the `?filename=` parameter to the URL in your browser to access the
+local files. Since this is mounted under `/data/` in the container, you must
+build the path as `/data/<filename on Desktop>`, such that the URL would be:
+http://localhost:8000/?filename=/data/TC_NG_SFBay_US_Geo.tif
+
+#### 📓 Jupyter in Docker
+
+There is also a pre-built image with localtileserver configured to be used in
+Jupyer from a Docker container.
+
+```
+docker run -p 8888:8888 ghcr.io/banesullivan/localtileserver-jupyter:latest
+```
+
+
+### 🧬 Flask Blueprint
+
+Under the hood, `localtileserver` is a basic Flask Blueprint that can be easily
+incorporated into any Flask application. To utilize in your own application:
+
+```py
+from flask import Flask
+from localtileserver.tileserver.blueprint import cache, tileserver
+
+app = Flask(__name__)
+cache.init_app(app)
+app.register_blueprint(tileserver, url_prefix='/')
+```
+
+There is an example Flask application and deployment in
+[`banesullivan/remotetileserver`](https://github.com/banesullivan/remotetileserver)
+
+### ⚛️ Standalone Electron App
+
+If you're interested in using `localtileserver` as a standalone application,
+check out this experimental Electron app:
+[`banesullivan/localtileserver-electron`](https://github.com/banesullivan/localtileserver-electron)
