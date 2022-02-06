@@ -406,7 +406,7 @@ class TileClient(BaseTileClient):
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
     @wraps(BaseTileClient.get_tile_url_params)
-    def get_tile_url(self, *args, client=True, **kwargs):
+    def get_tile_url(self, *args, client=False, **kwargs):
         params = self.get_tile_url_params(*args, **kwargs)
         return add_query_parameters(
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
