@@ -1,3 +1,4 @@
+# flake8: noqa: W503
 from functools import wraps
 import logging
 import pathlib
@@ -395,19 +396,22 @@ class TileClient(BaseTileClient):
         elif self.client_port is None and self.client_host is not None:
             base = f"http://{self.client_host}"
         else:
-            # Fallback to server
-            base = self.server_base_url
+            base = "/"  # Use relative path
         if self.client_prefix is not None:
-            return f"{base}/{self.client_prefix}"
+            return f"{base}{self.client_prefix}"
         return base
 
     def create_url(self, path: str, client: bool = False):
-        if client:
+        if client and (
+            self.client_port is not None
+            or self.client_host is not None
+            or self.client_prefix is not None
+        ):
             return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
     @wraps(BaseTileClient.get_tile_url_params)
-    def get_tile_url(self, *args, client=True, **kwargs):
+    def get_tile_url(self, *args, client=False, **kwargs):
         params = self.get_tile_url_params(*args, **kwargs)
         return add_query_parameters(
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params

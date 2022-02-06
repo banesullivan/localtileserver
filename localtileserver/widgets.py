@@ -98,6 +98,7 @@ def get_leaflet_tile_layer(
         nodata=nodata,
         scheme=scheme,
         n_colors=n_colors,
+        client=True,
     )
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
@@ -276,6 +277,7 @@ def get_folium_tile_layer(
         nodata=nodata,
         scheme=scheme,
         n_colors=n_colors,
+        client=True,
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION
