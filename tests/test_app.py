@@ -2,7 +2,7 @@ import requests
 
 
 def test_home_page_with_file(bahamas):
-    r = requests.get(bahamas.base_url)
+    r = requests.get(bahamas.server_base_url)
     r.raise_for_status()
 
 

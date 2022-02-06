@@ -26,8 +26,8 @@ def test_create_tile_client(bahamas_file, processes):
     assert ServerManager.server_count() == 0
     tile_client = TileClient(bahamas_file, processes=processes, debug=True)
     assert tile_client.filename == bahamas_file
-    assert tile_client.port
-    assert tile_client.base_url
+    assert tile_client.server_port
+    assert tile_client.server_base_url
     assert "bounds" in tile_client.metadata()
     assert tile_client.bounds()
     center = tile_client.center()
@@ -145,7 +145,7 @@ def test_launch_non_default_server(bahamas_file):
     default = TileClient(bahamas_file)
     diff = TileClient(bahamas_file, port=0)
     assert default.server != diff.server
-    assert default.port != diff.port
+    assert default.server_port != diff.server_port
 
 
 def test_get_or_create_tile_client(bahamas_file, remote_file_url):

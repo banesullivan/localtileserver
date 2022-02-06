@@ -1,3 +1,4 @@
+from functools import wraps
 import logging
 import pathlib
 from typing import List, Union
@@ -33,20 +34,24 @@ class BaseTileClient:
         return self._filename
 
     @property
-    def host(self):
+    def server_host(self):
         raise NotImplementedError
 
     @property
-    def base_url(self):
+    def server_port(self):
+        raise NotImplementedError
+
+    @property
+    def server_base_url(self):
         raise NotImplementedError
 
     def _produce_url(self, base: str):
         return add_query_parameters(base, {"filename": self._filename})
 
     def create_url(self, path: str):
-        return self._produce_url(f"{self.base_url}/{path.lstrip('/')}")
+        return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
-    def get_tile_url(
+    def get_tile_url_params(
         self,
         projection: str = "EPSG:3857",
         band: Union[int, List[int]] = None,
@@ -118,6 +123,11 @@ class BaseTileClient:
             params["scheme"] = scheme
         if n_colors:
             params["n_colors"] = n_colors
+        return params
+
+    @wraps(get_tile_url_params)
+    def get_tile_url(self, *args, **kwargs):
+        params = self.get_tile_url_params(*args, **kwargs)
         return add_query_parameters(self.create_url("api/tiles/{z}/{x}/{y}.png"), params)
 
     def extract_roi(
@@ -269,16 +279,16 @@ class RemoteTileClient(BaseTileClient):
         self._host = host
 
     @property
-    def host(self):
+    def server_host(self):
         return self._host
 
-    @host.setter
-    def host(self, host):
+    @server_host.setter
+    def server_host(self, host):
         self._host = host
 
     @property
-    def base_url(self):
-        return self.host
+    def server_base_url(self):
+        return self.server_host
 
 
 class TileClient(BaseTileClient):
@@ -297,6 +307,11 @@ class TileClient(BaseTileClient):
         Run the background server as a ThreadedWSGIServer. Default True.
     processes : int
         If processes is greater than 1, run background server as ForkingWSGIServer
+    client_port : int
+        The port on your client browser to use for fetching tiles. This is
+        useful when running in Docker and performing port forwarding.
+    client_host : str
+        The host on which your client browser can access the server.
 
     """
 
@@ -307,11 +322,19 @@ class TileClient(BaseTileClient):
         debug: bool = False,
         threaded: bool = True,
         processes: int = 1,
+        client_port: int = None,
+        client_host: str = None,
     ):
         super().__init__(filename)
         self._key = launch_server(port, debug, threaded=threaded, processes=processes)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
+        self._client_port = client_port
+        self._client_host = client_host
+
+    def shutdown(self, force: bool = False):
+        if hasattr(self, "_key"):
+            ServerManager.shutdown_server(self._key, force=force)
 
     def __del__(self):
         self.shutdown()
@@ -321,20 +344,52 @@ class TileClient(BaseTileClient):
         return ServerManager.get_server(self._key)
 
     @property
-    def port(self):
+    def server_port(self):
         return self.server.port
 
     @property
-    def host(self):
+    def server_host(self):
         return self.server.host
 
     @property
-    def base_url(self):
-        return f"http://{self.host}:{self.port}"
+    def server_base_url(self):
+        return f"http://{self.server_host}:{self.server_port}"
 
-    def shutdown(self, force: bool = False):
-        if hasattr(self, "_key"):
-            ServerManager.shutdown_server(self._key, force=force)
+    @property
+    def client_port(self):
+        if self._client_port is None:
+            return self.server_port
+        return self._client_port
+
+    @client_port.setter
+    def client_port(self, value):
+        self._client_port = value
+
+    @property
+    def client_host(self):
+        if self._client_host:
+            return self._client_host
+        return self.server_host
+
+    @client_host.setter
+    def client_host(self, value):
+        self._client_host = value
+
+    @property
+    def client_base_url(self):
+        return f"http://{self.client_host}:{self.client_port}"
+
+    def create_url(self, path: str, client: bool = False):
+        if client:
+            return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
+        return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
+
+    @wraps(BaseTileClient.get_tile_url_params)
+    def get_tile_url(self, *args, client=True, **kwargs):
+        params = self.get_tile_url_params(*args, **kwargs)
+        return add_query_parameters(
+            self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
+        )
 
 
 def get_or_create_tile_client(
