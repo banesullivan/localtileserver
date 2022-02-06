@@ -1,11 +1,13 @@
 FROM python:3.8-slim
 
-COPY . /build-context
+COPY requirements.txt /build-context/
 WORKDIR /build-context
 
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+COPY localtileserver/ /build-context/localtileserver/
+COPY setup.py /build-context/
 RUN python setup.py bdist_wheel
 RUN pip install dist/localtileserver*.whl
 
