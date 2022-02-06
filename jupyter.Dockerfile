@@ -12,8 +12,6 @@ COPY requirements.txt /build-context/
 COPY requirements_jupyter.txt /build-context/
 RUN pip install -r requirements_jupyter.txt
 
-RUN pip install jupyter-server-proxy
-
 COPY setup.py /build-context/
 COPY MANIFEST.in /build-context/
 COPY localtileserver/ /build-context/localtileserver/
