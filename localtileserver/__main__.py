@@ -53,14 +53,14 @@ def run_app(
 
     if port == 0:
         sock = socket.socket()
-        sock.bind(("localhost", 0))
+        sock.bind(("0.0.0.0", 0))
         port = sock.getsockname()[1]
         sock.close()
 
-    url = f"http://localhost:{port}"
+    url = f"http://0.0.0.0:{port}"
     if browser:
         threading.Timer(1, lambda: webbrowser.open(url)).start()
-    app.run(host="localhost", port=port, debug=debug)
+    app.run(host="0.0.0.0", port=port, debug=debug)
 
 
 if __name__ == "__main__":
