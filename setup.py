@@ -50,10 +50,9 @@ setup(
         "scooby",
     ],
     extras_require={
-        "leaflet": ["ipyleaflet"],
-        "folium": ["folium"],
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
         "sources": ["large-image-source-pil>=1.10", "large-image-source-tiff>=1.10"],
+        "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
     },
     entry_points={
         "console_scripts": [
