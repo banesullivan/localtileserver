@@ -379,7 +379,8 @@ class TileClient(BaseTileClient):
 
     @property
     def client_prefix(self):
-        return self._client_prefix
+        if self._client_prefix:
+            return self._client_prefix.replace("{port}", str(self.server_port))
 
     @client_prefix.setter
     def client_prefix(self, value):

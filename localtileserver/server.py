@@ -5,8 +5,6 @@ from typing import Union
 
 from werkzeug.serving import make_server
 
-from localtileserver.configure import get_default_port
-
 logger = logging.getLogger(__name__)
 
 
@@ -144,8 +142,7 @@ def launch_server(
     if ServerManager.is_server_live(port):
         return port
     if port == "default":
-        portn = get_default_port()
-        server = TileServerThread(portn, debug, threaded=threaded, processes=processes)
+        server = TileServerThread(0, debug, threaded=threaded, processes=processes)
     else:
         server = TileServerThread(port, debug, threaded=threaded, processes=processes)
         if port == 0:
