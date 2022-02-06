@@ -1,4 +1,5 @@
 import logging
+import os
 import socket
 import threading
 import webbrowser
@@ -51,16 +52,20 @@ def run_app(
         logging.getLogger("large_image").setLevel(logging.DEBUG)
         logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
 
+    host = "0.0.0.0"
+    if os.name == "nt":
+        host = "localhost"
+
     if port == 0:
         sock = socket.socket()
-        sock.bind(("0.0.0.0", 0))
+        sock.bind((host, 0))
         port = sock.getsockname()[1]
         sock.close()
 
-    url = f"http://0.0.0.0:{port}"
+    url = f"http://{host}:{port}"
     if browser:
         threading.Timer(1, lambda: webbrowser.open(url)).start()
-    app.run(host="0.0.0.0", port=port, debug=debug)
+    app.run(host=host, port=port, debug=debug)
 
 
 if __name__ == "__main__":

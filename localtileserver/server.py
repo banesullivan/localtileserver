@@ -107,7 +107,10 @@ class TileServerThread(threading.Thread):
             # make_server -> passthrough_errors ?
 
         self.daemon = True  # CRITICAL for safe exit
-        self.srv = make_server("0.0.0.0", port, app, threaded=threaded, processes=processes)
+        host = "0.0.0.0"
+        if os.name == "nt":
+            host = "localhost"
+        self.srv = make_server(host, port, app, threaded=threaded, processes=processes)
         self.ctx = app.app_context()
         self.ctx.push()
         if start:
