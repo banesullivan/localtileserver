@@ -12,6 +12,14 @@ from localtileserver.client import (
 from localtileserver.server import ServerDownError, ServerManager
 from localtileserver.tileserver.utilities import get_tile_source
 
+skip_pil_source = True
+try:
+    import large_image_source_pil  # noqa
+
+    skip_pil_source = False
+except ImportError:
+    pass
+
 TOLERANCE = 2e-2
 
 
@@ -99,6 +107,10 @@ def test_extract_roi_pixel(bahamas):
     assert path.exists()
     source = get_tile_source(path)
     assert source.getMetadata()["geospatial"]
+
+
+@pytest.mark.skipif(skip_pil_source, reason="`large-image-source-pil` not installed")
+def test_extract_roi_pixel_pil(bahamas):
     path = bahamas.extract_roi_pixel(100, 500, 300, 600, encoding="PNG")
     assert path.exists()
     source = get_tile_source(path)
