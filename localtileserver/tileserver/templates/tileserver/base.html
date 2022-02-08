@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
   <link rel="stylesheet" type="text/css" href="{{ url_for('tileserver.static',filename='styles/style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('tileserver.static',filename='styles/snackbar.css') }}">
 
   {% if google_analytics_mid %}
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -59,16 +60,33 @@
       return unescape(theCookie.substring(ind + cookieName.length + 1, ind1));
     }
 
+    function snackbarError(message) {
+      // Get the snackbar DIV
+      var x = document.getElementById("snackbar");
+      // Add the "show" class to DIV
+      x.className = "show";
+      x.textContent = message;
+      // After 3 seconds, remove the show class from DIV
+      setTimeout(function() {
+        x.className = x.className.replace("show", "");
+      }, 3000);
+    }
+
     function download(url, filename) {
       fetch(url)
-        .then(response => response.blob())
+        .then(response => {
+          if (response.ok) {
+            return response.blob();
+          }
+          throw new Error(response.statusText);
+        })
         .then(blob => {
           const link = document.createElement("a");
           link.href = URL.createObjectURL(blob);
           link.download = filename;
           link.click();
         })
-        .catch(console.error);
+        .catch(snackbarError);
     }
   </script>
 
@@ -79,6 +97,7 @@
   <div id="wrapper">
     <nav class="navbar navbar-expand-md navbar-light">
       <a class="navbar-brand" href="{{ url_for('tileserver.index')}}?filename={{ filename|urlencode }}">Tile Server</a>
+      <div id="snackbar"></div>
       <button class="navbar-toggler" type="button" data-trigger="#main_nav">
         <span class="navbar-toggler-icon"></span>
       </button>
