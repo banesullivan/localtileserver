@@ -17,7 +17,12 @@ from localtileserver.tileserver.data import get_pine_gulch_url
 @click.option("-b", "--browser", default=True)
 @click.option("-t", "--cesium-token", default="")
 def run_app(
-    filename, port: int = 0, debug: bool = False, browser: bool = True, cesium_token: str = ""
+    filename,
+    port: int = 0,
+    debug: bool = False,
+    browser: bool = True,
+    cesium_token: str = "",
+    host: str = "0.0.0.0",
 ):
     """Serve tiles from the raster at `filename`.
 
@@ -52,8 +57,7 @@ def run_app(
         logging.getLogger("large_image").setLevel(logging.DEBUG)
         logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
 
-    host = "0.0.0.0"
-    if os.name == "nt":
+    if os.name == "nt" and host == "0.0.0.0":
         host = "localhost"
 
     if port == 0:

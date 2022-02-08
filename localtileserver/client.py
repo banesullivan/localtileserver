@@ -324,12 +324,13 @@ class TileClient(BaseTileClient):
         debug: bool = False,
         threaded: bool = True,
         processes: int = 1,
+        host: str = "0.0.0.0",
         client_port: int = None,
         client_host: str = None,
         client_prefix: str = None,
     ):
         super().__init__(filename)
-        self._key = launch_server(port, debug, threaded=threaded, processes=processes)
+        self._key = launch_server(port, debug, threaded=threaded, processes=processes, host=host)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
         client_host, client_port, client_prefix = get_default_client_params(
