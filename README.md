@@ -459,3 +459,6 @@ There is an example Flask application and deployment in
 If you're interested in using `localtileserver` as a standalone application,
 check out this experimental Electron app:
 [`banesullivan/localtileserver-electron`](https://github.com/banesullivan/localtileserver-electron)
+
+### Medium Article Link:
+https://kaustavmukherjee-66179.medium.com/visualize-raster-tiles-locally-using-localtileserver-0-4-1-and-jupyter-notebook-cccd59e6420a
