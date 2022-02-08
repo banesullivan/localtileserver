@@ -80,6 +80,7 @@ class TileServerThread(threading.Thread):
         processes: int = 1,
         host: str = "0.0.0.0",
     ):
+        self._lts_initialized = False
         if not isinstance(port, int):
             raise ValueError(f"Port must be an int, not {type(port)}")
         if processes > 1 and not hasattr(os, "fork"):
@@ -90,6 +91,7 @@ class TileServerThread(threading.Thread):
             threaded = False
 
         threading.Thread.__init__(self)
+        self._lts_initialized = True
 
         app = ServerManager.get_or_create_app()
 
@@ -118,7 +120,7 @@ class TileServerThread(threading.Thread):
         self.srv.serve_forever()
 
     def shutdown(self):
-        if self.is_alive():
+        if self._lts_initialized and self.is_alive():
             self.srv.shutdown()
 
     def __del__(self):
