@@ -78,7 +78,7 @@ class TileServerThread(threading.Thread):
         start: bool = True,
         threaded: bool = True,
         processes: int = 1,
-        host: str = "0.0.0.0",
+        host: str = "127.0.0.1",
     ):
         self._lts_initialized = False
         if not isinstance(port, int):
@@ -108,7 +108,7 @@ class TileServerThread(threading.Thread):
             # make_server -> passthrough_errors ?
 
         self.daemon = True  # CRITICAL for safe exit
-        if os.name == "nt" and host == "0.0.0.0":
+        if os.name == "nt" and host == "127.0.0.1":
             host = "localhost"
         self.srv = make_server(host, port, app, threaded=threaded, processes=processes)
         self.ctx = app.app_context()
@@ -140,7 +140,7 @@ def launch_server(
     debug: bool = False,
     threaded: bool = True,
     processes: int = 1,
-    host: str = "0.0.0.0",
+    host: str = "127.0.0.1",
 ):
     if ServerManager.is_server_live(port):
         return port

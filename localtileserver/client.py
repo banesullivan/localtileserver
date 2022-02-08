@@ -324,7 +324,7 @@ class TileClient(BaseTileClient):
         debug: bool = False,
         threaded: bool = True,
         processes: int = 1,
-        host: str = "0.0.0.0",
+        host: str = "127.0.0.1",
         client_port: int = None,
         client_host: str = None,
         client_prefix: str = None,

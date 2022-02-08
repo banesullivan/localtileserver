@@ -22,7 +22,7 @@ def run_app(
     debug: bool = False,
     browser: bool = True,
     cesium_token: str = "",
-    host: str = "0.0.0.0",
+    host: str = "127.0.0.1",
 ):
     """Serve tiles from the raster at `filename`.
 
@@ -57,7 +57,7 @@ def run_app(
         logging.getLogger("large_image").setLevel(logging.DEBUG)
         logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
 
-    if os.name == "nt" and host == "0.0.0.0":
+    if os.name == "nt" and host == "127.0.0.1":
         host = "localhost"
 
     if port == 0:
