@@ -1,0 +1,18 @@
+{% block examples %}
+<form action="/" method="GET">
+  <label for="colors">Choose an example:</label>
+  <select id="colors" name="filename">
+    <option></option>
+    <option value="{{ filename_landsat_salt_lake }}">Salt Lake Landsat</option>
+    <option value="{{ filename_oam2 }}">OpenArialMap Sample</option>
+    <!-- &band=4&min=&max=130&palette=cmo.tarn -->
+    <option value="{{ filename_sf_bay }}">San Francisco Bay</option>
+    <option value="{{ filename_pine_gulch }}">Pine Gulch Fire</option>
+    <option value="{{ filename_dem }}">Elevation</option>
+    <!-- &band=1&min=-5000&max=5000&palette=cmo.topo -->
+    <option value="{{ filename_bluemarble }}">Blue Marble</option>
+    <option value="{{ filename_virtualearth }}">Virtual Earth</option>
+  </select>
+  <input type="submit" />
+</form>
+{% endblock %}

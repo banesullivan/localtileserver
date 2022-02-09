@@ -34,11 +34,6 @@ class CesiumViewer(BaseViewer):
         return self.render_or_404("tileserver/cesiumViewer.html")
 
 
-class ExampleChoices(View):
-    def dispatch_request(self):
-        return render_template("tileserver/exampleChoices.html")
-
-
 class CesiumSplitViewer(View):
     def dispatch_request(self):
         try:

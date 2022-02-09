@@ -73,3 +73,17 @@ ul {
   text-align: center;
   list-style-position: inside;
 }
+
+
+.examplescontainer {
+  background-color: #DCDCDC;
+  padding: 2px;
+  border: 1px solid #000;
+  text-align: left;
+  border-radius: 10px;
+  position: absolute;
+  opacity: 0.75;
+  z-index: 11;
+  top: 5px;
+  left: 5px;
+}

@@ -4,7 +4,6 @@ from localtileserver.tileserver.blueprint import tileserver
 # Views/pages
 tileserver.add_url_rule("/", view_func=views.CesiumViewer.as_view("index"))
 tileserver.add_url_rule("/roi/", view_func=views.GeoJSViewer.as_view("roi"))
-tileserver.add_url_rule("/examples", view_func=views.ExampleChoices.as_view("examples"))
 tileserver.add_url_rule("/split/", view_func=views.CesiumSplitViewer.as_view("split"))
 tileserver.add_url_rule("/split/form/", view_func=views.SplitViewForm.as_view("split-form"))
 
