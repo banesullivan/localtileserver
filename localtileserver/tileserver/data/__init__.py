@@ -17,3 +17,7 @@ def get_sf_bay_url():
 
 def get_elevation_us_url():
     return "https://data.kitware.com/api/v1/file/5dbc4f66e3566bda4b4ed3af/download"
+
+
+def get_oam2_url():
+    return "https://oin-hotosm.s3.amazonaws.com/59c66c5223c8440011d7b1e4/0/7ad397c0-bba2-4f98-a08a-931ec3a6e943.tif"

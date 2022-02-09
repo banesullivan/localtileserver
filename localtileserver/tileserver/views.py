@@ -87,6 +87,7 @@ def sample_data_context():
     context["filename_pine_gulch"] = data.get_pine_gulch_url()
     context["filename_sf_bay"] = data.get_sf_bay_url()
     context["filename_landsat_salt_lake"] = data.get_data_path("landsat.tif")
+    context["filename_oam2"] = data.get_oam2_url()
     context["cesium_token"] = current_app.config.get("cesium_token", "")
     return context
 

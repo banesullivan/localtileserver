@@ -2,7 +2,12 @@ from functools import wraps
 from typing import Union
 
 from localtileserver.client import TileClient
-from localtileserver.tileserver import get_data_path, get_pine_gulch_url, get_sf_bay_url
+from localtileserver.tileserver import (
+    get_data_path,
+    get_oam2_url,
+    get_pine_gulch_url,
+    get_sf_bay_url,
+)
 
 
 def _get_example_client(
@@ -60,4 +65,10 @@ def get_landsat(*args, **kwargs):
 @wraps(_get_example_client)
 def get_san_francisco(*args, **kwargs):
     path = get_sf_bay_url()
+    return TileClient(path, *args, **kwargs)
+
+
+@wraps(_get_example_client)
+def get_oam2(*args, **kwargs):
+    path = get_oam2_url()
     return TileClient(path, *args, **kwargs)
