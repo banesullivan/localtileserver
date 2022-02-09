@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>🌐 localtileserver &#8212; 🌐 localtileserver</title>
+    
+    <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
+    
+    <link rel="stylesheet"
+      href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/pydata-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/no_search_highlight.css" />
+    
+    <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="⬇️ Installation" href="installation/index.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="#">
+<p class="title">🌐 localtileserver</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="installation/index.html">
+  ⬇️ Installation
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="user-guide/index.html">
+  🚀 User Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="api/index.html">
+  📖 API
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/banesullivan/localtileserver" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/banesullivan/localtileserver/discussions" rel="noopener" target="_blank" title="Support"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <div class="col-12 col-md-1 col-xl-2 bd-sidebar no-sidebar"></div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   🌐 localtileserver
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#highlights">
+     🌟 Highlights
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#i-overview">
+     ℹ️ Overview
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#indices-and-tables">
+   Indices and tables
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-11 col-xl-8 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="localtileserver">
+<h1>🌐 localtileserver<a class="headerlink" href="#localtileserver" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<p><em>Need to visualize a rather large (gigabytes) raster you have locally?</em> <strong>This is for you.</strong></p>
+<br>
+
+<div id="map" style="width: 100%; height: 400px;"></div>
+
+<script>
+  var map = L.map('map').setView([37.752, -122.418], 9);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
+      attribution: 'Map tiles by <a href="https://carto.com">Carto</a>, under CC BY 3.0. Data by <a href="https://www.openstreetmap.org/">OpenStreetMap</a>, under ODbL.'
+  }).addTo(map);
+
+  L.tileLayer('https://tileserver.banesullivan.com/api/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=https://data.kitware.com/api/v1/file/60747d792fa25629b9a79565/download', {
+      attribution: 'Raster file served by <a href="https://github.com/banesullivan/localtileserver" target="_blank">localtileserver</a>.',
+      subdomains: '',
+      crossOrigin: false,
+  }).addTo(map);
+
+
+</script>
+
+<br><p>A Flask application for serving tiles from large raster files in
+the <a class="reference external" href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">Slippy Maps standard</a>
+(i.e., <code class="docutils literal notranslate"><span class="pre">/zoom/x/y.png</span></code>)</p>
+<p>Launch a <a class="reference external" href="https://github.com/banesullivan/localtileserver-demo">demo</a> on MyBinder <a class="reference external" href="https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD"><img alt="MyBinder" src="https://mybinder.org/badge_logo.svg" /></a></p>
+<section id="highlights">
+<h2>🌟 Highlights<a class="headerlink" href="#highlights" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Launch a tile server for large geospatial images</p></li>
+<li><p>View local or remote* raster files with <cite>ipyleaflet</cite> or <cite>folium</cite> in Jupyter</p></li>
+<li><p>View rasters with CesiumJS with the built-in Flask web application</p></li>
+<li><p>Extract regions of interest (ROIs) interactively</p></li>
+<li><p>Use the example datasets to generate Digital Elevation Models</p></li>
+</ul>
+<p><em>remote raster files should be pre-tiled Cloud Optimized GeoTiffs</em></p>
+</section>
+<section id="i-overview">
+<h2>ℹ️ Overview<a class="headerlink" href="#i-overview" title="Permalink to this headline">¶</a></h2>
+<p>This is a Flask application (blueprint) for serving tiles of large images.
+The <cite>TileClient</cite> class can be used to to launch a tile server in a background
+thread which will serve raster imagery to a viewer (see <cite>ipyleaflet</cite> and
+<cite>folium</cite> Jupyter notebook examples below).</p>
+<p>This tile server can efficiently deliver varying levels of detail of your
+raster imagery to your viewer; it helps to have pre-tiled, Cloud Optimized
+GeoTIFFs (COG), but no wories if not as the backing libraries,
+<a class="reference external" href="https://github.com/girder/large_image">large_image</a>,
+will tile and cache for you when opening the raster.</p>
+<p>There is an included, standalone web viewer leveraging
+<a class="reference external" href="https://cesium.com/platform/cesiumjs/">CesiumJS</a> and <a class="reference external" href="https://opengeoscience.github.io/geojs/">GeoJS</a>.
+You can use the web viewer to select and extract regions of interest from rasters.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is a hobby project and I am doing my best to make it
+more stable/robust. Things might break between minor releases (I use the
+<code class="docutils literal notranslate"><span class="pre">major.minor.patch</span></code> versioning scheme).</p>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+              </div>
+              
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+    <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2017-2022, Bane Sullivan.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

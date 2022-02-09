@@ -1,0 +1,361 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>🚀 User Guide &#8212; 🌐 localtileserver</title>
+    
+    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
+    
+    <link rel="stylesheet"
+      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/no_search_highlight.css" />
+    
+    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🥓 Two Rasters at Once" href="compare.html" />
+    <link rel="prev" title="🧬 Flask Blueprint" href="../installation/flask.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../index.html">
+<p class="title">🌐 localtileserver</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../installation/index.html">
+  ⬇️ Installation
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="current reference internal nav-link" href="#">
+  🚀 User Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api/index.html">
+  📖 API
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/banesullivan/localtileserver" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/banesullivan/localtileserver/discussions" rel="noopener" target="_blank" title="Support"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="compare.html">
+   🥓 Two Rasters at Once
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="rgb.html">
+   🧮 Controlling the RGB Bands
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="remote-cog.html">
+   ☁️ Remote Cloud Optimized GeoTiffs (COGs)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="roi.html">
+   🎯 Using
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ipyleaflet
+    </span>
+   </code>
+   for ROI Extraction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="docker.html">
+   🐳 Docker
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="example-data.html">
+   🗺️ Example Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="web-app.html">
+   🖥️ Local Web Application
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+<div class="tocsection onthispage pt-5 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#feedback">
+   💭 Feedback
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ipyleaflet-tile-layers">
+   🍃
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ipyleaflet
+    </span>
+   </code>
+   Tile Layers
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#folium-tile-layers">
+   🌳
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     folium
+    </span>
+   </code>
+   Tile Layers
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#usage-notes">
+   🗒️ Usage Notes
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="user-guide">
+<h1>🚀 User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> can be used in a few different ways:</p>
+<ul class="simple">
+<li><p>In a Jupyter notebook with ipyleaflet or folium</p></li>
+<li><p>From the commandline in a web browser</p></li>
+<li><p>With remote Cloud Optimized GeoTiffs</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+<section id="feedback">
+<h2>💭 Feedback<a class="headerlink" href="#feedback" title="Permalink to this headline">¶</a></h2>
+<p>Please share your thoughts and questions on the <a class="reference external" href="https://github.com/banesullivan/localtileserver/discussions">Discussions</a> board.
+If you would like to report any bugs or make feature requests, please open an issue.</p>
+<p>If filing a bug report, please share a scooby <code class="docutils literal notranslate"><span class="pre">Report</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">localtileserver</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">localtileserver</span><span class="o">.</span><span class="n">Report</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="ipyleaflet-tile-layers">
+<h2>🍃 <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code> Tile Layers<a class="headerlink" href="#ipyleaflet-tile-layers" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">TileClient</span></code> class is a nifty tool to launch a tile server as a background
+thread to serve image tiles from any raster file on your local file system.
+Additionally, it can be used in conjunction with the <code class="xref py py-func docutils literal notranslate"><span class="pre">get_leaflet_tile_layer()</span></code>
+utility to create an <code class="xref py py-class docutils literal notranslate"><span class="pre">ipyleaflet.TileLayer</span></code> for interactive visualization in
+a Jupyter notebook. Here is an example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">TileClient</span>
+<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
+
+<span class="c1"># First, create a tile server from local raster file</span>
+<span class="n">tile_client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="s1">&#39;~/Desktop/TC_NG_SFBay_US_Geo.tif&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create ipyleaflet tile layer from that server</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">tile_client</span><span class="p">)</span>
+
+<span class="c1"># Create ipyleaflet map, add tile layer, and display</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">tile_client</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">m</span>
+</pre></div>
+</div>
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet.png" />
+</section>
+<section id="folium-tile-layers">
+<h2>🌳 <code class="docutils literal notranslate"><span class="pre">folium</span></code> Tile Layers<a class="headerlink" href="#folium-tile-layers" title="Permalink to this headline">¶</a></h2>
+<p>Similarly to the support provided for <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code>, I have included a utility
+to generate a <code class="xref py py-class docutils literal notranslate"><span class="pre">folium.TileLayer</span></code> (see <a class="reference external" href="https://python-visualization.github.io/folium/modules.html#folium.raster_layers.TileLayer">reference</a>)
+with <code class="xref py py-func docutils literal notranslate"><span class="pre">get_folium_tile_layer()</span></code>. Here is an example with almost the exact same
+code as the <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code> example, just note that <code class="xref py py-class docutils literal notranslate"><span class="pre">folium.Map</span></code> is imported from
+<code class="docutils literal notranslate"><span class="pre">folium</span></code> and we use <code class="xref py py-func docutils literal notranslate"><span class="pre">add_child()</span></code> instead of <code class="xref py py-func docutils literal notranslate"><span class="pre">add_layer()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_folium_tile_layer</span><span class="p">,</span> <span class="n">TileClient</span>
+<span class="kn">from</span> <span class="nn">folium</span> <span class="kn">import</span> <span class="n">Map</span>
+
+<span class="c1"># First, create a tile server from local raster file</span>
+<span class="n">tile_client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="s1">&#39;~/Desktop/TC_NG_SFBay_US_Geo.tif&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create folium tile layer from that server</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">get_folium_tile_layer</span><span class="p">(</span><span class="n">tile_client</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">tile_client</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">m</span>
+</pre></div>
+</div>
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/folium.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/folium.png" />
+</section>
+<section id="usage-notes">
+<h2>🗒️ Usage Notes<a class="headerlink" href="#usage-notes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">get_leaflet_tile_layer()</span></code> accepts either an existing <code class="xref py py-class docutils literal notranslate"><span class="pre">TileClient</span></code> or a path from which to create a <code class="xref py py-class docutils literal notranslate"><span class="pre">TileClient</span></code> under the hood.</p></li>
+<li><p>The color palette choices come from <a class="reference external" href="https://jiffyclub.github.io/palettable/">palettable</a>.</p></li>
+<li><p>If matplotlib is installed, any matplotlib colormap name cane be used a palette choice</p></li>
+</ul>
+</section>
+</section>
+
+
+              </div>
+              
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2017-2022, Bane Sullivan.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>

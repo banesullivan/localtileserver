@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>🗺️ Example Datasets &#8212; 🌐 localtileserver</title>
+    
+    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  
+    
+    <link rel="stylesheet"
+      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+    <link rel="preload" as="font" type="font/woff2" crossorigin
+      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+  
+    
+      
+  
+    
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/no_search_highlight.css" />
+    
+    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+  
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🖥️ Local Web Application" href="web-app.html" />
+    <link rel="prev" title="🐳 Docker" href="docker.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+    
+    
+<a class="navbar-brand" href="../index.html">
+<p class="title">🌐 localtileserver</p>
+</a>
+
+    
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+      
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../installation/index.html">
+  ⬇️ Installation
+ </a>
+</li>
+
+<li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="index.html">
+  🚀 User Guide
+ </a>
+</li>
+
+<li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="../api/index.html">
+  📖 API
+ </a>
+</li>
+
+    
+</ul>
+      </div>
+      
+    </div>
+
+    <div id="navbar-end">
+      
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/banesullivan/localtileserver" rel="noopener" target="_blank" title="GitHub"><span><i class="fab fa-github-square"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://github.com/banesullivan/localtileserver/discussions" rel="noopener" target="_blank" title="Support"><span><i class="fa fa-comment fa-fw"></i></span>
+            <label class="sr-only">Support</label></a>
+        </li>
+      </ul>
+      </div>
+      
+    </div>
+  </div>
+</div>
+    </nav>
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+            
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="compare.html">
+   🥓 Two Rasters at Once
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="rgb.html">
+   🧮 Controlling the RGB Bands
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="remote-cog.html">
+   ☁️ Remote Cloud Optimized GeoTiffs (COGs)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="roi.html">
+   🎯 Using
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ipyleaflet
+    </span>
+   </code>
+   for ROI Extraction
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="docker.html">
+   🐳 Docker
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   🗺️ Example Datasets
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="web-app.html">
+   🖥️ Local Web Application
+  </a>
+ </li>
+</ul>
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+            
+          
+
+          
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+            
+              
+              <div class="toc-item">
+                
+
+<nav id="bd-toc-nav">
+    
+</nav>
+              </div>
+              
+              <div class="toc-item">
+                
+              </div>
+              
+            
+          </div>
+          
+
+          
+          
+            
+          
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+              
+              <div>
+                
+  <section id="example-datasets">
+<h1>🗺️ Example Datasets<a class="headerlink" href="#example-datasets" title="Permalink to this headline">¶</a></h1>
+<p>A few example datasets are included with <cite>localtileserver</cite>. A particularly
+useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">get_leaflet_roi_controls</span><span class="p">,</span> <span class="n">examples</span>
+<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
+
+<span class="c1"># Load example tile layer from publicly available DEM source</span>
+<span class="n">tile_client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_elevation</span><span class="p">()</span>
+
+<span class="c1"># Create ipyleaflet tile layer from that server</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">tile_client</span><span class="p">,</span>
+                           <span class="n">band</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">500</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+                           <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span><span class="p">,</span>
+                           <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+
+<span class="c1"># Create ipyleaflet controls to extract an ROI</span>
+<span class="n">draw_control</span><span class="p">,</span> <span class="n">roi_control</span> <span class="o">=</span> <span class="n">get_leaflet_roi_controls</span><span class="p">(</span><span class="n">tile_client</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">zoom</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span><span class="n">draw_control</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span><span class="n">roi_control</span><span class="p">)</span>
+<span class="n">m</span>
+</pre></div>
+</div>
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png" />
+<p>Then you can follow the same routine as described above to extract an ROI.</p>
+<p>I zoomed in over Golden, Colorado and drew a polygon of the extent of the DEM I would like to create:</p>
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-roi.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-roi.png" />
+<p>And perform the extraction:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">roi_path</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span>  <span class="c1"># Look in your working directory</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">roi_path</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                           <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+
+<span class="n">m2</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
+        <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">39.763427033262175</span><span class="p">,</span> <span class="o">-</span><span class="mf">105.20614908076823</span><span class="p">),</span>
+        <span class="n">zoom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+       <span class="p">)</span>
+<span class="n">m2</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="n">m2</span>
+</pre></div>
+</div>
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-dem.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-dem.png" />
+<p>Here is another example with the Virtual Earth satellite imagery</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
+<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
+
+<span class="c1"># Load example tile layer from publicly available imagery</span>
+<span class="n">tile_client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_virtual_earth</span><span class="p">()</span>
+
+<span class="c1"># Create ipyleaflet tile layer from that server</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">tile_client</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">39.751343612695145</span><span class="p">,</span> <span class="o">-</span><span class="mf">105.22181306125279</span><span class="p">),</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">m</span>
+</pre></div>
+</div>
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/kafadar.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/kafadar.png" />
+</section>
+
+
+              </div>
+              
+              
+          </main>
+          
+
+      </div>
+    </div>
+  
+    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <footer class="footer mt-5 mt-md-0">
+  <div class="container">
+    
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2017-2022, Bane Sullivan.<br>
+</p>
+    </div>
+    
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+</p>
+    </div>
+    
+  </div>
+</footer>
+  </body>
+</html>
