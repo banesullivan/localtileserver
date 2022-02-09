@@ -142,17 +142,22 @@
 
 <nav id="bd-toc-nav">
     <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   🌐 localtileserver
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#highlights">
    🌟 Highlights
   </a>
  </li>
- <li class="toc-h2 nav-item toc-entry">
+ <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#i-overview">
    ℹ️ Overview
   </a>
  </li>
- <li class="toc-h2 nav-item toc-entry">
+ <li class="toc-h1 nav-item toc-entry">
   <a class="reference internal nav-link" href="#community-usage">
    🪢 Community Usage
   </a>
@@ -207,8 +212,9 @@
 the <a class="reference external" href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">Slippy Maps standard</a>
 (i.e., <code class="docutils literal notranslate"><span class="pre">/zoom/x/y.png</span></code>)</p>
 <p>Launch a <a class="reference external" href="https://github.com/banesullivan/localtileserver-demo">demo</a> on MyBinder <a class="reference external" href="https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD"><img alt="MyBinder" src="https://mybinder.org/badge_logo.svg" /></a></p>
+</section>
 <section id="highlights">
-<h2>🌟 Highlights<a class="headerlink" href="#highlights" title="Permalink to this headline">¶</a></h2>
+<h1>🌟 Highlights<a class="headerlink" href="#highlights" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p>Launch a tile server for large geospatial images</p></li>
 <li><p>View local or remote* raster files with <cite>ipyleaflet</cite> or <cite>folium</cite> in Jupyter</p></li>
@@ -219,7 +225,7 @@ the <a class="reference external" href="https://wiki.openstreetmap.org/wiki/Slip
 <p><em>remote raster files should be pre-tiled Cloud Optimized GeoTiffs</em></p>
 </section>
 <section id="i-overview">
-<h2>ℹ️ Overview<a class="headerlink" href="#i-overview" title="Permalink to this headline">¶</a></h2>
+<h1>ℹ️ Overview<a class="headerlink" href="#i-overview" title="Permalink to this headline">¶</a></h1>
 <p>This is a Flask application (blueprint) for serving tiles of large images.
 The <cite>TileClient</cite> class can be used to to launch a tile server in a background
 thread which will serve raster imagery to a viewer (see <cite>ipyleaflet</cite> and
@@ -240,14 +246,13 @@ more stable/robust. Things might break between minor releases (I use the
 </div>
 </section>
 <section id="community-usage">
-<h2>🪢 Community Usage<a class="headerlink" href="#community-usage" title="Permalink to this headline">¶</a></h2>
+<h1>🪢 Community Usage<a class="headerlink" href="#community-usage" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/giswqs/leafmap">leafmap</a> and <a class="reference external" href="https://github.com/giswqs/geemap">geemap</a>: use localtileserver for visualizing large raster images in a Jupyter-based geospatial mapping application</p></li>
 <li><p><a class="reference external" href="https://github.com/giswqs/streamlit-geospatial">streamlit-geospatial</a>: uses localtileserver’s flask-based remote tile server for viewing image tiles</p></li>
 <li><p><a class="reference external" href="https://github.com/banesullivan/remotetileserver">remotetileserver</a>: uses the core flask application to spin up a production ready tile server</p></li>
 <li><p><a class="reference external" href="https://kaustavmukherjee-66179.medium.com/visualize-raster-tiles-locally-using-localtileserver-0-4-1-and-jupyter-notebook-cccd59e6420a">Kaustav Mukherjee’s blog post</a>: a user-created demonstration on how to get started with localtileserver</p></li>
 </ul>
-</section>
 </section>
 
 
