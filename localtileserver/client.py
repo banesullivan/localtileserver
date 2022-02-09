@@ -430,9 +430,9 @@ def get_or_create_tile_client(
 ):
     """A helper to safely get a TileClient from a path on disk.
 
-    To Do
-    -----
-    There should eventually be a check to see if a TileClient instance exists
+    Note
+    ----
+    TODO: There should eventually be a check to see if a TileClient instance exists
     for the given filename. For now, it is not really a big deal because the
     default is for all TileClient's to share a single server.
 
