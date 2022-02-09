@@ -79,6 +79,11 @@ html_theme_options = {
             "url": "https://github.com/banesullivan/localtileserver/discussions",
             "icon": "fa fa-comment fa-fw",
         },
+        {
+            "name": "Demo",
+            "url": "https://tileserver.banesullivan.com/",
+            "icon": "fa fa-desktop fa-fw",
+        },
     ],
 }
 
