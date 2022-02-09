@@ -94,6 +94,7 @@ You can use the web viewer to select and extract regions of interest from raster
 - `leafmap <https://github.com/giswqs/leafmap>`_ and `geemap <https://github.com/giswqs/geemap>`_: use localtileserver for visualizing large raster images in a Jupyter-based geospatial mapping application
 - `streamlit-geospatial <https://github.com/giswqs/streamlit-geospatial>`_: uses localtileserver's flask-based remote tile server for viewing image tiles
 - `remotetileserver <https://github.com/banesullivan/remotetileserver>`_: uses the core flask application to spin up a production ready tile server
+- `Kaustav Mukherjee's blog post <https://kaustavmukherjee-66179.medium.com/visualize-raster-tiles-locally-using-localtileserver-0-4-1-and-jupyter-notebook-cccd59e6420a>`_: a user-created demonstration on how to get started with localtileserver
 
 Indices and tables
 ==================
