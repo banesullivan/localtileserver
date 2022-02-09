@@ -3,7 +3,12 @@ from flask import Flask
 
 from localtileserver.tileserver import rest, urls, views
 from localtileserver.tileserver.blueprint import cache, tileserver
-from localtileserver.tileserver.data import get_data_path, get_pine_gulch_url, get_sf_bay_url
+from localtileserver.tileserver.data import (
+    get_data_path,
+    get_oam2_url,
+    get_pine_gulch_url,
+    get_sf_bay_url,
+)
 from localtileserver.tileserver.palettes import get_palettes, palette_valid_or_raise
 from localtileserver.tileserver.utilities import (
     get_cache_dir,
