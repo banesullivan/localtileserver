@@ -30,9 +30,9 @@ extensions = [
     "notfound.extension",
     "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
-    "jupyter_sphinx",
+    # "jupyter_sphinx",
     "sphinx_copybutton",
-    "sphinx_panels",
+    # "sphinx_panels",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
