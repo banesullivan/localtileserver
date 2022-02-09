@@ -1,0 +1,58 @@
+name: Build Documentation
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+      # Handle GDAL
+      - name: Install GDAL
+        run: |
+          python -m pip install --upgrade pip
+          pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
+      - name: Test GDAL installation
+        run: |
+          python -c "from osgeo import gdal"
+          gdalinfo --version
+      # Install everything else
+      - name: Install other dependencies
+        run: |
+          pip install -r requirements_jupyter.txt -r requirements_doc.txt
+      - name: Install localtileserver
+        run: pip install -e .
+      - name: Scooby Report
+        run: python -c "import localtileserver;print(localtileserver.Report())"
+      - name: Build Documentation
+        working-directory: doc
+        run: make html
+      - name: Stash build
+        uses: actions/upload-artifact@v2
+        with:
+          name: doc-build
+          path: doc/build
+
+  deploy:
+    name: Publish Documentation
+    runs-on: ubuntu-latest
+    needs: build-doc
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v2
+        with:
+          name: doc-build
+          path: doc/build
+      - name: Deploy to GH Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: doc/build/html
