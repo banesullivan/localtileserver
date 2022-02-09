@@ -12,7 +12,7 @@ the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 
 Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinder [![MyBinder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD)
 
-Documentation: https://banesullivan.github.io/localtileserver/
+Documentation: https://localtileserver.banesullivan.com/
 
 
 ## 🌟 Highlights
@@ -97,4 +97,4 @@ print(localtileserver.Report())
 
 ## 🚀 Usage
 
-All usage details can be found in the documentation: https://banesullivan.github.io/localtileserver/
+All usage details can be found in the documentation: https://localtileserver.banesullivan.com/
