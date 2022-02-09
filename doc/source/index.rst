@@ -52,7 +52,7 @@ Launch a `demo <https://github.com/banesullivan/localtileserver-demo>`_ on MyBin
 
 
 🌟 Highlights
--------------
+=============
 
 - Launch a tile server for large geospatial images
 - View local or remote* raster files with `ipyleaflet` or `folium` in Jupyter
@@ -63,7 +63,7 @@ Launch a `demo <https://github.com/banesullivan/localtileserver-demo>`_ on MyBin
 *remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
 
 ℹ️ Overview
------------
+===========
 
 This is a Flask application (blueprint) for serving tiles of large images.
 The `TileClient` class can be used to to launch a tile server in a background
@@ -89,7 +89,7 @@ You can use the web viewer to select and extract regions of interest from raster
 
 
 🪢 Community Usage
-------------------
+==================
 
 - `leafmap <https://github.com/giswqs/leafmap>`_ and `geemap <https://github.com/giswqs/geemap>`_: use localtileserver for visualizing large raster images in a Jupyter-based geospatial mapping application
 - `streamlit-geospatial <https://github.com/giswqs/streamlit-geospatial>`_: uses localtileserver's flask-based remote tile server for viewing image tiles
