@@ -14,7 +14,7 @@ import localtileserver
 
 project = "🌐 localtileserver"
 year = datetime.date.today().year
-copyright = f"2017-{year}, Bane Sullivan"
+copyright = f"2021-{year}, Bane Sullivan"
 author = "Bane Sullivan"
 
 # The full version, including alpha/beta/rc tags
