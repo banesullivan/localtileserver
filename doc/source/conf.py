@@ -70,7 +70,7 @@ html_context = {
 }
 
 html_theme_options = {
-    # "google_analytics_id": "",
+    "google_analytics_id": "G-14GFZDPSQG",
     "show_prev_next": False,
     "github_url": "https://github.com/banesullivan/localtileserver",
     "icon_links": [
