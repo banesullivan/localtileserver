@@ -400,10 +400,10 @@ class TileClient(BaseTileClient):
         )
         if self.client_port is not None and self.client_host is not None:
             base = f"{scheme}{self.client_host}:{self.client_port}"
-        elif self.client_port is not None and self.client_host is None:
-            base = f"{scheme}{self.server_host}:{self.client_port}"
         elif self.client_port is None and self.client_host is not None:
             base = f"{scheme}{self.client_host}"
+        elif self.client_port is not None and self.client_host is None:
+            base = f"http://{self.server_host}:{self.client_port}"
         else:
             base = "/"  # Use relative path
         if self.client_prefix is not None:
