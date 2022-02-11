@@ -12,41 +12,37 @@
 
 *Need to visualize a rather large (gigabytes) raster you have locally?* **This is for you.**
 
+  Try it out below!
+
+.. jupyter-execute::
+
+  from localtileserver import get_leaflet_tile_layer, examples
+  from ipyleaflet import Map
+
+  # Create a TileClient from a raster file
+  tile_client = examples.get_san_francisco()
+
+  # Create ipyleaflet TileLayer from that server
+  t = get_leaflet_tile_layer(tile_client)
+  # Create ipyleaflet map, add tile layer, and display
+  m = Map(center=tile_client.center(), zoom=10)
+  m.add_layer(t)
+  m
+
+
 
 .. raw:: html
 
-  <br>
-
-  <div id="map" style="width: 100%; height: 400px;"></div>
-
-  <script>
-    var map = L.map('map').setView([37.752, -122.418], 9);
-
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/{z}/{x}/{y}.png', {
-        attribution: 'Map tiles by <a href="https://carto.com">Carto</a>, under CC BY 3.0. Data by <a href="https://www.openstreetmap.org/">OpenStreetMap</a>, under ODbL.'
-    }).addTo(map);
-
-    L.tileLayer('https://tileserver.banesullivan.com/api/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=https://data.kitware.com/api/v1/file/60747d792fa25629b9a79565/download', {
-        attribution: 'Raster file served by <a href="https://github.com/banesullivan/localtileserver" target="_blank">localtileserver</a>.',
-        subdomains: '',
-        crossOrigin: false,
-    }).addTo(map);
-
-
-  </script>
-
-  <br>
-
-
-
-.. |binder| image:: https://mybinder.org/badge_logo.svg
-   :target: https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD
-   :alt: MyBinder
+  <br/>
 
 
 A Flask application for serving tiles from large raster files in
 the `Slippy Maps standard <https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames>`_
 (i.e., ``/zoom/x/y.png``)
+
+.. |binder| image:: https://mybinder.org/badge_logo.svg
+   :target: https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD
+   :alt: MyBinder
 
 Launch a `demo <https://github.com/banesullivan/localtileserver-demo>`_ on MyBinder |binder|
 
@@ -55,7 +51,7 @@ Launch a `demo <https://github.com/banesullivan/localtileserver-demo>`_ on MyBin
 =============
 
 - Launch a tile server for large geospatial images
-- View local or remote* raster files with `ipyleaflet` or `folium` in Jupyter
+- View local or remote* raster files with ``ipyleaflet`` or ``folium`` in Jupyter
 - View rasters with CesiumJS with the built-in Flask web application
 - Extract regions of interest (ROIs) interactively
 - Use the example datasets to generate Digital Elevation Models
@@ -66,9 +62,9 @@ Launch a `demo <https://github.com/banesullivan/localtileserver-demo>`_ on MyBin
 ===========
 
 This is a Flask application (blueprint) for serving tiles of large images.
-The `TileClient` class can be used to to launch a tile server in a background
-thread which will serve raster imagery to a viewer (see `ipyleaflet` and
-`folium` Jupyter notebook examples below).
+The :class:`TileClient` class can be used to to launch a tile server in a background
+thread which will serve raster imagery to a viewer (see ``ipyleaflet`` and
+``folium`` examples in :ref:`user_guide`).
 
 This tile server can efficiently deliver varying levels of detail of your
 raster imagery to your viewer; it helps to have pre-tiled, Cloud Optimized

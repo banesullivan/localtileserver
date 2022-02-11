@@ -30,7 +30,7 @@ extensions = [
     "notfound.extension",
     "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
-    # "jupyter_sphinx",
+    "jupyter_sphinx",
     "sphinx_copybutton",
     # "sphinx_panels",
 ]
@@ -52,7 +52,7 @@ todo_include_todos = False
 html_title = project
 html_short_title = ""
 # html_favicon = "_static/favicon.png"
-html_extra_path = [".nojekyll"]  # TODO: "CNAME",
+html_extra_path = []  # TODO: "CNAME",
 html_use_smartypants = True
 
 

@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  LOCALTILESERVER_BUILDING_DOCS: true
+
 jobs:
   build-doc:
     runs-on: ubuntu-latest

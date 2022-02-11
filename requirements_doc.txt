@@ -2,3 +2,4 @@ sphinx
 sphinx-copybutton
 sphinx-notfound-page
 pydata-sphinx-theme
+jupyter-sphinx

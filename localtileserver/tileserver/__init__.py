@@ -4,6 +4,7 @@ from flask import Flask
 from localtileserver.tileserver import rest, urls, views
 from localtileserver.tileserver.blueprint import cache, tileserver
 from localtileserver.tileserver.data import (
+    get_building_docs,
     get_data_path,
     get_oam2_url,
     get_pine_gulch_url,

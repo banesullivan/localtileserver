@@ -8,9 +8,10 @@ import requests
 
 from localtileserver.configure import get_default_client_params
 from localtileserver.server import ServerManager, launch_server
-from localtileserver.tileserver import get_clean_filename, palette_valid_or_raise
+from localtileserver.tileserver import get_building_docs, get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import add_query_parameters, save_file_from_request
 
+BUILDING_DOCS = get_building_docs()
 DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
 logger = logging.getLogger(__name__)
 
@@ -339,6 +340,8 @@ class TileClient(BaseTileClient):
         self._client_host = client_host
         self._client_port = client_port
         self._client_prefix = client_prefix
+        if BUILDING_DOCS and not client_host:
+            self._client_host = DEMO_REMOTE_TILE_SERVER
 
     def shutdown(self, force: bool = False):
         if hasattr(self, "_key"):
@@ -390,12 +393,17 @@ class TileClient(BaseTileClient):
 
     @property
     def client_base_url(self):
+        scheme = (
+            "http://"
+            if self.client_host is not None and not self.client_host.startswith("http")
+            else ""
+        )
         if self.client_port is not None and self.client_host is not None:
-            base = f"http://{self.client_host}:{self.client_port}"
+            base = f"{scheme}{self.client_host}:{self.client_port}"
         elif self.client_port is not None and self.client_host is None:
-            base = f"http://{self.server_host}:{self.client_port}"
+            base = f"{scheme}{self.server_host}:{self.client_port}"
         elif self.client_port is None and self.client_host is not None:
-            base = f"http://{self.client_host}"
+            base = f"{scheme}{self.client_host}"
         else:
             base = "/"  # Use relative path
         if self.client_prefix is not None:

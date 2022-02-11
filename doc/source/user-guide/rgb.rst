@@ -8,13 +8,13 @@ of the band indices to the ``band`` argument.
 Here is an example where I create two tile layers from the same raster but
 viewing a different set of bands:
 
-.. code:: python
+.. jupyter-execute::
 
-  from localtileserver import get_leaflet_tile_layer, TileClient
+  from localtileserver import get_leaflet_tile_layer, examples
   from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
-  # First, create a tile server from local raster file
-  tile_client = TileClient('landsat.tif')
+  # First, create TileClient using example file
+  tile_client = examples.get_landsat()
 
   # Create 2 tile layers from same raster viewing different bands
   l = get_leaflet_tile_layer(tile_client, band=[7, 5, 4])
@@ -27,6 +27,3 @@ viewing a different set of bands:
   m.add_control(ScaleControl(position='bottomleft'))
   m.add_control(FullScreenControl())
   m
-
-
-.. image:: https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-multi-bands.png

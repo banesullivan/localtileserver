@@ -1,9 +1,22 @@
+import os
 import pathlib
 
 
+def get_building_docs():
+    if (
+        "LOCALTILESERVER_BUILDING_DOCS" in os.environ
+        and os.environ["LOCALTILESERVER_BUILDING_DOCS"]
+    ):
+        return True
+    return False
+
+
 def get_data_path(name):
-    dirname = pathlib.Path(__file__).parent
-    return dirname / name
+    if get_building_docs():
+        return f"https://github.com/banesullivan/localtileserver/raw/main/localtileserver/tileserver/data/{name}"
+    else:
+        dirname = pathlib.Path(__file__).parent
+        return dirname / name
 
 
 def get_pine_gulch_url():
