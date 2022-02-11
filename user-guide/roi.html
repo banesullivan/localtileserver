@@ -25,6 +25,8 @@
     
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/no_search_highlight.css" />
@@ -37,13 +39,16 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/thebelab-helper.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="🐳 Docker" href="docker.html" />
-    <link rel="prev" title="☁️ Remote Cloud Optimized GeoTiffs (COGs)" href="remote-cog.html" />
+    <link rel="prev" title="🥓 Two Rasters at Once" href="compare.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -140,11 +145,6 @@
   <div class="bd-toc-item active">
     <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="compare.html">
-   🥓 Two Rasters at Once
-  </a>
- </li>
- <li class="toctree-l1">
   <a class="reference internal" href="rgb.html">
    🧮 Controlling the RGB Bands
   </a>
@@ -152,6 +152,11 @@
  <li class="toctree-l1">
   <a class="reference internal" href="remote-cog.html">
    ☁️ Remote Cloud Optimized GeoTiffs (COGs)
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="compare.html">
+   🥓 Two Rasters at Once
   </a>
  </li>
  <li class="toctree-l1 current active">
@@ -226,11 +231,11 @@ UI controls for extracting regions of interest from a tile client. You can
 use it as follows and then draw a polygon and click the “Extract ROI” button.</p>
 <p>The outputs are save in your working directory by default (next to the Jupyter notebook).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">get_leaflet_roi_controls</span>
-<span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">TileClient</span>
+<span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">examples</span>
 <span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
 
-<span class="c1"># First, create a tile server from local raster file</span>
-<span class="n">tile_client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="s1">&#39;~/Desktop/TC_NG_SFBay_US_Geo.tif&#39;</span><span class="p">)</span>
+<span class="c1"># First, create a TileClient from example raster file</span>
+<span class="n">tile_client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_san_francisco</span><span class="p">()</span>
 
 <span class="c1"># Create ipyleaflet tile layer from that server</span>
 <span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">tile_client</span><span class="p">)</span>

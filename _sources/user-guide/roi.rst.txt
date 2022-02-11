@@ -10,11 +10,11 @@ The outputs are save in your working directory by default (next to the Jupyter n
 .. code:: python
 
   from localtileserver import get_leaflet_tile_layer, get_leaflet_roi_controls
-  from localtileserver import TileClient
+  from localtileserver import examples
   from ipyleaflet import Map
 
-  # First, create a tile server from local raster file
-  tile_client = TileClient('~/Desktop/TC_NG_SFBay_US_Geo.tif')
+  # First, create a TileClient from example raster file
+  tile_client = examples.get_san_francisco()
 
   # Create ipyleaflet tile layer from that server
   t = get_leaflet_tile_layer(tile_client)
