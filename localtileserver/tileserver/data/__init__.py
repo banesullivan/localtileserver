@@ -6,7 +6,7 @@ import pathlib
 def get_building_docs():
     if (
         "LOCALTILESERVER_BUILDING_DOCS" in os.environ
-        and os.environ["LOCALTILESERVER_BUILDING_DOCS"]
+        and os.environ["LOCALTILESERVER_BUILDING_DOCS"] == "true"
     ):
         return True
     return False
