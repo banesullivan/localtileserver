@@ -102,6 +102,7 @@ def get_leaflet_tile_layer(
     )
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
+    kwargs.setdefault("max_native_zoom", source.metadata()["levels"])
     tile_layer = BoundTileLayer(url=url, attribution=attribution, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
