@@ -10,6 +10,7 @@ from large_image_source_gdal import GDALFileTileSource
 from localtileserver import __version__
 from localtileserver.tileserver import style, utilities
 from localtileserver.tileserver.blueprint import cache, tileserver
+from localtileserver.tileserver.data import str_to_bool
 from localtileserver.tileserver.palettes import get_palettes
 
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
@@ -275,7 +276,7 @@ class TileView(BaseTileView):
         tile_source = self.get_tile_source()
         tile_binary = tile_source.getTile(x, y, z)
         mime_type = tile_source.getTileMimeType()
-        grid = utilities.str_to_bool(request.args.get("grid", "False"))
+        grid = str_to_bool(request.args.get("grid", "False"))
         if grid:
             tile_binary = self.add_border_to_image(tile_binary)
         return send_file(
@@ -420,7 +421,7 @@ class HistogramView(BasePixelOperation):
     def get(self):
         kwargs = dict(
             bins=int(request.args.get("bins", 256)),
-            density=utilities.str_to_bool(request.args.get("density", "False")),
+            density=str_to_bool(request.args.get("density", "False")),
             format=request.args.get("format", None),
         )
         tile_source = self.get_tile_source(projection=None)

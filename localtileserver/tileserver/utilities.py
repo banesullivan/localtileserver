@@ -12,7 +12,7 @@ from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
 
-from localtileserver.tileserver.data import get_data_path, str_to_bool
+from localtileserver.tileserver.data import get_data_path
 
 logger = logging.getLogger(__name__)
 
