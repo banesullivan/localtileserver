@@ -9,6 +9,7 @@ from localtileserver.tileserver.data import (
     get_oam2_url,
     get_pine_gulch_url,
     get_sf_bay_url,
+    str_to_bool,
 )
 from localtileserver.tileserver.palettes import get_palettes, palette_valid_or_raise
 from localtileserver.tileserver.utilities import (

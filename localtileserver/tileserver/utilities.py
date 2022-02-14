@@ -12,13 +12,9 @@ from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
 
-from localtileserver.tileserver.data import get_data_path
+from localtileserver.tileserver.data import get_data_path, str_to_bool
 
 logger = logging.getLogger(__name__)
-
-
-def str_to_bool(v):
-    return v.lower() in ("yes", "true", "t", "1", "on")
 
 
 def get_memcache_config():

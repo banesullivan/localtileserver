@@ -3,10 +3,13 @@ import os
 import pathlib
 
 
+def str_to_bool(v):
+    return v.lower() in ("yes", "true", "t", "1", "on", "y")
+
+
 def get_building_docs():
-    if (
-        "LOCALTILESERVER_BUILDING_DOCS" in os.environ
-        and os.environ["LOCALTILESERVER_BUILDING_DOCS"] == "true"
+    if "LOCALTILESERVER_BUILDING_DOCS" in os.environ and str_to_bool(
+        os.environ["LOCALTILESERVER_BUILDING_DOCS"]
     ):
         return True
     return False
