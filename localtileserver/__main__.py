@@ -1,4 +1,5 @@
 import logging
+import os
 import socket
 import threading
 import webbrowser
@@ -16,7 +17,12 @@ from localtileserver.tileserver.data import get_pine_gulch_url
 @click.option("-b", "--browser", default=True)
 @click.option("-t", "--cesium-token", default="")
 def run_app(
-    filename, port: int = 0, debug: bool = False, browser: bool = True, cesium_token: str = ""
+    filename,
+    port: int = 0,
+    debug: bool = False,
+    browser: bool = True,
+    cesium_token: str = "",
+    host: str = "127.0.0.1",
 ):
     """Serve tiles from the raster at `filename`.
 
@@ -51,16 +57,19 @@ def run_app(
         logging.getLogger("large_image").setLevel(logging.DEBUG)
         logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
 
+    if os.name == "nt" and host == "127.0.0.1":
+        host = "localhost"
+
     if port == 0:
         sock = socket.socket()
-        sock.bind(("localhost", 0))
+        sock.bind((host, 0))
         port = sock.getsockname()[1]
         sock.close()
 
-    url = f"http://localhost:{port}"
+    url = f"http://{host}:{port}"
     if browser:
         threading.Timer(1, lambda: webbrowser.open(url)).start()
-    app.run(host="localhost", port=port, debug=debug)
+    app.run(host=host, port=port, debug=debug)
 
 
 if __name__ == "__main__":

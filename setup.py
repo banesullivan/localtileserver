@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 4, 0
+version_info = 0, 4, 4
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -44,16 +44,15 @@ setup(
         "Flask-Caching",
         "flask-restx>=0.5.0",
         "GDAL",
-        "large_image",
-        "large_image_source_gdal",
+        "large-image>=1.10",
+        "large-image-source-gdal>=1.10",
         "requests",
         "scooby",
     ],
     extras_require={
-        "leaflet": ["ipyleaflet"],
-        "folium": ["folium"],
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
-        "sources": ["large-image-source-pil", "large-image-source-tiff"],
+        "sources": ["large-image-source-pil>=1.10", "large-image-source-tiff>=1.10"],
+        "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
     },
     entry_points={
         "console_scripts": [

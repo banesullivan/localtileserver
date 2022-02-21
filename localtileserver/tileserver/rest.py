@@ -10,6 +10,7 @@ from large_image_source_gdal import GDALFileTileSource
 from localtileserver import __version__
 from localtileserver.tileserver import style, utilities
 from localtileserver.tileserver.blueprint import cache, tileserver
+from localtileserver.tileserver.data import str_to_bool
 from localtileserver.tileserver.palettes import get_palettes
 
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
@@ -49,6 +50,19 @@ STYLE_PARAMS = {
         "description": "The color palette to map the band values (named Matplotlib colormaps or palettable palettes).",
         "in": "query",
         "type": "str",
+    },
+    "scheme": {
+        "description": "This is either ``linear`` (the default) or ``discrete``. If a palette is specified, ``linear`` uses a piecewise linear interpolation, and ``discrete`` uses exact colors from the palette with the range of the data mapped into the specified number of colors (e.g., a palette with two colors will split exactly halfway between the min and max values).",
+        "in": "query",
+        "type": "str",
+        "default": "linear",
+    },
+    "n_colors": {
+        "description": "The number (positive integer) of colors to discretize the matplotlib color palettes when used.",
+        "in": "query",
+        "type": "int",
+        "example": 24,
+        "default": 255,
     },
     "min": {
         "description": "The minimum value for the color mapping.",
@@ -137,8 +151,21 @@ class BaseImageView(View):
         vmin = style_args.get("min", None)
         vmax = style_args.get("max", None)
         palette = style_args.get("palette", None)
+        scheme = style_args.get("scheme", None)
         nodata = style_args.get("nodata", None)
-        sty = style.make_style(band, vmin=vmin, vmax=vmax, palette=palette, nodata=nodata)
+        if style_args.get("n_colors", ""):
+            n_colors = int(style_args.get("n_colors"))
+        else:
+            n_colors = 255
+        sty = style.make_style(
+            band,
+            vmin=vmin,
+            vmax=vmax,
+            palette=palette,
+            nodata=nodata,
+            scheme=scheme,
+            n_colors=n_colors,
+        )
         return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
 
 
@@ -249,7 +276,7 @@ class TileView(BaseTileView):
         tile_source = self.get_tile_source()
         tile_binary = tile_source.getTile(x, y, z)
         mime_type = tile_source.getTileMimeType()
-        grid = utilities.str_to_bool(request.args.get("grid", "False"))
+        grid = str_to_bool(request.args.get("grid", "False"))
         if grid:
             tile_binary = self.add_border_to_image(tile_binary)
         return send_file(
@@ -394,7 +421,7 @@ class HistogramView(BasePixelOperation):
     def get(self):
         kwargs = dict(
             bins=int(request.args.get("bins", 256)),
-            density=utilities.str_to_bool(request.args.get("density", "False")),
+            density=str_to_bool(request.args.get("density", "False")),
             format=request.args.get("format", None),
         )
         tile_source = self.get_tile_source(projection=None)

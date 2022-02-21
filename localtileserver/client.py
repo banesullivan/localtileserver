@@ -1,14 +1,18 @@
+# flake8: noqa: W503
+from functools import wraps
 import logging
 import pathlib
 from typing import List, Union
 
 import requests
 
+from localtileserver.configure import get_default_client_params
 from localtileserver.server import ServerManager, launch_server
-from localtileserver.tileserver import get_clean_filename, palette_valid_or_raise
+from localtileserver.tileserver import get_building_docs, get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import add_query_parameters, save_file_from_request
 
-DEMO_REMOTE_TILE_SERVER = "https://localtileserver-demo.herokuapp.com/"
+BUILDING_DOCS = get_building_docs()
+DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
 logger = logging.getLogger(__name__)
 
 
@@ -33,20 +37,24 @@ class BaseTileClient:
         return self._filename
 
     @property
-    def host(self):
+    def server_host(self):
         raise NotImplementedError
 
     @property
-    def base_url(self):
+    def server_port(self):
+        raise NotImplementedError
+
+    @property
+    def server_base_url(self):
         raise NotImplementedError
 
     def _produce_url(self, base: str):
         return add_query_parameters(base, {"filename": self._filename})
 
     def create_url(self, path: str):
-        return self._produce_url(f"{self.base_url}/{path.lstrip('/')}")
+        return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
-    def get_tile_url(
+    def get_tile_url_params(
         self,
         projection: str = "EPSG:3857",
         band: Union[int, List[int]] = None,
@@ -54,6 +62,8 @@ class BaseTileClient:
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
         vmax: Union[Union[float, int], List[Union[float, int]]] = None,
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        scheme: Union[str, List[str]] = None,
+        n_colors: int = 255,
         grid: bool = False,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
@@ -79,6 +89,16 @@ class BaseTileClient:
             a single band.
         nodata : float
             The value from the band to use to interpret as not valid data.
+        scheme : str
+            This is either ``linear`` (the default) or ``discrete``. If a
+            palette is specified, ``linear`` uses a piecewise linear
+            interpolation, and ``discrete`` uses exact colors from the palette
+            with the range of the data mapped into the specified number of
+            colors (e.g., a palette with two colors will split exactly halfway
+            between the min and max values).
+        n_colors : int
+            The number (positive integer) of colors to discretize the matplotlib
+            color palettes when used.
         grid : bool
             Show the outline of each tile. This is useful when debugging your
             tile viewer.
@@ -102,6 +122,15 @@ class BaseTileClient:
             params["projection"] = projection
         if grid:
             params["grid"] = True
+        if scheme is not None:
+            params["scheme"] = scheme
+        if n_colors:
+            params["n_colors"] = n_colors
+        return params
+
+    @wraps(get_tile_url_params)
+    def get_tile_url(self, *args, **kwargs):
+        params = self.get_tile_url_params(*args, **kwargs)
         return add_query_parameters(self.create_url("api/tiles/{z}/{x}/{y}.png"), params)
 
     def extract_roi(
@@ -162,6 +191,8 @@ class BaseTileClient:
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
         vmax: Union[Union[float, int], List[Union[float, int]]] = None,
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        scheme: Union[str, List[str]] = None,
+        n_colors: int = 255,
         output_path: pathlib.Path = None,
     ):
         params = {}
@@ -177,6 +208,10 @@ class BaseTileClient:
             params["max"] = vmax
         if nodata is not None:
             params["nodata"] = nodata
+        if scheme is not None:
+            params["scheme"] = scheme
+        if n_colors:
+            params["n_colors"] = n_colors
         url = add_query_parameters(self.create_url("api/thumbnail"), params)
         r = requests.get(url)
         r.raise_for_status()
@@ -247,16 +282,16 @@ class RemoteTileClient(BaseTileClient):
         self._host = host
 
     @property
-    def host(self):
+    def server_host(self):
         return self._host
 
-    @host.setter
-    def host(self, host):
+    @server_host.setter
+    def server_host(self, host):
         self._host = host
 
     @property
-    def base_url(self):
-        return self.host
+    def server_base_url(self):
+        return self.server_host
 
 
 class TileClient(BaseTileClient):
@@ -275,6 +310,11 @@ class TileClient(BaseTileClient):
         Run the background server as a ThreadedWSGIServer. Default True.
     processes : int
         If processes is greater than 1, run background server as ForkingWSGIServer
+    client_port : int
+        The port on your client browser to use for fetching tiles. This is
+        useful when running in Docker and performing port forwarding.
+    client_host : str
+        The host on which your client browser can access the server.
 
     """
 
@@ -285,11 +325,27 @@ class TileClient(BaseTileClient):
         debug: bool = False,
         threaded: bool = True,
         processes: int = 1,
+        host: str = "127.0.0.1",
+        client_port: int = None,
+        client_host: str = None,
+        client_prefix: str = None,
     ):
         super().__init__(filename)
-        self._key = launch_server(port, debug, threaded=threaded, processes=processes)
+        self._key = launch_server(port, debug, threaded=threaded, processes=processes, host=host)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
+        client_host, client_port, client_prefix = get_default_client_params(
+            client_host, client_port, client_prefix
+        )
+        self._client_host = client_host
+        self._client_port = client_port
+        self._client_prefix = client_prefix
+        if BUILDING_DOCS and not client_host:
+            self._client_host = DEMO_REMOTE_TILE_SERVER
+
+    def shutdown(self, force: bool = False):
+        if hasattr(self, "_key"):
+            ServerManager.shutdown_server(self._key, force=force)
 
     def __del__(self):
         self.shutdown()
@@ -299,20 +355,78 @@ class TileClient(BaseTileClient):
         return ServerManager.get_server(self._key)
 
     @property
-    def port(self):
+    def server_port(self):
         return self.server.port
 
     @property
-    def host(self):
+    def server_host(self):
         return self.server.host
 
     @property
-    def base_url(self):
-        return f"http://{self.host}:{self.port}"
+    def server_base_url(self):
+        return f"http://{self.server_host}:{self.server_port}"
 
-    def shutdown(self, force: bool = False):
-        if hasattr(self, "_key"):
-            ServerManager.shutdown_server(self._key, force=force)
+    @property
+    def client_port(self):
+        return self._client_port
+
+    @client_port.setter
+    def client_port(self, value):
+        self._client_port = value
+
+    @property
+    def client_host(self):
+        return self._client_host
+
+    @client_host.setter
+    def client_host(self, value):
+        self._client_host = value
+
+    @property
+    def client_prefix(self):
+        if self._client_prefix:
+            return self._client_prefix.replace("{port}", str(self.server_port))
+
+    @client_prefix.setter
+    def client_prefix(self, value):
+        self._client_prefix = value
+
+    @property
+    def client_base_url(self):
+        scheme = (
+            "http://"
+            if self.client_host is not None and not self.client_host.startswith("http")
+            else ""
+        )
+        if self.client_port is not None and self.client_host is not None:
+            base = f"{scheme}{self.client_host}:{self.client_port}"
+        elif self.client_port is None and self.client_host is not None:
+            base = f"{scheme}{self.client_host}"
+        elif self.client_port is not None and self.client_host is None:
+            base = f"http://{self.server_host}:{self.client_port}"
+        else:
+            base = "/"  # Use relative path
+        if self.client_prefix is not None:
+            base = f"{base}{self.client_prefix}"
+        if base.startswith("/"):
+            base = f"/{base.lstrip('/')}"
+        return base
+
+    def create_url(self, path: str, client: bool = False):
+        if client and (
+            self.client_port is not None
+            or self.client_host is not None
+            or self.client_prefix is not None
+        ):
+            return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
+        return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
+
+    @wraps(BaseTileClient.get_tile_url_params)
+    def get_tile_url(self, *args, client=False, **kwargs):
+        params = self.get_tile_url_params(*args, **kwargs)
+        return add_query_parameters(
+            self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
+        )
 
 
 def get_or_create_tile_client(
@@ -324,9 +438,9 @@ def get_or_create_tile_client(
 ):
     """A helper to safely get a TileClient from a path on disk.
 
-    To Do
-    -----
-    There should eventually be a check to see if a TileClient instance exists
+    Note
+    ----
+    TODO: There should eventually be a check to see if a TileClient instance exists
     for the given filename. For now, it is not really a big deal because the
     default is for all TileClient's to share a single server.
 

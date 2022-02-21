@@ -13,13 +13,14 @@ env:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository )
     steps:
       - uses: actions/checkout@v2
       - name: Log into the Container registry
         uses: docker/login-action@v1
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
+          username: token
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata for the Docker image
         id: meta
@@ -30,6 +31,20 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          push: true
+          file: Dockerfile
+          push: ${{ github.actor != 'dependabot[bot]' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+      - name: Extract metadata for the Jupyter Docker image
+        id: meta_jupyter
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-jupyter
+      - name: Build and push the Jupyter Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: jupyter.Dockerfile
+          push: ${{ github.actor != 'dependabot[bot]' }}
+          tags: ${{ steps.meta_jupyter.outputs.tags }}
+          labels: ${{ steps.meta_jupyter.outputs.labels }}

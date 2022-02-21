@@ -1,9 +1,26 @@
+# flake8: noqa: W503
+import os
 import pathlib
 
 
+def str_to_bool(v):
+    return v.lower() in ("yes", "true", "t", "1", "on", "y")
+
+
+def get_building_docs():
+    if "LOCALTILESERVER_BUILDING_DOCS" in os.environ and str_to_bool(
+        os.environ["LOCALTILESERVER_BUILDING_DOCS"]
+    ):
+        return True
+    return False
+
+
 def get_data_path(name):
-    dirname = pathlib.Path(__file__).parent
-    return dirname / name
+    if get_building_docs():
+        return f"https://github.com/banesullivan/localtileserver/raw/main/localtileserver/tileserver/data/{name}"
+    else:
+        dirname = pathlib.Path(__file__).parent
+        return dirname / name
 
 
 def get_pine_gulch_url():
@@ -17,3 +34,7 @@ def get_sf_bay_url():
 
 def get_elevation_us_url():
     return "https://data.kitware.com/api/v1/file/5dbc4f66e3566bda4b4ed3af/download"
+
+
+def get_oam2_url():
+    return "https://oin-hotosm.s3.amazonaws.com/59c66c5223c8440011d7b1e4/0/7ad397c0-bba2-4f98-a08a-931ec3a6e943.tif"

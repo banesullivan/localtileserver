@@ -2,8 +2,6 @@ name: Package Release
 on:
   push:
     tags: "*"
-  release:
-    types: [released]
 jobs:
   publish:
     runs-on: ubuntu-latest

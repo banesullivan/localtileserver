@@ -1,11 +1,16 @@
 FROM python:3.8-slim
+LABEL maintainer="Bane Sullivan"
+LABEL repo="https://github.com/banesullivan/localtileserver"
 
-COPY . /build-context
+COPY requirements.txt /build-context/
 WORKDIR /build-context
 
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+COPY setup.py /build-context/
+COPY MANIFEST.in /build-context/
+COPY localtileserver/ /build-context/localtileserver/
 RUN python setup.py bdist_wheel
 RUN pip install dist/localtileserver*.whl
 

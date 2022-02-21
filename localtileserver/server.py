@@ -78,7 +78,9 @@ class TileServerThread(threading.Thread):
         start: bool = True,
         threaded: bool = True,
         processes: int = 1,
+        host: str = "127.0.0.1",
     ):
+        self._lts_initialized = False
         if not isinstance(port, int):
             raise ValueError(f"Port must be an int, not {type(port)}")
         if processes > 1 and not hasattr(os, "fork"):
@@ -89,6 +91,7 @@ class TileServerThread(threading.Thread):
             threaded = False
 
         threading.Thread.__init__(self)
+        self._lts_initialized = True
 
         app = ServerManager.get_or_create_app()
 
@@ -105,7 +108,9 @@ class TileServerThread(threading.Thread):
             # make_server -> passthrough_errors ?
 
         self.daemon = True  # CRITICAL for safe exit
-        self.srv = make_server("localhost", port, app, threaded=threaded, processes=processes)
+        if os.name == "nt" and host == "127.0.0.1":
+            host = "localhost"
+        self.srv = make_server(host, port, app, threaded=threaded, processes=processes)
         self.ctx = app.app_context()
         self.ctx.push()
         if start:
@@ -115,7 +120,7 @@ class TileServerThread(threading.Thread):
         self.srv.serve_forever()
 
     def shutdown(self):
-        if self.is_alive():
+        if self._lts_initialized and self.is_alive():
             self.srv.shutdown()
 
     def __del__(self):
@@ -135,13 +140,14 @@ def launch_server(
     debug: bool = False,
     threaded: bool = True,
     processes: int = 1,
+    host: str = "127.0.0.1",
 ):
     if ServerManager.is_server_live(port):
         return port
     if port == "default":
-        server = TileServerThread(0, debug, threaded=threaded, processes=processes)
+        server = TileServerThread(0, debug, threaded=threaded, processes=processes, host=host)
     else:
-        server = TileServerThread(port, debug, threaded=threaded, processes=processes)
+        server = TileServerThread(port, debug, threaded=threaded, processes=processes, host=host)
         if port == 0:
             # Get reallocated port
             port = server.port

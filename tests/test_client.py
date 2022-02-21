@@ -12,6 +12,14 @@ from localtileserver.client import (
 from localtileserver.server import ServerDownError, ServerManager
 from localtileserver.tileserver.utilities import get_tile_source
 
+skip_pil_source = True
+try:
+    import large_image_source_pil  # noqa
+
+    skip_pil_source = False
+except ImportError:
+    pass
+
 TOLERANCE = 2e-2
 
 
@@ -26,8 +34,8 @@ def test_create_tile_client(bahamas_file, processes):
     assert ServerManager.server_count() == 0
     tile_client = TileClient(bahamas_file, processes=processes, debug=True)
     assert tile_client.filename == bahamas_file
-    assert tile_client.port
-    assert tile_client.base_url
+    assert tile_client.server_port
+    assert tile_client.server_base_url
     assert "bounds" in tile_client.metadata()
     assert tile_client.bounds()
     center = tile_client.center()
@@ -99,6 +107,10 @@ def test_extract_roi_pixel(bahamas):
     assert path.exists()
     source = get_tile_source(path)
     assert source.getMetadata()["geospatial"]
+
+
+@pytest.mark.skipif(skip_pil_source, reason="`large-image-source-pil` not installed")
+def test_extract_roi_pixel_pil(bahamas):
     path = bahamas.extract_roi_pixel(100, 500, 300, 600, encoding="PNG")
     assert path.exists()
     source = get_tile_source(path)
@@ -145,7 +157,7 @@ def test_launch_non_default_server(bahamas_file):
     default = TileClient(bahamas_file)
     diff = TileClient(bahamas_file, port=0)
     assert default.server != diff.server
-    assert default.port != diff.port
+    assert default.server_port != diff.server_port
 
 
 def test_get_or_create_tile_client(bahamas_file, remote_file_url):

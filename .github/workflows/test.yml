@@ -28,7 +28,7 @@ jobs:
       # Install everything else
       - name: Install other dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r requirements_jupyter.txt
       - name: Install localtileserver
         run: pip install -e .
       - name: Scooby Report

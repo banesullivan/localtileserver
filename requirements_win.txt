@@ -1,9 +1,9 @@
 click
 flask>=2.0.0
 Flask-Caching
-large-image
-large-image-source-gdal
-large-image-source-pil
+large-image>=1.10
+large-image-source-gdal>=1.10
+large-image-source-pil>=1.10
 requests
 scooby
 pytest

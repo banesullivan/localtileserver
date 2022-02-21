@@ -80,8 +80,7 @@ function downloadROI() {
     roi.right > extents.xmax |
     roi.top > extents.ymax |
     roi.bottom < extents.ymin) {
-    console.log('ROI exceeds the boundary of the source raster.')
-    // TODO: show toast with error message
+    snackbarError('ROI exceeds the boundary of the source raster.');
     return
   }
   // Build a URL for extracting that ROI

@@ -11,6 +11,10 @@
   {% include 'tileserver/_include/palettes.html' %}
 </div>
 
+<div class="examplescontainer" id="examplesTool">
+  {% include 'tileserver/_include/examples.html' %}
+</div>
+
 <script>
   var extents = JSON.parse('{{ bounds|tojson }}');
   var tileProvider;
