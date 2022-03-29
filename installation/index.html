@@ -8,23 +8,19 @@
 
     <title>⬇️ Installation &#8212; 🌐 localtileserver</title>
     
-    <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-  
+
     
-    <link rel="stylesheet"
-      href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
-    <link rel="preload" as="font" type="font/woff2" crossorigin
-      href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
-  
-    
-      
-  
-    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/pydata-sphinx-theme.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -32,8 +28,9 @@
     <link rel="stylesheet" type="text/css" href="../_static/no_search_highlight.css" />
     <link rel="stylesheet" type="text/css" href="../_static/fontawesome/css/all.css" />
     
-    <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
-  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -44,7 +41,7 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
+    <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -65,7 +62,7 @@
                 </script>
 
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -184,7 +181,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage pt-5 pb-3">
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -239,13 +236,13 @@
               <div>
                 
   <section id="installation">
-<h1>⬇️ Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<h1>⬇️ Installation<a class="headerlink" href="#installation" title="Permalink to this headline">#</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <p>Get started with <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> to view rasters locally in Jupyter or
 deploy in your own Flask application.</p>
 <section id="installing-with-conda">
-<h2>🐍 Installing with <code class="docutils literal notranslate"><span class="pre">conda</span></code><a class="headerlink" href="#installing-with-conda" title="Permalink to this headline">¶</a></h2>
+<h2>🐍 Installing with <code class="docutils literal notranslate"><span class="pre">conda</span></code><a class="headerlink" href="#installing-with-conda" title="Permalink to this headline">#</a></h2>
 <a class="reference external image-reference" href="https://anaconda.org/conda-forge/localtileserver"><img alt="conda-forge" src="https://img.shields.io/conda/vn/conda-forge/localtileserver.svg?logo=conda-forge&amp;logoColor=white" /></a>
 <p>Conda makes managing <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code>’s dependencies across platforms quite
 easy and this is the recommended method to install:</p>
@@ -254,7 +251,7 @@ easy and this is the recommended method to install:</p>
 </div>
 </section>
 <section id="installing-with-pip">
-<h2>🎡 Installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code><a class="headerlink" href="#installing-with-pip" title="Permalink to this headline">¶</a></h2>
+<h2>🎡 Installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code><a class="headerlink" href="#installing-with-pip" title="Permalink to this headline">#</a></h2>
 <a class="reference external image-reference" href="https://pypi.org/project/localtileserver/"><img alt="PyPI" src="https://img.shields.io/pypi/v/localtileserver.svg?logo=python&amp;logoColor=white" /></a>
 <p>If you prefer pip, and know how to install GDAL on your system, then you can
 install from PyPI: <a class="reference external" href="https://pypi.org/project/localtileserver/">https://pypi.org/project/localtileserver/</a></p>
@@ -262,7 +259,7 @@ install from PyPI: <a class="reference external" href="https://pypi.org/project/
 </pre></div>
 </div>
 <section id="a-brief-note-on-installing-gdal">
-<h3>📝 A Brief Note on Installing GDAL<a class="headerlink" href="#a-brief-note-on-installing-gdal" title="Permalink to this headline">¶</a></h3>
+<h3>📝 A Brief Note on Installing GDAL<a class="headerlink" href="#a-brief-note-on-installing-gdal" title="Permalink to this headline">#</a></h3>
 <p>GDAL can be a pain in the 🍑 to install, so you may want to handle GDAL
 before installing <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> when using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
 <p>If on linux, I highly recommend using the <a class="reference external" href="https://github.com/girder/large_image_wheels">large_image_wheels</a> from Kitware.</p>
@@ -283,8 +280,9 @@ before installing <code class="docutils literal notranslate"><span class="pre">l
       </div>
     </div>
   
-    <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
-  <footer class="footer mt-5 mt-md-0">
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
   <div class="container">
     
     <div class="footer-item">
@@ -295,7 +293,7 @@ before installing <code class="docutils literal notranslate"><span class="pre">l
     
     <div class="footer-item">
       <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.4.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
     
