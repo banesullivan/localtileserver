@@ -1,3 +1,5 @@
+![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/tile-diagram.gif)
+
 # 🌐 Local Tile Server for Geospatial Rasters
 
 [![codecov](https://codecov.io/gh/banesullivan/localtileserver/branch/main/graph/badge.svg?token=S0HQ64FW8G)](https://codecov.io/gh/banesullivan/localtileserver)
@@ -25,7 +27,29 @@ Documentation: https://localtileserver.banesullivan.com/
 
 **remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
 
-![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/tile-diagram.gif)
+## 🚀 Usage
+
+Usage details and examples can be found in the documentation: https://localtileserver.banesullivan.com/
+
+The following is a minimal example to visualize a local raster file with
+`ipyleaflet`:
+
+```py
+from localtileserver import get_leaflet_tile_layer, TileClient
+from ipyleaflet import Map
+
+# First, create a tile server from local raster file
+tile_client = TileClient('path/to/geo.tif')
+
+# Create ipyleaflet tile layer from that server
+t = get_leaflet_tile_layer(tile_client)
+
+m = Map(center=tile_client.center(), zoom=6)
+m.add_child(t)
+m
+```
+
+![ipyleaflet](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet.png)
 
 ## ℹ️ Overview
 
@@ -94,7 +118,3 @@ If filing a bug report, please share a scooby `Report`:
 import localtileserver
 print(localtileserver.Report())
 ```
-
-## 🚀 Usage
-
-All usage details can be found in the documentation: https://localtileserver.banesullivan.com/
