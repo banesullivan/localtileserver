@@ -10,3 +10,4 @@ pytest
 pytest-cov
 folium
 matplotlib
+werkzeug<2.1.0

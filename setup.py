@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 4, 4
+version_info = 0, 4, 5
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -48,6 +48,7 @@ setup(
         "large-image-source-gdal>=1.10",
         "requests",
         "scooby",
+        "werkzeug<2.1.0",
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
