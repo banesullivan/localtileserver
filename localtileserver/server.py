@@ -102,8 +102,6 @@ class TileServerThread(threading.Thread):
         self.ctx = app.app_context()
         self.ctx.push()
 
-        if self.srv.multithread:
-            self.srv.block_on_close = False
         # daemon = True  # CRITICAL for safe exit
         threading.Thread.__init__(self, daemon=True, target=self.srv.serve_forever)
         self._lts_initialized = True
@@ -113,10 +111,8 @@ class TileServerThread(threading.Thread):
 
     def shutdown(self):
         if self._lts_initialized and self.is_alive():
-            if self.srv.multithread:
-                self.srv.shutdown()
-            else:
-                self.srv.server_close()
+            self.srv.shutdown()
+            self.srv.server_close()
             self.join()
 
     def __del__(self):
