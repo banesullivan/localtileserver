@@ -29,10 +29,9 @@ def get_content(url):
     return r.content
 
 
-@pytest.mark.parametrize("processes", [1, 5])
-def test_create_tile_client(bahamas_file, processes):
+def test_create_tile_client(bahamas_file):
     assert ServerManager.server_count() == 0
-    tile_client = TileClient(bahamas_file, processes=processes, debug=True)
+    tile_client = TileClient(bahamas_file, debug=True)
     assert tile_client.filename == bahamas_file
     assert tile_client.server_port
     assert tile_client.server_base_url

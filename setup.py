@@ -48,7 +48,6 @@ setup(
         "large-image-source-gdal>=1.10",
         "requests",
         "scooby",
-        "werkzeug<2.1.0",
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
