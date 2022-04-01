@@ -58,7 +58,7 @@ class ServerManager:
     @staticmethod
     def shutdown_server(key: int, force: bool = False):
         if not force and key == "default":
-            # We do not shut down the default server
+            # We do not shut down the default server unless forced
             return
         try:
             server = ServerManager.pop_server(key)
@@ -76,22 +76,11 @@ class TileServerThread(threading.Thread):
         port: int = 0,
         debug: bool = False,
         start: bool = True,
-        threaded: bool = True,
-        processes: int = 1,
         host: str = "127.0.0.1",
     ):
         self._lts_initialized = False
         if not isinstance(port, int):
             raise ValueError(f"Port must be an int, not {type(port)}")
-        if processes > 1 and not hasattr(os, "fork"):
-            logger.error("Your platform does not support forking. Failing to multithreading.")
-            processes = 1
-            threaded = True
-        if threaded and processes > 1:
-            threaded = False
-
-        threading.Thread.__init__(self)
-        self._lts_initialized = True
 
         app = ServerManager.get_or_create_app()
 
@@ -107,21 +96,28 @@ class TileServerThread(threading.Thread):
             logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
             # make_server -> passthrough_errors ?
 
-        self.daemon = True  # CRITICAL for safe exit
         if os.name == "nt" and host == "127.0.0.1":
             host = "localhost"
-        self.srv = make_server(host, port, app, threaded=threaded, processes=processes)
+        self.srv = make_server(host, port, app, threaded=True)
         self.ctx = app.app_context()
         self.ctx.push()
+
+        if self.srv.multithread:
+            self.srv.block_on_close = False
+        # daemon = True  # CRITICAL for safe exit
+        threading.Thread.__init__(self, daemon=True, target=self.srv.serve_forever)
+        self._lts_initialized = True
+
         if start:
             self.start()
 
-    def run(self):
-        self.srv.serve_forever()
-
     def shutdown(self):
         if self._lts_initialized and self.is_alive():
-            self.srv.shutdown()
+            if self.srv.multithread:
+                self.srv.shutdown()
+            else:
+                self.srv.server_close()
+            self.join()
 
     def __del__(self):
         self.shutdown()
@@ -138,16 +134,14 @@ class TileServerThread(threading.Thread):
 def launch_server(
     port: Union[int, str] = "default",
     debug: bool = False,
-    threaded: bool = True,
-    processes: int = 1,
     host: str = "127.0.0.1",
 ):
     if ServerManager.is_server_live(port):
         return port
     if port == "default":
-        server = TileServerThread(0, debug, threaded=threaded, processes=processes, host=host)
+        server = TileServerThread(0, debug, host=host)
     else:
-        server = TileServerThread(port, debug, threaded=threaded, processes=processes, host=host)
+        server = TileServerThread(port, debug, host=host)
         if port == 0:
             # Get reallocated port
             port = server.port

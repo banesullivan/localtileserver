@@ -306,10 +306,6 @@ class TileClient(BaseTileClient):
         to getting an available port.
     debug : bool
         Run the tile server in debug mode.
-    threaded : bool
-        Run the background server as a ThreadedWSGIServer. Default True.
-    processes : int
-        If processes is greater than 1, run background server as ForkingWSGIServer
     client_port : int
         The port on your client browser to use for fetching tiles. This is
         useful when running in Docker and performing port forwarding.
@@ -323,15 +319,13 @@ class TileClient(BaseTileClient):
         filename: Union[pathlib.Path, str],
         port: Union[int, str] = "default",
         debug: bool = False,
-        threaded: bool = True,
-        processes: int = 1,
         host: str = "127.0.0.1",
         client_port: int = None,
         client_host: str = None,
         client_prefix: str = None,
     ):
         super().__init__(filename)
-        self._key = launch_server(port, debug, threaded=threaded, processes=processes, host=host)
+        self._key = launch_server(port, debug, host=host)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
         client_host, client_port, client_prefix = get_default_client_params(
@@ -433,8 +427,6 @@ def get_or_create_tile_client(
     source: Union[pathlib.Path, str, TileClient],
     port: Union[int, str] = "default",
     debug: bool = False,
-    threaded: bool = True,
-    processes: int = 1,
 ):
     """A helper to safely get a TileClient from a path on disk.
 
@@ -450,7 +442,7 @@ def get_or_create_tile_client(
     _internally_created = False
     # Launch tile server if file path is given
     if not isinstance(source, TileClient):
-        source = TileClient(source, port=port, debug=debug, threaded=threaded, processes=processes)
+        source = TileClient(source, port=port, debug=debug)
         _internally_created = True
     # Check that the tile source is valid and no server errors
     try:
