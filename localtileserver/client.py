@@ -212,7 +212,7 @@ class BaseTileClient:
             params["scheme"] = scheme
         if n_colors:
             params["n_colors"] = n_colors
-        url = add_query_parameters(self.create_url("api/thumbnail"), params)
+        url = add_query_parameters(self.create_url("api/thumbnail.png"), params)
         r = requests.get(url)
         r.raise_for_status()
         return save_file_from_request(r, output_path)
