@@ -31,7 +31,7 @@ BASE_PARAMS = {
         "description": "The local path or URL to the image to use.",
         "in": "query",
         "type": "str",
-        "example": "s3://sentinel-cogs/sentinel-s2-l2a-cogs/2020/S2A_31QHU_20200714_0_L2A/B01.tif",
+        "example": "https://data.kitware.com/api/v1/file/60747d792fa25629b9a79565/download",
     },
     "projection": {
         "description": "The projection in which to open the image.",
