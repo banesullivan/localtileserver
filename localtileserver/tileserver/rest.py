@@ -51,7 +51,7 @@ STYLE_PARAMS = {
         "type": "int",
     },
     "palette": {
-        "description": "The color palette to map the band values (named Matplotlib colormaps or palettable palettes).",
+        "description": "The color palette to map the band values (named Matplotlib colormaps or palettable palettes). `cmap` is a supported alias.",
         "in": "query",
         "type": "str",
     },
@@ -171,7 +171,7 @@ class BaseImageView(View):
             band = style_args.get("band", 0)
             vmin = style_args.get("min", None)
             vmax = style_args.get("max", None)
-            palette = style_args.get("palette", None)
+            palette = style_args.get("palette", style_args.get("cmap", None))
             scheme = style_args.get("scheme", None)
             nodata = style_args.get("nodata", None)
             if style_args.get("n_colors", ""):
