@@ -1,3 +1,5 @@
+import base64
+import binascii
 import io
 import time
 
@@ -81,6 +83,11 @@ STYLE_PARAMS = {
         "in": "query",
         "type": "float",
     },
+    "style": {
+        "description": "Base64 encoded JSON style following https://girder.github.io/large_image/tilesource_options.html#style",
+        "in": "query",
+        "type": "str",
+    },
 }
 REGION_PARAMS = {
     "left": {
@@ -149,25 +156,37 @@ class BaseImageView(View):
         projection = request.args.get("projection", projection)
         encoding = request.args.get("encoding", "PNG")
         style_args = style.reformat_style_query_parameters(request.args)
-        band = style_args.get("band", 0)
-        vmin = style_args.get("min", None)
-        vmax = style_args.get("max", None)
-        palette = style_args.get("palette", None)
-        scheme = style_args.get("scheme", None)
-        nodata = style_args.get("nodata", None)
-        if style_args.get("n_colors", ""):
-            n_colors = int(style_args.get("n_colors"))
+        if "style" in style_args:
+            style_base64 = style_args.get("style").encode("ascii")
+            # Un Base64 the string
+            try:
+                message_bytes = base64.b64decode(style_base64)
+                sty = message_bytes.decode("ascii")
+            except binascii.Error:
+                raise BadRequest(
+                    "`style` query parameter is malformed and likely not base64 encoded."
+                )
+        # else, fallback to supported query parameters for viewing a single band
         else:
-            n_colors = 255
-        sty = style.make_style(
-            band,
-            vmin=vmin,
-            vmax=vmax,
-            palette=palette,
-            nodata=nodata,
-            scheme=scheme,
-            n_colors=n_colors,
-        )
+            band = style_args.get("band", 0)
+            vmin = style_args.get("min", None)
+            vmax = style_args.get("max", None)
+            palette = style_args.get("palette", None)
+            scheme = style_args.get("scheme", None)
+            nodata = style_args.get("nodata", None)
+            if style_args.get("n_colors", ""):
+                n_colors = int(style_args.get("n_colors"))
+            else:
+                n_colors = 255
+            sty = style.make_style(
+                band,
+                vmin=vmin,
+                vmax=vmax,
+                palette=palette,
+                nodata=nodata,
+                scheme=scheme,
+                n_colors=n_colors,
+            )
         return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
 
 
