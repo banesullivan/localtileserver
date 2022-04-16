@@ -5,7 +5,9 @@ from PIL import Image, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
 import large_image
+from large_image.exceptions import TileSourceXYZRangeError
 from large_image_source_gdal import GDALFileTileSource
+from werkzeug.exceptions import BadRequest
 
 from localtileserver import __version__
 from localtileserver.tileserver import style, utilities
@@ -274,7 +276,10 @@ class TileView(BaseTileView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self, x: int, y: int, z: int):
         tile_source = self.get_tile_source()
-        tile_binary = tile_source.getTile(x, y, z)
+        try:
+            tile_binary = tile_source.getTile(x, y, z)
+        except TileSourceXYZRangeError as e:
+            raise BadRequest(e)
         mime_type = tile_source.getTileMimeType()
         grid = str_to_bool(request.args.get("grid", "False"))
         if grid:
@@ -321,6 +326,10 @@ class RegionWorldView(BaseRegionView):
             units,
             encoding,
         )
+        if not path:
+            raise BadRequest(
+                "No output generated, check that the bounds of your ROI overlap source imagery and that your `projection` and `units` are correct."
+            )
         return send_file(
             path,
             mimetype=mime_type,
@@ -342,6 +351,10 @@ class RegionPixelView(BaseRegionView):
             top,
             encoding=encoding,
         )
+        if not path:
+            raise BadRequest(
+                "No output generated, check that the bounds of your ROI overlap source imagery."
+            )
         return send_file(
             path,
             mimetype=mime_type,
