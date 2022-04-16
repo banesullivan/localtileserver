@@ -7,6 +7,8 @@ specify a few keyword arguments:
 - ``max_zoom`` and ``max_native_zoom`` set appropriately in the ``TileLayer``
 - ``max_zoom`` set in the ``Map`` which matches ``max_zoom`` in the ``TileLayer``
 
+For more information, please see https://github.com/jupyter-widgets/ipyleaflet/issues/925
+
 .. jupyter-execute::
 
   from localtileserver import get_leaflet_tile_layer, examples
