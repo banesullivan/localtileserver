@@ -66,6 +66,7 @@ class BaseTileClient:
         scheme: Union[str, List[str]] = None,
         n_colors: int = 255,
         style: dict = None,
+        cmap: Union[str, List[str]] = None,
     ):
         if style:
             return {"style": base64.urlsafe_b64encode(json.dumps(style).encode()).decode()}
@@ -73,7 +74,9 @@ class BaseTileClient:
         params = {}
         if band is not None:
             params["band"] = band
-        if palette is not None:
+        if palette is not None or cmap is not None:
+            if palette is None:
+                palette = cmap
             # make sure palette is valid
             palette_valid_or_raise(palette)
             params["palette"] = palette
@@ -101,6 +104,7 @@ class BaseTileClient:
         n_colors: int = 255,
         grid: bool = False,
         style: dict = None,
+        cmap: Union[str, List[str]] = None,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
 
@@ -142,6 +146,8 @@ class BaseTileClient:
             large-image JSON style. See
             https://girder.github.io/large_image/tilesource_options.html#style
             If given, this will override all other styling parameters.
+        cmap : str
+            Alias for palette if not specified.
 
         """
         params = self._get_style_params(
@@ -153,6 +159,7 @@ class BaseTileClient:
             scheme=scheme,
             n_colors=n_colors,
             style=style,
+            cmap=cmap,
         )
         if projection is not None:
             params["projection"] = projection
@@ -227,6 +234,7 @@ class BaseTileClient:
         n_colors: int = 255,
         output_path: pathlib.Path = None,
         style: dict = None,
+        cmap: Union[str, List[str]] = None,
     ):
         params = self._get_style_params(
             band=band,
@@ -237,6 +245,7 @@ class BaseTileClient:
             scheme=scheme,
             n_colors=n_colors,
             style=style,
+            cmap=cmap,
         )
         url = add_query_parameters(self.create_url("api/thumbnail.png"), params)
         r = requests.get(url)

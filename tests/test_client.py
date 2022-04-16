@@ -194,6 +194,11 @@ def test_custom_palette(bahamas):
         palette=palette,
     )
     assert thumbnail  # TODO: check colors in produced image
+    thumbnail = bahamas.thumbnail(
+        band=1,
+        cmap=palette,
+    )
+    assert thumbnail  # TODO: check colors in produced image
 
 
 def test_style_dict(bahamas):
