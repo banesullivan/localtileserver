@@ -27,3 +27,30 @@ viewing a different set of bands:
   m.add_control(ScaleControl(position='bottomleft'))
   m.add_control(FullScreenControl())
   m
+
+
+Additionally, ``localtileserver`` supports a full styling specification
+from ``large-image`` for more complex composite images.
+
+See https://girder.github.io/large_image/tilesource_options.html#style
+
+.. jupyter-execute::
+
+  from localtileserver import get_leaflet_tile_layer, examples
+  from ipyleaflet import Map
+
+  landsat_client = examples.get_landsat()
+
+  style = {
+    'bands': [
+      {'band': 5, 'palette': ['#000', '#f00']},
+      {'band': 3, 'palette': ['#000', '#0f0']},
+      {'band': 2, 'palette': ['#000', '#00f']},
+    ]
+  }
+
+  l = get_leaflet_tile_layer(tile_client, style=style)
+
+  m = Map(center=tile_client.center(), zoom=12)
+  m.add_layer(l)
+  m
