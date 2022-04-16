@@ -194,3 +194,15 @@ def test_custom_palette(bahamas):
         palette=palette,
     )
     assert thumbnail  # TODO: check colors in produced image
+
+
+def test_style_dict(bahamas):
+    style = {
+        "bands": [
+            {"band": 1, "palette": ["#000", "#0f0"]},
+        ]
+    }
+    thumbnail = bahamas.thumbnail(
+        style=style,
+    )
+    assert thumbnail  # TODO: check colors in produced image
