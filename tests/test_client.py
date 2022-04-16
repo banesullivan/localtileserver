@@ -10,7 +10,7 @@ from localtileserver.client import (
     get_or_create_tile_client,
 )
 from localtileserver.server import ServerDownError, ServerManager
-from localtileserver.tileserver.utilities import get_tile_source
+from localtileserver.tileserver.utilities import get_clean_filename, get_tile_source
 
 skip_pil_source = True
 try:
@@ -32,7 +32,7 @@ def get_content(url):
 def test_create_tile_client(bahamas_file):
     assert ServerManager.server_count() == 0
     tile_client = TileClient(bahamas_file, debug=True)
-    assert tile_client.filename == bahamas_file
+    assert tile_client.filename == get_clean_filename(bahamas_file)
     assert tile_client.server_port
     assert tile_client.server_base_url
     assert "bounds" in tile_client.metadata()
