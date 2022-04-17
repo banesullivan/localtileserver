@@ -7,7 +7,7 @@ from PIL import Image, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
 import large_image
-from large_image.exceptions import TileSourceXYZRangeError
+from large_image.exceptions import TileSourceError, TileSourceXYZRangeError
 from large_image_source_gdal import GDALFileTileSource
 from werkzeug.exceptions import BadRequest
 
@@ -193,7 +193,10 @@ class BaseImageView(View):
                 )
             except ValueError as e:
                 raise BadRequest(str(e))
-        return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
+        try:
+            return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
+        except TileSourceError as e:
+            raise BadRequest(f"TileSourceError: {str(e)}")
 
 
 class MetadataView(BaseImageView):
