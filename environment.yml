@@ -1,0 +1,41 @@
+name: localtileserver
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.8
+  - large-image-source-gdal
+  - large-image-source-tiff
+  - large-image-converter
+  - click
+  - requests
+  - flask >=2.0.0
+  - Flask-Caching
+  - flask-restx >=0.5.0
+  - pylibmc
+  - requests
+  - scooby
+  - pytest
+  - pytest-cov
+  - matplotlib
+  - gunicorn
+  - cmocean
+  - sphinx
+  - pydata-sphinx-theme
+  - jupyter-sphinx
+  - ipyleaflet
+  - shapely
+  - folium
+  - jupyter-server-proxy
+  - codespell
+  - flake8
+  - black
+  - isort
+  - pydocstyle
+  - flake8-black
+  - flake8-isort
+  - flake8-bugbear
+  - pip
+  - pip:
+    - sphinx-copybutton
+    - sphinx-notfound-page
+    - sentry-sdk[flask]
