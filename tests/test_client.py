@@ -178,7 +178,9 @@ def test_get_or_create_tile_client(bahamas_file, remote_file_url):
 def test_pixel(bahamas):
     pix = bahamas.pixel(0, 0)  # pixel space
     assert "bands" in pix
-    pix = bahamas.pixel(24.56, -77.76, units="EPSG:4326")  # world coordinates
+    pix = bahamas.pixel(
+        24.56, -77.76, units="EPSG:4326", projection="EPSG:3857"
+    )  # world coordinates
     assert "bands" in pix
 
 
@@ -192,11 +194,13 @@ def test_custom_palette(bahamas):
     thumbnail = bahamas.thumbnail(
         band=1,
         palette=palette,
+        scheme="discrete",
     )
     assert thumbnail  # TODO: check colors in produced image
     thumbnail = bahamas.thumbnail(
         band=1,
         cmap=palette,
+        scheme="linear",
     )
     assert thumbnail  # TODO: check colors in produced image
 

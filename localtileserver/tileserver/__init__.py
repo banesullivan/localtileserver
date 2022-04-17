@@ -6,6 +6,7 @@ from localtileserver.tileserver.blueprint import cache, tileserver
 from localtileserver.tileserver.data import (
     get_building_docs,
     get_data_path,
+    get_elevation_us_url,
     get_oam2_url,
     get_pine_gulch_url,
     get_sf_bay_url,

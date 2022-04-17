@@ -19,7 +19,9 @@ class ServerManager:
     _APP = None
 
     def __init__(self):
-        raise NotImplementedError("The ServerManager class cannot be instantiated.")
+        raise NotImplementedError(
+            "The ServerManager class cannot be instantiated."
+        )  # pragma: no cover
 
     @staticmethod
     def get_or_create_app():

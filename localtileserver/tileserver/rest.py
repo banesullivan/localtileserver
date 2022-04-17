@@ -152,7 +152,10 @@ class ListTileSources(View):
 class BaseImageView(View):
     def get_tile_source(self, projection="EPSG:3857"):
         """Return the built tile source."""
-        filename = utilities.get_clean_filename_from_request()
+        try:
+            filename = utilities.get_clean_filename_from_request()
+        except OSError as e:
+            raise BadRequest(str(e))
         projection = request.args.get("projection", projection)
         encoding = request.args.get("encoding", "PNG")
         style_args = style.reformat_style_query_parameters(request.args)
@@ -178,15 +181,18 @@ class BaseImageView(View):
                 n_colors = int(style_args.get("n_colors"))
             else:
                 n_colors = 255
-            sty = style.make_style(
-                band,
-                vmin=vmin,
-                vmax=vmax,
-                palette=palette,
-                nodata=nodata,
-                scheme=scheme,
-                n_colors=n_colors,
-            )
+            try:
+                sty = style.make_style(
+                    band,
+                    vmin=vmin,
+                    vmax=vmax,
+                    palette=palette,
+                    nodata=nodata,
+                    scheme=scheme,
+                    n_colors=n_colors,
+                )
+            except ValueError as e:
+                raise BadRequest(str(e))
         return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
 
 
@@ -298,7 +304,7 @@ class TileView(BaseTileView):
         try:
             tile_binary = tile_source.getTile(x, y, z)
         except TileSourceXYZRangeError as e:
-            raise BadRequest(e)
+            raise BadRequest(str(e))
         mime_type = tile_source.getTileMimeType()
         grid = str_to_bool(request.args.get("grid", "False"))
         if grid:
@@ -332,7 +338,7 @@ class RegionWorldView(BaseRegionView):
     def get(self):
         tile_source = self.get_tile_source()
         if not isinstance(tile_source, GDALFileTileSource):
-            raise TypeError("Source image must have geospatial reference.")
+            raise BadRequest("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")
         encoding = request.args.get("encoding", "TILED")
         left, right, bottom, top = self.get_bounds()

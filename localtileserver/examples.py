@@ -4,6 +4,7 @@ from typing import Union
 from localtileserver.client import TileClient
 from localtileserver.tileserver import (
     get_data_path,
+    get_elevation_us_url,
     get_oam2_url,
     get_pine_gulch_url,
     get_sf_bay_url,
@@ -17,7 +18,7 @@ def _get_example_client(
     client_host: str = None,
     client_prefix: str = None,
 ):
-    raise NotImplementedError
+    raise NotImplementedError  # pragma: no cover
 
 
 @wraps(_get_example_client)
@@ -71,4 +72,10 @@ def get_san_francisco(*args, **kwargs):
 @wraps(_get_example_client)
 def get_oam2(*args, **kwargs):
     path = get_oam2_url()
+    return TileClient(path, *args, **kwargs)
+
+
+@wraps(_get_example_client)
+def get_elevation_us(*args, **kwargs):
+    path = get_elevation_us_url()
     return TileClient(path, *args, **kwargs)

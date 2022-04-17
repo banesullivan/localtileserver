@@ -88,7 +88,7 @@ def get_leaflet_tile_layer(
     try:
         from ipyleaflet import TileLayer
         from traitlets import Tuple, Union
-    except ImportError as e:
+    except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `ipyleaflet`: {e}")
 
     class BoundTileLayer(TileLayer):
@@ -147,7 +147,7 @@ def get_leaflet_roi_controls(
         from ipyleaflet import DrawControl, WidgetControl
         import ipywidgets as widgets
         from shapely.geometry import Polygon
-    except ImportError as e:
+    except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `ipyleaflet` and `shapely`: {e}")
     draw_control = DrawControl()
     # Disable polyline and circle
@@ -284,7 +284,7 @@ def get_folium_tile_layer(
     # Safely import folium
     try:
         from folium import TileLayer
-    except ImportError as e:
+    except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `folium`: {e}")
     source, created = get_or_create_tile_client(source, port=port, debug=debug)
     url = source.get_tile_url(

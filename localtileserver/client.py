@@ -40,15 +40,15 @@ class BaseTileClient:
 
     @property
     def server_host(self):
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def server_port(self):
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def server_base_url(self):
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def _produce_url(self, base: str):
         return add_query_parameters(base, {"filename": self._filename})

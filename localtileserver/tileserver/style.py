@@ -47,11 +47,7 @@ def make_single_band_style(
             style["nodata"] = float(nodata)
         if palette:
             if isinstance(palette, str):
-                try:
-                    style["palette"] = get_palette_by_name(palette, n_colors=n_colors)
-                except ValueError as e:
-                    # Safely catch bad color palettes to avoid server errors
-                    logger.error(e)
+                style["palette"] = get_palette_by_name(palette, n_colors=n_colors)
             else:
                 # TODO: check contents to make sure its a list of valid HEX colors
                 style["palette"] = palette

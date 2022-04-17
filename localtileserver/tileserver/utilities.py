@@ -158,7 +158,7 @@ def make_vsi(url: str, **options):
 
 def get_clean_filename(filename: str):
     if not filename:
-        raise OSError("Empty path given")
+        raise OSError("Empty path given")  # pragma: no cover
     if str(filename).startswith("/vsi"):
         return filename
     parsed = urlparse(str(filename))

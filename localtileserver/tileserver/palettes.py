@@ -47,7 +47,7 @@ def is_mpl_cmap(name: str):
 
         matplotlib.cm.get_cmap(name)
         return True
-    except ImportError:
+    except ImportError:  # pragma: no cover
         logger.error("Install matplotlib for additional colormap choices.")
     except ValueError:
         pass
@@ -111,7 +111,7 @@ def get_palettes():
         import matplotlib.pyplot
 
         cmaps["matplotlib"] = list(matplotlib.pyplot.colormaps())
-    except ImportError:
+    except ImportError:  # pragma: no cover
         logger.error("Install matplotlib for additional colormap choices.")
     cmaps["simple"] = [s for s in SIMPLE_PALETTES.keys() if len(s) > 1]
     return cmaps
