@@ -442,9 +442,6 @@ class PixelView(BasePixelOperation):
             "type": "bool",
             "default": False,
         },
-        "format": {
-            "type": "str",
-        },
     }
 )
 class HistogramView(BasePixelOperation):
@@ -454,7 +451,6 @@ class HistogramView(BasePixelOperation):
         kwargs = dict(
             bins=int(request.args.get("bins", 256)),
             density=str_to_bool(request.args.get("density", "False")),
-            format=request.args.get("format", None),
         )
         tile_source = self.get_tile_source(projection=None)
         result = tile_source.histogram(**kwargs)

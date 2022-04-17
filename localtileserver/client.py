@@ -278,13 +278,11 @@ class BaseTileClient:
         r.raise_for_status()
         return r.json()
 
-    def histogram(self, bins: int = 256, density: bool = False, format: str = None):
+    def histogram(self, bins: int = 256, density: bool = False):
         """Get a histoogram for each band."""
         params = {}
         params["density"] = density
         params["bins"] = bins
-        if format is not None:
-            params["format"] = format
         url = add_query_parameters(self.create_url("api/histogram"), params)
         r = requests.get(url)
         r.raise_for_status()
