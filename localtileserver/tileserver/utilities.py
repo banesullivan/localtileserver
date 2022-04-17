@@ -12,7 +12,7 @@ from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
 
-from localtileserver.tileserver.data import get_sf_bay_url
+from localtileserver.tileserver.data import clean_url, get_sf_bay_url
 
 logger = logging.getLogger(__name__)
 
@@ -142,6 +142,7 @@ def get_meta_data(tile_source: FileTileSource):
 
 
 def make_vsi(url: str, **options):
+    url = clean_url(url)
     if str(url).startswith("s3://"):
         s3_path = url.replace("s3://", "")
         vsi = f"/vsis3/{s3_path}"

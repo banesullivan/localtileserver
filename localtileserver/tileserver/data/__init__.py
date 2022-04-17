@@ -38,3 +38,12 @@ def get_elevation_us_url():
 
 def get_oam2_url():
     return "https://oin-hotosm.s3.amazonaws.com/59c66c5223c8440011d7b1e4/0/7ad397c0-bba2-4f98-a08a-931ec3a6e943.tif"
+
+
+def convert_dropbox_url(url: str):
+    return url.replace("https://www.dropbox.com", "https://dl.dropbox.com")
+
+
+def clean_url(url: str):
+    """Fix the download URL for common hosting services like dropbox."""
+    return convert_dropbox_url(url)
