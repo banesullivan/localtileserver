@@ -12,7 +12,7 @@ from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
 
-from localtileserver.tileserver.data import get_data_path
+from localtileserver.tileserver.data import get_sf_bay_url
 
 logger = logging.getLogger(__name__)
 
@@ -188,5 +188,5 @@ def get_clean_filename_from_request(param_name: str = "filename", strict: bool =
                 raise OSError(message)
             # Fallback to sample data
             logger.error(message)
-            filename = get_data_path("landsat.tif")
+            filename = get_clean_filename(get_sf_bay_url())
     return filename

@@ -1,3 +1,5 @@
+import base64
+import binascii
 import io
 import time
 
@@ -5,7 +7,9 @@ from PIL import Image, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
 import large_image
+from large_image.exceptions import TileSourceXYZRangeError
 from large_image_source_gdal import GDALFileTileSource
+from werkzeug.exceptions import BadRequest
 
 from localtileserver import __version__
 from localtileserver.tileserver import style, utilities
@@ -31,7 +35,7 @@ BASE_PARAMS = {
         "description": "The local path or URL to the image to use.",
         "in": "query",
         "type": "str",
-        "example": "s3://sentinel-cogs/sentinel-s2-l2a-cogs/2020/S2A_31QHU_20200714_0_L2A/B01.tif",
+        "example": "https://data.kitware.com/api/v1/file/60747d792fa25629b9a79565/download",
     },
     "projection": {
         "description": "The projection in which to open the image.",
@@ -47,7 +51,7 @@ STYLE_PARAMS = {
         "type": "int",
     },
     "palette": {
-        "description": "The color palette to map the band values (named Matplotlib colormaps or palettable palettes).",
+        "description": "The color palette to map the band values (named Matplotlib colormaps or palettable palettes). `cmap` is a supported alias.",
         "in": "query",
         "type": "str",
     },
@@ -78,6 +82,11 @@ STYLE_PARAMS = {
         "description": "The value to map as no data (often made transparent).",
         "in": "query",
         "type": "float",
+    },
+    "style": {
+        "description": "Base64 encoded JSON style following https://girder.github.io/large_image/tilesource_options.html#style",
+        "in": "query",
+        "type": "str",
     },
 }
 REGION_PARAMS = {
@@ -147,25 +156,37 @@ class BaseImageView(View):
         projection = request.args.get("projection", projection)
         encoding = request.args.get("encoding", "PNG")
         style_args = style.reformat_style_query_parameters(request.args)
-        band = style_args.get("band", 0)
-        vmin = style_args.get("min", None)
-        vmax = style_args.get("max", None)
-        palette = style_args.get("palette", None)
-        scheme = style_args.get("scheme", None)
-        nodata = style_args.get("nodata", None)
-        if style_args.get("n_colors", ""):
-            n_colors = int(style_args.get("n_colors"))
+        if "style" in style_args:
+            style_base64 = style_args.get("style").encode("ascii")
+            # Un Base64 the string
+            try:
+                message_bytes = base64.b64decode(style_base64)
+                sty = message_bytes.decode("ascii")
+            except binascii.Error:
+                raise BadRequest(
+                    "`style` query parameter is malformed and likely not base64 encoded."
+                )
+        # else, fallback to supported query parameters for viewing a single band
         else:
-            n_colors = 255
-        sty = style.make_style(
-            band,
-            vmin=vmin,
-            vmax=vmax,
-            palette=palette,
-            nodata=nodata,
-            scheme=scheme,
-            n_colors=n_colors,
-        )
+            band = style_args.get("band", 0)
+            vmin = style_args.get("min", None)
+            vmax = style_args.get("max", None)
+            palette = style_args.get("palette", style_args.get("cmap", None))
+            scheme = style_args.get("scheme", None)
+            nodata = style_args.get("nodata", None)
+            if style_args.get("n_colors", ""):
+                n_colors = int(style_args.get("n_colors"))
+            else:
+                n_colors = 255
+            sty = style.make_style(
+                band,
+                vmin=vmin,
+                vmax=vmax,
+                palette=palette,
+                nodata=nodata,
+                scheme=scheme,
+                n_colors=n_colors,
+            )
         return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
 
 
@@ -274,7 +295,10 @@ class TileView(BaseTileView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self, x: int, y: int, z: int):
         tile_source = self.get_tile_source()
-        tile_binary = tile_source.getTile(x, y, z)
+        try:
+            tile_binary = tile_source.getTile(x, y, z)
+        except TileSourceXYZRangeError as e:
+            raise BadRequest(e)
         mime_type = tile_source.getTileMimeType()
         grid = str_to_bool(request.args.get("grid", "False"))
         if grid:
@@ -321,6 +345,10 @@ class RegionWorldView(BaseRegionView):
             units,
             encoding,
         )
+        if not path:
+            raise BadRequest(
+                "No output generated, check that the bounds of your ROI overlap source imagery and that your `projection` and `units` are correct."
+            )
         return send_file(
             path,
             mimetype=mime_type,
@@ -342,6 +370,10 @@ class RegionPixelView(BaseRegionView):
             top,
             encoding=encoding,
         )
+        if not path:
+            raise BadRequest(
+                "No output generated, check that the bounds of your ROI overlap source imagery."
+            )
         return send_file(
             path,
             mimetype=mime_type,

@@ -22,6 +22,8 @@ def get_leaflet_tile_layer(
     scheme: Union[str, List[str]] = None,
     n_colors: int = 255,
     attribution: str = None,
+    style: dict = None,
+    cmap: Union[str, List[str]] = None,
     **kwargs,
 ):
     """Generate an ipyleaflet TileLayer for the given TileClient.
@@ -68,6 +70,12 @@ def get_leaflet_tile_layer(
     attribution : str
         Attribution for the source raster. This
         defaults to a message about it being a local file.
+    style : dict, optional
+        large-image JSON style. See
+        https://girder.github.io/large_image/tilesource_options.html#style
+        If given, this will override all other styling parameters.
+    cmap : str
+        Alias for palette if not specified.
     **kwargs
         All additional keyword arguments are passed to ``ipyleaflet.TileLayer``.
 
@@ -98,6 +106,8 @@ def get_leaflet_tile_layer(
         nodata=nodata,
         scheme=scheme,
         n_colors=n_colors,
+        style=style,
+        cmap=cmap,
         client=True,
     )
     if attribution is None:
@@ -209,6 +219,8 @@ def get_folium_tile_layer(
     scheme: Union[str, List[str]] = None,
     n_colors: int = 255,
     attr: str = None,
+    style: dict = None,
+    cmap: Union[str, List[str]] = None,
     **kwargs,
 ):
     """Generate a folium TileLayer for the given TileClient.
@@ -255,6 +267,12 @@ def get_folium_tile_layer(
     attr : str
         Folium requires the custom tile source have an attribution. This
         defaults to a message about it being a local file.
+    style : dict, optional
+        large-image JSON style. See
+        https://girder.github.io/large_image/tilesource_options.html#style
+        If given, this will override all other styling parameters.
+    cmap : str
+        Alias for palette if not specified.
     **kwargs
         All additional keyword arguments are passed to ``folium.TileLayer``.
 
@@ -278,6 +296,8 @@ def get_folium_tile_layer(
         nodata=nodata,
         scheme=scheme,
         n_colors=n_colors,
+        style=style,
+        cmap=cmap,
         client=True,
     )
     if attr is None:

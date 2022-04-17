@@ -10,7 +10,7 @@ from localtileserver.client import (
     get_or_create_tile_client,
 )
 from localtileserver.server import ServerDownError, ServerManager
-from localtileserver.tileserver.utilities import get_tile_source
+from localtileserver.tileserver.utilities import get_clean_filename, get_tile_source
 
 skip_pil_source = True
 try:
@@ -29,11 +29,10 @@ def get_content(url):
     return r.content
 
 
-@pytest.mark.parametrize("processes", [1, 5])
-def test_create_tile_client(bahamas_file, processes):
+def test_create_tile_client(bahamas_file):
     assert ServerManager.server_count() == 0
-    tile_client = TileClient(bahamas_file, processes=processes, debug=True)
-    assert tile_client.filename == bahamas_file
+    tile_client = TileClient(bahamas_file, debug=True)
+    assert tile_client.filename == get_clean_filename(bahamas_file)
     assert tile_client.server_port
     assert tile_client.server_base_url
     assert "bounds" in tile_client.metadata()
@@ -89,8 +88,8 @@ def test_multiple_tile_clients_one_server(bahamas, blue_marble):
     tile_url_a = bahamas.get_tile_url().format(z=8, x=72, y=110)
     tile_url_b = blue_marble.get_tile_url().format(z=8, x=72, y=110)
     assert get_content(tile_url_a) != get_content(tile_url_b)
-    thumb_url_a = bahamas.create_url("api/thumbnail")
-    thumb_url_b = blue_marble.create_url("api/thumbnail")
+    thumb_url_a = bahamas.create_url("api/thumbnail.png")
+    thumb_url_b = blue_marble.create_url("api/thumbnail.png")
     assert get_content(thumb_url_a) != get_content(thumb_url_b)
 
 
@@ -118,10 +117,10 @@ def test_extract_roi_pixel_pil(bahamas):
 
 
 def test_caching_query_params(bahamas):
-    thumb_url_a = bahamas.create_url("api/thumbnail")
-    thumb_url_b = bahamas.create_url("api/thumbnail?band=1")
+    thumb_url_a = bahamas.create_url("api/thumbnail.png")
+    thumb_url_b = bahamas.create_url("api/thumbnail.png?band=1")
     assert get_content(thumb_url_a) != get_content(thumb_url_b)
-    thumb_url_c = bahamas.create_url("api/thumbnail")
+    thumb_url_c = bahamas.create_url("api/thumbnail.png")
     assert get_content(thumb_url_a) == get_content(thumb_url_c)
 
 
@@ -193,5 +192,22 @@ def test_custom_palette(bahamas):
     thumbnail = bahamas.thumbnail(
         band=1,
         palette=palette,
+    )
+    assert thumbnail  # TODO: check colors in produced image
+    thumbnail = bahamas.thumbnail(
+        band=1,
+        cmap=palette,
+    )
+    assert thumbnail  # TODO: check colors in produced image
+
+
+def test_style_dict(bahamas):
+    style = {
+        "bands": [
+            {"band": 1, "palette": ["#000", "#0f0"]},
+        ]
+    }
+    thumbnail = bahamas.thumbnail(
+        style=style,
     )
     assert thumbnail  # TODO: check colors in produced image

@@ -19,6 +19,7 @@
    docker
    example-data
    web-app
+   ipyleaflet_deep_zoom
 
 
 🍃 ``ipyleaflet`` Tile Layers

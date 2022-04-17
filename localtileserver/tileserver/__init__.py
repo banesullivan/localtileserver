@@ -21,6 +21,10 @@ from localtileserver.tileserver.utilities import (
 
 
 def create_app(url_prefix="/"):
+    try:
+        from localtileserver.tileserver import sentry
+    except ImportError:
+        pass
     app = Flask(__name__)
     cache.init_app(app)
     app.register_blueprint(tileserver, url_prefix=url_prefix)

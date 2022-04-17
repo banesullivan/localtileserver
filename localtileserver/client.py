@@ -1,5 +1,7 @@
 # flake8: noqa: W503
+import base64
 from functools import wraps
+import json
 import logging
 import pathlib
 from typing import List, Union
@@ -54,6 +56,42 @@ class BaseTileClient:
     def create_url(self, path: str):
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
+    def _get_style_params(
+        self,
+        band: Union[int, List[int]] = None,
+        palette: Union[str, List[str]] = None,
+        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        scheme: Union[str, List[str]] = None,
+        n_colors: int = 255,
+        style: dict = None,
+        cmap: Union[str, List[str]] = None,
+    ):
+        if style:
+            return {"style": base64.urlsafe_b64encode(json.dumps(style).encode()).decode()}
+        # First handle query parameters to check for errors
+        params = {}
+        if band is not None:
+            params["band"] = band
+        if palette is not None or cmap is not None:
+            if palette is None:
+                palette = cmap
+            # make sure palette is valid
+            palette_valid_or_raise(palette)
+            params["palette"] = palette
+        if vmin is not None:
+            params["min"] = vmin
+        if vmax is not None:
+            params["max"] = vmax
+        if nodata is not None:
+            params["nodata"] = nodata
+        if scheme is not None:
+            params["scheme"] = scheme
+        if n_colors:
+            params["n_colors"] = n_colors
+        return params
+
     def get_tile_url_params(
         self,
         projection: str = "EPSG:3857",
@@ -65,6 +103,8 @@ class BaseTileClient:
         scheme: Union[str, List[str]] = None,
         n_colors: int = 255,
         grid: bool = False,
+        style: dict = None,
+        cmap: Union[str, List[str]] = None,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
 
@@ -102,30 +142,29 @@ class BaseTileClient:
         grid : bool
             Show the outline of each tile. This is useful when debugging your
             tile viewer.
+        style : dict, optional
+            large-image JSON style. See
+            https://girder.github.io/large_image/tilesource_options.html#style
+            If given, this will override all other styling parameters.
+        cmap : str
+            Alias for palette if not specified.
 
         """
-        # First handle query parameters to check for errors
-        params = {}
-        if band is not None:
-            params["band"] = band
-        if palette is not None:
-            # make sure palette is valid
-            palette_valid_or_raise(palette)
-            params["palette"] = palette
-        if vmin is not None:
-            params["min"] = vmin
-        if vmax is not None:
-            params["max"] = vmax
-        if nodata is not None:
-            params["nodata"] = nodata
+        params = self._get_style_params(
+            band=band,
+            palette=palette,
+            vmin=vmin,
+            vmax=vmax,
+            nodata=nodata,
+            scheme=scheme,
+            n_colors=n_colors,
+            style=style,
+            cmap=cmap,
+        )
         if projection is not None:
             params["projection"] = projection
         if grid:
             params["grid"] = True
-        if scheme is not None:
-            params["scheme"] = scheme
-        if n_colors:
-            params["n_colors"] = n_colors
         return params
 
     @wraps(get_tile_url_params)
@@ -194,25 +233,21 @@ class BaseTileClient:
         scheme: Union[str, List[str]] = None,
         n_colors: int = 255,
         output_path: pathlib.Path = None,
+        style: dict = None,
+        cmap: Union[str, List[str]] = None,
     ):
-        params = {}
-        if band is not None:
-            params["band"] = band
-        if palette is not None:
-            # make sure palette is valid
-            palette_valid_or_raise(palette)
-            params["palette"] = palette
-        if vmin is not None:
-            params["min"] = vmin
-        if vmax is not None:
-            params["max"] = vmax
-        if nodata is not None:
-            params["nodata"] = nodata
-        if scheme is not None:
-            params["scheme"] = scheme
-        if n_colors:
-            params["n_colors"] = n_colors
-        url = add_query_parameters(self.create_url("api/thumbnail"), params)
+        params = self._get_style_params(
+            band=band,
+            palette=palette,
+            vmin=vmin,
+            vmax=vmax,
+            nodata=nodata,
+            scheme=scheme,
+            n_colors=n_colors,
+            style=style,
+            cmap=cmap,
+        )
+        url = add_query_parameters(self.create_url("api/thumbnail.png"), params)
         r = requests.get(url)
         r.raise_for_status()
         return save_file_from_request(r, output_path)
@@ -306,10 +341,6 @@ class TileClient(BaseTileClient):
         to getting an available port.
     debug : bool
         Run the tile server in debug mode.
-    threaded : bool
-        Run the background server as a ThreadedWSGIServer. Default True.
-    processes : int
-        If processes is greater than 1, run background server as ForkingWSGIServer
     client_port : int
         The port on your client browser to use for fetching tiles. This is
         useful when running in Docker and performing port forwarding.
@@ -323,15 +354,13 @@ class TileClient(BaseTileClient):
         filename: Union[pathlib.Path, str],
         port: Union[int, str] = "default",
         debug: bool = False,
-        threaded: bool = True,
-        processes: int = 1,
         host: str = "127.0.0.1",
         client_port: int = None,
         client_host: str = None,
         client_prefix: str = None,
     ):
         super().__init__(filename)
-        self._key = launch_server(port, debug, threaded=threaded, processes=processes, host=host)
+        self._key = launch_server(port, debug, host=host)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
         client_host, client_port, client_prefix = get_default_client_params(
@@ -433,8 +462,6 @@ def get_or_create_tile_client(
     source: Union[pathlib.Path, str, TileClient],
     port: Union[int, str] = "default",
     debug: bool = False,
-    threaded: bool = True,
-    processes: int = 1,
 ):
     """A helper to safely get a TileClient from a path on disk.
 
@@ -450,7 +477,7 @@ def get_or_create_tile_client(
     _internally_created = False
     # Launch tile server if file path is given
     if not isinstance(source, TileClient):
-        source = TileClient(source, port=port, debug=debug, threaded=threaded, processes=processes)
+        source = TileClient(source, port=port, debug=debug)
         _internally_created = True
     # Check that the tile source is valid and no server errors
     try:
