@@ -20,6 +20,7 @@
    example-data
    web-app
    ipyleaflet_deep_zoom
+   rasterio
 
 
 🍃 ``ipyleaflet`` Tile Layers

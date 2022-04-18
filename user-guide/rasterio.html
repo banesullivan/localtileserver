@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>🖥️ Local Web Application &#8212; 🌐 localtileserver</title>
+    <title>🧩 Rasterio &#8212; 🌐 localtileserver</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -45,8 +45,8 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="🔬 Deep Zoom with ipyleaflet" href="ipyleaflet_deep_zoom.html" />
-    <link rel="prev" title="🗺️ Example Datasets" href="example-data.html" />
+    <link rel="next" title="📖 API" href="../api/index.html" />
+    <link rel="prev" title="🔬 Deep Zoom with ipyleaflet" href="ipyleaflet_deep_zoom.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -190,8 +190,8 @@
    🗺️ Example Datasets
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="web-app.html">
    🖥️ Local Web Application
   </a>
  </li>
@@ -205,8 +205,8 @@
    </code>
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="rasterio.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    🧩 Rasterio
   </a>
  </li>
@@ -249,27 +249,26 @@
               
               <div>
                 
-  <section id="local-web-application">
-<h1>🖥️ Local Web Application<a class="headerlink" href="#local-web-application" title="Permalink to this headline">#</a></h1>
-<p>Launch the tileserver from the commandline to use the included web application where you can view the raster and extract regions of interest.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m localtileserver path/to/raster.tif
+  <section id="rasterio">
+<h1>🧩 Rasterio<a class="headerlink" href="#rasterio" title="Permalink to this headline">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">localtileserver.TileClient</span></code> supports viewing <code class="docutils literal notranslate"><span class="pre">rasterio.DatasetReader</span></code>
+so that you can easily visualize your data when working with rasterio.
+This will only work when opening a raster in read-mode.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rasterio</span>
+<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
+<span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">TileClient</span><span class="p">,</span> <span class="n">get_leaflet_tile_layer</span>
+
+<span class="n">src</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;path/to/geo.tif&#39;</span><span class="p">)</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">m</span>
 </pre></div>
 </div>
-<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/cesium-viewer.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/cesium-viewer.png" />
-<p>You can use the web viewer to extract regions of interest:</p>
-<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/webviewer-roi.gif" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/webviewer-roi.gif" />
-<p>You can also launch the web viewer with any of the available example datasets:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m localtileserver dem
-</pre></div>
-</div>
-<p>Available choices are:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">dem</span></code> or <code class="docutils literal notranslate"><span class="pre">elevation</span></code>: global elevation dataset</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">blue_marble</span></code>: Blue Marble satellite imagery</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">virtual_earth</span></code>: Microsoft’s satellite/aerial imagery</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">arcgis</span></code>: ArcGIS World Street Map</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">bahamas</span></code>: Sample raster over the Bahamas</p></li>
-</ul>
 </section>
 
 
