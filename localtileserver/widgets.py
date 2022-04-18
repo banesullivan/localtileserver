@@ -6,7 +6,7 @@ from typing import List, Union
 try:
     from rasterio.io import DatasetReaderBase
 except ImportError:
-    from typing import Any as DatasetReaderBase
+    DatasetReaderBase = None
 
 from localtileserver.client import TileClient, get_or_create_tile_client
 

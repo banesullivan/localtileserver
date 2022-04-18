@@ -11,7 +11,7 @@ import requests
 try:
     from rasterio.io import DatasetReaderBase
 except ImportError:
-    from typing import Any as DatasetReaderBase
+    DatasetReaderBase = None
 
 from localtileserver.configure import get_default_client_params
 from localtileserver.server import ServerManager, launch_server
@@ -362,7 +362,7 @@ class TileClient(BaseTileClient):
         client_host: str = None,
         client_prefix: str = None,
     ):
-        if isinstance(filename, DatasetReaderBase) and hasattr(filename, "name"):
+        if DatasetReaderBase and isinstance(filename, DatasetReaderBase) and hasattr(filename, "name"):
             filename = filename.name
         super().__init__(filename)
         self._key = launch_server(port, debug, host=host)
