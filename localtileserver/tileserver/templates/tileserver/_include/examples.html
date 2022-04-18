@@ -1,7 +1,7 @@
 {% block examples %}
 <form action="/" method="GET">
-  <label for="colors">Choose an example:</label>
-  <select id="colors" name="filename">
+  <label for="example">Choose an example:</label>
+  <select id="examples" name="filename">
     <option></option>
     <option value="{{ filename_landsat_salt_lake }}">Salt Lake Landsat</option>
     <option value="{{ filename_oam2 }}">OpenArialMap Sample</option>
@@ -13,6 +13,11 @@
     <option value="{{ filename_bluemarble }}">Blue Marble</option>
     <option value="{{ filename_virtualearth }}">Virtual Earth</option>
   </select>
+  <input type="submit" />
+</form>
+<form action="/" method="GET">
+  <label for="url">Provide URL:</label>
+  <input id="url" name="filename" type="text" />
   <input type="submit" />
 </form>
 {% endblock %}
