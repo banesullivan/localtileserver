@@ -34,8 +34,8 @@ dependencies:
   - flake8-black
   - flake8-isort
   - flake8-bugbear
+  - sphinx-notfound-page
+  - sphinx-copybutton
   - pip
   - pip:
-    - sphinx-copybutton
-    - sphinx-notfound-page
     - sentry-sdk[flask]
