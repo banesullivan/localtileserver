@@ -8,6 +8,11 @@ from typing import List, Union
 
 import requests
 
+try:
+    from rasterio.io import DatasetReaderBase
+except ImportError:
+    from typing import Any as DatasetReaderBase
+
 from localtileserver.configure import get_default_client_params
 from localtileserver.server import ServerManager, launch_server
 from localtileserver.tileserver import get_building_docs, get_clean_filename, palette_valid_or_raise
@@ -332,7 +337,7 @@ class TileClient(BaseTileClient):
 
     Parameters
     ----------
-    path : pathlib.Path, str
+    path : pathlib.Path, str, rasterio.io.DatasetReaderBase
         The path on disk to use as the source raster for the tiles.
     port : int
         The port on your host machine to use for the tile server. This defaults
@@ -349,7 +354,7 @@ class TileClient(BaseTileClient):
 
     def __init__(
         self,
-        filename: Union[pathlib.Path, str],
+        filename: Union[pathlib.Path, str, DatasetReaderBase],
         port: Union[int, str] = "default",
         debug: bool = False,
         host: str = "127.0.0.1",
@@ -357,6 +362,8 @@ class TileClient(BaseTileClient):
         client_host: str = None,
         client_prefix: str = None,
     ):
+        if isinstance(filename, DatasetReaderBase) and hasattr(filename, "name"):
+            filename = filename.name
         super().__init__(filename)
         self._key = launch_server(port, debug, host=host)
         # Store actual port just in case
@@ -457,7 +464,7 @@ class TileClient(BaseTileClient):
 
 
 def get_or_create_tile_client(
-    source: Union[pathlib.Path, str, TileClient],
+    source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
 ):

@@ -3,6 +3,11 @@ import os
 import pathlib
 from typing import List, Union
 
+try:
+    from rasterio.io import DatasetReaderBase
+except ImportError:
+    from typing import Any as DatasetReaderBase
+
 from localtileserver.client import TileClient, get_or_create_tile_client
 
 logger = logging.getLogger(__name__)
@@ -10,7 +15,7 @@ DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesul
 
 
 def get_leaflet_tile_layer(
-    source: Union[pathlib.Path, str, TileClient],
+    source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
     projection: str = "EPSG:3857",
@@ -30,7 +35,7 @@ def get_leaflet_tile_layer(
 
     Parameters
     ----------
-    source : Union[pathlib.Path, str, TileClient]
+    source : Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase]
         The source of the tile layer. This can be a path on disk or an already
         open ``TileClient``
     port : int
@@ -207,7 +212,7 @@ def get_leaflet_roi_controls(
 
 
 def get_folium_tile_layer(
-    source: Union[pathlib.Path, str, TileClient],
+    source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
     projection: str = "EPSG:3857",
@@ -227,7 +232,7 @@ def get_folium_tile_layer(
 
     Parameters
     ----------
-    source : Union[pathlib.Path, str, TileClient]
+    source : Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase]
         The source of the tile layer. This can be a path on disk or an already
         open ``TileClient``
     port : int

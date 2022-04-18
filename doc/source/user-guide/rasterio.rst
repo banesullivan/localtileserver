@@ -1,0 +1,23 @@
+Rasterio
+---------
+
+``localtileserver.TileClient`` supports viewing ``rasterio.DatasetReader``
+so that you can easily visualize your data when working with rasterio.
+This will only work when opening a raster in read-mode.
+
+
+.. code-block:: python
+
+    import rasterio
+    from ipyleaflet import Map
+    from localtileserver import TileClient, get_leaflet_tile_layer
+
+    src = rasterio.open('path/to/geo.tif')
+
+    client = TileClient(src)
+
+    t = get_leaflet_tile_layer(client)
+
+    m = Map(center=client.center(), zoom=8)
+    m.add_layer(t)
+    m
