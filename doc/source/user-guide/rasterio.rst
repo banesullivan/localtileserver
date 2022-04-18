@@ -1,5 +1,5 @@
-Rasterio
----------
+🧩 Rasterio
+-----------
 
 ``localtileserver.TileClient`` supports viewing ``rasterio.DatasetReader``
 so that you can easily visualize your data when working with rasterio.
