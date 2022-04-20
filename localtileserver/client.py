@@ -1,10 +1,10 @@
 # flake8: noqa: W503
-import base64
 from functools import wraps
 import json
 import logging
 import pathlib
 from typing import List, Union
+from urllib.parse import quote
 
 import requests
 
@@ -74,7 +74,7 @@ class BaseTileClient:
         cmap: Union[str, List[str]] = None,
     ):
         if style:
-            return {"style": base64.urlsafe_b64encode(json.dumps(style).encode()).decode()}
+            return {"style": quote(json.dumps(style))}
         # First handle query parameters to check for errors
         params = {}
         if band is not None:
@@ -362,7 +362,11 @@ class TileClient(BaseTileClient):
         client_host: str = None,
         client_prefix: str = None,
     ):
-        if DatasetReaderBase and isinstance(filename, DatasetReaderBase) and hasattr(filename, "name"):
+        if (
+            DatasetReaderBase
+            and isinstance(filename, DatasetReaderBase)
+            and hasattr(filename, "name")
+        ):
             filename = filename.name
         super().__init__(filename)
         self._key = launch_server(port, debug, host=host)

@@ -1,7 +1,7 @@
-import base64
-import binascii
 import io
+import json
 import time
+from urllib.parse import unquote
 
 from PIL import Image, ImageOps
 from flask import request, send_file
@@ -84,7 +84,7 @@ STYLE_PARAMS = {
         "type": "float",
     },
     "style": {
-        "description": "Base64 encoded JSON style following https://girder.github.io/large_image/tilesource_options.html#style",
+        "description": "Encoded JSON style following https://girder.github.io/large_image/tilesource_options.html#style",
         "in": "query",
         "type": "str",
     },
@@ -158,19 +158,18 @@ class BaseImageView(View):
             raise BadRequest(str(e))
         projection = request.args.get("projection", projection)
         encoding = request.args.get("encoding", "PNG")
-        style_args = style.reformat_style_query_parameters(request.args)
-        if "style" in style_args:
-            style_base64 = style_args.get("style").encode("ascii")
-            # Un Base64 the string
+        if "style" in request.args:
+            sty = unquote(request.args.get("style"))
             try:
-                message_bytes = base64.b64decode(style_base64)
-                sty = message_bytes.decode("ascii")
-            except binascii.Error:
+                # Check that style is valid JSON before passing to large-image
+                _ = json.loads(sty)
+            except json.JSONDecodeError as e:
                 raise BadRequest(
-                    "`style` query parameter is malformed and likely not base64 encoded."
+                    f"`style` query parameter is malformed and likely not properly URL encoded: {e}"
                 )
         # else, fallback to supported query parameters for viewing a single band
         else:
+            style_args = style.reformat_style_query_parameters(request.args)
             band = style_args.get("band", 0)
             vmin = style_args.get("min", None)
             vmax = style_args.get("max", None)
