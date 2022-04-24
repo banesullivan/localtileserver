@@ -8,6 +8,7 @@ large-image[memcached]>=1.13
 large-image-source-gdal>=1.13
 large-image-source-pil>=1.13
 requests
+server-thread
 scooby
 pytest
 pytest-cov

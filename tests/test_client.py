@@ -9,8 +9,8 @@ from localtileserver.client import (
     TileClient,
     get_or_create_tile_client,
 )
-from localtileserver.server import ServerDownError, ServerManager
 from localtileserver.tileserver.utilities import get_clean_filename, get_tile_source
+from server_thread import ServerDownError, ServerManager
 
 skip_pil_source = True
 try:

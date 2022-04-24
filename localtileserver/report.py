@@ -25,6 +25,7 @@ class Report(scooby.Report):
             "requests",
             "werkzeug",
             "click",
+            "server_thread",
             "scooby",
         ] + large_image_core
 
