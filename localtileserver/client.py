@@ -13,8 +13,10 @@ try:
 except ImportError:
     DatasetReaderBase = None
 
+from server_thread import ServerManager, launch_server
+
 from localtileserver.configure import get_default_client_params
-from localtileserver.server import ServerManager, launch_server
+from localtileserver.manager import AppManager
 from localtileserver.tileserver import get_building_docs, get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import add_query_parameters, save_file_from_request
 
@@ -369,7 +371,8 @@ class TileClient(BaseTileClient):
         ):
             filename = filename.name
         super().__init__(filename)
-        self._key = launch_server(port, debug, host=host)
+        app = AppManager.get_or_create_app()
+        self._key = launch_server(app, port=port, debug=debug, host=host)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
         client_host, client_port, client_prefix = get_default_client_params(
@@ -380,6 +383,14 @@ class TileClient(BaseTileClient):
         self._client_prefix = client_prefix
         if BUILDING_DOCS and not client_host:
             self._client_host = DEMO_REMOTE_TILE_SERVER
+
+        if not debug:
+            logging.getLogger("gdal").setLevel(logging.ERROR)
+            logging.getLogger("large_image").setLevel(logging.ERROR)
+        else:
+            logging.getLogger("gdal").setLevel(logging.DEBUG)
+            logging.getLogger("large_image").setLevel(logging.DEBUG)
+            logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
 
     def shutdown(self, force: bool = False):
         if hasattr(self, "_key"):

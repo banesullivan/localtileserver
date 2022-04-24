@@ -47,6 +47,7 @@ setup(
         "large-image>=1.13",
         "large-image-source-gdal>=1.13",
         "requests",
+        "server-thread",
         "scooby",
     ],
     extras_require={
