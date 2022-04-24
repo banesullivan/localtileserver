@@ -13,11 +13,12 @@ try:
 except ImportError:
     DatasetReaderBase = None
 
+from server_thread import ServerManager, launch_server
+
 from localtileserver.configure import get_default_client_params
 from localtileserver.manager import AppManager
 from localtileserver.tileserver import get_building_docs, get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import add_query_parameters, save_file_from_request
-from server_thread import ServerManager, launch_server
 
 BUILDING_DOCS = get_building_docs()
 DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
@@ -363,7 +364,11 @@ class TileClient(BaseTileClient):
         client_host: str = None,
         client_prefix: str = None,
     ):
-        if DatasetReaderBase and isinstance(filename, DatasetReaderBase) and hasattr(filename, "name"):
+        if (
+            DatasetReaderBase
+            and isinstance(filename, DatasetReaderBase)
+            and hasattr(filename, "name")
+        ):
             filename = filename.name
         super().__init__(filename)
         app = AppManager.get_or_create_app()

@@ -2,6 +2,7 @@ import os
 
 import pytest
 import requests
+from server_thread import ServerDownError, ServerManager
 
 from localtileserver.client import (
     DEMO_REMOTE_TILE_SERVER,
@@ -10,7 +11,6 @@ from localtileserver.client import (
     get_or_create_tile_client,
 )
 from localtileserver.tileserver.utilities import get_clean_filename, get_tile_source
-from server_thread import ServerDownError, ServerManager
 
 skip_pil_source = True
 try:
