@@ -54,3 +54,11 @@ def test_list_palettes(flask_client):
 def test_list_sources(flask_client):
     r = flask_client.get("/api/sources")
     assert r.status_code == 200
+
+
+def test_cog_validate_endpoint(flask_client, remote_file_url):
+    r = flask_client.get(f"/api/validate?filename={remote_file_url}")
+    assert r.status_code == 200
+    non_cog = "https://data.kitware.com/api/v1/file/60747d792fa25629b9a79565/download"
+    r = flask_client.get(f"/api/validate?filename={non_cog}")
+    assert r.status_code == 400

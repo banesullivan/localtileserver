@@ -198,6 +198,18 @@ class BaseImageView(View):
             raise BadRequest(f"TileSourceError: {str(e)}")
 
 
+class ValidateCOGView(BaseImageView):
+    def get(self):
+        from localtileserver.validate import ValidateCloudOptimizedGeoTIFFException, validate_cog
+
+        tile_source = self.get_tile_source()
+        try:
+            validate_cog(tile_source)
+        except ValidateCloudOptimizedGeoTIFFException as e:
+            raise BadRequest(f"Not a valid Cloud Optimized GeoTiff: {str(e)}")
+        return "Valid Cloud Optimized GeoTiff"
+
+
 class MetadataView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self):
