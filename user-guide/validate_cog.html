@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>🧩 Rasterio &#8212; 🌐 localtileserver</title>
+    <title>✅ Validate COG &#8212; 🌐 localtileserver</title>
     
   <!-- Loaded before other Sphinx assets -->
   <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
@@ -45,8 +45,8 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="✅ Validate COG" href="validate_cog.html" />
-    <link rel="prev" title="🔬 Deep Zoom with ipyleaflet" href="ipyleaflet_deep_zoom.html" />
+    <link rel="next" title="📖 API" href="../api/index.html" />
+    <link rel="prev" title="🧩 Rasterio" href="rasterio.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -205,13 +205,13 @@
    </code>
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="rasterio.html">
    🧩 Rasterio
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="validate_cog.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    ✅ Validate COG
   </a>
  </li>
@@ -254,25 +254,53 @@
               
               <div>
                 
-  <section id="rasterio">
-<h1>🧩 Rasterio<a class="headerlink" href="#rasterio" title="Permalink to this headline">#</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">localtileserver.TileClient</span></code> supports viewing <code class="docutils literal notranslate"><span class="pre">rasterio.DatasetReader</span></code>
-so that you can easily visualize your data when working with rasterio.
-This will only work when opening a raster in read-mode.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">rasterio</span>
-<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
-<span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">TileClient</span><span class="p">,</span> <span class="n">get_leaflet_tile_layer</span>
+  <section id="validate-cog">
+<h1>✅ Validate COG<a class="headerlink" href="#validate-cog" title="Permalink to this headline">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> includes a helper method to validate whether or not a
+source image meets the requirements of a Cloud Optimized GeoTiff.</p>
+<p><a class="reference internal" href="../api/index.html#localtileserver.validate.validate_cog" title="localtileserver.validate.validate_cog"><code class="xref py py-func docutils literal notranslate"><span class="pre">localtileserver.validate.validate_cog()</span></code></a> users the
+<code class="docutils literal notranslate"><span class="pre">validate_cloud_optimized_geotiff</span></code> script from <code class="docutils literal notranslate"><span class="pre">osgeo_utils</span></code> to check if
+an image is a GeoTiff with the proper tiling and overviews to be considered
+“Cloud Optimized”. If the validation fails, this method will raise an
+<a class="reference internal" href="../api/index.html#localtileserver.validate.ValidateCloudOptimizedGeoTIFFException" title="localtileserver.validate.ValidateCloudOptimizedGeoTIFFException"><code class="xref py py-class docutils literal notranslate"><span class="pre">localtileserver.validate.ValidateCloudOptimizedGeoTIFFException</span></code></a>
+error.</p>
+<p>You can use the script by:</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver.validate</span> <span class="kn">import</span> <span class="n">validate_cog</span>
 
-<span class="n">src</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;path/to/geo.tif&#39;</span><span class="p">)</span>
+<span class="c1"># Path to raster (URL or local path)</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif&#39;</span>
 
-<span class="n">client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
-
-<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
-
-<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<span class="n">m</span>
+<span class="c1"># If invalid, raises ValidateCloudOptimizedGeoTIFFException</span>
+<span class="n">validate_cog</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-none notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
+</div>
+<p>This can also be used with an existing <a class="reference internal" href="../api/index.html#localtileserver.TileClient" title="localtileserver.TileClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">localtileserver.TileClient</span></code></a>:</p>
+<div class="jupyter_cell jupyter_container docutils container">
+<div class="cell_input code_cell docutils container">
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">examples</span>
+<span class="kn">from</span> <span class="nn">localtileserver.validate</span> <span class="kn">import</span> <span class="n">validate_cog</span>
+
+<span class="n">tile_client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_san_francisco</span><span class="p">()</span>
+
+<span class="c1"># If invalid, raises ValidateCloudOptimizedGeoTIFFException</span>
+<span class="n">validate_cog</span><span class="p">(</span><span class="n">tile_client</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-none notranslate"><div class="highlight"><pre><span></span>True
+</pre></div>
+</div>
+</div>
 </div>
 </section>
 

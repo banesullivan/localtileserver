@@ -45,7 +45,7 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="🧩 Rasterio" href="../user-guide/rasterio.html" />
+    <link rel="prev" title="✅ Validate COG" href="../user-guide/validate_cog.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
     
@@ -187,6 +187,11 @@
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#other-helpers">
    Other Helpers
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exceptions">
+   Exceptions
   </a>
  </li>
 </ul>
@@ -667,6 +672,19 @@ If given, this will override all other styling parameters.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="localtileserver.make_vsi">
 <span class="sig-prename descclassname"><span class="pre">localtileserver.</span></span><span class="sig-name descname"><span class="pre">make_vsi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.make_vsi" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="localtileserver.validate.validate_cog">
+<span class="sig-prename descclassname"><span class="pre">localtileserver.validate.</span></span><span class="sig-name descname"><span class="pre">validate_cog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">large_image.tilesource.base.FileTileSource</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#localtileserver.TileClient" title="localtileserver.client.TileClient"><span class="pre">localtileserver.client.TileClient</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_tiled</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">full_check</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.validate.validate_cog" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="localtileserver.validate.ValidateCloudOptimizedGeoTIFFException">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">localtileserver.validate.</span></span><span class="sig-name descname"><span class="pre">ValidateCloudOptimizedGeoTIFFException</span></span><a class="headerlink" href="#localtileserver.validate.ValidateCloudOptimizedGeoTIFFException" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </section>
