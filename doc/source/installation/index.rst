@@ -54,3 +54,11 @@ If on linux, I highly recommend using the `large_image_wheels <https://github.co
 .. code:: bash
 
    pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
+
+
+Otherwise, *one does not simply pip install GDAL*. You will want to either use
+conda or install GDAL using your system package manager (e.g.: apt, Homebrew, etc.)
+
+.. image:: https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/pip-gdal.jpg
+   :alt: One does not simply pip install GDAL
+   :align: center
