@@ -21,6 +21,7 @@
    web-app
    ipyleaflet_deep_zoom
    rasterio
+   validate_cog
 
 
 🍃 ``ipyleaflet`` Tile Layers

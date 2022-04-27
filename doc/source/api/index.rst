@@ -42,3 +42,14 @@ Other Helpers
 .. autofunction:: localtileserver.helpers.save_new_raster
 
 .. autofunction:: localtileserver.make_vsi
+
+.. autofunction:: localtileserver.validate.validate_cog
+
+
+Exceptions
+----------
+
+
+.. autoclass:: localtileserver.validate.ValidateCloudOptimizedGeoTIFFException
+   :members:
+   :undoc-members:
