@@ -16,7 +16,6 @@
    remote-cog
    compare
    roi
-   docker
    example-data
    web-app
    ipyleaflet_deep_zoom

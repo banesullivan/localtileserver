@@ -5,6 +5,7 @@
    :hidden:
 
    remote-jupyter
+   docker
    flask
 
 
