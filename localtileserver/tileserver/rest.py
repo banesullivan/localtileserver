@@ -9,7 +9,7 @@ from flask_restx import Api, Resource as View
 import large_image
 from large_image.exceptions import TileSourceError, TileSourceXYZRangeError
 from large_image_source_gdal import GDALFileTileSource
-from werkzeug.exceptions import BadRequest
+from werkzeug.exceptions import BadRequest, UnsupportedMediaType
 
 from localtileserver import __version__
 from localtileserver.tileserver import style, utilities
@@ -206,7 +206,7 @@ class ValidateCOGView(BaseImageView):
         try:
             validate_cog(tile_source)
         except ValidateCloudOptimizedGeoTIFFException as e:
-            raise BadRequest(f"Not a valid Cloud Optimized GeoTiff: {str(e)}")
+            raise UnsupportedMediaType(f"Not a valid Cloud Optimized GeoTiff: {str(e)}")
         return "Valid Cloud Optimized GeoTiff"
 
 

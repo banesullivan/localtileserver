@@ -28,8 +28,9 @@ def get_pine_gulch_url():
 
 
 def get_sf_bay_url():
-    # https://data.kitware.com/#item/60747d792fa25629b9a79538
-    return "https://data.kitware.com/api/v1/file/60747d792fa25629b9a79565/download"
+    # Non-COG: https://data.kitware.com/#item/60747d792fa25629b9a79538
+    # COG: https://data.kitware.com/#item/626854a04acac99f42126a72
+    return "https://data.kitware.com/api/v1/file/626854a14acac99f42126a74/download"
 
 
 def get_elevation_us_url():
