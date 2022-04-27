@@ -7,6 +7,7 @@ from localtileserver.tileserver.palettes import (
     is_valid_palette_name,
     mpl_to_palette,
 )
+from localtileserver.validate import validate_cog
 
 has_mpl = False
 try:
@@ -36,3 +37,7 @@ def test_report():
 
 def test_get_palettes():
     assert isinstance(get_palettes(), dict)
+
+
+def test_cog_validate(remote_file_url):
+    assert validate_cog(remote_file_url)

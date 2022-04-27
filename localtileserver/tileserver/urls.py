@@ -63,3 +63,8 @@ rest.api.add_resource(
     "/sources",
     endpoint="sources",
 )
+rest.api.add_resource(
+    rest.ValidateCOGView,
+    "/validate",
+    endpoint="validate",
+)
