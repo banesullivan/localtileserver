@@ -31,7 +31,7 @@ This can also be used with an existing :class:`localtileserver.TileClient`:
    from localtileserver import examples
    from localtileserver.validate import validate_cog
 
-   tile_client = examples.get_san_francisco()
+   client = examples.get_san_francisco()
 
    # If invalid, raises ValidateCloudOptimizedGeoTIFFException
-   validate_cog(tile_client)
+   validate_cog(client)

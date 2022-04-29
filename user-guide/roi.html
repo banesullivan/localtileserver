@@ -260,13 +260,13 @@ use it as follows and then draw a polygon and click the “Extract ROI” button
 <span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
 
 <span class="c1"># First, create a TileClient from example raster file</span>
-<span class="n">tile_client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_san_francisco</span><span class="p">()</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_san_francisco</span><span class="p">()</span>
 
 <span class="c1"># Create ipyleaflet tile layer from that server</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">tile_client</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 
 <span class="c1"># Create ipyleaflet controls to extract an ROI</span>
-<span class="n">draw_control</span><span class="p">,</span> <span class="n">roi_control</span> <span class="o">=</span> <span class="n">get_leaflet_roi_controls</span><span class="p">(</span><span class="n">tile_client</span><span class="p">)</span>
+<span class="n">draw_control</span><span class="p">,</span> <span class="n">roi_control</span> <span class="o">=</span> <span class="n">get_leaflet_roi_controls</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 
 <span class="c1"># Create ipyleaflet map, add layers, add controls, and display</span>
 <span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">37.7249511580583</span><span class="p">,</span> <span class="o">-</span><span class="mf">122.27230466902257</span><span class="p">),</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>

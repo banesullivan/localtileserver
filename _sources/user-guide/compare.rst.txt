@@ -18,7 +18,7 @@
   r = get_leaflet_tile_layer(r_client, **display)
 
   # Make the ipyleaflet map
-  m = Map(center=l_client.center(), zoom=8)
+  m = Map(center=l_client.center(), zoom=l_client.default_zoom)
   control = SplitMapControl(left_layer=l, right_layer=r)
   m.add_control(control)
   m.add_control(ScaleControl(position='bottomleft'))

@@ -264,7 +264,7 @@ This will only work when opening a raster in read-mode.</p>
 
 <span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 
-<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">default_zoom</span><span class="p">)</span>
 <span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="n">m</span>
 </pre></div>

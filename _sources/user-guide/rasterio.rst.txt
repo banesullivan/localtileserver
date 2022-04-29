@@ -18,6 +18,6 @@ This will only work when opening a raster in read-mode.
 
     t = get_leaflet_tile_layer(client)
 
-    m = Map(center=client.center(), zoom=8)
+    m = Map(center=client.center(), zoom=client.default_zoom)
     m.add_layer(t)
     m
