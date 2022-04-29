@@ -37,7 +37,7 @@
   <br/>
 
 
-An application for serving tiles from large raster files in
+A Python package for serving tiles from large raster files in
 the `Slippy Maps standard <https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames>`_
 (i.e., `/zoom/x/y.png`) for visualization in Jupyter with ``ipyleaflet`` or ``folium``.
 
