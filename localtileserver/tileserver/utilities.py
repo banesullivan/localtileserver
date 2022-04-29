@@ -64,6 +64,10 @@ def purge_cache():
     return get_cache_dir()
 
 
+def is_geospatial(source: FileTileSource) -> bool:
+    return source.getMetadata().get('geospatial', False)
+
+
 def get_tile_source(
     path: Union[pathlib.Path, str], projection: str = None, style: str = None, encoding: str = "PNG"
 ) -> FileTileSource:
@@ -125,6 +129,8 @@ def get_tile_bounds(
     tile_source: FileTileSource,
     projection: str = "EPSG:4326",
 ):
+    if not is_geospatial(tile_source):
+        return {"xmin": 0, "xmax": tile_source.sizeX, "ymin": 0, "ymax": tile_source.sizeY}
     bounds = tile_source.getBounds(srs=projection)
     if projection == "EPSG:4326":
         threshold = 89.9999
