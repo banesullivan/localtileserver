@@ -168,8 +168,7 @@ class BaseTileClient:
             style=style,
             cmap=cmap,
         )
-        if projection is not None:
-            params["projection"] = projection
+        params["projection"] = projection
         if grid:
             params["grid"] = True
         return params

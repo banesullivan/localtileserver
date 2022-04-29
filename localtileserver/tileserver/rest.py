@@ -157,6 +157,8 @@ class BaseImageView(View):
         except OSError as e:
             raise BadRequest(str(e))
         projection = request.args.get("projection", projection)
+        if projection.lower() in ["none", "pixel", "pixels", "null", "undefined"]:
+            projection = None
         encoding = request.args.get("encoding", "PNG")
         if "style" in request.args:
             sty = unquote(request.args.get("style"))
