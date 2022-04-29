@@ -29,7 +29,6 @@ def create_app(url_prefix: str = "/", cors_all: bool = False):
         pass
     app = Flask(__name__)
     if cors_all:
-        print("corsin")
         cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     cache.init_app(app)
     app.register_blueprint(tileserver, url_prefix=url_prefix)

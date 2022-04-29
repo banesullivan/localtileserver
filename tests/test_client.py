@@ -219,8 +219,9 @@ def test_style_dict(bahamas):
 
 
 def test_pixel_space_tiles(bahamas_file):
-    client = TileClient(bahamas_file, cors_all=True)
+    client = TileClient(bahamas_file)
     tile_url = client.get_tile_url(projection=None).format(z=0, x=0, y=0)
+    assert "projection=none" in tile_url.lower()
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
