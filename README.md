@@ -6,15 +6,18 @@
 [![PyPI](https://img.shields.io/pypi/v/localtileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/localtileserver/)
 [![conda](https://img.shields.io/conda/vn/conda-forge/localtileserver.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/localtileserver)
 
-*Need to visualize a rather large (gigabytes) raster you have locally?* **This is for you.**
+*Need to visualize a rather large (gigabytes+) raster?* **This is for you.**
 
 An application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
-(i.e., `/zoom/x/y.png`) for visualization in `ipyleaflet` or `folium`.
+(i.e., `/zoom/x/y.png`) for visualization in Jupyter with `ipyleaflet` or `folium`.
 
 Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinder [![MyBinder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD)
 
 Documentation: https://localtileserver.banesullivan.com/
+
+Under the hood, this is also a Flask blueprint/application for use as a
+standalone web app or in your own web deployments needing dynamic tile serving.
 
 
 ## 🌟 Highlights
@@ -53,30 +56,25 @@ m
 
 ## ℹ️ Overview
 
-This is a Flask application (blueprint) for serving tiles of large images.
 The `TileClient` class can be used to to launch a tile server in a background
-thread which will serve raster imagery to a viewer (see `ipyleaflet` and
-`folium` Jupyter notebook examples below).
+thread which will serve raster imagery to a viewer (usually `ipyleaflet` or
+`folium` in Jupyter notebooks).
 
-This tile server can efficiently deliver varying levels of detail of your
-raster imagery to your viewer; it helps to have pre-tiled, Cloud Optimized
-GeoTIFFs (COG), but no wories if not as the backing libraries,
-[`large_image`](https://github.com/girder/large_image),
+This tile server can efficiently deliver varying resolutions of your
+raster imagery to your viewer; it helps to have pre-tiled,
+[Cloud Optimized GeoTIFFs (COGs)](https://www.cogeo.org/), but no wories if
+not as the backing library, [`large_image`](https://github.com/girder/large_image),
 will tile and cache for you when opening the raster.
 
 There is an included, standalone web viewer leveraging
 [CesiumJS](https://cesium.com/platform/cesiumjs/) and [GeoJS](https://opengeoscience.github.io/geojs/).
 You can use the web viewer to select and extract regions of interest from rasters.
 
-**Disclaimer**: This is a hobby project and I am doing my best to make it
-more stable/robust. Things might break between minor releases (I use the
-`major.minor.patch` versioning scheme).
-
 
 ## ⬇️ Installation
 
-Get started with `localtileserver` to view rasters locally in Jupyter or
-deploy in your own Flask application.
+Get started with `localtileserver` to view rasters in Jupyter or deploy as your
+own Flask application.
 
 ### 🐍 Installing with `conda`
 

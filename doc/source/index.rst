@@ -10,7 +10,7 @@
 
 
 
-*Need to visualize a rather large (gigabytes) raster you have locally?* **This is for you.**
+*Need to visualize a rather large (gigabytes+) raster?* **This is for you.**
 
   Try it out below!
 
@@ -37,15 +37,19 @@
   <br/>
 
 
-A Flask application for serving tiles from large raster files in
+An application for serving tiles from large raster files in
 the `Slippy Maps standard <https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames>`_
-(i.e., ``/zoom/x/y.png``)
+(i.e., `/zoom/x/y.png`) for visualization in Jupyter with ``ipyleaflet`` or ``folium``.
+
 
 .. |binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD
    :alt: MyBinder
 
 Launch a `demo <https://github.com/banesullivan/localtileserver-demo>`_ on MyBinder |binder|
+
+Under the hood, this is also a Flask blueprint/application for use as a
+standalone web app or in your own web deployments needing dynamic tile serving.
 
 
 🌟 Highlights
@@ -62,27 +66,20 @@ Launch a `demo <https://github.com/banesullivan/localtileserver-demo>`_ on MyBin
 ℹ️ Overview
 ===========
 
-This is a Flask application (blueprint) for serving tiles of large images.
 The :class:`TileClient` class can be used to to launch a tile server in a background
 thread which will serve raster imagery to a viewer (see ``ipyleaflet`` and
 ``folium`` examples in :ref:`user_guide`).
 
-This tile server can efficiently deliver varying levels of detail of your
-raster imagery to your viewer; it helps to have pre-tiled, Cloud Optimized
-GeoTIFFs (COG), but no wories if not as the backing libraries,
-`large_image <https://github.com/girder/large_image>`_,
+This tile server can efficiently deliver varying resolutions of your
+raster imagery to your viewer; it helps to have pre-tiled,
+`Cloud Optimized GeoTIFFs (COG) <https://www.cogeo.org/>`_, but no wories if
+not as the backing library, `large_image <https://github.com/girder/large_image>`_,
 will tile and cache for you when opening the raster.
 
 There is an included, standalone web viewer leveraging
-`CesiumJS <https://cesium.com/platform/cesiumjs/>`_ and `GeoJS <https://opengeoscience.github.io/geojs/>`_.
+`CesiumJS <https://cesium.com/platform/cesiumjs/>`_ and
+`GeoJS <https://opengeoscience.github.io/geojs/>`_.
 You can use the web viewer to select and extract regions of interest from rasters.
-
-
-.. note::
-
-   This is a hobby project and I am doing my best to make it
-   more stable/robust. Things might break between minor releases (I use the
-   ``major.minor.patch`` versioning scheme).
 
 
 🪢 Community Usage

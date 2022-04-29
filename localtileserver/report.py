@@ -21,6 +21,7 @@ class Report(scooby.Report):
             "localtileserver",
             "flask",
             "flask_caching",
+            "flask_cors",
             "flask_restx",
             "requests",
             "werkzeug",
@@ -46,6 +47,7 @@ class Report(scooby.Report):
             "large_image_converter",
             "tifftools",
             "pyvips",
+            "pylibtiff",
         ]
 
         scooby.Report.__init__(
