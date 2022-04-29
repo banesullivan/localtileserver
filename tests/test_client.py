@@ -232,3 +232,7 @@ def test_large_image_to_client(bahamas_file):
     tile_client = TileClient(src)
     assert tile_client.filename == get_clean_filename(bahamas_file)
     assert "bounds" in tile_client.metadata()
+
+
+def test_default_zoom(bahamas):
+    assert bahamas.default_zoom == 8

@@ -21,7 +21,7 @@ viewing a different set of bands:
   r = get_leaflet_tile_layer(tile_client, band=[5, 3, 2])
 
   # Make the ipyleaflet map
-  m = Map(center=tile_client.center(), zoom=12)
+  m = Map(center=tile_client.center(), zoom=tile_client.default_zoom)
   control = SplitMapControl(left_layer=l, right_layer=r)
   m.add_control(control)
   m.add_control(ScaleControl(position='bottomleft'))
@@ -51,6 +51,6 @@ See https://girder.github.io/large_image/tilesource_options.html#style
 
   l = get_leaflet_tile_layer(tile_client, style=style)
 
-  m = Map(center=tile_client.center(), zoom=12)
+  m = Map(center=tile_client.center(), zoom=tile_client.default_zoom)
   m.add_layer(l)
   m

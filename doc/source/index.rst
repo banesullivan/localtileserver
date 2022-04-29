@@ -26,7 +26,7 @@
   # Create ipyleaflet TileLayer from that server
   t = get_leaflet_tile_layer(tile_client)
   # Create ipyleaflet map, add tile layer, and display
-  m = Map(center=tile_client.center(), zoom=10)
+  m = Map(center=tile_client.center(), zoom=tile_client.default_zoom)
   m.add_layer(t)
   m
 

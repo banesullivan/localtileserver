@@ -30,7 +30,7 @@ Here we can create a folium map with the raster overlain:
   # Create folium tile layer from that server
   t = get_folium_tile_layer(tile_client)
 
-  m = folium.Map(location=tile_client.center(), zoom_start=10)
+  m = folium.Map(location=tile_client.center(), zoom_start=tile_client.default_zoom)
   m.add_child(t)
   m
 
@@ -42,7 +42,7 @@ Or we can do the same ipyleaflet:
   # Create ipyleaflet tile layer from that server
   l = get_leaflet_tile_layer(tile_client)
 
-  m = ipyleaflet.Map(center=tile_client.center(), zoom=10)
+  m = ipyleaflet.Map(center=tile_client.center(), zoom=tile_client.default_zoom)
   m.add_layer(l)
   m
 

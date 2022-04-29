@@ -44,7 +44,7 @@ tile_client = TileClient('path/to/geo.tif')
 # Create ipyleaflet tile layer from that server
 t = get_leaflet_tile_layer(tile_client)
 
-m = Map(center=tile_client.center(), zoom=6)
+m = Map(center=tile_client.center(), zoom=tile_client.default_zoom)
 m.add_layer(t)
 m
 ```
