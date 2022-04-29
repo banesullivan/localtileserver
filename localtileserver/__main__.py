@@ -16,6 +16,7 @@ from localtileserver.tileserver.data import get_pine_gulch_url
 @click.option("-d", "--debug", default=False)
 @click.option("-b", "--browser", default=True)
 @click.option("-t", "--cesium-token", default="")
+@click.option("-c", "--cors-all", default=False)
 def run_app(
     filename,
     port: int = 0,
@@ -23,6 +24,7 @@ def run_app(
     browser: bool = True,
     cesium_token: str = "",
     host: str = "127.0.0.1",
+    cors_all: bool = False,
 ):
     """Serve tiles from the raster at `filename`.
 
@@ -47,7 +49,7 @@ def run_app(
         filename = get_clean_filename(filename)
         if not str(filename).startswith("/vsi") and not filename.exists():
             raise OSError(f"File does not exist: {filename}")
-    app = create_app()
+    app = create_app(cors_all=cors_all)
     app.config["DEBUG"] = debug
     app.config["filename"] = filename
     app.config["cesium_token"] = cesium_token

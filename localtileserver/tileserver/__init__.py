@@ -1,5 +1,6 @@
 # flake8: noqa: F401
 from flask import Flask
+from flask_cors import CORS
 
 from localtileserver.tileserver import rest, urls, views
 from localtileserver.tileserver.blueprint import cache, tileserver
@@ -21,12 +22,15 @@ from localtileserver.tileserver.utilities import (
 )
 
 
-def create_app(url_prefix="/"):
+def create_app(url_prefix: str = "/", cors_all: bool = False):
     try:
         from localtileserver.tileserver import sentry
     except ImportError:
         pass
     app = Flask(__name__)
+    if cors_all:
+        print("corsin")
+        cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
     cache.init_app(app)
     app.register_blueprint(tileserver, url_prefix=url_prefix)
     app.config.JSONIFY_PRETTYPRINT_REGULAR = True

@@ -10,7 +10,7 @@ class AppManager:
         )  # pragma: no cover
 
     @staticmethod
-    def get_or_create_app():
+    def get_or_create_app(cors_all: bool = False):
         if not AppManager._APP:
-            AppManager._APP = create_app()
+            AppManager._APP = create_app(cors_all=cors_all)
         return AppManager._APP

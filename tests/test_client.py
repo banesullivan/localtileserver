@@ -215,3 +215,11 @@ def test_style_dict(bahamas):
         style=style,
     )
     assert thumbnail  # TODO: check colors in produced image
+
+
+def test_pixel_space_tiles(bahamas_file):
+    client = TileClient(bahamas_file, cors_all=True)
+    tile_url = client.get_tile_url(projection=None).format(z=0, x=0, y=0)
+    r = requests.get(tile_url)
+    r.raise_for_status()
+    assert r.content

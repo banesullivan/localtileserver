@@ -362,6 +362,7 @@ class TileClient(BaseTileClient):
         client_port: int = None,
         client_host: str = None,
         client_prefix: str = None,
+        cors_all: bool = False,
     ):
         if (
             DatasetReaderBase
@@ -370,7 +371,7 @@ class TileClient(BaseTileClient):
         ):
             filename = filename.name
         super().__init__(filename)
-        app = AppManager.get_or_create_app()
+        app = AppManager.get_or_create_app(cors_all=cors_all)
         self._key = launch_server(app, port=port, debug=debug, host=host)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
