@@ -303,7 +303,14 @@ class BaseTileClient:
         except KeyError:
             return 0
 
+    @property
+    def is_geospatial(self):
+        return self.metadata().get("geospatial", False)
+
     def _ipython_display_(self):
+        if not self.is_geospatial:
+            raise NotImplementedError
+
         from IPython.display import display
         from ipyleaflet import Map
 
