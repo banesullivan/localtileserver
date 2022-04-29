@@ -295,6 +295,25 @@ class BaseTileClient:
         r.raise_for_status()
         return r.json()
 
+    @property
+    def default_zoom(self):
+        m = self.metadata()
+        try:
+            return m["levels"] - m["sourceLevels"]
+        except KeyError:
+            return 0
+
+    def _ipython_display_(self):
+        from IPython.display import display
+        from ipyleaflet import Map
+
+        from localtileserver.widgets import get_leaflet_tile_layer
+
+        t = get_leaflet_tile_layer(self)
+        m = Map(center=self.center(), zoom=self.default_zoom)
+        m.add_layer(t)
+        return display(m)
+
 
 class RemoteTileClient(BaseTileClient):
     """Connect to a remote localtileserver instance at a given host URL.
