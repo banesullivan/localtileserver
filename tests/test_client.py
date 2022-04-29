@@ -1,5 +1,6 @@
 import os
 
+import large_image
 import pytest
 import requests
 from server_thread import ServerDownError, ServerManager
@@ -223,3 +224,10 @@ def test_pixel_space_tiles(bahamas_file):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
+
+
+def test_large_image_to_client(bahamas_file):
+    src = large_image.open(bahamas_file)
+    tile_client = TileClient(src)
+    assert tile_client.filename == get_clean_filename(bahamas_file)
+    assert "bounds" in tile_client.metadata()

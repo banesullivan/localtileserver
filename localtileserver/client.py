@@ -6,6 +6,7 @@ import pathlib
 from typing import List, Union
 from urllib.parse import quote
 
+from large_image.tilesource import FileTileSource
 import requests
 
 try:
@@ -355,7 +356,7 @@ class TileClient(BaseTileClient):
 
     def __init__(
         self,
-        filename: Union[pathlib.Path, str, DatasetReaderBase],
+        filename: Union[pathlib.Path, str, DatasetReaderBase, FileTileSource],
         port: Union[int, str] = "default",
         debug: bool = False,
         host: str = "127.0.0.1",
@@ -370,6 +371,8 @@ class TileClient(BaseTileClient):
             and hasattr(filename, "name")
         ):
             filename = filename.name
+        elif isinstance(filename, FileTileSource):
+            filename = filename._getLargeImagePath()
         super().__init__(filename)
         app = AppManager.get_or_create_app(cors_all=cors_all)
         self._key = launch_server(app, port=port, debug=debug, host=host)
@@ -479,7 +482,7 @@ class TileClient(BaseTileClient):
 
 
 def get_or_create_tile_client(
-    source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
+    source: Union[pathlib.Path, str, TileClient, DatasetReaderBase, FileTileSource],
     port: Union[int, str] = "default",
     debug: bool = False,
 ):
