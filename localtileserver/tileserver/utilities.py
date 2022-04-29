@@ -65,7 +65,7 @@ def purge_cache():
 
 
 def is_geospatial(source: FileTileSource) -> bool:
-    return source.getMetadata().get('geospatial', False)
+    return source.getMetadata().get("geospatial", False)
 
 
 def get_tile_source(
