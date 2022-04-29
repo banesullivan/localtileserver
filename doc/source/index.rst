@@ -20,13 +20,13 @@
   from ipyleaflet import Map
 
   # Create a TileClient from a raster file
-  # tile_client = TileClient('path/to/geo.tif')
-  tile_client = examples.get_san_francisco()  # use example data
+  # client = TileClient('path/to/geo.tif')
+  client = examples.get_san_francisco()  # use example data
 
   # Create ipyleaflet TileLayer from that server
-  t = get_leaflet_tile_layer(tile_client)
+  t = get_leaflet_tile_layer(client)
   # Create ipyleaflet map, add tile layer, and display
-  m = Map(center=tile_client.center(), zoom=tile_client.default_zoom)
+  m = Map(center=client.center(), zoom=client.default_zoom)
   m.add_layer(t)
   m
 

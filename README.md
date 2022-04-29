@@ -39,12 +39,12 @@ from localtileserver import get_leaflet_tile_layer, TileClient
 from ipyleaflet import Map
 
 # First, create a tile server from local raster file
-tile_client = TileClient('path/to/geo.tif')
+client = TileClient('path/to/geo.tif')
 
 # Create ipyleaflet tile layer from that server
-t = get_leaflet_tile_layer(tile_client)
+t = get_leaflet_tile_layer(client)
 
-m = Map(center=tile_client.center(), zoom=tile_client.default_zoom)
+m = Map(center=client.center(), zoom=client.default_zoom)
 m.add_layer(t)
 m
 ```

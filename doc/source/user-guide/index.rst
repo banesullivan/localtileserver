@@ -30,9 +30,9 @@ Here is the "one-liner" to visualize a large geospatial image with
 
   from localtileserver import TileClient, examples
 
-  # tile_client = TileClient('path/to/geo.tif')
-  tile_client = examples.get_san_francisco()  # use example data
-  tile_client
+  # client = TileClient('path/to/geo.tif')
+  client = examples.get_san_francisco()  # use example data
+  client
 
 
 The :class:`localtileserver.TileClient` class utilizes the ``_ipython_display_``
@@ -55,11 +55,11 @@ a Jupyter notebook. Here is an example:
   from ipyleaflet import Map
 
   # First, create a tile server from local raster file
-  # tile_client = TileClient('path/to/geo.tif')
-  tile_client = examples.get_elevation()  # use example data
+  # client = TileClient('path/to/geo.tif')
+  client = examples.get_elevation()  # use example data
 
   # Create ipyleaflet tile layer from that server
-  t = get_leaflet_tile_layer(tile_client,
+  t = get_leaflet_tile_layer(client,
                              band=1, vmin=-5000, vmax=5000, palette='cmo.topo',
                              opacity=0.65)
 
@@ -85,13 +85,13 @@ code as the ``ipyleaflet`` example, just note that :class:`folium.Map` is import
   from folium import Map
 
   # First, create a tile server from local raster file
-  # tile_client = TileClient('path/to/geo.tif')
-  tile_client = examples.get_oam2()  # use example data
+  # client = TileClient('path/to/geo.tif')
+  client = examples.get_oam2()  # use example data
 
   # Create folium tile layer from that server
-  t = get_folium_tile_layer(tile_client)
+  t = get_folium_tile_layer(client)
 
-  m = Map(location=tile_client.center(), zoom_start=16)
+  m = Map(location=client.center(), zoom_start=16)
   m.add_child(t)
   m
 

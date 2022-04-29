@@ -14,14 +14,14 @@ viewing a different set of bands:
   from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
   # First, create TileClient using example file
-  tile_client = examples.get_landsat()
+  client = examples.get_landsat()
 
   # Create 2 tile layers from same raster viewing different bands
-  l = get_leaflet_tile_layer(tile_client, band=[7, 5, 4])
-  r = get_leaflet_tile_layer(tile_client, band=[5, 3, 2])
+  l = get_leaflet_tile_layer(client, band=[7, 5, 4])
+  r = get_leaflet_tile_layer(client, band=[5, 3, 2])
 
   # Make the ipyleaflet map
-  m = Map(center=tile_client.center(), zoom=tile_client.default_zoom)
+  m = Map(center=client.center(), zoom=client.default_zoom)
   control = SplitMapControl(left_layer=l, right_layer=r)
   m.add_control(control)
   m.add_control(ScaleControl(position='bottomleft'))
@@ -39,18 +39,18 @@ See https://girder.github.io/large_image/tilesource_options.html#style
   from localtileserver import get_leaflet_tile_layer, examples
   from ipyleaflet import Map
 
-  landsat_client = examples.get_landsat()
+  client = examples.get_landsat()
 
   style = {
     'bands': [
-      {'band': 5, 'palette': ['#000', '#f00']},
-      {'band': 3, 'palette': ['#000', '#0f0']},
-      {'band': 2, 'palette': ['#000', '#00f']},
+      {'band': 5, 'palette': '#f00'},
+      {'band': 3, 'palette': '#0f0'},
+      {'band': 2, 'palette': '#00f'},
     ]
   }
 
-  l = get_leaflet_tile_layer(tile_client, style=style)
+  l = get_leaflet_tile_layer(client, style=style)
 
-  m = Map(center=tile_client.center(), zoom=tile_client.default_zoom)
+  m = Map(center=client.center(), zoom=client.default_zoom)
   m.add_layer(l)
   m

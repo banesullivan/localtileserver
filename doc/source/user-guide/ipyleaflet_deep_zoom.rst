@@ -15,19 +15,19 @@ For more information, please see https://github.com/jupyter-widgets/ipyleaflet/i
   from ipyleaflet import Map, TileLayer
 
   # Load high res raster
-  tile_client = examples.get_oam2()
+  client = examples.get_oam2()
 
   max_zoom = 30
 
   # Create zoomable tile layer from high res raster
-  layer = get_leaflet_tile_layer(tile_client,
+  layer = get_leaflet_tile_layer(client,
       # extra kwargs to pass to the TileLayer
       max_zoom=max_zoom,
       max_native_zoom=max_zoom,
   )
 
   # Make the ipyleaflet map with deeper zoom
-  m = Map(center=tile_client.center(),
+  m = Map(center=client.center(),
           zoom=22, max_zoom=max_zoom
   )
   m.add_layer(layer)

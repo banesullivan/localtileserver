@@ -126,7 +126,7 @@ def get_leaflet_tile_layer(
 
 
 def get_leaflet_roi_controls(
-    tile_client: TileClient,
+    client: TileClient,
     button_position: str = "topright",
     output_directory: pathlib.Path = ".",
     debug: bool = False,
@@ -193,7 +193,7 @@ def get_leaflet_roi_controls(
                 p = p.union(t)
         left, bottom, right, top = p.bounds
         # Get filename in working directory
-        split = os.path.basename(tile_client.filename).split(".")
+        split = os.path.basename(client.filename).split(".")
         ext = split[-1]
         basename = ".".join(split[:1])
         output_path = pathlib.Path(output_directory).absolute()
@@ -201,7 +201,7 @@ def get_leaflet_roi_controls(
         output_path = output_path / f"roi_{basename}_{left}_{right}_{bottom}_{top}.{ext}"
         draw_control.output_path = output_path
         logger.error(f"output_path: {output_path}")
-        tile_client.extract_roi(left, right, bottom, top, output_path=output_path)
+        client.extract_roi(left, right, bottom, top, output_path=output_path)
 
     button = widgets.Button(description="Extract ROI")
     button.on_click(on_button_clicked)

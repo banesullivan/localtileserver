@@ -8,8 +8,8 @@ from localtileserver.tileserver import create_app
 @pytest.fixture
 def flask_client():
     app = create_app()
-    with app.test_client() as client:
-        yield client
+    with app.test_client() as f_client:
+        yield f_client
 
 
 @pytest.fixture
@@ -20,17 +20,17 @@ def bahamas_file():
 @pytest.fixture
 def bahamas(port="default", debug=True):
     # Using debug True since in a testing environment
-    tile_client = get_bahamas(port=port, debug=debug)
-    yield tile_client
-    tile_client.shutdown(force=True)
+    client = get_bahamas(port=port, debug=debug)
+    yield client
+    client.shutdown(force=True)
 
 
 @pytest.fixture
 def blue_marble(port="default", debug=True):
     # Using debug True since in a testing environment
-    tile_client = get_blue_marble(port=port, debug=debug)
-    yield tile_client
-    tile_client.shutdown(force=True)
+    client = get_blue_marble(port=port, debug=debug)
+    yield client
+    client.shutdown(force=True)
 
 
 @pytest.fixture

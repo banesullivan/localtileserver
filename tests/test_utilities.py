@@ -41,5 +41,5 @@ def test_get_palettes():
 
 def test_cog_validate(remote_file_url):
     assert validate_cog(remote_file_url)
-    tile_client = TileClient(remote_file_url)
-    assert validate_cog(tile_client)
+    client = TileClient(remote_file_url)
+    assert validate_cog(client)
