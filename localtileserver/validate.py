@@ -26,7 +26,9 @@ def validate_cog(
         path = path.filename
     else:
         path = get_clean_filename(path)
-    warnings, errors, details = gdal_validate(path, check_tiled=check_tiled, full_check=full_check)
+    warnings, errors, details = gdal_validate(
+        str(path), check_tiled=check_tiled, full_check=full_check
+    )
     if errors:
         raise ValidateCloudOptimizedGeoTIFFException(errors)
     if strict and warnings:
