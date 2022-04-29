@@ -8,9 +8,9 @@
 
 *Need to visualize a rather large (gigabytes) raster you have locally?* **This is for you.**
 
-A Flask application for serving tiles from large raster files in
+An application for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
-(i.e., `/zoom/x/y.png`)
+(i.e., `/zoom/x/y.png`) for visualization in `ipyleaflet` or `folium`.
 
 Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinder [![MyBinder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD)
 
