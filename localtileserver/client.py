@@ -314,6 +314,10 @@ class BaseTileClient:
         m.add_layer(t)
         return display(m)
 
+    def _repr_png_(self):
+        with open(self.thumbnail(), "rb") as f:
+            return f.read()
+
 
 class RemoteTileClient(BaseTileClient):
     """Connect to a remote localtileserver instance at a given host URL.
