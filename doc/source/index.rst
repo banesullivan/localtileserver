@@ -20,7 +20,8 @@
   from ipyleaflet import Map
 
   # Create a TileClient from a raster file
-  tile_client = examples.get_san_francisco()
+  # tile_client = TileClient('path/to/geo.tif')
+  tile_client = examples.get_san_francisco()  # use example data
 
   # Create ipyleaflet TileLayer from that server
   t = get_leaflet_tile_layer(tile_client)

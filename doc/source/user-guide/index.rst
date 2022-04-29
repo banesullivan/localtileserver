@@ -23,6 +23,22 @@
    validate_cog
 
 
+Here is the "one-liner" to visualize a large geospatial image with
+``ipyleaflet`` in Jupyter:
+
+.. jupyter-execute::
+
+  from localtileserver import TileClient, examples
+
+  # tile_client = TileClient('path/to/geo.tif')
+  tile_client = examples.get_san_francisco()  # use example data
+  tile_client
+
+
+The :class:`localtileserver.TileClient` class utilizes the ``_ipython_display_``
+method to automatically display the tiles with ``ipyleaflet`` in a Notebook.
+
+
 🍃 ``ipyleaflet`` Tile Layers
 -----------------------------
 
@@ -40,8 +56,7 @@ a Jupyter notebook. Here is an example:
 
   # First, create a tile server from local raster file
   # tile_client = TileClient('path/to/geo.tif')
-  # Use example data
-  tile_client = examples.get_elevation()
+  tile_client = examples.get_elevation()  # use example data
 
   # Create ipyleaflet tile layer from that server
   t = get_leaflet_tile_layer(tile_client,
@@ -71,8 +86,7 @@ code as the ``ipyleaflet`` example, just note that :class:`folium.Map` is import
 
   # First, create a tile server from local raster file
   # tile_client = TileClient('path/to/geo.tif')
-  # Use example data
-  tile_client = examples.get_oam2()
+  tile_client = examples.get_oam2()  # use example data
 
   # Create folium tile layer from that server
   t = get_folium_tile_layer(tile_client)
