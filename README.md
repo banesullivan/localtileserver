@@ -8,7 +8,7 @@
 
 *Need to visualize a rather large (gigabytes+) raster?* **This is for you.**
 
-An application for serving tiles from large raster files in
+A Python package for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`) for visualization in Jupyter with `ipyleaflet` or `folium`.
 
