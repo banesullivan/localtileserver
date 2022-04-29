@@ -45,15 +45,14 @@ setup(
         "flask-cors",
         "flask-restx>=0.5.0",
         "GDAL",
-        "large-image>=1.13",
-        "large-image-source-gdal>=1.13",
+        "large-image[gdal]>=1.14.1",
         "requests",
         "server-thread",
         "scooby",
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
-        "sources": ["large-image-source-pil>=1.13", "large-image-source-tiff>=1.13"],
+        "sources": ["large-image[gdal,pil,tiff]>=1.14.1"],
         "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
     },
     entry_points={

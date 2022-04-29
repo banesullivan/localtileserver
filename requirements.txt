@@ -5,9 +5,7 @@ flask-cors
 flask-restx>=0.5.0
 sentry-sdk[flask]
 --find-links https://girder.github.io/large_image_wheels GDAL
-large-image[memcached]>=1.13
-large-image-source-gdal>=1.13
-large-image-source-pil>=1.13
+large-image[memcached,gdal,pil]>=1.14.1
 requests
 server-thread
 scooby
