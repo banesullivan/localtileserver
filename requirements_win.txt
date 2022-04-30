@@ -8,6 +8,5 @@ server-thread
 scooby
 pytest
 pytest-cov
-ipyleaflet
 folium
 matplotlib
