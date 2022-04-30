@@ -7,14 +7,14 @@ from osgeo_utils.samples.validate_cloud_optimized_geotiff import (
     validate as gdal_validate,
 )
 
-from localtileserver.client import TileClient
+from localtileserver.client import BaseTileClient
 from localtileserver.tileserver import get_clean_filename
 
 logger = logging.getLogger(__name__)
 
 
 def validate_cog(
-    path: Union[str, FileTileSource, TileClient],
+    path: Union[str, FileTileSource, BaseTileClient],
     check_tiled: bool = True,
     full_check: bool = False,
     strict: bool = True,
@@ -22,7 +22,7 @@ def validate_cog(
 ):
     if isinstance(path, FileTileSource):
         path = path._getLargeImagePath()
-    elif isinstance(path, TileClient):
+    elif isinstance(path, BaseTileClient):
         path = path.filename
     else:
         path = get_clean_filename(path)

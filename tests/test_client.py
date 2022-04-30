@@ -151,6 +151,8 @@ def test_multiband(bahamas):
 def test_remote_client(remote_file_url):
     tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
     assert tile_client.metadata()
+    url = tile_client.get_tile_url(projection=None).format(z=0, x=0, y=0)
+    assert get_content(url)
 
 
 def test_launch_non_default_server(bahamas_file):

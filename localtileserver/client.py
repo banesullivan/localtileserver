@@ -61,7 +61,7 @@ class BaseTileClient:
     def _produce_url(self, base: str):
         return add_query_parameters(base, {"filename": self._filename})
 
-    def create_url(self, path: str):
+    def create_url(self, path: str, **kwargs):
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
     def _get_style_params(
@@ -175,9 +175,11 @@ class BaseTileClient:
         return params
 
     @wraps(get_tile_url_params)
-    def get_tile_url(self, *args, **kwargs):
+    def get_tile_url(self, *args, client: bool = False, **kwargs):
         params = self.get_tile_url_params(*args, **kwargs)
-        return add_query_parameters(self.create_url("api/tiles/{z}/{x}/{y}.png"), params)
+        return add_query_parameters(
+            self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
+        )
 
     def extract_roi(
         self,
@@ -504,7 +506,7 @@ class TileClient(BaseTileClient):
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
     @wraps(BaseTileClient.get_tile_url_params)
-    def get_tile_url(self, *args, client=False, **kwargs):
+    def get_tile_url(self, *args, client: bool = False, **kwargs):
         params = self.get_tile_url_params(*args, **kwargs)
         return add_query_parameters(
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
