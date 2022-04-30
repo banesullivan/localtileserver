@@ -22,7 +22,7 @@ from localtileserver.tileserver.utilities import (
 )
 
 
-def create_app(url_prefix: str = "/", cors_all: bool = False):
+def create_app(url_prefix: str = "/", cors_all: bool = True):
     try:
         from localtileserver.tileserver import sentry
     except ImportError:
