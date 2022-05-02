@@ -24,7 +24,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Bane Sullivan",
-    author_email="banesullivan@gmail.com",
+    author_email="hello@banesullivan.com",
     url="https://github.com/banesullivan/localtileserver",
     packages=find_packages(),
     include_package_data=True,
