@@ -150,7 +150,7 @@ class ListTileSources(View):
 
 @api.doc(params=BASE_PARAMS)
 class BaseImageView(View):
-    def get_tile_source(self, projection="EPSG:3857"):
+    def get_tile_source(self, projection=None):
         """Return the built tile source."""
         try:
             filename = utilities.get_clean_filename_from_request()

@@ -3,7 +3,7 @@ from functools import wraps
 import json
 import logging
 import pathlib
-from typing import List, Union
+from typing import List, Optional, Union
 from urllib.parse import quote
 
 from large_image.tilesource import FileTileSource
@@ -39,12 +39,22 @@ class BaseTileClient:
     def __init__(
         self,
         filename: Union[pathlib.Path, str],
+        default_projection: Optional[str] = "EPSG:3857",
     ):
         self._filename = get_clean_filename(filename)
+        self._default_projection = default_projection
 
     @property
     def filename(self):
         return self._filename
+
+    @property
+    def default_projection(self):
+        return self._default_projection
+
+    @default_projection.setter
+    def default_projection(self, value):
+        self._default_projection = value
 
     @property
     def server_host(self):
@@ -102,7 +112,7 @@ class BaseTileClient:
 
     def get_tile_url_params(
         self,
-        projection: str = "EPSG:3857",
+        projection: Optional[str] = "",
         band: Union[int, List[int]] = None,
         palette: Union[str, List[str]] = None,
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
@@ -169,6 +179,8 @@ class BaseTileClient:
             style=style,
             cmap=cmap,
         )
+        if not projection:
+            projection = self.default_projection
         params["projection"] = projection
         if grid:
             params["grid"] = True
@@ -212,14 +224,18 @@ class BaseTileClient:
         r.raise_for_status()
         return save_file_from_request(r, output_path)
 
-    def metadata(self):
-        r = requests.get(self.create_url("/api/metadata"))
+    def metadata(self, projection: Optional[str] = ""):
+        if projection == "":
+            projection = self.default_projection
+        r = requests.get(self.create_url(f"/api/metadata?projection={projection}"))
         r.raise_for_status()
         return r.json()
 
     def bounds(self, projection: str = "EPSG:4326"):
         """Get bounds in form of (ymin, ymax, xmin, xmax)."""
-        r = requests.get(self.create_url(f"/api/bounds?units={projection}"))
+        r = requests.get(
+            self.create_url(f"/api/bounds?units={projection}&projection={self.default_projection}")
+        )
         r.raise_for_status()
         bounds = r.json()
         return (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
@@ -261,7 +277,7 @@ class BaseTileClient:
         r.raise_for_status()
         return save_file_from_request(r, output_path)
 
-    def pixel(self, y: float, x: float, units: str = "pixels", projection: str = None):
+    def pixel(self, y: float, x: float, units: str = "pixels", projection: Optional[str] = None):
         """Get pixel values for each band at the given coordinates (y <lat>, x <lon>).
 
         Parameters
@@ -280,7 +296,7 @@ class BaseTileClient:
         params["x"] = x
         params["y"] = y
         params["units"] = units
-        if projection is not None:
+        if projection:
             params["projection"] = projection
         url = add_query_parameters(self.create_url("api/pixel"), params)
         r = requests.get(url)
@@ -304,6 +320,11 @@ class BaseTileClient:
             return m["levels"] - m["sourceLevels"]
         except KeyError:
             return 0
+
+    @property
+    def max_zoom(self):
+        m = self.metadata()
+        return m.get("levels")
 
     @property
     def is_geospatial(self):
@@ -343,9 +364,10 @@ class RemoteTileClient(BaseTileClient):
     def __init__(
         self,
         filename: Union[pathlib.Path, str],
+        default_projection: Optional[str] = "EPSG:3857",
         host: str = None,
     ):
-        super().__init__(filename=filename)
+        super().__init__(filename=filename, default_projection=default_projection)
         if host is None:
             host = DEMO_REMOTE_TILE_SERVER
             logger.error(
@@ -389,6 +411,7 @@ class TileClient(BaseTileClient):
     def __init__(
         self,
         filename: Union[pathlib.Path, str, DatasetReaderBase, FileTileSource],
+        default_projection: Optional[str] = "EPSG:3857",
         port: Union[int, str] = "default",
         debug: bool = False,
         host: str = "127.0.0.1",
@@ -405,7 +428,7 @@ class TileClient(BaseTileClient):
             filename = filename.name
         elif isinstance(filename, FileTileSource):
             filename = filename._getLargeImagePath()
-        super().__init__(filename)
+        super().__init__(filename=filename, default_projection=default_projection)
         app = AppManager.get_or_create_app(cors_all=cors_all)
         self._key = launch_server(app, port=port, debug=debug, host=host)
         # Store actual port just in case
@@ -517,6 +540,7 @@ def get_or_create_tile_client(
     source: Union[pathlib.Path, str, TileClient, DatasetReaderBase, FileTileSource],
     port: Union[int, str] = "default",
     debug: bool = False,
+    default_projection: Optional[str] = "EPSG:3857",
 ):
     """A helper to safely get a TileClient from a path on disk.
 
@@ -532,8 +556,9 @@ def get_or_create_tile_client(
     _internally_created = False
     # Launch tile server if file path is given
     if not isinstance(source, TileClient):
-        source = TileClient(source, port=port, debug=debug)
+        source = TileClient(source, port=port, debug=debug, default_projection=default_projection)
         _internally_created = True
+
     # Check that the tile source is valid and no server errors
     try:
         r = requests.get(source.create_url("api/metadata"))
