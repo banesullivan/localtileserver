@@ -22,6 +22,7 @@
    rasterio
    validate_cog
    non-geo
+   bokeh
 
 
 Here is the "one-liner" to visualize a large geospatial image with
