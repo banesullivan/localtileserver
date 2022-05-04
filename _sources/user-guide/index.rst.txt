@@ -21,6 +21,7 @@
    ipyleaflet_deep_zoom
    rasterio
    validate_cog
+   non-geo
 
 
 Here is the "one-liner" to visualize a large geospatial image with
