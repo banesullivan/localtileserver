@@ -335,13 +335,22 @@ class BaseTileClient:
             raise NotImplementedError
 
         from IPython.display import display
-        from ipyleaflet import Map
+        from ipyleaflet import Map, projections
 
         from localtileserver.widgets import get_leaflet_tile_layer
 
         t = get_leaflet_tile_layer(self)
-        m = Map(center=self.center(), zoom=self.default_zoom)
-        m.add_layer(t)
+        if self.default_projection is None:
+            m = Map(
+                basemap=t,
+                min_zoom=0,
+                max_zoom=self.max_zoom,
+                zoom=0,
+                crs=projections.Simple,
+            )
+        else:
+            m = Map(center=self.center(), zoom=self.default_zoom)
+            m.add_layer(t)
         return display(m)
 
     def _repr_png_(self):

@@ -18,7 +18,7 @@ def get_leaflet_tile_layer(
     source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
-    projection: Optional[str] = None,
+    projection: Optional[str] = "",
     band: Union[int, List[int]] = None,
     palette: Union[str, List[str]] = None,
     vmin: Union[Union[float, int], List[Union[float, int]]] = None,
@@ -121,7 +121,7 @@ def get_leaflet_tile_layer(
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
     kwargs.setdefault("max_native_zoom", source.max_zoom)
-    if source.default_projection is None:
+    if not projection and source.default_projection is None:
         kwargs.setdefault("crs", projections.Simple)
     tile_layer = BoundTileLayer(url=url, attribution=attribution, **kwargs)
     if created:
@@ -220,7 +220,7 @@ def get_folium_tile_layer(
     source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
-    projection: Optional[str] = None,
+    projection: Optional[str] = "",
     band: Union[int, List[int]] = None,
     palette: Union[str, List[str]] = None,
     vmin: Union[Union[float, int], List[Union[float, int]]] = None,
@@ -315,7 +315,7 @@ def get_folium_tile_layer(
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION
-    if source.default_projection is None:
+    if not projection and source.default_projection is None:
         kwargs.setdefault("crs", "Simple")
     tile_layer = TileLayer(tiles=url, attr=attr, **kwargs)
     if created:
