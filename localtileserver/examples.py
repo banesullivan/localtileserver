@@ -79,3 +79,9 @@ def get_oam2(*args, **kwargs):
 def get_elevation_us(*args, **kwargs):
     path = get_elevation_us_url()
     return TileClient(path, *args, **kwargs)
+
+
+@wraps(_get_example_client)
+def get_pelvis(*args, **kwargs):
+    path = get_data_path("G10-3_pelvis_crop-powers-of-3.tif")
+    return TileClient(path, default_projection=None, *args, **kwargs)

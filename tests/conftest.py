@@ -1,7 +1,7 @@
 from osgeo import gdal
 import pytest
 
-from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path
+from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path, get_pelvis
 from localtileserver.tileserver import create_app
 
 
@@ -21,6 +21,14 @@ def bahamas_file():
 def bahamas(port="default", debug=True):
     # Using debug True since in a testing environment
     client = get_bahamas(port=port, debug=debug)
+    yield client
+    client.shutdown(force=True)
+
+
+@pytest.fixture
+def pelvis(port="default", debug=True):
+    # Using debug True since in a testing environment
+    client = get_pelvis(port=port, debug=debug)
     yield client
     client.shutdown(force=True)
 
