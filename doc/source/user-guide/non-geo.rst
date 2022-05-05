@@ -12,7 +12,7 @@ This will work to visualize any image (e.g., medical microscopy images).
   from ipyleaflet import Map, projections
   from localtileserver import TileClient, examples, get_leaflet_tile_layer
 
-  client = examples.get_landsat(default_projection=None)
+  client = examples.get_pelvis(default_projection=None)
 
   # Image layer that fetches tiles in image coordinates
   image_layer = get_leaflet_tile_layer(client)
