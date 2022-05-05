@@ -42,7 +42,13 @@ class BaseTileClient:
         default_projection: Optional[str] = "EPSG:3857",
     ):
         self._filename = get_clean_filename(filename)
-        self._default_projection = default_projection
+        self._metadata = {}
+        self._is_geospatial = None
+
+        if default_projection != "EPSG:3857":
+            self._default_projection = default_projection
+        else:
+            self._default_projection = ""
 
     @property
     def filename(self):
@@ -50,6 +56,8 @@ class BaseTileClient:
 
     @property
     def default_projection(self):
+        if self._default_projection == "":
+            self._default_projection = "EPSG:3857" if self.is_geospatial else None
         return self._default_projection
 
     @default_projection.setter
@@ -225,11 +233,20 @@ class BaseTileClient:
         return save_file_from_request(r, output_path)
 
     def metadata(self, projection: Optional[str] = ""):
-        if projection == "":
-            projection = self.default_projection
-        r = requests.get(self.create_url(f"/api/metadata?projection={projection}"))
-        r.raise_for_status()
-        return r.json()
+        if projection not in self._metadata:
+            if projection == "":
+                projection = self.default_projection
+            r = requests.get(self.create_url(f"/api/metadata?projection={projection}"))
+            r.raise_for_status()
+            self._metadata[projection] = r.json()
+        return self._metadata[projection]
+
+    def metadata_safe(self, projection: Optional[str] = ""):
+        if self.is_geospatial:
+            m = self.metadata(projection=projection)
+        else:
+            m = self.metadata(projection=None)
+        return m
 
     def bounds(self, projection: str = "EPSG:4326"):
         """Get bounds in form of (ymin, ymax, xmin, xmax)."""
@@ -315,7 +332,7 @@ class BaseTileClient:
 
     @property
     def default_zoom(self):
-        m = self.metadata()
+        m = self.metadata_safe()
         try:
             return m["levels"] - m["sourceLevels"]
         except KeyError:
@@ -323,12 +340,14 @@ class BaseTileClient:
 
     @property
     def max_zoom(self):
-        m = self.metadata()
+        m = self.metadata_safe()
         return m.get("levels")
 
     @property
     def is_geospatial(self):
-        return self.metadata().get("geospatial", False)
+        if self._is_geospatial is None:
+            self._is_geospatial = self.metadata(projection=None).get("geospatial", False)
+        return self._is_geospatial
 
     def _ipython_display_(self):
         from IPython.display import display
