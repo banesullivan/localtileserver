@@ -121,9 +121,13 @@ def get_leaflet_tile_layer(
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
     kwargs.setdefault("max_native_zoom", source.max_zoom)
-    if not projection and source.default_projection is None:
+    if projection is None or (not projection and source.default_projection is None):
         kwargs.setdefault("crs", projections.Simple)
-    tile_layer = BoundTileLayer(url=url, attribution=attribution, **kwargs)
+        bounds = None
+    else:
+        b = source.bounds()
+        bounds = ((b[0], b[2]), (b[1], b[3]))
+    tile_layer = BoundTileLayer(url=url, attribution=attribution, bounds=bounds, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source
@@ -315,7 +319,7 @@ def get_folium_tile_layer(
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION
-    if not projection and source.default_projection is None:
+    if projection is None or (not projection and source.default_projection is None):
         kwargs.setdefault("crs", "Simple")
     tile_layer = TileLayer(tiles=url, attr=attr, **kwargs)
     if created:
