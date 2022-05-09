@@ -237,9 +237,19 @@
               
               <div class="toc-item">
                 
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
-    
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#converting-to-a-cog">
+   ↔️ Converting to a COG
+  </a>
+ </li>
+</ul>
+
 </nav>
               </div>
               
@@ -307,6 +317,73 @@ error.</p>
 </div>
 </div>
 </div>
+<section id="converting-to-a-cog">
+<h2>↔️ Converting to a COG<a class="headerlink" href="#converting-to-a-cog" title="Permalink to this headline">#</a></h2>
+<p>Converting an image to a Cloud Optimized GeoTiff, while easy, isn’t always
+straightforward. I often find myself needing to recall <em>exactly</em> how to do it
+or need to point people to a resource on how to perform the conversion <em>so that
+the resulting image is not only a COG but a performant COG.</em></p>
+<p>This <em>brief</em> section is a place for me to note how to convert imagery to a
+COG.</p>
+<p>The easiest method is to use <code class="docutils literal notranslate"><span class="pre">large_image_converter</span></code>: <a class="reference external" href="https://pypi.org/project/large-image-converter/">https://pypi.org/project/large-image-converter/</a></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">large_image_converter</span>
+
+<span class="n">large_image_converter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">input_path</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Under the hood, this is using GDAL’s translate utility to perform the
+conversion with a few cleverly chosen options set to better (opinionated)
+default values:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gdal_translate &lt;input&gt; &lt;output&gt;.tiff <span class="se">\</span>
+  -of COG <span class="se">\</span>
+  -co <span class="nv">BIGTIFF</span><span class="o">=</span>IF_SAFER <span class="se">\</span>
+  -co <span class="nv">BLOCKSIZE</span><span class="o">=</span><span class="m">256</span> <span class="se">\</span>
+  -co <span class="nv">COMPRESS</span><span class="o">=</span>LZW <span class="se">\</span>
+  -co <span class="nv">PREDICTOR</span><span class="o">=</span>YES <span class="se">\</span>
+  -co <span class="nv">QUALITY</span><span class="o">=</span><span class="m">90</span>
+</pre></div>
+</div>
+<p>or in Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">osgeo</span> <span class="kn">import</span> <span class="n">gdal</span>
+
+<span class="n">options</span> <span class="o">=</span> <span class="p">[</span>
+       <span class="s1">&#39;-of&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;COG&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;-co&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;BIGTIFF=IF_SAFER&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;-co&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;COMPRESS=LZW&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;-co&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;PREDICTOR=YES&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;-co&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;BLOCKSIZE=256&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;-co&#39;</span><span class="p">,</span>
+       <span class="s1">&#39;QUALITY=90&#39;</span>
+   <span class="p">]</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Open</span><span class="p">(</span><span class="n">src_path</span><span class="p">)</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">gdal</span><span class="o">.</span><span class="n">Translate</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>I want to elaborate a bit on what I meant when I stated the statement above:</p>
+<blockquote>
+<div><p>so that the resulting image is not only a COG but a performant COG.</p>
+</div></blockquote>
+<p>I’m planning to write a thorough blog post on this topic, but the gist is that
+a COG is a performant COG when two criteria are properly met:</p>
+<ol class="arabic simple">
+<li><p><strong>Tiling:</strong> the bytes of the image data are arranged in tiles such that data that are geographically close are adjacent within the file. This is opposed to typical striping patterns.</p></li>
+<li><p><strong>Overviews:</strong> Embedded in the image are “zoomed out”, lower-resolution versions of the image down to 256x256 pixels (or 512x512), effectively creating a pyramid of resolutions.</p></li>
+</ol>
+<p><a class="reference external" href="https://www.cogeo.org/in-depth.html">cogeo.org</a> does a wonderful job
+explaining these concepts - for further details, please refer to their in-depth
+explanation.</p>
+<p>While many routines to generate a COG exist out there, many of them do not
+properly handle both tiling and generating overviews. Often, this is not a big
+deal, but when dealing with massive amounts of imagery, the tiling block
+sizes, compression scheme, and ensuring overviews are present can make
+significant performances increases.</p>
+</section>
 </section>
 
 
