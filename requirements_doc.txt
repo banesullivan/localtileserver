@@ -1,6 +1,6 @@
 sphinx
 sphinx-copybutton
 sphinx-notfound-page
-pydata-sphinx-theme
+pydata-sphinx-theme==0.9
 jupyter-sphinx
 bokeh
