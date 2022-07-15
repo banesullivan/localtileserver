@@ -16,7 +16,7 @@
 
 .. jupyter-execute::
 
-  from localtileserver import get_leaflet_tile_layer, examples
+  from localtileserver import TileClient, get_leaflet_tile_layer, examples
   from ipyleaflet import Map
 
   # Create a TileClient from a raster file
