@@ -84,5 +84,5 @@ def get_elevation_us(*args, **kwargs):
 @wraps(_get_example_client)
 def get_pelvis(*args, **kwargs):
     path = get_data_path("G10-3_pelvis_crop-powers-of-3.tif")
-    kwargs["default_projection"] = None
+    kwargs.setdefault("default_projection", None)
     return TileClient(path, *args, **kwargs)
