@@ -1,3 +1,4 @@
+import json
 import os
 
 import large_image
@@ -11,6 +12,7 @@ from localtileserver.client import (
     TileClient,
     get_or_create_tile_client,
 )
+from localtileserver.helpers import polygon_to_geojson
 from localtileserver.tileserver.utilities import get_clean_filename, get_tile_source
 
 skip_pil_source = True
@@ -20,6 +22,12 @@ try:
     skip_pil_source = False
 except ImportError:
     pass
+
+skip_shapely = False
+try:
+    from shapely.geometry import Polygon
+except ImportError:
+    skip_shapely = True
 
 TOLERANCE = 2e-2
 
@@ -237,3 +245,24 @@ def test_large_image_to_client(bahamas_file):
 
 def test_default_zoom(bahamas):
     assert bahamas.default_zoom == 8
+
+
+@pytest.mark.skipif(skip_shapely, reason="shapely not installed")
+def test_bounds_polygon(bahamas):
+    poly = bahamas.bounds(return_polygon=True)
+    assert isinstance(poly, Polygon)
+    e = poly.bounds
+    assert e[0] == pytest.approx(-78.9586, abs=TOLERANCE)
+    assert e[1] == pytest.approx(23.5650, abs=TOLERANCE)
+    assert e[2] == pytest.approx(-76.5749, abs=TOLERANCE)
+    assert e[3] == pytest.approx(25.5509, abs=TOLERANCE)
+
+
+@pytest.mark.skipif(skip_shapely, reason="shapely not installed")
+def test_bounds_geojson(bahamas):
+    poly = bahamas.bounds(return_polygon=True)
+    assert isinstance(poly, Polygon)
+    geojson = polygon_to_geojson(poly)
+    assert isinstance(geojson, str)
+    obj = json.loads(geojson)
+    assert isinstance(obj[0], dict)

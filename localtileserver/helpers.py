@@ -1,3 +1,6 @@
+import json
+
+
 def save_new_raster(src_path, out_path, data):
     """Save new raster from a numpy array using the metadata of another raster.
 
@@ -34,3 +37,15 @@ def save_new_raster(src_path, out_path, data):
             dst.write(band, i + 1)
 
     return out_path
+
+
+def polygon_to_geojson(polygon) -> str:
+    """Dump shapely.Polygon to GeoJSON."""
+    # Safely import shapely
+    try:
+        from shapely.geometry import mapping
+    except ImportError as e:  # pragma: no cover
+        raise ImportError(f"Please install `shapely`: {e}")
+
+    features = [{"type": "Feature", "properties": {}, "geometry": mapping(polygon)}]
+    return json.dumps(features)

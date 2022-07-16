@@ -248,14 +248,41 @@ class BaseTileClient:
             m = self.metadata(projection=None)
         return m
 
-    def bounds(self, projection: str = "EPSG:4326"):
-        """Get bounds in form of (ymin, ymax, xmin, xmax)."""
+    def bounds(self, projection: str = "EPSG:4326", return_polygon: bool = False):
+        """Get bounds in form of (ymin, ymax, xmin, xmax).
+
+        Parameters
+        ----------
+        projection : str
+            The EPSG projection of the returned coordinates. Can also be a
+            Proj4 projection.
+
+        return_polygon : bool, optional
+            If true, return a shapely.Polygon object of the bounding polygon
+            of the raster.
+        """
         r = requests.get(
             self.create_url(f"/api/bounds?units={projection}&projection={self.default_projection}")
         )
         r.raise_for_status()
         bounds = r.json()
-        return (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
+        extent = (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
+        if not return_polygon:
+            return extent
+        # Safely import shapely
+        try:
+            from shapely.geometry import Polygon
+        except ImportError as e:  # pragma: no cover
+            raise ImportError(f"Please install `shapely`: {e}")
+        coords = (
+            (bounds["xmin"], bounds["ymax"]),
+            (bounds["xmin"], bounds["ymax"]),
+            (bounds["xmax"], bounds["ymax"]),
+            (bounds["xmax"], bounds["ymin"]),
+            (bounds["xmin"], bounds["ymin"]),
+            (bounds["xmin"], bounds["ymax"]),  # Close the loop
+        )
+        return Polygon(coords)
 
     def center(self, projection: str = "EPSG:4326"):
         """Get center in the form of (y <lat>, x <lon>)."""
