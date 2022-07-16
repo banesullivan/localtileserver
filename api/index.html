@@ -253,8 +253,18 @@ default is for all TileClient’s to share a single server.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.bounds">
-<span class="sig-name descname"><span class="pre">bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.bounds" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.bounds" title="Permalink to this definition">#</a></dt>
 <dd><p>Get bounds in form of (ymin, ymax, xmin, xmax).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>projection</strong> (<em>str</em>) – The EPSG projection of the returned coordinates. Can also be a
+Proj4 projection.</p></li>
+<li><p><strong>return_polygon</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, return a shapely.Polygon object of the bounding polygon
+of the raster.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
