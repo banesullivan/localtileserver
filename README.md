@@ -1,4 +1,4 @@
-![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/bahamas-tiles.png)
+![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/bahamas-tiles-wide.png)
 
 # 🌐 Local Tile Server for Geospatial Rasters
 
