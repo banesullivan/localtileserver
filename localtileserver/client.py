@@ -217,6 +217,33 @@ class BaseTileClient:
         r.raise_for_status()
         return save_file_from_request(r, output_path)
 
+    def extract_roi_polygon(
+        self,
+        polygon: "Polygon",
+        units: str = "EPSG:4326",
+        encoding: str = "TILED",
+        output_path: pathlib.Path = None,
+    ):
+        """Extract ROI in world coordinates using a Shapely Polygon.
+
+        Note
+        ----
+        This accepts any object with a ``bounds`` property that returns the
+        bounding coordinates of the shape as: ``left``, ``bottom``, ``right``,
+        ``top``.
+
+        """
+        left, bottom, right, top = polygon.bounds
+        return self.extract_roi(
+            left,
+            right,
+            bottom,
+            top,
+            units=units,
+            encoding=encoding,
+            output_path=output_path,
+        )
+
     def extract_roi_pixel(
         self,
         left: int,

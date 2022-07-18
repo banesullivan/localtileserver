@@ -13,7 +13,11 @@ from localtileserver.client import (
     get_or_create_tile_client,
 )
 from localtileserver.helpers import polygon_to_geojson
-from localtileserver.tileserver.utilities import get_clean_filename, get_tile_source
+from localtileserver.tileserver.utilities import (
+    get_clean_filename,
+    get_tile_bounds,
+    get_tile_source,
+)
 
 skip_pil_source = True
 try:
@@ -106,8 +110,29 @@ def test_extract_roi_world(bahamas):
     # -78.047, -77.381, 24.056, 24.691
     path = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691)
     assert path.exists()
-    source = get_tile_source(path)
+    source = get_tile_source(path, projection="EPSG:3857")
     assert source.getMetadata()["geospatial"]
+    e = get_tile_bounds(source, projection="EPSG:4326")
+    assert e["xmin"] == pytest.approx(-78.047, abs=TOLERANCE)
+    assert e["xmax"] == pytest.approx(-77.381, abs=TOLERANCE)
+    assert e["ymin"] == pytest.approx(24.056, abs=TOLERANCE)
+    assert e["ymax"] == pytest.approx(24.691, abs=TOLERANCE)
+
+
+@pytest.mark.skipif(skip_shapely, reason="shapely not installed")
+def test_extract_roi_world_polygon(bahamas):
+    from shapely.geometry import box
+
+    poly = box(-78.047, 24.056, -77.381, 24.691)
+    path = bahamas.extract_roi_polygon(poly)
+    assert path.exists()
+    source = get_tile_source(path, projection="EPSG:3857")
+    assert source.getMetadata()["geospatial"]
+    e = get_tile_bounds(source, projection="EPSG:4326")
+    assert e["xmin"] == pytest.approx(-78.047, abs=TOLERANCE)
+    assert e["xmax"] == pytest.approx(-77.381, abs=TOLERANCE)
+    assert e["ymin"] == pytest.approx(24.056, abs=TOLERANCE)
+    assert e["ymax"] == pytest.approx(24.691, abs=TOLERANCE)
 
 
 def test_extract_roi_pixel(bahamas):
@@ -115,14 +140,18 @@ def test_extract_roi_pixel(bahamas):
     assert path.exists()
     source = get_tile_source(path)
     assert source.getMetadata()["geospatial"]
+    assert source.getMetadata()["sizeX"] == 400
+    assert source.getMetadata()["sizeY"] == 300
 
 
 @pytest.mark.skipif(skip_pil_source, reason="`large-image-source-pil` not installed")
 def test_extract_roi_pixel_pil(bahamas):
-    path = bahamas.extract_roi_pixel(100, 500, 300, 600, encoding="PNG")
+    path = bahamas.extract_roi_pixel(100, 550, 300, 650, encoding="PNG")
     assert path.exists()
     source = get_tile_source(path)
     assert "geospatial" not in source.getMetadata()
+    assert source.getMetadata()["sizeX"] == 450
+    assert source.getMetadata()["sizeY"] == 350
 
 
 def test_caching_query_params(bahamas):
