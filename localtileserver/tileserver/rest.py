@@ -3,7 +3,7 @@ import json
 import time
 from urllib.parse import unquote
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageDraw, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
 import large_image
@@ -267,10 +267,14 @@ class ThumbnailView(BaseImageView):
 @api.doc(params=STYLE_PARAMS)
 class BaseTileView(BaseImageView):
     @staticmethod
-    def add_border_to_image(content):
+    def add_border_to_image(content, msg: str = None):
         img = Image.open(io.BytesIO(content))
         img = ImageOps.crop(img, 1)
         border = ImageOps.expand(img, border=1, fill="black")
+        if msg is not None:
+            draw = ImageDraw.Draw(border)
+            w, h = draw.textsize(msg)
+            draw.text(((255 - w) / 2, (255 - h) / 2), msg, fill="red")
         img_bytes = io.BytesIO()
         border.save(img_bytes, format="PNG")
         return img_bytes.getvalue()
@@ -298,6 +302,10 @@ class TileDebugView(View):
     def get(self, x: int, y: int, z: int):
         img = Image.new("RGBA", (254, 254))
         img = ImageOps.expand(img, border=1, fill="black")
+        draw = ImageDraw.Draw(img)
+        msg = f"{x}/{y}/{z}"
+        w, h = draw.textsize(msg)
+        draw.text(((255 - w) / 2, (255 - h) / 2), msg, fill="black")
         img_bytes = io.BytesIO()
         img.save(img_bytes, format="PNG")
         img_bytes.seek(0)
@@ -330,7 +338,7 @@ class TileView(BaseTileView):
         mime_type = tile_source.getTileMimeType()
         grid = str_to_bool(request.args.get("grid", "False"))
         if grid:
-            tile_binary = self.add_border_to_image(tile_binary)
+            tile_binary = self.add_border_to_image(tile_binary, msg=f"{x}/{y}/{z}")
         return send_file(
             io.BytesIO(tile_binary),
             download_name=f"{x}.{y}.{z}.png",
