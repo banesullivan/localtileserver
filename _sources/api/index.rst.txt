@@ -45,6 +45,8 @@ Other Helpers
 
 .. autofunction:: localtileserver.validate.validate_cog
 
+.. autofunction:: localtileserver.helpers.polygon_to_geojson
+
 
 Exceptions
 ----------
