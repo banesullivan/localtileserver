@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>🎯 Using ipyleaflet for ROI Extraction &#8212; 🌐 localtileserver</title>
+    <title>🎯 ROI Extraction &#8212; 🌐 localtileserver</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -183,13 +183,7 @@
  </li>
  <li class="toctree-l1 current active">
   <a class="current reference internal" href="#">
-   🎯 Using
-   <code class="docutils literal notranslate">
-    <span class="pre">
-     ipyleaflet
-    </span>
-   </code>
-   for ROI Extraction
+   🎯 ROI Extraction
   </a>
  </li>
  <li class="toctree-l1">
@@ -250,9 +244,24 @@
     
     <div class="toc-item">
       
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
 
 <nav id="bd-toc-nav">
-    
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#user-interface-with-ipyleaflet">
+   User Interface with
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     ipyleaflet
+    </span>
+   </code>
+  </a>
+ </li>
+</ul>
+
 </nav>
     </div>
     
@@ -270,8 +279,44 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="using-ipyleaflet-for-roi-extraction">
-<h1>🎯 Using <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code> for ROI Extraction<a class="headerlink" href="#using-ipyleaflet-for-roi-extraction" title="Permalink to this heading">#</a></h1>
+  <section id="roi-extraction">
+<h1>🎯 ROI Extraction<a class="headerlink" href="#roi-extraction" title="Permalink to this heading">#</a></h1>
+<p>The <a class="reference internal" href="../api/index.html#localtileserver.TileClient" title="localtileserver.TileClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">localtileserver.TileClient</span></code></a> class has a few methods for extracting
+regions of interest (ROIs):</p>
+<ul class="simple">
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">localtileserver.TileClient.extract_roi()</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">localtileserver.TileClient.extract_roi_shape()</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">localtileserver.TileClient.extract_roi_pixel()</span></code></p></li>
+</ul>
+<p>These methods can be used to extract rectangular regions from large images
+using world coordinates, Shapely geometry, or pixel bounds.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">TileClient</span><span class="p">,</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
+<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span><span class="p">,</span> <span class="n">WKTLayer</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_san_francisco</span><span class="p">()</span>
+<span class="n">presidio</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">load_presidio</span><span class="p">()</span>
+
+<span class="c1"># Perform ROI extraction with Shapely object</span>
+<span class="n">output_path</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">extract_roi_shape</span><span class="p">(</span><span class="n">presidio</span><span class="p">,</span> <span class="n">output_path</span><span class="o">=</span><span class="s1">&#39;presidio.tif&#39;</span><span class="p">)</span>
+
+<span class="n">presidio_client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+<span class="n">presidio_layer</span> <span class="o">=</span> <span class="n">WKTLayer</span><span class="p">(</span>
+  <span class="n">wkt_string</span><span class="o">=</span><span class="n">presidio</span><span class="o">.</span><span class="n">wkt</span><span class="p">,</span>
+  <span class="n">style</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;fillOpacity&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="n">hover_style</span><span class="o">=</span><span class="p">{</span>
+      <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span> <span class="s1">&#39;fillOpacity&#39;</span><span class="p">:</span> <span class="mi">0</span>
+  <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">presidio_client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="n">presidio_client</span><span class="o">.</span><span class="n">default_zoom</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">presidio_client</span><span class="p">))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">presidio_layer</span><span class="p">)</span>
+<span class="n">m</span>
+</pre></div>
+</div>
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/presidio.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/presidio.png" />
+<section id="user-interface-with-ipyleaflet">
+<h2>User Interface with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code><a class="headerlink" href="#user-interface-with-ipyleaflet" title="Permalink to this heading">#</a></h2>
 <p>I have included the <code class="xref py py-func docutils literal notranslate"><span class="pre">get_leaflet_roi_controls()</span></code> utility to create some leaflet
 UI controls for extracting regions of interest from a tile client. You can
 use it as follows and then draw a polygon and click the “Extract ROI” button.</p>
@@ -298,6 +343,7 @@ use it as follows and then draw a polygon and click the “Extract ROI” button
 </pre></div>
 </div>
 <img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-draw-roi.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet-draw-roi.png" />
+</section>
 </section>
 
 

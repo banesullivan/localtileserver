@@ -253,7 +253,7 @@ default is for all TileClient’s to share a single server.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.bounds">
-<span class="sig-name descname"><span class="pre">bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.bounds" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_wkt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.bounds" title="Permalink to this definition">#</a></dt>
 <dd><p>Get bounds in form of (ymin, ymax, xmin, xmax).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -262,6 +262,8 @@ default is for all TileClient’s to share a single server.</p>
 Proj4 projection.</p></li>
 <li><p><strong>return_polygon</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, return a shapely.Polygon object of the bounding polygon
 of the raster.</p></li>
+<li><p><strong>return_wkt</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, return Well Known Text (WKT) string of the bounding
+polygon of the raster.</p></li>
 </ul>
 </dd>
 </dl>
@@ -269,8 +271,18 @@ of the raster.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.center">
-<span class="sig-name descname"><span class="pre">center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.center" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">center</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_point</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_wkt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.center" title="Permalink to this definition">#</a></dt>
 <dd><p>Get center in the form of (y &lt;lat&gt;, x &lt;lon&gt;).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>projection</strong> (<em>str</em>) – The srs or projection as a Proj4 string of the returned coordinates</p></li>
+<li><p><strong>return_point</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, returns a shapely.Point object.</p></li>
+<li><p><strong>return_wkt</strong> (<em>bool</em><em>, </em><em>optional</em>) – If true, returns a Well Known Text (WKT) string of center
+coordinates.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -301,15 +313,17 @@ of the raster.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.extract_roi_polygon">
-<span class="sig-name descname"><span class="pre">extract_roi_polygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'TILED'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.extract_roi_polygon" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.extract_roi_shape">
+<span class="sig-name descname"><span class="pre">extract_roi_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'TILED'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.extract_roi_shape" title="Permalink to this definition">#</a></dt>
 <dd><p>Extract ROI in world coordinates using a Shapely Polygon.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>This accepts any object with a <code class="docutils literal notranslate"><span class="pre">bounds</span></code> property that returns the
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>shape</strong> – Anything shape-like (GeoJSON dict, WKT string, Shapely.Polygon) or
+anything with a <code class="docutils literal notranslate"><span class="pre">bounds</span></code> property that returns the
 bounding coordinates of the shape as: <code class="docutils literal notranslate"><span class="pre">left</span></code>, <code class="docutils literal notranslate"><span class="pre">bottom</span></code>, <code class="docutils literal notranslate"><span class="pre">right</span></code>,
 <code class="docutils literal notranslate"><span class="pre">top</span></code>.</p>
-</div>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
