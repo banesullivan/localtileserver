@@ -120,11 +120,11 @@ def test_extract_roi_world(bahamas):
 
 
 @pytest.mark.skipif(skip_shapely, reason="shapely not installed")
-def test_extract_roi_world_polygon(bahamas):
+def test_extract_roi_world_shape(bahamas):
     from shapely.geometry import box
 
     poly = box(-78.047, 24.056, -77.381, 24.691)
-    path = bahamas.extract_roi_polygon(poly)
+    path = bahamas.extract_roi_shape(poly)
     assert path.exists()
     source = get_tile_source(path, projection="EPSG:3857")
     assert source.getMetadata()["geospatial"]
@@ -285,6 +285,8 @@ def test_bounds_polygon(bahamas):
     assert e[1] == pytest.approx(23.5650, abs=TOLERANCE)
     assert e[2] == pytest.approx(-76.5749, abs=TOLERANCE)
     assert e[3] == pytest.approx(25.5509, abs=TOLERANCE)
+    wkt = bahamas.bounds(return_wkt=True)
+    assert isinstance(wkt, str)
 
 
 @pytest.mark.skipif(skip_shapely, reason="shapely not installed")

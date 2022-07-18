@@ -2,6 +2,8 @@
 import os
 import pathlib
 
+DIRECTORY = pathlib.Path(__file__).parent
+
 
 def str_to_bool(v):
     return v.lower() in ("yes", "true", "t", "1", "on", "y")
@@ -19,8 +21,7 @@ def get_data_path(name):
     if get_building_docs():
         return f"https://github.com/banesullivan/localtileserver/raw/main/localtileserver/tileserver/data/{name}"
     else:
-        dirname = pathlib.Path(__file__).parent
-        return dirname / name
+        return DIRECTORY / name
 
 
 def get_pine_gulch_url():

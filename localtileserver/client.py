@@ -17,6 +17,7 @@ except ImportError:
 from server_thread import ServerManager, launch_server
 
 from localtileserver.configure import get_default_client_params
+from localtileserver.helpers import parse_shapely
 from localtileserver.manager import AppManager
 from localtileserver.tileserver import get_building_docs, get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import add_query_parameters, save_file_from_request
@@ -217,23 +218,27 @@ class BaseTileClient:
         r.raise_for_status()
         return save_file_from_request(r, output_path)
 
-    def extract_roi_polygon(
+    def extract_roi_shape(
         self,
-        polygon: "Polygon",
+        shape,
         units: str = "EPSG:4326",
         encoding: str = "TILED",
         output_path: pathlib.Path = None,
     ):
         """Extract ROI in world coordinates using a Shapely Polygon.
 
-        Note
-        ----
-        This accepts any object with a ``bounds`` property that returns the
-        bounding coordinates of the shape as: ``left``, ``bottom``, ``right``,
-        ``top``.
+        Parameters
+        ----------
+        shape
+            Anything shape-like (GeoJSON dict, WKT string, Shapely.Polygon) or
+            anything with a ``bounds`` property that returns the
+            bounding coordinates of the shape as: ``left``, ``bottom``, ``right``,
+            ``top``.
 
         """
-        left, bottom, right, top = polygon.bounds
+        if not hasattr(shape, "bounds"):
+            shape = parse_shapely(shape)
+        left, bottom, right, top = shape.bounds
         return self.extract_roi(
             left,
             right,
@@ -275,7 +280,9 @@ class BaseTileClient:
             m = self.metadata(projection=None)
         return m
 
-    def bounds(self, projection: str = "EPSG:4326", return_polygon: bool = False):
+    def bounds(
+        self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
+    ):
         """Get bounds in form of (ymin, ymax, xmin, xmax).
 
         Parameters
@@ -287,6 +294,11 @@ class BaseTileClient:
         return_polygon : bool, optional
             If true, return a shapely.Polygon object of the bounding polygon
             of the raster.
+
+        return_wkt : bool, optional
+            If true, return Well Known Text (WKT) string of the bounding
+            polygon of the raster.
+
         """
         r = requests.get(
             self.create_url(f"/api/bounds?units={projection}&projection={self.default_projection}")
@@ -294,7 +306,7 @@ class BaseTileClient:
         r.raise_for_status()
         bounds = r.json()
         extent = (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
-        if not return_polygon:
+        if not return_polygon and not return_wkt:
             return extent
         # Safely import shapely
         try:
@@ -309,15 +321,46 @@ class BaseTileClient:
             (bounds["xmin"], bounds["ymin"]),
             (bounds["xmin"], bounds["ymax"]),  # Close the loop
         )
-        return Polygon(coords)
+        poly = Polygon(coords)
+        if return_wkt:
+            return poly.wkt
+        return poly
 
-    def center(self, projection: str = "EPSG:4326"):
-        """Get center in the form of (y <lat>, x <lon>)."""
+    def center(
+        self, projection: str = "EPSG:4326", return_point: bool = False, return_wkt: bool = False
+    ):
+        """Get center in the form of (y <lat>, x <lon>).
+
+        Parameters
+        ----------
+        projection : str
+            The srs or projection as a Proj4 string of the returned coordinates
+
+        return_point : bool, optional
+            If true, returns a shapely.Point object.
+
+        return_wkt : bool, optional
+            If true, returns a Well Known Text (WKT) string of center
+            coordinates.
+
+        """
         bounds = self.bounds(projection=projection)
-        return (
+        point = (
             (bounds[1] - bounds[0]) / 2 + bounds[0],
             (bounds[3] - bounds[2]) / 2 + bounds[2],
         )
+        if return_point or return_wkt:
+            # Safely import shapely
+            try:
+                from shapely.geometry import Point
+            except ImportError as e:  # pragma: no cover
+                raise ImportError(f"Please install `shapely`: {e}")
+
+            point = Point(point)
+            if return_wkt:
+                return point.wkt
+
+        return point
 
     def thumbnail(
         self,
@@ -405,7 +448,7 @@ class BaseTileClient:
 
     def _ipython_display_(self):
         from IPython.display import display
-        from ipyleaflet import Map, projections
+        from ipyleaflet import Map, WKTLayer, projections
 
         from localtileserver.widgets import get_leaflet_tile_layer
 
@@ -421,6 +464,11 @@ class BaseTileClient:
         else:
             m = Map(center=self.center(), zoom=self.default_zoom)
             m.add_layer(t)
+            wlayer = WKTLayer(
+                wkt_string=self.bounds(return_wkt=True),
+                style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
+            )
+            m.add_layer(wlayer)
         return display(m)
 
     def _repr_png_(self):

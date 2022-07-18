@@ -49,3 +49,29 @@ def polygon_to_geojson(polygon) -> str:
 
     features = [{"type": "Feature", "properties": {}, "geometry": mapping(polygon)}]
     return json.dumps(features)
+
+
+def parse_shapely(context):
+    """Convert GeoJSON-like or WKT to shapely object.
+
+    Parameters
+    ----------
+    context : str, dict
+        a GeoJSON-like dict, which provides a "type" member describing the type
+        of the geometry and "coordinates" member providing a list of coordinates,
+        or an object which implements __geo_interface__.
+        If a string, falls back to inferring as Well Known Text (WKT).
+    """
+    try:
+        from shapely.geometry import shape
+        import shapely.wkb
+        import shapely.wkt
+    except ImportError as e:  # pragma: no cover
+        raise ImportError(f"Please install `shapely`: {e}")
+    if isinstance(context, str):
+        # Infer as WKT
+        return shapely.wkt.loads(context)
+    elif isinstance(context, bytes):
+        # Infer as WKB
+        return shapely.wkb.loads(context)
+    return shape(context)
