@@ -16,6 +16,7 @@ from localtileserver.tileserver.data import get_pine_gulch_url
 @click.option("-d", "--debug", default=False)
 @click.option("-b", "--browser", default=True)
 @click.option("-t", "--cesium-token", default="")
+@click.option("-h", "--host", default="127.0.0.1")
 @click.option("-c", "--cors-all", default=False)
 def run_app(
     filename,
@@ -68,7 +69,7 @@ def run_app(
         port = sock.getsockname()[1]
         sock.close()
 
-    url = f"http://{host}:{port}"
+    url = f"http://{host}:{port}?filename={filename}"
     if browser:
         threading.Timer(1, lambda: webbrowser.open(url)).start()
     app.run(host=host, port=port, debug=debug)
