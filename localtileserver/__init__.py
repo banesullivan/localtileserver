@@ -4,6 +4,7 @@ from localtileserver.client import RemoteTileClient, TileClient, get_or_create_t
 from localtileserver.report import Report
 from localtileserver.tileserver.utilities import get_cache_dir, make_vsi, purge_cache
 from localtileserver.widgets import (
+    LocalTileServerLayerMixin,
     get_folium_tile_layer,
     get_leaflet_roi_controls,
     get_leaflet_tile_layer,

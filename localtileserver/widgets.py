@@ -14,6 +14,11 @@ logger = logging.getLogger(__name__)
 DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesullivan/localtileserver' target='_blank'>localtileserver</a>."
 
 
+class LocalTileServerLayerMixin:
+    """Mixin class for tile layers using localtileserver."""
+    pass
+
+
 def get_leaflet_tile_layer(
     source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
     port: Union[int, str] = "default",
@@ -97,7 +102,7 @@ def get_leaflet_tile_layer(
     except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `ipyleaflet`: {e}")
 
-    class BoundTileLayer(TileLayer):
+    class BoundTileLayer(TileLayer, LocalTileServerLayerMixin):
         # https://github.com/jupyter-widgets/ipyleaflet/issues/888
         # https://github.com/ipython/traitlets/issues/626#issuecomment-699957829
         bounds = Union((Tuple(),), default_value=None, allow_none=True).tag(sync=True, o=True)
@@ -302,6 +307,10 @@ def get_folium_tile_layer(
         from folium import TileLayer
     except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `folium`: {e}")
+
+    class FoliumTileLayer(TileLayer, LocalTileServerLayerMixin):
+        pass
+
     source, created = get_or_create_tile_client(
         source, port=port, debug=debug, default_projection=default_projection
     )
@@ -322,7 +331,7 @@ def get_folium_tile_layer(
         attr = DEFAULT_ATTRIBUTION
     if projection is None or (not projection and source.default_projection is None):
         kwargs.setdefault("crs", "Simple")
-    tile_layer = TileLayer(tiles=url, attr=attr, **kwargs)
+    tile_layer = FoliumTileLayer(tiles=url, attr=attr, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source
