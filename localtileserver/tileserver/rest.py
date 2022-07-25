@@ -130,9 +130,9 @@ REGION_PARAMS = {
 
 
 def make_cache_key(*args, **kwargs):
-    path = request.path
+    path = str(request.path)
     args = str(hash(frozenset(request.args.items())))
-    return (path + args).encode("utf-8")
+    return path + args
 
 
 class ListPalettes(View):
