@@ -16,6 +16,7 @@ DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesul
 
 class LocalTileServerLayerMixin:
     """Mixin class for tile layers using localtileserver."""
+
     pass
 
 
