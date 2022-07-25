@@ -1,4 +1,4 @@
-sphinx
+sphinx==5.0.2
 sphinx-copybutton
 sphinx-notfound-page
 pydata-sphinx-theme==0.9
