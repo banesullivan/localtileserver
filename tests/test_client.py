@@ -199,7 +199,7 @@ def test_launch_non_default_server(bahamas_file):
     assert default.server_port != diff.server_port
 
 
-def test_get_or_create_tile_client(bahamas_file, remote_file_url):
+def test_get_or_create_tile_client(bahamas_file):
     tile_client, _ = get_or_create_tile_client(bahamas_file)
     same, created = get_or_create_tile_client(tile_client)
     assert not created
@@ -209,6 +209,10 @@ def test_get_or_create_tile_client(bahamas_file, remote_file_url):
     assert tile_client != diff
     with pytest.raises(requests.HTTPError):
         _, _ = get_or_create_tile_client(__file__)
+
+
+@pytest.mark.xfail
+def test_get_or_create_remote_client(remote_file_url):
     tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
     same, created = get_or_create_tile_client(tile_client)
     assert not created
