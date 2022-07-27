@@ -7,7 +7,7 @@ sentry-sdk[flask]
 --find-links https://girder.github.io/large_image_wheels GDAL
 large-image[gdal,pil]>=1.14.1
 requests
-server-thread
+server-thread>=0.2.0
 scooby
 pytest
 pytest-cov
