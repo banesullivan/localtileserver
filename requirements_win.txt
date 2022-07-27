@@ -4,7 +4,7 @@ Flask-Caching<2.0.0
 flask-cors
 large-image[gdal,pil]>=1.14.1
 requests
-server-thread
+server-thread>=0.2.0
 scooby
 pytest
 pytest-cov
