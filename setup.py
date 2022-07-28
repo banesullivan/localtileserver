@@ -41,7 +41,7 @@ setup(
     install_requires=[
         "click",
         "flask>=2.0.0",
-        "Flask-Caching<2.0.0",
+        "Flask-Caching",
         "flask-cors",
         "flask-restx>=0.5.0",
         "GDAL",
