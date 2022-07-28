@@ -1,6 +1,6 @@
 click
 flask>=2.0.0
-Flask-Caching<2.0.0
+Flask-Caching
 flask-cors
 large-image[gdal,pil]>=1.14.1
 requests
