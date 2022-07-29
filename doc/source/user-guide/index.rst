@@ -23,6 +23,7 @@
    validate_cog
    non-geo
    bokeh
+   hillshade
 
 
 Here is the "one-liner" to visualize a large geospatial image with

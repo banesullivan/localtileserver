@@ -38,7 +38,7 @@ This can also be used with an existing :class:`localtileserver.TileClient`:
 
 
 ↔️ Converting to a COG
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 Converting an image to a Cloud Optimized GeoTiff, while easy, isn't always
 straightforward. I often find myself needing to recall *exactly* how to do it

@@ -4,6 +4,7 @@ from typing import Union
 from localtileserver.client import TileClient
 from localtileserver.helpers import parse_shapely
 from localtileserver.tileserver import (
+    get_co_elevation_url,
     get_data_path,
     get_elevation_us_url,
     get_oam2_url,
@@ -94,3 +95,9 @@ def load_presidio():
     """Load Presidio of San Francisco boundary as Shapely Polygon."""
     with open(DIRECTORY / "presidio.wkb", "rb") as f:
         return parse_shapely(f.read())
+
+
+@wraps(_get_example_client)
+def get_co_elevation(*args, **kwargs):
+    path = get_co_elevation_url()
+    return TileClient(path, *args, **kwargs)

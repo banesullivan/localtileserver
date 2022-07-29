@@ -475,6 +475,16 @@ class BaseTileClient:
         with open(self.thumbnail(), "rb") as f:
             return f.read()
 
+    @property
+    def rasterio(self):
+        """Open dataset with rasterio."""
+        if hasattr(self, "_rasterio_ds"):
+            return self._rasterio_ds
+        import rasterio
+
+        self._rasterio_ds = rasterio.open(self.filename, "r")
+        return self._rasterio_ds
+
 
 class RemoteTileClient(BaseTileClient):
     """Connect to a remote localtileserver instance at a given host URL.

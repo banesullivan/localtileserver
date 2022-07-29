@@ -1,0 +1,85 @@
+⛰️ DEM Hillshade
+----------------
+
+Generate hillshade map from Digital Elevation Model (DEM).
+
+A hillshade is a 3D representation of a surface where the darker and lighter
+colors represent the shadows and highlights that you would visually expect to
+see in a terrain model. Hillshades are often used as an underlay in a map, to
+make the data appear more 3-Dimensional.
+
+
+This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html>`_
+
+
+.. note::
+
+  This example requires ``rasterio`` to be installed.
+
+
+.. jupyter-execute::
+
+  from localtileserver import TileClient, get_leaflet_tile_layer
+  from localtileserver import examples, helpers
+  from ipyleaflet import Map, SplitMapControl
+  import rasterio as rio
+
+  # Example DEM dataset
+  client = examples.get_co_elevation()
+
+  tdem = get_leaflet_tile_layer(client, cmap='gist_earth')
+
+  m = Map(center=client.center(), zoom=client.default_zoom)
+  m.add_layer(tdem)
+  m
+
+
+Read the DEM data as a NumPy array using rasterio:
+
+.. jupyter-execute::
+
+  dem = client.rasterio.read()[0, :, :]
+  dem.shape
+
+
+Compute the hillshade of the DEM using the :func:`localtileserver.helpers.hillshade`
+function (adopted from EarthPy).
+
+.. jupyter-execute::
+
+  help(helpers.hillshade)
+
+.. jupyter-execute::
+
+  # Compute hillshade
+  hs_arr = helpers.hillshade(dem)
+
+  # Save hillshade arrays as new raster and open with rasterio
+  hs = rio.open(helpers.save_new_raster(client, hs_arr))
+
+
+.. code:: python
+
+  # Make an ipyleaflet tile layer of the hillshade
+  hst = get_leaflet_tile_layer(hs)
+
+  m = Map(center=client.center(), zoom=client.default_zoom)
+  control = SplitMapControl(left_layer=tdem, right_layer=hst)
+  m.add_control(control)
+  m
+
+.. image:: https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/hillshade_compare.png
+
+
+We can also overlay the hillshade on the original DEM so that it gives it a 3D
+effect:
+
+.. code:: python
+
+  m = Map(center=client.center(), zoom=client.default_zoom)
+  m.add_layer(tdem)
+  m.add_layer(get_leaflet_tile_layer(hs, opacity=0.5))
+  m
+
+
+.. image:: https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/hillshade.png

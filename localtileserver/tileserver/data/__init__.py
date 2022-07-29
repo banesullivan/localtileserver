@@ -49,3 +49,7 @@ def convert_dropbox_url(url: str):
 def clean_url(url: str):
     """Fix the download URL for common hosting services like dropbox."""
     return convert_dropbox_url(url)
+
+
+def get_co_elevation_url():
+    return "https://data.kitware.com/api/v1/file/62e4408fbddec9d0c4443918/download"
