@@ -17,7 +17,7 @@ This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest
   This example requires ``rasterio`` to be installed.
 
 
-.. jupyter-execute::
+.. code:: python
 
   from localtileserver import TileClient, get_leaflet_tile_layer
   from localtileserver import examples, helpers
@@ -36,7 +36,7 @@ This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest
 
 Read the DEM data as a NumPy array using rasterio:
 
-.. jupyter-execute::
+.. code:: python
 
   dem = client.rasterio.read()[0, :, :]
   dem.shape
@@ -45,11 +45,11 @@ Read the DEM data as a NumPy array using rasterio:
 Compute the hillshade of the DEM using the :func:`localtileserver.helpers.hillshade`
 function (adopted from EarthPy).
 
-.. jupyter-execute::
+.. code:: python
 
   help(helpers.hillshade)
 
-.. jupyter-execute::
+.. code:: python
 
   # Compute hillshade
   hs_arr = helpers.hillshade(dem)
