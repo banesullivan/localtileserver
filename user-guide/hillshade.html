@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>🗺️ Example Datasets &#8212; 🌐 localtileserver</title>
+    <title>⛰️ DEM Hillshade &#8212; 🌐 localtileserver</title>
 <script>
   document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
   document.documentElement.dataset.theme = localStorage.getItem("theme") || "light"
@@ -57,8 +57,8 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="🖥️ Local Web Application" href="web-app.html" />
-    <link rel="prev" title="🎯 ROI Extraction" href="roi.html" />
+    <link rel="next" title="📖 API" href="../api/index.html" />
+    <link rel="prev" title="🎨 Plotting with Bokeh" href="bokeh.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="en">
   </head>
@@ -186,8 +186,8 @@
    🎯 ROI Extraction
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="example-data.html">
    🗺️ Example Datasets
   </a>
  </li>
@@ -226,8 +226,8 @@
    🎨 Plotting with Bokeh
   </a>
  </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="hillshade.html">
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
    ⛰️ DEM Hillshade
   </a>
  </li>
@@ -269,67 +269,69 @@
               
               <article class="bd-article" role="main">
                 
-  <section id="example-datasets">
-<h1>🗺️ Example Datasets<a class="headerlink" href="#example-datasets" title="Permalink to this heading">#</a></h1>
-<p>A few example datasets are included with <cite>localtileserver</cite>. A particularly
-useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">get_leaflet_roi_controls</span><span class="p">,</span> <span class="n">examples</span>
-<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
+  <section id="dem-hillshade">
+<h1>⛰️ DEM Hillshade<a class="headerlink" href="#dem-hillshade" title="Permalink to this heading">#</a></h1>
+<p>Generate hillshade map from Digital Elevation Model (DEM).</p>
+<p>A hillshade is a 3D representation of a surface where the darker and lighter
+colors represent the shadows and highlights that you would visually expect to
+see in a terrain model. Hillshades are often used as an underlay in a map, to
+make the data appear more 3-Dimensional.</p>
+<p>This example was adopted from <a class="reference external" href="https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html">EarthPy</a></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This example requires <code class="docutils literal notranslate"><span class="pre">rasterio</span></code> to be installed.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">TileClient</span><span class="p">,</span> <span class="n">get_leaflet_tile_layer</span>
+<span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">examples</span><span class="p">,</span> <span class="n">helpers</span>
+<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span><span class="p">,</span> <span class="n">SplitMapControl</span>
+<span class="kn">import</span> <span class="nn">rasterio</span> <span class="k">as</span> <span class="nn">rio</span>
 
-<span class="c1"># Load example tile layer from publicly available DEM source</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_elevation</span><span class="p">()</span>
+<span class="c1"># Example DEM dataset</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_co_elevation</span><span class="p">()</span>
 
-<span class="c1"># Create ipyleaflet tile layer from that server</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">,</span>
-                           <span class="n">band</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">500</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
-                           <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span><span class="p">,</span>
-                           <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+<span class="n">tdem</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gist_earth&#39;</span><span class="p">)</span>
 
-<span class="c1"># Create ipyleaflet controls to extract an ROI</span>
-<span class="n">draw_control</span><span class="p">,</span> <span class="n">roi_control</span> <span class="o">=</span> <span class="n">get_leaflet_roi_controls</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
-
-<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">zoom</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span><span class="n">draw_control</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span><span class="n">roi_control</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">default_zoom</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">tdem</span><span class="p">)</span>
 <span class="n">m</span>
 </pre></div>
 </div>
-<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png" />
-<p>Then you can follow the same routine as described above to extract an ROI.</p>
-<p>I zoomed in over Golden, Colorado and drew a polygon of the extent of the DEM I would like to create:</p>
-<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-roi.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-roi.png" />
-<p>And perform the extraction:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">roi_path</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span>  <span class="c1"># Look in your working directory</span>
-
-<span class="n">r</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">roi_path</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                           <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
-
-<span class="n">m2</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
-        <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">39.763427033262175</span><span class="p">,</span> <span class="o">-</span><span class="mf">105.20614908076823</span><span class="p">),</span>
-        <span class="n">zoom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-       <span class="p">)</span>
-<span class="n">m2</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-<span class="n">m2</span>
+<p>Read the DEM data as a NumPy array using rasterio:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dem</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rasterio</span><span class="o">.</span><span class="n">read</span><span class="p">()[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="n">dem</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
-<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-dem.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-dem.png" />
-<p>Here is another example with the Virtual Earth satellite imagery</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
-<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
+<p>Compute the hillshade of the DEM using the <code class="xref py py-func docutils literal notranslate"><span class="pre">localtileserver.helpers.hillshade()</span></code>
+function (adopted from EarthPy).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">helpers</span><span class="o">.</span><span class="n">hillshade</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute hillshade</span>
+<span class="n">hs_arr</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">hillshade</span><span class="p">(</span><span class="n">dem</span><span class="p">)</span>
 
-<span class="c1"># Load example tile layer from publicly available imagery</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_virtual_earth</span><span class="p">()</span>
+<span class="c1"># Save hillshade arrays as new raster and open with rasterio</span>
+<span class="n">hs</span> <span class="o">=</span> <span class="n">rio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">helpers</span><span class="o">.</span><span class="n">save_new_raster</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">hs_arr</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make an ipyleaflet tile layer of the hillshade</span>
+<span class="n">hst</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">hs</span><span class="p">)</span>
 
-<span class="c1"># Create ipyleaflet tile layer from that server</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">39.751343612695145</span><span class="p">,</span> <span class="o">-</span><span class="mf">105.22181306125279</span><span class="p">),</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">default_zoom</span><span class="p">)</span>
+<span class="n">control</span> <span class="o">=</span> <span class="n">SplitMapControl</span><span class="p">(</span><span class="n">left_layer</span><span class="o">=</span><span class="n">tdem</span><span class="p">,</span> <span class="n">right_layer</span><span class="o">=</span><span class="n">hst</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span><span class="n">control</span><span class="p">)</span>
 <span class="n">m</span>
 </pre></div>
 </div>
-<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/kafadar.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/kafadar.png" />
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/hillshade_compare.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/hillshade_compare.png" />
+<p>We can also overlay the hillshade on the original DEM so that it gives it a 3D
+effect:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">default_zoom</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">tdem</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="n">m</span>
+</pre></div>
+</div>
+<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/hillshade.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/hillshade.png" />
 </section>
 
 

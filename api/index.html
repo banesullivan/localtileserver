@@ -57,7 +57,7 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="🎨 Plotting with Bokeh" href="../user-guide/bokeh.html" />
+    <link rel="prev" title="⛰️ DEM Hillshade" href="../user-guide/hillshade.html" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="docsearch:language" content="en">
   </head>
@@ -452,6 +452,12 @@ If given, this will override all other styling parameters.</p></li>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.rasterio">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rasterio</span></span><a class="headerlink" href="#localtileserver.client.BaseTileClient.rasterio" title="Permalink to this definition">#</a></dt>
+<dd><p>Open dataset with rasterio.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.server_base_url">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">server_base_url</span></span><a class="headerlink" href="#localtileserver.client.BaseTileClient.server_base_url" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
@@ -727,15 +733,19 @@ If given, this will override all other styling parameters.</p></li>
 <h2>Other Helpers<a class="headerlink" href="#other-helpers" title="Permalink to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="localtileserver.helpers.save_new_raster">
-<span class="sig-prename descclassname"><span class="pre">localtileserver.helpers.</span></span><span class="sig-name descname"><span class="pre">save_new_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.helpers.save_new_raster" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">localtileserver.helpers.</span></span><span class="sig-name descname"><span class="pre">save_new_raster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">src</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.helpers.save_new_raster" title="Permalink to this definition">#</a></dt>
 <dd><p>Save new raster from a numpy array using the metadata of another raster.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
 <p>Requires <code class="docutils literal notranslate"><span class="pre">rasterio</span></code></p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src_path</strong> (<em>str</em>) – The source data whose spatial reference will be copied</p></li>
-<li><p><strong>out_path</strong> (<em>str</em>) – The path for which to write the new raster</p></li>
+<li><p><strong>src</strong> (<em>str</em><em>, </em><em>DatasetReader</em><em>, </em><a class="reference internal" href="#localtileserver.client.BaseTileClient" title="localtileserver.client.BaseTileClient"><em>BaseTileClient</em></a>) – The source rasterio data whose spatial reference will be copied</p></li>
 <li><p><strong>data</strong> (<em>np.ndarray</em>) – The bands of data to save to the new raster</p></li>
+<li><p><strong>out_path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The path for which to write the new raster. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, this will
+use a temporary file</p></li>
 </ul>
 </dd>
 </dl>
