@@ -13,6 +13,10 @@ try:
     from rasterio.io import DatasetReaderBase
 except ImportError:
     DatasetReaderBase = None
+try:
+    import ipyleaflet
+except ImportError:
+    ipyleaflet = None
 
 from server_thread import ServerManager, launch_server
 
@@ -449,30 +453,32 @@ class BaseTileClient:
             self._is_geospatial = self.metadata(projection=None).get("geospatial", False)
         return self._is_geospatial
 
-    def _ipython_display_(self):
-        from IPython.display import display
-        from ipyleaflet import Map, WKTLayer, projections
+    if ipyleaflet:
 
-        from localtileserver.widgets import get_leaflet_tile_layer
+        def _ipython_display_(self):
+            from IPython.display import display
+            from ipyleaflet import Map, WKTLayer, projections
 
-        t = get_leaflet_tile_layer(self)
-        if self.default_projection is None:
-            m = Map(
-                basemap=t,
-                min_zoom=0,
-                max_zoom=self.max_zoom,
-                zoom=0,
-                crs=projections.Simple,
-            )
-        else:
-            m = Map(center=self.center(), zoom=self.default_zoom)
-            m.add_layer(t)
-            wlayer = WKTLayer(
-                wkt_string=self.bounds(return_wkt=True),
-                style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
-            )
-            m.add_layer(wlayer)
-        return display(m)
+            from localtileserver.widgets import get_leaflet_tile_layer
+
+            t = get_leaflet_tile_layer(self)
+            if self.default_projection is None:
+                m = Map(
+                    basemap=t,
+                    min_zoom=0,
+                    max_zoom=self.max_zoom,
+                    zoom=0,
+                    crs=projections.Simple,
+                )
+            else:
+                m = Map(center=self.center(), zoom=self.default_zoom)
+                m.add_layer(t)
+                wlayer = WKTLayer(
+                    wkt_string=self.bounds(return_wkt=True),
+                    style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
+                )
+                m.add_layer(wlayer)
+            return display(m)
 
     def _repr_png_(self):
         with open(self.thumbnail(encoding="PNG"), "rb") as f:
