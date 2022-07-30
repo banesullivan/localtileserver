@@ -229,6 +229,12 @@ def test_histogram(bahamas):
     assert len(hist)
 
 
+@pytest.mark.parametrize("encoding", ["PNG", "JPEG", "JPG", "TIF", "TIFF"])
+def test_thumbnail_encodings(bahamas, encoding):
+    thumbnail = bahamas.thumbnail(encoding=encoding)
+    assert thumbnail  # TODO: check content
+
+
 def test_custom_palette(bahamas):
     palette = ["#006633", "#E5FFCC", "#662A00", "#D8D8D8", "#F5F5F5"]
     thumbnail = bahamas.thumbnail(

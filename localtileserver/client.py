@@ -374,7 +374,10 @@ class BaseTileClient:
         output_path: pathlib.Path = None,
         style: dict = None,
         cmap: Union[str, List[str]] = None,
+        encoding: str = "PNG",
     ):
+        if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
+            raise ValueError(f"Encoding ({encoding}) not supported.")
         params = self._get_style_params(
             band=band,
             palette=palette,
@@ -386,7 +389,7 @@ class BaseTileClient:
             style=style,
             cmap=cmap,
         )
-        url = add_query_parameters(self.create_url("api/thumbnail.png"), params)
+        url = add_query_parameters(self.create_url(f"api/thumbnail.{encoding.lower()}"), params)
         r = requests.get(url)
         r.raise_for_status()
         return save_file_from_request(r, output_path)
@@ -472,7 +475,7 @@ class BaseTileClient:
         return display(m)
 
     def _repr_png_(self):
-        with open(self.thumbnail(), "rb") as f:
+        with open(self.thumbnail(encoding="PNG"), "rb") as f:
             return f.read()
 
     @property

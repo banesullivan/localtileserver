@@ -3,7 +3,7 @@ import os
 import pathlib
 import shutil
 import tempfile
-from typing import Union
+from typing import Optional, Union
 from urllib.parse import urlencode, urlparse
 
 from flask import current_app, request
@@ -197,3 +197,16 @@ def get_clean_filename_from_request(param_name: str = "filename", strict: bool =
             logger.error(message)
             filename = get_clean_filename(get_sf_bay_url())
     return filename
+
+
+def format_to_encoding(format: Optional[str]) -> str:
+    """Translate format extension (e.g., `tiff`) to encoding (e.g., `TILED`)."""
+    if not format:
+        return "PNG"
+    if format.lower() not in ["tif", "tiff", "png", "jpeg", "jpg"]:
+        raise ValueError(f"Format {format!r} is not valid. Try `png`, `jpeg`, or `tif`")
+    if format.lower() in ["tif", "tiff"]:
+        return "TILED"
+    if format.lower() == "jpg":
+        format = "jpeg"
+    return format.upper()  # jpeg, png

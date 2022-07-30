@@ -1,5 +1,6 @@
 import io
 import json
+import pathlib
 import time
 from urllib.parse import unquote
 
@@ -16,6 +17,7 @@ from localtileserver.tileserver import style, utilities
 from localtileserver.tileserver.blueprint import cache, tileserver
 from localtileserver.tileserver.data import str_to_bool
 from localtileserver.tileserver.palettes import get_palettes
+from localtileserver.tileserver.utilities import format_to_encoding
 
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
 
@@ -253,13 +255,21 @@ class BoundsView(BaseImageView):
 @api.doc(params=STYLE_PARAMS)
 class ThumbnailView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
-    def get(self):
+    def get(self, format: str = "png"):
+        try:
+            encoding = format_to_encoding(format)
+        except ValueError:
+            raise BadRequest(f"Format {format} is not a valid encoding.")
         tile_source = self.get_tile_source()
-        encoding = request.args.get("encoding", "PNG")
         thumb_data, mime_type = tile_source.getThumbnail(encoding=encoding)
+        if isinstance(thumb_data, bytes):
+            thumb_data = io.BytesIO(thumb_data)
+        elif isinstance(thumb_data, (str, pathlib.Path)):
+            with open(thumb_data, "rb") as f:
+                thumb_data = io.BytesIO(f.read())
         return send_file(
-            io.BytesIO(thumb_data),
-            download_name="thumbnail.png",
+            thumb_data,
+            download_name=f"thumbnail.{format}",
             mimetype=mime_type,
         )
 
