@@ -26,7 +26,7 @@ from localtileserver.tileserver.utilities import (
 def create_app(url_prefix: str = "/", cors_all: bool = False):
     try:
         from localtileserver.tileserver import sentry
-    except ImportError:
+    except Exception:
         pass
     app = Flask(__name__)
     if cors_all:
