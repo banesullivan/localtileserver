@@ -1,5 +1,5 @@
 codespell
-flake8
+flake8<5.0.0
 black
 isort
 pydocstyle
