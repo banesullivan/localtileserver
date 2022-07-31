@@ -1,8 +1,6 @@
 # flake8: noqa: F401
-from flask import Flask
-from flask_cors import CORS
-
 from localtileserver.tileserver import rest, urls, views
+from localtileserver.tileserver.application import create_app, run_app
 from localtileserver.tileserver.blueprint import cache, tileserver
 from localtileserver.tileserver.data import (
     get_building_docs,
@@ -21,18 +19,3 @@ from localtileserver.tileserver.utilities import (
     make_vsi,
     purge_cache,
 )
-
-
-def create_app(url_prefix: str = "/", cors_all: bool = False):
-    try:
-        from localtileserver.tileserver import sentry
-    except Exception:
-        pass
-    app = Flask(__name__)
-    if cors_all:
-        cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-    cache.init_app(app)
-    app.register_blueprint(tileserver, url_prefix=url_prefix)
-    app.config.JSONIFY_PRETTYPRINT_REGULAR = True
-    app.config.SWAGGER_UI_DOC_EXPANSION = "list"
-    return app

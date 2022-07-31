@@ -11,15 +11,15 @@ import requests
 
 try:
     from rasterio.io import DatasetReaderBase
-except ImportError:
+except ImportError:  # pragma: no cover
     DatasetReaderBase = None
 try:
     import ipyleaflet
-except ImportError:
+except ImportError:  # pragma: no cover
     ipyleaflet = None
 try:
     import shapely
-except ImportError:
+except ImportError:  # pragma: no cover
     shapely = None
 
 from server_thread import ServerManager, launch_server

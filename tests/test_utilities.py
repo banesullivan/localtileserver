@@ -1,3 +1,6 @@
+from osgeo_utils.samples.validate_cloud_optimized_geotiff import (
+    ValidateCloudOptimizedGeoTIFFException,
+)
 import pytest
 
 from localtileserver import Report, TileClient
@@ -43,3 +46,8 @@ def test_cog_validate(remote_file_url):
     assert validate_cog(remote_file_url)
     client = TileClient(remote_file_url)
     assert validate_cog(client)
+
+
+def test_cog_validate_error(bahamas):
+    with pytest.raises(ValidateCloudOptimizedGeoTIFFException):
+        assert validate_cog(bahamas)

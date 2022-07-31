@@ -36,7 +36,7 @@ class ImageBytes(bytes):
 def save_file_from_request(response: requests.Response, output_path: pathlib.Path):
     d = response.headers["content-disposition"]
     fname = re.findall("filename=(.+)", d)[0]
-    if not output_path:
+    if isinstance(output_path, bool) or not output_path:
         output_path = get_cache_dir() / fname
     with open(output_path, "wb") as f:
         f.write(response.content)

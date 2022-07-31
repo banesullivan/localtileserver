@@ -12,7 +12,12 @@ from large_image.tilesource import FileTileSource
 from large_image_source_gdal import GDALFileTileSource
 from osgeo import gdal
 
-from localtileserver.tileserver.data import clean_url, get_sf_bay_url
+from localtileserver.tileserver.data import (
+    clean_url,
+    get_data_path,
+    get_pine_gulch_url,
+    get_sf_bay_url,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +171,21 @@ def make_vsi(url: str, **options):
 def get_clean_filename(filename: str):
     if not filename:
         raise OSError("Empty path given")  # pragma: no cover
+
+    # Check for example first
+    if filename == "blue_marble":
+        filename = get_data_path("frmt_wms_bluemarble_s3_tms.xml")
+    elif filename == "virtual_earth":
+        filename = get_data_path("frmt_wms_virtualearth.xml")
+    elif filename == "arcgis":
+        filename = get_data_path("frmt_wms_arcgis_mapserver_tms.xml")
+    elif filename in ["elevation", "dem", "topo"]:
+        filename = get_data_path("aws_elevation_tiles_prod.xml")
+    elif filename == "bahamas":
+        filename = get_data_path("bahamas_rgb.tif")
+    elif filename == "pine_gulch":
+        filename = get_pine_gulch_url()
+
     if str(filename).startswith("/vsi"):
         return filename
     parsed = urlparse(str(filename))

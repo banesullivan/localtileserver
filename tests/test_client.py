@@ -1,4 +1,5 @@
 import json
+import os
 
 import large_image
 import pytest
@@ -11,7 +12,7 @@ from localtileserver.client import (
     TileClient,
     get_or_create_tile_client,
 )
-from localtileserver.helpers import polygon_to_geojson
+from localtileserver.helpers import parse_shapely, polygon_to_geojson
 from localtileserver.tileserver.utilities import (
     get_clean_filename,
     get_tile_bounds,
@@ -32,6 +33,11 @@ try:
     from shapely.geometry import Polygon
 except ImportError:
     skip_shapely = True
+skip_rasterio = False
+try:
+    import rasterio as rio
+except ImportError:
+    skip_rasterio = True
 
 TOLERANCE = 2e-2
 
@@ -71,6 +77,7 @@ def test_create_tile_client(bahamas_file):
     assert r.content
     thumb = tile_client.thumbnail()
     assert isinstance(thumb, ImageBytes)
+    assert thumb.mimetype == "image/png"
     tile_client.shutdown(force=True)
 
 
@@ -119,6 +126,7 @@ def test_extract_roi_world(bahamas):
     assert e["ymax"] == pytest.approx(24.691, abs=TOLERANCE)
     roi = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691, return_bytes=True)
     assert isinstance(roi, ImageBytes)
+    assert roi.mimetype == "image/tiff"
     roi = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691)
     assert roi.metadata()["geospatial"]
 
@@ -137,6 +145,8 @@ def test_extract_roi_world_shape(bahamas):
     assert e["xmax"] == pytest.approx(-77.381, abs=TOLERANCE)
     assert e["ymin"] == pytest.approx(24.056, abs=TOLERANCE)
     assert e["ymax"] == pytest.approx(24.691, abs=TOLERANCE)
+    path = bahamas.extract_roi_shape(poly.wkt, return_path=True)
+    assert path.exists()
 
 
 def test_extract_roi_pixel(bahamas):
@@ -148,6 +158,8 @@ def test_extract_roi_pixel(bahamas):
     assert source.getMetadata()["sizeY"] == 300
     roi = bahamas.extract_roi_pixel(100, 500, 300, 600)
     assert roi.metadata()["geospatial"]
+    roi = bahamas.extract_roi_pixel(100, 500, 300, 600, return_bytes=True)
+    assert isinstance(roi, ImageBytes)
 
 
 @pytest.mark.skipif(skip_pil_source, reason="`large-image-source-pil` not installed")
@@ -239,6 +251,14 @@ def test_histogram(bahamas):
 def test_thumbnail_encodings(bahamas, encoding):
     thumbnail = bahamas.thumbnail(encoding=encoding)
     assert thumbnail  # TODO: check content
+    assert isinstance(thumbnail, ImageBytes)
+    thumbnail = bahamas.thumbnail(encoding=encoding, output_path=True)
+    assert os.path.exists(thumbnail)
+
+
+def test_thumbnail_bad_encoding(bahamas):
+    with pytest.raises(ValueError):
+        bahamas.thumbnail(encoding="foo")
 
 
 def test_custom_palette(bahamas):
@@ -270,11 +290,13 @@ def test_style_dict(bahamas):
 
 
 def test_pixel_space_tiles(pelvis):
+    assert pelvis.metadata_safe()
     tile_url = pelvis.get_tile_url().format(z=0, x=0, y=0)
     assert "projection=none" in tile_url.lower()
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
+    pelvis.default_projection = None  # to test setter
 
 
 def test_large_image_to_client(bahamas_file):
@@ -309,3 +331,20 @@ def test_bounds_geojson(bahamas):
     assert isinstance(geojson, str)
     obj = json.loads(geojson)
     assert isinstance(obj[0], dict)
+
+
+@pytest.mark.skipif(skip_shapely, reason="shapely not installed")
+def test_center_shapely(bahamas):
+    from shapely.geometry import Point
+
+    pt = bahamas.center(return_point=True)
+    assert isinstance(pt, Point)
+    wkt = bahamas.center(return_wkt=True)
+    assert parse_shapely(wkt)
+
+
+@pytest.mark.skipif(skip_rasterio, reason="rasterio not installed")
+def test_rasterio_property(bahamas):
+    src = bahamas.rasterio
+    assert isinstance(src, rio.io.DatasetReaderBase)
+    assert src == bahamas.rasterio
