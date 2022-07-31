@@ -11,6 +11,43 @@ regions of interest (ROIs):
 These methods can be used to extract rectangular regions from large images
 using world coordinates, Shapely geometry, or pixel bounds.
 
+.. note::
+
+  The following example needs ``shapely`` to be installed.
+
+
+.. jupyter-execute::
+
+  from localtileserver import examples, get_leaflet_tile_layer
+  from ipyleaflet import Map, WKTLayer
+
+  client = examples.get_san_francisco()
+  presidio_roi = examples.load_presidio()
+
+  presidio_layer = WKTLayer(
+    wkt_string=presidio_roi.wkt,
+    style={'fillOpacity': 0, 'weight': 1},
+    hover_style={
+        'color': 'white', 'fillOpacity': 0
+    },
+  )
+
+  m = Map(center=client.center(), zoom=client.default_zoom)
+  m.add_layer(get_leaflet_tile_layer(client))
+  m.add_layer(presidio_layer)
+  m
+
+Perform ROI extraction with Shapely object
+
+.. jupyter-execute::
+
+  presidio = client.extract_roi_shape(presidio_roi, encoding='PNG', return_bytes=True)
+  presidio
+
+
+-------
+
+
 .. code:: python
 
     from localtileserver import TileClient, get_leaflet_tile_layer, examples
