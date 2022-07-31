@@ -17,6 +17,10 @@ try:
     import ipyleaflet
 except ImportError:
     ipyleaflet = None
+try:
+    import shapely
+except ImportError:
+    shapely = None
 
 from server_thread import ServerManager, launch_server
 
@@ -473,11 +477,12 @@ class BaseTileClient:
             else:
                 m = Map(center=self.center(), zoom=self.default_zoom)
                 m.add_layer(t)
-                wlayer = WKTLayer(
-                    wkt_string=self.bounds(return_wkt=True),
-                    style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
-                )
-                m.add_layer(wlayer)
+                if shapely:
+                    wlayer = WKTLayer(
+                        wkt_string=self.bounds(return_wkt=True),
+                        style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
+                    )
+                    m.add_layer(wlayer)
             return display(m)
 
     def _repr_png_(self):
