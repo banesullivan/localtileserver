@@ -1,6 +1,7 @@
 import json
 import uuid
 
+import numpy as np
 from localtileserver.tileserver.utilities import get_cache_dir
 
 
@@ -180,8 +181,6 @@ def hillshade(arr, azimuth=30, altitude=30):
     OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     """
-    import numpy as np
-
     try:
         x, y = np.gradient(arr)
     except ValueError:

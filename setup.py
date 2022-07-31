@@ -55,6 +55,7 @@ setup(
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
         "sources": ["large-image[gdal,pil,tiff]>=1.14.1"],
         "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
+        "helpers": ["shapely", "rasterio"]
     },
     entry_points={
         "console_scripts": [
