@@ -17,12 +17,11 @@ using world coordinates, Shapely geometry, or pixel bounds.
     from ipyleaflet import Map, WKTLayer
 
     client = examples.get_san_francisco()
-    presidio = examples.load_presidio()
+    presidio_roi = examples.load_presidio()
 
     # Perform ROI extraction with Shapely object
-    output_path = client.extract_roi_shape(presidio, output_path='presidio.tif')
+    presidio = client.extract_roi_shape(presidio_roi)
 
-    presidio_client = TileClient(output_path)
     presidio_layer = WKTLayer(
       wkt_string=presidio.wkt,
       style={'fillOpacity': 0, 'weight': 1},
@@ -31,8 +30,8 @@ using world coordinates, Shapely geometry, or pixel bounds.
       },
     )
 
-    m = Map(center=presidio_client.center(), zoom=presidio_client.default_zoom)
-    m.add_layer(get_leaflet_tile_layer(presidio_client))
+    m = Map(center=presidio.center(), zoom=presidio.default_zoom)
+    m.add_layer(get_leaflet_tile_layer(presidio))
     m.add_layer(presidio_layer)
     m
 

@@ -220,6 +220,7 @@ class BaseTileClient:
         encoding: str = "TILED",
         output_path: pathlib.Path = None,
         return_bytes: bool = False,
+        return_path: bool = False,
     ):
         """Extract ROI in world coordinates."""
         path = f"api/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
@@ -227,7 +228,10 @@ class BaseTileClient:
         r.raise_for_status()
         if return_bytes:
             return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-        return save_file_from_request(r, output_path)
+        output_path = save_file_from_request(r, output_path)
+        if return_path:
+            return output_path
+        return TileClient(output_path)
 
     def extract_roi_shape(
         self,
@@ -236,6 +240,7 @@ class BaseTileClient:
         encoding: str = "TILED",
         output_path: pathlib.Path = None,
         return_bytes: bool = False,
+        return_path: bool = False,
     ):
         """Extract ROI in world coordinates using a Shapely Polygon.
 
@@ -260,6 +265,7 @@ class BaseTileClient:
             encoding=encoding,
             output_path=output_path,
             return_bytes=return_bytes,
+            return_path=return_path,
         )
 
     def extract_roi_pixel(
@@ -271,6 +277,7 @@ class BaseTileClient:
         encoding: str = "TILED",
         output_path: pathlib.Path = None,
         return_bytes: bool = False,
+        return_path: bool = False,
     ):
         """Extract ROI in pixel coordinates."""
         path = f"/api/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
@@ -278,7 +285,12 @@ class BaseTileClient:
         r.raise_for_status()
         if return_bytes:
             return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-        return save_file_from_request(r, output_path)
+        output_path = save_file_from_request(r, output_path)
+        if return_path:
+            return output_path
+        return TileClient(
+            output_path, default_projection="EPSG:3857" if encoding == "TILED" else None
+        )
 
     def metadata(self, projection: Optional[str] = ""):
         if projection not in self._metadata:

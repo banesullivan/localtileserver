@@ -217,7 +217,7 @@ def get_leaflet_roi_controls(
         output_path = output_path / f"roi_{basename}_{left}_{right}_{bottom}_{top}.{ext}"
         draw_control.output_path = output_path
         logger.error(f"output_path: {output_path}")
-        client.extract_roi(left, right, bottom, top, output_path=output_path)
+        client.extract_roi(left, right, bottom, top, output_path=output_path, return_path=True)
 
     button = widgets.Button(description="Extract ROI")
     button.on_click(on_button_clicked)

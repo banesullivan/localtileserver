@@ -108,7 +108,7 @@ def test_multiple_tile_clients_one_server(bahamas, blue_marble):
 
 def test_extract_roi_world(bahamas):
     # -78.047, -77.381, 24.056, 24.691
-    path = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691)
+    path = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691, return_path=True)
     assert path.exists()
     source = get_tile_source(path, projection="EPSG:3857")
     assert source.getMetadata()["geospatial"]
@@ -119,6 +119,8 @@ def test_extract_roi_world(bahamas):
     assert e["ymax"] == pytest.approx(24.691, abs=TOLERANCE)
     roi = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691, return_bytes=True)
     assert isinstance(roi, ImageBytes)
+    roi = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691)
+    assert roi.metadata()["geospatial"]
 
 
 @pytest.mark.skipif(skip_shapely, reason="shapely not installed")
@@ -126,7 +128,7 @@ def test_extract_roi_world_shape(bahamas):
     from shapely.geometry import box
 
     poly = box(-78.047, 24.056, -77.381, 24.691)
-    path = bahamas.extract_roi_shape(poly)
+    path = bahamas.extract_roi_shape(poly, return_path=True)
     assert path.exists()
     source = get_tile_source(path, projection="EPSG:3857")
     assert source.getMetadata()["geospatial"]
@@ -138,17 +140,19 @@ def test_extract_roi_world_shape(bahamas):
 
 
 def test_extract_roi_pixel(bahamas):
-    path = bahamas.extract_roi_pixel(100, 500, 300, 600)
+    path = bahamas.extract_roi_pixel(100, 500, 300, 600, return_path=True)
     assert path.exists()
     source = get_tile_source(path)
     assert source.getMetadata()["geospatial"]
     assert source.getMetadata()["sizeX"] == 400
     assert source.getMetadata()["sizeY"] == 300
+    roi = bahamas.extract_roi_pixel(100, 500, 300, 600)
+    assert roi.metadata()["geospatial"]
 
 
 @pytest.mark.skipif(skip_pil_source, reason="`large-image-source-pil` not installed")
 def test_extract_roi_pixel_pil(bahamas):
-    path = bahamas.extract_roi_pixel(100, 550, 300, 650, encoding="PNG")
+    path = bahamas.extract_roi_pixel(100, 550, 300, 650, encoding="PNG", return_path=True)
     assert path.exists()
     source = get_tile_source(path)
     assert "geospatial" not in source.getMetadata()
