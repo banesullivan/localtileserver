@@ -1,5 +1,4 @@
 import json
-import os
 
 import large_image
 import pytest
@@ -18,6 +17,7 @@ from localtileserver.tileserver.utilities import (
     get_tile_bounds,
     get_tile_source,
 )
+from localtileserver.utilities import ImageBytes
 
 skip_pil_source = True
 try:
@@ -69,8 +69,8 @@ def test_create_tile_client(bahamas_file):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
-    path = tile_client.thumbnail()
-    assert os.path.exists(path)
+    thumb = tile_client.thumbnail()
+    assert isinstance(thumb, ImageBytes)
     tile_client.shutdown(force=True)
 
 
@@ -117,6 +117,8 @@ def test_extract_roi_world(bahamas):
     assert e["xmax"] == pytest.approx(-77.381, abs=TOLERANCE)
     assert e["ymin"] == pytest.approx(24.056, abs=TOLERANCE)
     assert e["ymax"] == pytest.approx(24.691, abs=TOLERANCE)
+    roi = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691, return_bytes=True)
+    assert isinstance(roi, ImageBytes)
 
 
 @pytest.mark.skipif(skip_shapely, reason="shapely not installed")

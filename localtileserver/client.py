@@ -28,7 +28,7 @@ from localtileserver.configure import get_default_client_params
 from localtileserver.helpers import parse_shapely
 from localtileserver.manager import AppManager
 from localtileserver.tileserver import get_building_docs, get_clean_filename, palette_valid_or_raise
-from localtileserver.utilities import add_query_parameters, save_file_from_request
+from localtileserver.utilities import ImageBytes, add_query_parameters, save_file_from_request
 
 BUILDING_DOCS = get_building_docs()
 DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
@@ -219,11 +219,14 @@ class BaseTileClient:
         units: str = "EPSG:4326",
         encoding: str = "TILED",
         output_path: pathlib.Path = None,
+        return_bytes: bool = False,
     ):
         """Extract ROI in world coordinates."""
         path = f"api/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
+        if return_bytes:
+            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
         return save_file_from_request(r, output_path)
 
     def extract_roi_shape(
@@ -232,6 +235,7 @@ class BaseTileClient:
         units: str = "EPSG:4326",
         encoding: str = "TILED",
         output_path: pathlib.Path = None,
+        return_bytes: bool = False,
     ):
         """Extract ROI in world coordinates using a Shapely Polygon.
 
@@ -255,6 +259,7 @@ class BaseTileClient:
             units=units,
             encoding=encoding,
             output_path=output_path,
+            return_bytes=return_bytes,
         )
 
     def extract_roi_pixel(
@@ -265,11 +270,14 @@ class BaseTileClient:
         top: int,
         encoding: str = "TILED",
         output_path: pathlib.Path = None,
+        return_bytes: bool = False,
     ):
         """Extract ROI in pixel coordinates."""
         path = f"/api/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
         r = requests.get(self.create_url(path))
         r.raise_for_status()
+        if return_bytes:
+            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
         return save_file_from_request(r, output_path)
 
     def metadata(self, projection: Optional[str] = ""):
@@ -400,7 +408,9 @@ class BaseTileClient:
         url = add_query_parameters(self.create_url(f"api/thumbnail.{encoding.lower()}"), params)
         r = requests.get(url)
         r.raise_for_status()
-        return save_file_from_request(r, output_path)
+        if output_path:
+            return save_file_from_request(r, output_path)
+        return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
 
     def pixel(self, y: float, x: float, units: str = "pixels", projection: Optional[str] = None):
         """Get pixel values for each band at the given coordinates (y <lat>, x <lon>).

@@ -2,6 +2,7 @@ import json
 import uuid
 
 import numpy as np
+
 from localtileserver.tileserver.utilities import get_cache_dir
 
 
