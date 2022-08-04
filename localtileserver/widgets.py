@@ -127,6 +127,7 @@ def get_leaflet_tile_layer(
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
     kwargs.setdefault("max_native_zoom", source.max_zoom)
+    kwargs.setdefault("max_zoom", source.max_zoom)
     kwargs.setdefault("show_loading", True)
     if projection is None or (not projection and source.default_projection is None):
         kwargs.setdefault("crs", projections.Simple)
