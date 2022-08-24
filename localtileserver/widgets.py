@@ -113,7 +113,7 @@ def get_leaflet_tile_layer(
     )
     url = source.get_tile_url(
         projection=projection,
-        band=band,
+        band=kwargs.get("bands", band),
         palette=palette,
         vmin=vmin,
         vmax=vmax,
@@ -318,7 +318,7 @@ def get_folium_tile_layer(
     )
     url = source.get_tile_url(
         projection=projection,
-        band=band,
+        band=kwargs.get("bands", band),
         palette=palette,
         vmin=vmin,
         vmax=vmax,
