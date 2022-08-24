@@ -369,7 +369,7 @@ class BaseRegionView(BaseImageView):
 class RegionWorldView(BaseRegionView):
     """Returns region tile binary from world coordinates in given EPSG.
 
-    Use the `units` query parameter to inidicate the projection of the given
+    Use the `units` query parameter to indicate the projection of the given
     coordinates. This can be different than the `projection` parameter used
     to open the tile source. `units` defaults to `EPSG:4326`.
 

@@ -215,6 +215,10 @@ def test_multiband_vmin_vmax(bahamas):
         vmax=[100, 200, 250],
     ).format(z=8, x=72, y=110)
     assert get_content(url)  # just make sure it doesn't fail
+    with pytest.raises(ValueError):
+        bahamas.get_tile_url(
+            vmax=[100, 200, 250],
+        ).format(z=8, x=72, y=110)
 
 
 @pytest.mark.xfail
