@@ -202,6 +202,21 @@ def test_multiband(bahamas):
     assert get_content(url)  # just make sure it doesn't fail
 
 
+def test_multiband_vmin_vmax(bahamas):
+    # Check that other options are well handled
+    url = bahamas.get_tile_url(
+        band=[3, 2, 1],
+        vmax=[100, 200, 250],
+    ).format(z=8, x=72, y=110)
+    assert get_content(url)  # just make sure it doesn't fail
+    url = bahamas.get_tile_url(
+        band=[3, 2, 1],
+        vmin=[0, 10, 50],
+        vmax=[100, 200, 250],
+    ).format(z=8, x=72, y=110)
+    assert get_content(url)  # just make sure it doesn't fail
+
+
 @pytest.mark.xfail
 def test_remote_client(remote_file_url):
     tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
