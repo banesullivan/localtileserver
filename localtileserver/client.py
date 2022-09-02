@@ -1,4 +1,5 @@
 # flake8: noqa: W503
+from collections.abc import Iterable
 from functools import wraps
 import json
 import logging
@@ -116,12 +117,22 @@ class BaseTileClient:
             palette_valid_or_raise(palette)
             params["palette"] = palette
         if vmin is not None:
+            if isinstance(vmin, Iterable) and not isinstance(band, Iterable):
+                raise ValueError("`band` must be explicitly set if `vmin` is an iterable.")
             params["min"] = vmin
         if vmax is not None:
+            if isinstance(vmax, Iterable) and not isinstance(band, Iterable):
+                raise ValueError("`band` must be explicitly set if `vmax` is an iterable.")
             params["max"] = vmax
         if nodata is not None:
+            if isinstance(nodata, Iterable) and not isinstance(band, Iterable):
+                raise ValueError("`band` must be explicitly set if `nodata` is an iterable.")
             params["nodata"] = nodata
         if scheme is not None:
+            if (not isinstance(scheme, str) and isinstance(scheme, Iterable)) and not isinstance(
+                band, Iterable
+            ):
+                raise ValueError("`band` must be explicitly set if `scheme` is an iterable.")
             params["scheme"] = scheme
         if n_colors:
             params["n_colors"] = n_colors
