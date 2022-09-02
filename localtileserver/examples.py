@@ -98,6 +98,9 @@ def load_presidio():
 
 
 @wraps(_get_example_client)
-def get_co_elevation(*args, **kwargs):
-    path = get_co_elevation_url()
+def get_co_elevation(*args, local_roi=False, **kwargs):
+    if local_roi:
+        path = get_data_path("co_elevation_roi.tif")
+    else:
+        path = get_co_elevation_url()
     return TileClient(path, *args, **kwargs)

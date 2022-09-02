@@ -5,8 +5,7 @@ from osgeo import gdal
 import pytest
 
 from localtileserver import helpers
-from localtileserver.tileserver import get_co_elevation_url
-from localtileserver.tileserver.utilities import make_vsi
+from localtileserver.tileserver import get_data_path
 
 skip_rasterio = False
 try:
@@ -16,7 +15,8 @@ except ImportError:
 
 
 def test_hillshade():
-    ds = gdal.Open(make_vsi(get_co_elevation_url()))
+    path = str(get_data_path("co_elevation_roi.tif"))
+    ds = gdal.Open(path)
     dem = ds.ReadAsArray()
     hs_arr = helpers.hillshade(dem)
     assert isinstance(hs_arr, np.ndarray)
@@ -24,6 +24,7 @@ def test_hillshade():
 
 @pytest.mark.skipif(skip_rasterio, reason="rasterio not installed")
 def test_save_new_raster():
-    src = rio.open(make_vsi(get_co_elevation_url()))
+    path = get_data_path("co_elevation_roi.tif")
+    src = rio.open(path)
     path = helpers.save_new_raster(src, np.random.rand(10, 10))
     assert os.path.exists(path)
