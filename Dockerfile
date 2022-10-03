@@ -1,4 +1,4 @@
-FROM python:3.10.6-slim
+FROM python:3.10.7-slim
 LABEL maintainer="Bane Sullivan"
 LABEL repo="https://github.com/banesullivan/localtileserver"
 
