@@ -15,4 +15,3 @@ matplotlib
 gunicorn
 cmocean
 werkzeug<2.2
---find-links https://girder.github.io/large_image_wheels pyproj==3.3.1.1
