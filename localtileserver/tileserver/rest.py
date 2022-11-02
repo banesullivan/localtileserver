@@ -376,7 +376,7 @@ class RegionWorldView(BaseRegionView):
     """
 
     def get(self):
-        tile_source = self.get_tile_source()
+        tile_source = self.get_tile_source(projection="EPSG:3857")
         if not isinstance(tile_source, GDALFileTileSource):
             raise BadRequest("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")
