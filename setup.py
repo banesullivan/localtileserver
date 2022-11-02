@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 6, 0
+version_info = 0, 6, 1
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -34,7 +34,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python",
     ],
     python_requires=">=3.7",
