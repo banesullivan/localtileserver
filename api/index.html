@@ -42,6 +42,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/thebelab-helper.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -921,21 +922,458 @@ use a temporary file</p></li>
   <a class="reference internal nav-link" href="#python-client">
    Python Client
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.get_or_create_tile_client">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_or_create_tile_client()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       BaseTileClient
+      </span>
+     </code>
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.bounds">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.bounds()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.center">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.center()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.create_url">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.create_url()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.default_projection">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.default_projection
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.default_zoom">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.default_zoom
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.extract_roi">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.extract_roi()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.extract_roi_pixel">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.extract_roi_pixel()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.extract_roi_shape">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.extract_roi_shape()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.filename">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.filename
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.get_tile_url">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.get_tile_url()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.get_tile_url_params">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.get_tile_url_params()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.histogram">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.histogram()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.is_geospatial">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.is_geospatial
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.max_zoom">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.max_zoom
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.metadata">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.metadata()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.metadata_safe">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.metadata_safe()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.pixel">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.pixel()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.rasterio">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.rasterio
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.server_base_url">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.server_base_url
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.server_host">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.server_host
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.server_port">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.server_port
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.thumbnail">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.thumbnail()
+        </span>
+       </code>
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.TileClient">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       TileClient
+      </span>
+     </code>
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.client_base_url">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.client_base_url
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.client_host">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.client_host
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.client_port">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.client_port
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.client_prefix">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.client_prefix
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.create_url">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.create_url()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.get_tile_url">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.get_tile_url()
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.server">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.server
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.server_base_url">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.server_base_url
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.server_host">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.server_host
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.server_port">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.server_port
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.TileClient.shutdown">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         TileClient.shutdown()
+        </span>
+       </code>
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.RemoteTileClient">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       RemoteTileClient
+      </span>
+     </code>
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.RemoteTileClient.server_base_url">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         RemoteTileClient.server_base_url
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.RemoteTileClient.server_host">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         RemoteTileClient.server_host
+        </span>
+       </code>
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#jupyter-widget-helpers">
    Jupyter Widget Helpers
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.get_leaflet_tile_layer">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_leaflet_tile_layer()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.get_leaflet_roi_controls">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_leaflet_roi_controls()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.get_folium_tile_layer">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       get_folium_tile_layer()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#other-helpers">
    Other Helpers
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.helpers.save_new_raster">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       save_new_raster()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.make_vsi">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       make_vsi()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.validate.validate_cog">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       validate_cog()
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.helpers.polygon_to_geojson">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       polygon_to_geojson()
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#exceptions">
    Exceptions
   </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#localtileserver.validate.ValidateCloudOptimizedGeoTIFFException">
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       ValidateCloudOptimizedGeoTIFFException
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
  </li>
 </ul>
 
@@ -990,7 +1428,7 @@ use a temporary file</p></li>
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.1.1.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.2.3.<br>
 </p>
 
   </div>
