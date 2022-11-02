@@ -4,7 +4,7 @@ Flask-Caching
 flask-cors
 flask-restx>=0.5.0
 sentry-sdk[flask]
---find-links https://girder.github.io/large_image_wheels GDAL pyproj==3.3.1.1
+--find-links https://girder.github.io/large_image_wheels GDAL
 large-image[memcached,gdal,pil]>=1.14.1
 requests
 server-thread
@@ -15,3 +15,4 @@ matplotlib
 gunicorn
 cmocean
 werkzeug<2.2
+--find-links https://girder.github.io/large_image_wheels pyproj==3.3.1.1
