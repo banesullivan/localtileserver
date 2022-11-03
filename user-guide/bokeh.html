@@ -13,8 +13,8 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=9b1a4fa89bdd0e95b23b" rel="stylesheet">
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=9b1a4fa89bdd0e95b23b" rel="stylesheet">
+  <link href="../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
 
   
   <link rel="stylesheet"
@@ -23,6 +23,8 @@
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
@@ -33,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/fontawesome/css/all.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=9b1a4fa89bdd0e95b23b">
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
@@ -82,7 +84,7 @@
     <div class="search-button__search-container">
       
 <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
-  <i class="icon fas fa-search"></i>
+  <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form>
@@ -92,7 +94,7 @@
   
   <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
-      <span class="fas fa-bars"></span>
+      <span class="fa-solid fa-bars"></span>
   </label>
   <div id="navbar-start">
     
@@ -158,8 +160,8 @@
     <div id="navbar-end">
       <div class="navbar-end-item navbar-end__search-button-container">
         
-<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search">
-  <i class="fas fa-search"></i>
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
 </button>
       </div>
       
@@ -172,7 +174,8 @@
           
           
           
-          <a href="https://github.com/banesullivan/localtileserver" title="GitHub" class="nav-link" rel="noopener" target="_blank"><span><i class="fab fa-github-square"></i></span>
+          
+          <a href="https://github.com/banesullivan/localtileserver" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
         <li class="nav-item">
@@ -182,7 +185,8 @@
           
           
           
-          <a href="https://github.com/banesullivan/localtileserver/discussions" title="Support" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-comment fa-fw"></i></span>
+          
+          <a href="https://github.com/banesullivan/localtileserver/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-comment fa-fw"></i></span>
             <label class="sr-only">Support</label></a>
         </li>
         <li class="nav-item">
@@ -192,7 +196,8 @@
           
           
           
-          <a href="https://tileserver.banesullivan.com/" title="Demo" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-desktop fa-fw"></i></span>
+          
+          <a href="https://tileserver.banesullivan.com/" title="Demo" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-desktop fa-fw"></i></span>
             <label class="sr-only">Demo</label></a>
         </li>
         <li class="nav-item">
@@ -202,7 +207,8 @@
           
           
           
-          <a href="https://banesullivan.com/" title="Author" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-user fa-fw"></i></span>
+          
+          <a href="https://banesullivan.com/" title="Author" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-user fa-fw"></i></span>
             <label class="sr-only">Author</label></a>
         </li>
       </ul>
@@ -214,14 +220,14 @@
 
   
   <div class="search-button-container--mobile">
-<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search">
-  <i class="fas fa-search"></i>
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
 </button>
   </div>
 
   
   <label class="sidebar-toggle secondary-toggle" for="__secondary">
-      <span class="fas fa-outdent"></span>
+      <span class="fa-solid fa-outdent"></span>
   </label>
   
 
@@ -287,7 +293,8 @@
           
           
           
-          <a href="https://github.com/banesullivan/localtileserver" title="GitHub" class="nav-link" rel="noopener" target="_blank"><span><i class="fab fa-github-square"></i></span>
+          
+          <a href="https://github.com/banesullivan/localtileserver" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
         <li class="nav-item">
@@ -297,7 +304,8 @@
           
           
           
-          <a href="https://github.com/banesullivan/localtileserver/discussions" title="Support" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-comment fa-fw"></i></span>
+          
+          <a href="https://github.com/banesullivan/localtileserver/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-comment fa-fw"></i></span>
             <label class="sr-only">Support</label></a>
         </li>
         <li class="nav-item">
@@ -307,7 +315,8 @@
           
           
           
-          <a href="https://tileserver.banesullivan.com/" title="Demo" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-desktop fa-fw"></i></span>
+          
+          <a href="https://tileserver.banesullivan.com/" title="Demo" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-desktop fa-fw"></i></span>
             <label class="sr-only">Demo</label></a>
         </li>
         <li class="nav-item">
@@ -317,7 +326,8 @@
           
           
           
-          <a href="https://banesullivan.com/" title="Author" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-user fa-fw"></i></span>
+          
+          <a href="https://banesullivan.com/" title="Author" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-user fa-fw"></i></span>
             <label class="sr-only">Author</label></a>
         </li>
       </ul>
@@ -335,71 +345,18 @@
   </p>
   <div class="bd-toc-item navbar-nav">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="rgb.html">
-   🧮 Controlling the RGB Bands
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="remote-cog.html">
-   ☁️ Remote Cloud Optimized GeoTiffs (COGs)
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="compare.html">
-   🥓 Two Rasters at Once
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="roi.html">
-   🎯 ROI Extraction
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="example-data.html">
-   🗺️ Example Datasets
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="web-app.html">
-   🖥️ Local Web Application
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="ipyleaflet_deep_zoom.html">
-   🔬 Deep Zoom with
-   <code class="docutils literal notranslate">
-    <span class="pre">
-     ipyleaflet
-    </span>
-   </code>
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="rasterio.html">
-   🧩 Rasterio
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="validate_cog.html">
-   ✅ Validate COG
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="non-geo.html">
-   🩻 Non-geospatial visualization
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   🎨 Plotting with Bokeh
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="hillshade.html">
-   ⛰️ DEM Hillshade
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="rgb.html">🧮 Controlling the RGB Bands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="remote-cog.html">☁️ Remote Cloud Optimized GeoTiffs (COGs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compare.html">🥓 Two Rasters at Once</a></li>
+<li class="toctree-l1"><a class="reference internal" href="roi.html">🎯 ROI Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example-data.html">🗺️ Example Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web-app.html">🖥️ Local Web Application</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ipyleaflet_deep_zoom.html">🔬 Deep Zoom with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="rasterio.html">🧩 Rasterio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="validate_cog.html">✅ Validate COG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="non-geo.html">🩻 Non-geospatial visualization</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">🎨 Plotting with Bokeh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hillshade.html">⛰️ DEM Hillshade</a></li>
 </ul>
 
   </div>
@@ -744,11 +701,11 @@ if (force === true) {
     });
   }
 }(window));</script><div class="output text_html">
-<div id="8eff4aef-04ea-4f01-a368-7b5bcfcfb3ce" data-root-id="p1004" style="display: contents;"></div>
+<div id="855dfe3a-b07d-41f6-a629-ab91812a1f1e" data-root-id="p1004" style="display: contents;"></div>
 </div><script type="application/javascript">(function(root) {
   function embed_document(root) {
-  const docs_json = {"a03a9250-67f8-45d0-a235-0f8d208537ec":{"version":"3.0.0","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Figure","id":"p1004","attributes":{"x_range":{"type":"object","name":"Range1d","id":"p1013","attributes":{"start":-13660993.43811085,"end":-13594198.136883384}},"y_range":{"type":"object","name":"Range1d","id":"p1015","attributes":{"start":4502326.297712617,"end":4586806.951318035}},"x_scale":{"type":"object","name":"LinearScale","id":"p1017"},"y_scale":{"type":"object","name":"LinearScale","id":"p1019"},"title":{"type":"object","name":"Title","id":"p1010"},"renderers":[{"type":"object","name":"TileRenderer","id":"p1058","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1003","attributes":{"url":"https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png","max_zoom":20,"attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>"}}}},{"type":"object","name":"TileRenderer","id":"p1060","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1002","attributes":{"url":"https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fdata.kitware.com%252Fapi%252Fv1%252Ffile%252F626854a14acac99f42126a74%252Fdownload%26use_head%3Dno%26list_dir%3Dno&n_colors=255&projection=EPSG%3A3857"}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1012","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1043"},{"type":"object","name":"WheelZoomTool","id":"p1044"},{"type":"object","name":"BoxZoomTool","id":"p1045","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1046","attributes":{"syncable":false,"level":"overlay","visible":false,"left_units":"canvas","right_units":"canvas","bottom_units":"canvas","top_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1047"},{"type":"object","name":"ResetTool","id":"p1048"},{"type":"object","name":"HelpTool","id":"p1049"}]}},"left":[{"type":"object","name":"MercatorAxis","id":"p1032","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1034","attributes":{"mantissas":[1,2,5],"dimension":"lat"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1033","attributes":{"dimension":"lat"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1035"}}}],"below":[{"type":"object","name":"MercatorAxis","id":"p1021","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1023","attributes":{"mantissas":[1,2,5],"dimension":"lon"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1022","attributes":{"dimension":"lon"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1024"}}}],"center":[{"type":"object","name":"Grid","id":"p1031","attributes":{"axis":{"id":"p1021"}}},{"type":"object","name":"Grid","id":"p1042","attributes":{"dimension":1,"axis":{"id":"p1032"}}}]}}]}};
-  const render_items = [{"docid":"a03a9250-67f8-45d0-a235-0f8d208537ec","roots":{"p1004":"8eff4aef-04ea-4f01-a368-7b5bcfcfb3ce"},"root_ids":["p1004"]}];
+  const docs_json = {"b184e609-a9e7-494b-9796-4eda8569fae4":{"version":"3.0.0","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Figure","id":"p1004","attributes":{"x_range":{"type":"object","name":"Range1d","id":"p1013","attributes":{"start":-13660993.43811085,"end":-13594198.136883384}},"y_range":{"type":"object","name":"Range1d","id":"p1015","attributes":{"start":4502326.297712617,"end":4586806.951318035}},"x_scale":{"type":"object","name":"LinearScale","id":"p1017"},"y_scale":{"type":"object","name":"LinearScale","id":"p1019"},"title":{"type":"object","name":"Title","id":"p1012"},"renderers":[{"type":"object","name":"TileRenderer","id":"p1058","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1003","attributes":{"url":"https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png","max_zoom":20,"attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>"}}}},{"type":"object","name":"TileRenderer","id":"p1060","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1002","attributes":{"url":"https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fdata.kitware.com%252Fapi%252Fv1%252Ffile%252F626854a14acac99f42126a74%252Fdownload%26use_head%3Dno%26list_dir%3Dno&n_colors=255&projection=EPSG%3A3857"}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1008","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1043"},{"type":"object","name":"WheelZoomTool","id":"p1044"},{"type":"object","name":"BoxZoomTool","id":"p1045","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1046","attributes":{"syncable":false,"level":"overlay","visible":false,"left_units":"canvas","right_units":"canvas","bottom_units":"canvas","top_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1047"},{"type":"object","name":"ResetTool","id":"p1048"},{"type":"object","name":"HelpTool","id":"p1049"}]}},"left":[{"type":"object","name":"MercatorAxis","id":"p1032","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1034","attributes":{"mantissas":[1,2,5],"dimension":"lat"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1035","attributes":{"dimension":"lat"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1033"}}}],"below":[{"type":"object","name":"MercatorAxis","id":"p1021","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1023","attributes":{"mantissas":[1,2,5],"dimension":"lon"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1024","attributes":{"dimension":"lon"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1022"}}}],"center":[{"type":"object","name":"Grid","id":"p1031","attributes":{"axis":{"id":"p1021"}}},{"type":"object","name":"Grid","id":"p1042","attributes":{"dimension":1,"axis":{"id":"p1032"}}}]}}]}};
+  const render_items = [{"docid":"b184e609-a9e7-494b-9796-4eda8569fae4","roots":{"p1004":"855dfe3a-b07d-41f6-a629-ab91812a1f1e"},"root_ids":["p1004"]}];
   root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
   }
   if (root.Bokeh !== undefined) {
@@ -785,13 +742,18 @@ if (force === true) {
               
 <div class="toc-item">
   
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
 </div>
 
 <div class="toc-item">
   
 <div class="tocsection sourcelink">
     <a href="../_sources/user-guide/bokeh.rst.txt">
-        <i class="fas fa-file-alt"></i> Show Source
+        <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
 </div>
 
@@ -814,7 +776,7 @@ if (force === true) {
   
     
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=9b1a4fa89bdd0e95b23b"></script>
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
 
   <footer class="bd-footer"><div class="bd-footer__inner container">
   

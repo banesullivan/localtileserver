@@ -13,8 +13,8 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=9b1a4fa89bdd0e95b23b" rel="stylesheet">
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=9b1a4fa89bdd0e95b23b" rel="stylesheet">
+  <link href="../_static/styles/theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1e1de1a1873e13ef5536" rel="stylesheet">
 
   
   <link rel="stylesheet"
@@ -23,6 +23,8 @@
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
@@ -33,7 +35,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/fontawesome/css/all.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=9b1a4fa89bdd0e95b23b">
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536">
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
@@ -82,7 +84,7 @@
     <div class="search-button__search-container">
       
 <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
-  <i class="icon fas fa-search"></i>
+  <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form>
@@ -92,7 +94,7 @@
   
   <nav class="bd-header navbar navbar-expand-lg bd-navbar" id="navbar-main"><div class="bd-header__inner bd-page-width">
   <label class="sidebar-toggle primary-toggle" for="__primary">
-      <span class="fas fa-bars"></span>
+      <span class="fa-solid fa-bars"></span>
   </label>
   <div id="navbar-start">
     
@@ -158,8 +160,8 @@
     <div id="navbar-end">
       <div class="navbar-end-item navbar-end__search-button-container">
         
-<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search">
-  <i class="fas fa-search"></i>
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
 </button>
       </div>
       
@@ -172,7 +174,8 @@
           
           
           
-          <a href="https://github.com/banesullivan/localtileserver" title="GitHub" class="nav-link" rel="noopener" target="_blank"><span><i class="fab fa-github-square"></i></span>
+          
+          <a href="https://github.com/banesullivan/localtileserver" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
         <li class="nav-item">
@@ -182,7 +185,8 @@
           
           
           
-          <a href="https://github.com/banesullivan/localtileserver/discussions" title="Support" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-comment fa-fw"></i></span>
+          
+          <a href="https://github.com/banesullivan/localtileserver/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-comment fa-fw"></i></span>
             <label class="sr-only">Support</label></a>
         </li>
         <li class="nav-item">
@@ -192,7 +196,8 @@
           
           
           
-          <a href="https://tileserver.banesullivan.com/" title="Demo" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-desktop fa-fw"></i></span>
+          
+          <a href="https://tileserver.banesullivan.com/" title="Demo" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-desktop fa-fw"></i></span>
             <label class="sr-only">Demo</label></a>
         </li>
         <li class="nav-item">
@@ -202,7 +207,8 @@
           
           
           
-          <a href="https://banesullivan.com/" title="Author" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-user fa-fw"></i></span>
+          
+          <a href="https://banesullivan.com/" title="Author" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-user fa-fw"></i></span>
             <label class="sr-only">Author</label></a>
         </li>
       </ul>
@@ -214,14 +220,14 @@
 
   
   <div class="search-button-container--mobile">
-<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search">
-  <i class="fas fa-search"></i>
+<button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" data-toggle="tooltip">
+  <i class="fa-solid fa-magnifying-glass"></i>
 </button>
   </div>
 
   
   <label class="sidebar-toggle secondary-toggle" for="__secondary">
-      <span class="fas fa-outdent"></span>
+      <span class="fa-solid fa-outdent"></span>
   </label>
   
 
@@ -287,7 +293,8 @@
           
           
           
-          <a href="https://github.com/banesullivan/localtileserver" title="GitHub" class="nav-link" rel="noopener" target="_blank"><span><i class="fab fa-github-square"></i></span>
+          
+          <a href="https://github.com/banesullivan/localtileserver" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa-brands fa-square-github"></i></span>
             <label class="sr-only">GitHub</label></a>
         </li>
         <li class="nav-item">
@@ -297,7 +304,8 @@
           
           
           
-          <a href="https://github.com/banesullivan/localtileserver/discussions" title="Support" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-comment fa-fw"></i></span>
+          
+          <a href="https://github.com/banesullivan/localtileserver/discussions" title="Support" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-comment fa-fw"></i></span>
             <label class="sr-only">Support</label></a>
         </li>
         <li class="nav-item">
@@ -307,7 +315,8 @@
           
           
           
-          <a href="https://tileserver.banesullivan.com/" title="Demo" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-desktop fa-fw"></i></span>
+          
+          <a href="https://tileserver.banesullivan.com/" title="Demo" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-desktop fa-fw"></i></span>
             <label class="sr-only">Demo</label></a>
         </li>
         <li class="nav-item">
@@ -317,7 +326,8 @@
           
           
           
-          <a href="https://banesullivan.com/" title="Author" class="nav-link" rel="noopener" target="_blank"><span><i class="fa fa-user fa-fw"></i></span>
+          
+          <a href="https://banesullivan.com/" title="Author" class="nav-link" rel="noopener" target="_blank" data-toggle="tooltip"><span><i class="fa fa-user fa-fw"></i></span>
             <label class="sr-only">Author</label></a>
         </li>
       </ul>
@@ -335,21 +345,9 @@
   </p>
   <div class="bd-toc-item navbar-nav">
     <ul class="current nav bd-sidenav">
- <li class="toctree-l1">
-  <a class="reference internal" href="remote-jupyter.html">
-   📡 Remote Jupyter
-  </a>
- </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
-   🐳 Docker
-  </a>
- </li>
- <li class="toctree-l1">
-  <a class="reference internal" href="flask.html">
-   🧬 Flask Blueprint
-  </a>
- </li>
+<li class="toctree-l1"><a class="reference internal" href="remote-jupyter.html">📡 Remote Jupyter</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">🐳 Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flask.html">🧬 Flask Blueprint</a></li>
 </ul>
 
   </div>
@@ -403,7 +401,7 @@ build the path as <cite>/data/&lt;filename on Desktop&gt;</cite>, such that the 
 <a class="reference external" href="http://localhost:8000/?filename=/data/TC_NG_SFBay_US_Geo.tif">http://localhost:8000/?filename=/data/TC_NG_SFBay_US_Geo.tif</a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Check out the container on GitHub’s package registry: <a class="reference external" href="https://github.com/banesullivan/localtileserver/pkgs/container/localtileserver">https://github.com/banesullivan/localtileserver/pkgs/container/localtileserver</a></p>
+<p>Check out the container on GitHub’s package registry: <a class="github reference external" href="https://github.com/banesullivan/localtileserver/pkgs/container/localtileserver">banesullivan/localtileserver</a></p>
 </div>
 <section id="jupyter-in-docker">
 <span id="jupyter-docker"></span><h2>📓 Jupyter in Docker<a class="headerlink" href="#jupyter-in-docker" title="Permalink to this heading">#</a></h2>
@@ -414,7 +412,7 @@ Jupyer from a Docker container.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Check out the container on GitHub’s package registry: <a class="reference external" href="https://github.com/banesullivan/localtileserver/pkgs/container/localtileserver-jupyter">https://github.com/banesullivan/localtileserver/pkgs/container/localtileserver-jupyter</a></p>
+<p>Check out the container on GitHub’s package registry: <a class="github reference external" href="https://github.com/banesullivan/localtileserver/pkgs/container/localtileserver-jupyter">banesullivan/localtileserver</a></p>
 </div>
 </section>
 </section>
@@ -433,7 +431,7 @@ Jupyer from a Docker container.</p>
 <div class="toc-item">
   
 <div class="tocsection onthispage">
-    <i class="fas fa-list"></i> On this page
+    <i class="fa-solid fa-list"></i> On this page
 </div>
 <nav id="bd-toc-nav" class="page-toc">
     <ul class="visible nav section-nav flex-column">
@@ -449,13 +447,18 @@ Jupyer from a Docker container.</p>
 
 <div class="toc-item">
   
+<div id="searchbox"></div>
+</div>
+
+<div class="toc-item">
+  
 </div>
 
 <div class="toc-item">
   
 <div class="tocsection sourcelink">
     <a href="../_sources/installation/docker.rst.txt">
-        <i class="fas fa-file-alt"></i> Show Source
+        <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
 </div>
 
@@ -478,7 +481,7 @@ Jupyer from a Docker container.</p>
   
     
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=9b1a4fa89bdd0e95b23b"></script>
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1e1de1a1873e13ef5536"></script>
 
   <footer class="bd-footer"><div class="bd-footer__inner container">
   
