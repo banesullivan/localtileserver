@@ -377,7 +377,9 @@ default is for all TileClient’s to share a single server.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="localtileserver.client.BaseTileClient">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">localtileserver.client.</span></span><span class="sig-name descname"><span class="pre">BaseTileClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:3857'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient" title="Permalink to this definition">#</a></dt>
-<dd><p>Connect to a localtileserver instance.</p>
+<dd><p>Base TileClient methods and configuration.</p>
+<p>This class does not perform any RESTful operations but will interface
+directly with large-image to produce results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>pathlib.Path</em><em>, </em><em>str</em>) – The path on disk to use as the source raster for the tiles.</p>
@@ -462,6 +464,12 @@ bounding coordinates of the shape as: <code class="docutils literal notranslate"
 <dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.filename">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#localtileserver.client.BaseTileClient.filename" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.get_tile">
+<span class="sig-name descname"><span class="pre">get_tile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.BaseTileClient.get_tile" title="Permalink to this definition">#</a></dt>
+<dd><p>Get single tile binary.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="localtileserver.client.BaseTileClient.get_tile_url">
@@ -1028,6 +1036,15 @@ use a temporary file</p></li>
        <code class="docutils literal notranslate">
         <span class="pre">
          BaseTileClient.filename
+        </span>
+       </code>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#localtileserver.client.BaseTileClient.get_tile">
+       <code class="docutils literal notranslate">
+        <span class="pre">
+         BaseTileClient.get_tile()
         </span>
        </code>
       </a>
