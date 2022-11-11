@@ -12,6 +12,12 @@ try:
 except ImportError:
     skip_leaflet = True
 
+skip_shapely = False
+try:
+    import shapely  # noqa
+except ImportError:
+    skip_shapely = True
+
 
 @pytest.mark.skipif(skip_leaflet, reason="ipyleaflet not installed")
 def test_leaflet_tile_layer(bahamas):
@@ -33,7 +39,7 @@ def test_leaflet_tile_layer_from_path(bahamas_file):
     assert isinstance(layer, LocalTileServerLayerMixin)
 
 
-@pytest.mark.skipif(skip_leaflet, reason="ipyleaflet not installed")
+@pytest.mark.skipif(skip_leaflet or skip_shapely, reason="ipyleaflet and shapely not installed")
 def test_get_leaflet_roi_controls(bahamas):
     draw_control, button_control = get_leaflet_roi_controls(bahamas)
     assert isinstance(draw_control, DrawControl)

@@ -37,7 +37,10 @@ logger = logging.getLogger(__name__)
 
 
 class BaseTileClient:
-    """Connect to a localtileserver instance.
+    """Base TileClient methods and configuration.
+
+    This class does not perform any RESTful operations but will interface
+    directly with large-image to produce results.
 
     Parameters
     ----------
@@ -73,6 +76,16 @@ class BaseTileClient:
     @default_projection.setter
     def default_projection(self, value):
         self._default_projection = value
+
+    @property
+    def rasterio(self):
+        """Open dataset with rasterio."""
+        if hasattr(self, "_rasterio_ds"):
+            return self._rasterio_ds
+        import rasterio
+
+        self._rasterio_ds = rasterio.open(self.filename, "r")
+        return self._rasterio_ds
 
     @property
     def server_host(self):
@@ -221,6 +234,10 @@ class BaseTileClient:
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
         )
 
+    def get_tile(self, z: int, x: int, y: int, *args, **kwargs):
+        """Get single tile binary."""
+        raise NotImplementedError  # pragma: no cover
+
     def extract_roi(
         self,
         left: float,
@@ -234,15 +251,7 @@ class BaseTileClient:
         return_path: bool = False,
     ):
         """Extract ROI in world coordinates."""
-        path = f"api/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
-        r = requests.get(self.create_url(path))
-        r.raise_for_status()
-        if return_bytes:
-            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-        output_path = save_file_from_request(r, output_path)
-        if return_path:
-            return output_path
-        return TileClient(output_path)
+        raise NotImplementedError  # pragma: no cover
 
     def extract_roi_shape(
         self,
@@ -291,26 +300,10 @@ class BaseTileClient:
         return_path: bool = False,
     ):
         """Extract ROI in pixel coordinates."""
-        path = f"/api/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
-        r = requests.get(self.create_url(path))
-        r.raise_for_status()
-        if return_bytes:
-            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-        output_path = save_file_from_request(r, output_path)
-        if return_path:
-            return output_path
-        return TileClient(
-            output_path, default_projection="EPSG:3857" if encoding == "TILED" else None
-        )
+        raise NotImplementedError  # pragma: no cover
 
     def metadata(self, projection: Optional[str] = ""):
-        if projection not in self._metadata:
-            if projection == "":
-                projection = self.default_projection
-            r = requests.get(self.create_url(f"/api/metadata?projection={projection}"))
-            r.raise_for_status()
-            self._metadata[projection] = r.json()
-        return self._metadata[projection]
+        raise NotImplementedError  # pragma: no cover
 
     def metadata_safe(self, projection: Optional[str] = ""):
         if self.is_geospatial:
@@ -339,31 +332,7 @@ class BaseTileClient:
             polygon of the raster.
 
         """
-        r = requests.get(
-            self.create_url(f"/api/bounds?units={projection}&projection={self.default_projection}")
-        )
-        r.raise_for_status()
-        bounds = r.json()
-        extent = (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
-        if not return_polygon and not return_wkt:
-            return extent
-        # Safely import shapely
-        try:
-            from shapely.geometry import Polygon
-        except ImportError as e:  # pragma: no cover
-            raise ImportError(f"Please install `shapely`: {e}")
-        coords = (
-            (bounds["xmin"], bounds["ymax"]),
-            (bounds["xmin"], bounds["ymax"]),
-            (bounds["xmax"], bounds["ymax"]),
-            (bounds["xmax"], bounds["ymin"]),
-            (bounds["xmin"], bounds["ymin"]),
-            (bounds["xmin"], bounds["ymax"]),  # Close the loop
-        )
-        poly = Polygon(coords)
-        if return_wkt:
-            return poly.wkt
-        return poly
+        raise NotImplementedError  # pragma: no cover
 
     def center(
         self, projection: str = "EPSG:4326", return_point: bool = False, return_wkt: bool = False
@@ -415,25 +384,7 @@ class BaseTileClient:
         cmap: Union[str, List[str]] = None,
         encoding: str = "PNG",
     ):
-        if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
-            raise ValueError(f"Encoding ({encoding}) not supported.")
-        params = self._get_style_params(
-            band=band,
-            palette=palette,
-            vmin=vmin,
-            vmax=vmax,
-            nodata=nodata,
-            scheme=scheme,
-            n_colors=n_colors,
-            style=style,
-            cmap=cmap,
-        )
-        url = add_query_parameters(self.create_url(f"api/thumbnail.{encoding.lower()}"), params)
-        r = requests.get(url)
-        r.raise_for_status()
-        if output_path:
-            return save_file_from_request(r, output_path)
-        return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
+        raise NotImplementedError  # pragma: no cover
 
     def pixel(self, y: float, x: float, units: str = "pixels", projection: Optional[str] = None):
         """Get pixel values for each band at the given coordinates (y <lat>, x <lon>).
@@ -450,26 +401,11 @@ class BaseTileClient:
             The projection in which to open the image.
 
         """
-        params = {}
-        params["x"] = x
-        params["y"] = y
-        params["units"] = units
-        if projection:
-            params["projection"] = projection
-        url = add_query_parameters(self.create_url("api/pixel"), params)
-        r = requests.get(url)
-        r.raise_for_status()
-        return r.json()
+        raise NotImplementedError  # pragma: no cover
 
     def histogram(self, bins: int = 256, density: bool = False):
         """Get a histoogram for each band."""
-        params = {}
-        params["density"] = density
-        params["bins"] = bins
-        url = add_query_parameters(self.create_url("api/histogram"), params)
-        r = requests.get(url)
-        r.raise_for_status()
-        return r.json()
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def default_zoom(self):
@@ -522,18 +458,162 @@ class BaseTileClient:
         with open(self.thumbnail(encoding="PNG"), "rb") as f:
             return f.read()
 
-    @property
-    def rasterio(self):
-        """Open dataset with rasterio."""
-        if hasattr(self, "_rasterio_ds"):
-            return self._rasterio_ds
-        import rasterio
 
-        self._rasterio_ds = rasterio.open(self.filename, "r")
-        return self._rasterio_ds
+class RestfulTileClient(BaseTileClient):
+    """Connect to a localtileserver instance.
+
+    This is a base class for performing all operations over the RESTful API.
+
+    """
+
+    def get_tile(self, z: int, x: int, y: int, *args, output_path=None, **kwargs):
+        url = self.get_tile_url(*args, **kwargs)
+        r = requests.get(url.format(z=z, x=x, y=y))
+        r.raise_for_status()
+        if output_path:
+            return save_file_from_request(r, output_path)
+        return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
+
+    def extract_roi(
+        self,
+        left: float,
+        right: float,
+        bottom: float,
+        top: float,
+        units: str = "EPSG:4326",
+        encoding: str = "TILED",
+        output_path: pathlib.Path = None,
+        return_bytes: bool = False,
+        return_path: bool = False,
+    ):
+        path = f"api/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
+        r = requests.get(self.create_url(path))
+        r.raise_for_status()
+        if return_bytes:
+            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
+        output_path = save_file_from_request(r, output_path)
+        if return_path:
+            return output_path
+        return TileClient(output_path)
+
+    def extract_roi_pixel(
+        self,
+        left: int,
+        right: int,
+        bottom: int,
+        top: int,
+        encoding: str = "TILED",
+        output_path: pathlib.Path = None,
+        return_bytes: bool = False,
+        return_path: bool = False,
+    ):
+        path = f"/api/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
+        r = requests.get(self.create_url(path))
+        r.raise_for_status()
+        if return_bytes:
+            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
+        output_path = save_file_from_request(r, output_path)
+        if return_path:
+            return output_path
+        return TileClient(
+            output_path, default_projection="EPSG:3857" if encoding == "TILED" else None
+        )
+
+    def metadata(self, projection: Optional[str] = ""):
+        if projection not in self._metadata:
+            if projection == "":
+                projection = self.default_projection
+            r = requests.get(self.create_url(f"/api/metadata?projection={projection}"))
+            r.raise_for_status()
+            self._metadata[projection] = r.json()
+        return self._metadata[projection]
+
+    def bounds(
+        self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
+    ):
+        r = requests.get(
+            self.create_url(f"/api/bounds?units={projection}&projection={self.default_projection}")
+        )
+        r.raise_for_status()
+        bounds = r.json()
+        extent = (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
+        if not return_polygon and not return_wkt:
+            return extent
+        # Safely import shapely
+        try:
+            from shapely.geometry import Polygon
+        except ImportError as e:  # pragma: no cover
+            raise ImportError(f"Please install `shapely`: {e}")
+        coords = (
+            (bounds["xmin"], bounds["ymax"]),
+            (bounds["xmin"], bounds["ymax"]),
+            (bounds["xmax"], bounds["ymax"]),
+            (bounds["xmax"], bounds["ymin"]),
+            (bounds["xmin"], bounds["ymin"]),
+            (bounds["xmin"], bounds["ymax"]),  # Close the loop
+        )
+        poly = Polygon(coords)
+        if return_wkt:
+            return poly.wkt
+        return poly
+
+    def thumbnail(
+        self,
+        band: Union[int, List[int]] = None,
+        palette: Union[str, List[str]] = None,
+        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        scheme: Union[str, List[str]] = None,
+        n_colors: int = 255,
+        output_path: pathlib.Path = None,
+        style: dict = None,
+        cmap: Union[str, List[str]] = None,
+        encoding: str = "PNG",
+    ):
+        if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
+            raise ValueError(f"Encoding ({encoding}) not supported.")
+        params = self._get_style_params(
+            band=band,
+            palette=palette,
+            vmin=vmin,
+            vmax=vmax,
+            nodata=nodata,
+            scheme=scheme,
+            n_colors=n_colors,
+            style=style,
+            cmap=cmap,
+        )
+        url = add_query_parameters(self.create_url(f"api/thumbnail.{encoding.lower()}"), params)
+        r = requests.get(url)
+        r.raise_for_status()
+        if output_path:
+            return save_file_from_request(r, output_path)
+        return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
+
+    def pixel(self, y: float, x: float, units: str = "pixels", projection: Optional[str] = None):
+        params = {}
+        params["x"] = x
+        params["y"] = y
+        params["units"] = units
+        if projection:
+            params["projection"] = projection
+        url = add_query_parameters(self.create_url("api/pixel"), params)
+        r = requests.get(url)
+        r.raise_for_status()
+        return r.json()
+
+    def histogram(self, bins: int = 256, density: bool = False):
+        params = {}
+        params["density"] = density
+        params["bins"] = bins
+        url = add_query_parameters(self.create_url("api/histogram"), params)
+        r = requests.get(url)
+        r.raise_for_status()
+        return r.json()
 
 
-class RemoteTileClient(BaseTileClient):
+class RemoteTileClient(RestfulTileClient):
     """Connect to a remote localtileserver instance at a given host URL.
 
     Parameters
@@ -572,7 +652,7 @@ class RemoteTileClient(BaseTileClient):
         return self.server_host
 
 
-class TileClient(BaseTileClient):
+class TileClient(RestfulTileClient):
     """Serve tiles from a local raster file in a background thread.
 
     Parameters

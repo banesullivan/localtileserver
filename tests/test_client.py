@@ -63,6 +63,8 @@ def test_create_tile_client(bahamas_file):
     r = requests.get(tile_url)
     r.raise_for_status()
     assert r.content
+    tile_conent = tile_client.get_tile(z=8, x=72, y=110)
+    assert tile_conent
     tile_url = tile_client.get_tile_url(grid=True).format(z=8, x=72, y=110)
     r = requests.get(tile_url)
     r.raise_for_status()
