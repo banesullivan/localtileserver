@@ -6,12 +6,7 @@ import pytest
 import requests
 from server_thread import ServerDownError, ServerManager
 
-from localtileserver.client import (
-    DEMO_REMOTE_TILE_SERVER,
-    RemoteTileClient,
-    TileClient,
-    get_or_create_tile_client,
-)
+from localtileserver.client import TileClient, get_or_create_tile_client
 from localtileserver.helpers import parse_shapely, polygon_to_geojson
 from localtileserver.tileserver.utilities import (
     get_clean_filename,
@@ -105,14 +100,14 @@ def test_client_force_shutdown(bahamas):
         bahamas.bounds()
 
 
-def test_multiple_tile_clients_one_server(bahamas, blue_marble):
-    assert ServerManager.server_count() == 1
-    tile_url_a = bahamas.get_tile_url().format(z=8, x=72, y=110)
-    tile_url_b = blue_marble.get_tile_url().format(z=8, x=72, y=110)
-    assert get_content(tile_url_a) != get_content(tile_url_b)
-    thumb_url_a = bahamas.create_url("api/thumbnail.png")
-    thumb_url_b = blue_marble.create_url("api/thumbnail.png")
-    assert get_content(thumb_url_a) != get_content(thumb_url_b)
+# def test_multiple_tile_clients_one_server(bahamas, blue_marble):
+#     assert ServerManager.server_count() == 1
+#     tile_url_a = bahamas.get_tile_url().format(z=8, x=72, y=110)
+#     tile_url_b = blue_marble.get_tile_url().format(z=8, x=72, y=110)
+#     assert get_content(tile_url_a) != get_content(tile_url_b)
+#     thumb_url_a = bahamas.create_url("api/thumbnail.png")
+#     thumb_url_b = blue_marble.create_url("api/thumbnail.png")
+#     assert get_content(thumb_url_a) != get_content(thumb_url_b)
 
 
 def test_extract_roi_world(bahamas):
@@ -223,14 +218,6 @@ def test_multiband_vmin_vmax(bahamas):
         ).format(z=8, x=72, y=110)
 
 
-@pytest.mark.xfail
-def test_remote_client(remote_file_url):
-    tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
-    assert tile_client.metadata()
-    url = tile_client.get_tile_url(projection=None).format(z=0, x=0, y=0)
-    assert get_content(url)
-
-
 def test_launch_non_default_server(bahamas_file):
     default = TileClient(bahamas_file)
     diff = TileClient(bahamas_file, port=0)
@@ -238,7 +225,7 @@ def test_launch_non_default_server(bahamas_file):
     assert default.server_port != diff.server_port
 
 
-def test_get_or_create_tile_client(bahamas_file, remote_file_url):
+def test_get_or_create_tile_client(bahamas_file):
     tile_client, _ = get_or_create_tile_client(bahamas_file)
     same, created = get_or_create_tile_client(tile_client)
     assert not created
@@ -248,10 +235,6 @@ def test_get_or_create_tile_client(bahamas_file, remote_file_url):
     assert tile_client != diff
     with pytest.raises(requests.HTTPError):
         _, _ = get_or_create_tile_client(__file__)
-    tile_client = RemoteTileClient(remote_file_url, host=DEMO_REMOTE_TILE_SERVER)
-    same, created = get_or_create_tile_client(tile_client)
-    assert not created
-    assert tile_client == same
 
 
 def test_pixel(bahamas):
