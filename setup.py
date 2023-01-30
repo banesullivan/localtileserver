@@ -49,7 +49,7 @@ setup(
         "requests",
         "server-thread",
         "scooby",
-        "werkzeug<2.2",
+        "werkzeug",
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
