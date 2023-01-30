@@ -764,6 +764,11 @@ class TileClient(RestfulTileClient):
     def client_prefix(self, value):
         self._client_prefix = value
 
+    def enable_colab(self):
+        """Configure this client for use on Google Colab."""
+        self.client_host = "localhost"
+        self.client_port = True
+
     @property
     def client_base_url(self):
         scheme = (
