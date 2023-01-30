@@ -283,7 +283,8 @@ class BaseTileView(BaseImageView):
         border = ImageOps.expand(img, border=1, fill="black")
         if msg is not None:
             draw = ImageDraw.Draw(border)
-            w, h = draw.textsize(msg)
+            w = draw.textlength(msg, direction="rtl")
+            h = draw.textlength(msg, direction="ttb")
             draw.text(((255 - w) / 2, (255 - h) / 2), msg, fill="red")
         img_bytes = io.BytesIO()
         border.save(img_bytes, format="PNG")
@@ -314,7 +315,8 @@ class TileDebugView(View):
         img = ImageOps.expand(img, border=1, fill="black")
         draw = ImageDraw.Draw(img)
         msg = f"{x}/{y}/{z}"
-        w, h = draw.textsize(msg)
+        w = draw.textlength(msg, direction="rtl")
+        h = draw.textlength(msg, direction="ttb")
         draw.text(((255 - w) / 2, (255 - h) / 2), msg, fill="black")
         img_bytes = io.BytesIO()
         img.save(img_bytes, format="PNG")
