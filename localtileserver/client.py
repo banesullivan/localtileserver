@@ -700,9 +700,9 @@ class TileClient(RestfulTileClient):
         client_host, client_port, client_prefix = get_default_client_params(
             client_host, client_port, client_prefix
         )
-        self._client_host = client_host
-        self._client_port = client_port
-        self._client_prefix = client_prefix
+        self.client_host = client_host
+        self.client_port = client_port
+        self.client_prefix = client_prefix
         if BUILDING_DOCS and not client_host:
             self._client_host = DEMO_REMOTE_TILE_SERVER
 
@@ -743,6 +743,8 @@ class TileClient(RestfulTileClient):
 
     @client_port.setter
     def client_port(self, value):
+        if value is True:
+            value = self.server_port
         self._client_port = value
 
     @property
