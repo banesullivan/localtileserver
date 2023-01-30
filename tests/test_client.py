@@ -1,5 +1,6 @@
 import json
 import os
+import platform
 
 import large_image
 import pytest
@@ -33,6 +34,10 @@ try:
     import rasterio as rio
 except ImportError:
     skip_rasterio = True
+
+skip_mac_arm = pytest.mark.skipif(
+    platform.system() == "Darwin" and platform.processor() == "arm", reason="MacOS Arm issues."
+)
 
 TOLERANCE = 2e-2
 
@@ -293,6 +298,7 @@ def test_style_dict(bahamas):
     assert thumbnail  # TODO: check colors in produced image
 
 
+@skip_mac_arm
 def test_pixel_space_tiles(pelvis):
     assert pelvis.metadata_safe()
     tile_url = pelvis.get_tile_url().format(z=0, x=0, y=0)
