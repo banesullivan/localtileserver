@@ -14,4 +14,4 @@ pytest-cov
 matplotlib
 gunicorn
 cmocean
-werkzeug<2.2
+werkzeug<2.3
