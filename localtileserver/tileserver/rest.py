@@ -210,7 +210,10 @@ class BaseImageView(View):
 
 class ValidateCOGView(BaseImageView):
     def get(self):
-        from localtileserver.validate import ValidateCloudOptimizedGeoTIFFException, validate_cog
+        from localtileserver.validate import validate_cog
+        from osgeo_utils.samples.validate_cloud_optimized_geotiff import (
+            ValidateCloudOptimizedGeoTIFFException,
+        )
 
         tile_source = self.get_tile_source()
         try:
