@@ -714,6 +714,13 @@ class TileClient(RestfulTileClient):
             logging.getLogger("large_image").setLevel(logging.DEBUG)
             logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
 
+        try:
+            import google.colab  # noqa
+
+            self.enable_colab()
+        except ImportError:
+            pass
+
     def shutdown(self, force: bool = False):
         if hasattr(self, "_key"):
             ServerManager.shutdown_server(self._key, force=force)
