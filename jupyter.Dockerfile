@@ -1,4 +1,4 @@
-FROM jupyter/base-notebook:python-3.10.8
+FROM jupyter/base-notebook:python-3.10.9
 LABEL maintainer="Bane Sullivan"
 LABEL repo="https://github.com/banesullivan/localtileserver"
 
