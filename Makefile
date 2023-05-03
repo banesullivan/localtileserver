@@ -16,7 +16,7 @@ pydocstyle:
 	@pydocstyle localtileserver --match='(?!coverage).*.py'
 
 doctest:
-	@echo "Runnnig module doctesting"
+	@echo "Running module doctesting"
 	pytest -v --doctest-modules localtileserver
 
 lint:
