@@ -8,7 +8,7 @@ source image meets the requirements of a Cloud Optimized GeoTiff.
 ``validate_cloud_optimized_geotiff`` script from ``osgeo_utils`` to check if
 an image is a GeoTiff with the proper tiling and overviews to be considered
 "Cloud Optimized". If the validation fails, this method will raise an
-:class:`localtileserver.validate.ValidateCloudOptimizedGeoTIFFException`
+``osgeo_utils.samples.validate_cloud_optimized_geotiff.ValidateCloudOptimizedGeoTIFFException``
 error.
 
 You can use the script by:

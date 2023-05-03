@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="en">
@@ -41,9 +40,6 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -111,8 +107,9 @@
   
 
   
+    <img src="../_static/logo-light.png" class="logo__image only-light" alt="Logo image">
+    <img src="../_static/logo-dark.png" class="logo__image only-dark" alt="Logo image">
   
-    <p class="title logo__title">🌐 localtileserver</p>
   
 </a>
     
@@ -668,7 +665,7 @@ const JS_MIME_TYPE = 'application/javascript';
     document.body.appendChild(element);
   }
 
-  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.0.3.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.0.3.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.0.3.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.0.3.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.0.3.min.js"];
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.1.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.1.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.1.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.1.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.1.0.min.js"];
   const css_urls = [];
 
   const inline_js = [    function(Bokeh) {
@@ -706,11 +703,11 @@ if (force === true) {
     });
   }
 }(window));</script><div class="output text_html">
-<div id="21845872-9f17-4c0f-8e5b-bf645343b21a" data-root-id="p1004" style="display: contents;"></div>
+<div id="060fcbfd-11f2-45b1-bbda-f3fa8682918d" data-root-id="p1004" style="display: contents;"></div>
 </div><script type="application/javascript">(function(root) {
   function embed_document(root) {
-  const docs_json = {"d6ea4bad-a58a-479b-964e-0e565b8b37cd":{"version":"3.0.3","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Figure","id":"p1004","attributes":{"x_range":{"type":"object","name":"Range1d","id":"p1013","attributes":{"start":-13660993.43811085,"end":-13594198.136883384}},"y_range":{"type":"object","name":"Range1d","id":"p1015","attributes":{"start":4502326.297712617,"end":4586806.951318035}},"x_scale":{"type":"object","name":"LinearScale","id":"p1017"},"y_scale":{"type":"object","name":"LinearScale","id":"p1019"},"title":{"type":"object","name":"Title","id":"p1011"},"renderers":[{"type":"object","name":"TileRenderer","id":"p1058","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1003","attributes":{"url":"https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png","max_zoom":20,"attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>"}}}},{"type":"object","name":"TileRenderer","id":"p1060","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1002","attributes":{"url":"https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fdata.kitware.com%252Fapi%252Fv1%252Ffile%252F626854a14acac99f42126a74%252Fdownload%26use_head%3Dno%26list_dir%3Dno&n_colors=255&projection=EPSG%3A3857"}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1008","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1043"},{"type":"object","name":"WheelZoomTool","id":"p1044"},{"type":"object","name":"BoxZoomTool","id":"p1045","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1046","attributes":{"syncable":false,"level":"overlay","visible":false,"left_units":"canvas","right_units":"canvas","bottom_units":"canvas","top_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1047"},{"type":"object","name":"ResetTool","id":"p1048"},{"type":"object","name":"HelpTool","id":"p1049"}]}},"left":[{"type":"object","name":"MercatorAxis","id":"p1032","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1033","attributes":{"mantissas":[1,2,5],"dimension":"lat"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1035","attributes":{"dimension":"lat"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1034"}}}],"below":[{"type":"object","name":"MercatorAxis","id":"p1021","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1022","attributes":{"mantissas":[1,2,5],"dimension":"lon"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1024","attributes":{"dimension":"lon"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1023"}}}],"center":[{"type":"object","name":"Grid","id":"p1031","attributes":{"axis":{"id":"p1021"}}},{"type":"object","name":"Grid","id":"p1042","attributes":{"dimension":1,"axis":{"id":"p1032"}}}]}}]}};
-  const render_items = [{"docid":"d6ea4bad-a58a-479b-964e-0e565b8b37cd","roots":{"p1004":"21845872-9f17-4c0f-8e5b-bf645343b21a"},"root_ids":["p1004"]}];
+  const docs_json = {"331b4688-2e91-4761-b612-eed5120fc0fb":{"version":"3.1.0","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Figure","id":"p1004","attributes":{"x_range":{"type":"object","name":"Range1d","id":"p1013","attributes":{"start":-13660993.43811085,"end":-13594198.136883384}},"y_range":{"type":"object","name":"Range1d","id":"p1015","attributes":{"start":4502326.297712617,"end":4586806.951318035}},"x_scale":{"type":"object","name":"LinearScale","id":"p1017"},"y_scale":{"type":"object","name":"LinearScale","id":"p1019"},"title":{"type":"object","name":"Title","id":"p1007"},"renderers":[{"type":"object","name":"TileRenderer","id":"p1058","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1003","attributes":{"url":"https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png","max_zoom":20,"attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>"}}}},{"type":"object","name":"TileRenderer","id":"p1060","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1002","attributes":{"url":"https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fdata.kitware.com%252Fapi%252Fv1%252Ffile%252F626854a14acac99f42126a74%252Fdownload%26use_head%3Dno%26list_dir%3Dno&n_colors=255&projection=EPSG%3A3857"}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1009","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1043"},{"type":"object","name":"WheelZoomTool","id":"p1044"},{"type":"object","name":"BoxZoomTool","id":"p1045","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1046","attributes":{"syncable":false,"level":"overlay","visible":false,"left_units":"canvas","right_units":"canvas","bottom_units":"canvas","top_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1047"},{"type":"object","name":"ResetTool","id":"p1048"},{"type":"object","name":"HelpTool","id":"p1049"}]}},"left":[{"type":"object","name":"MercatorAxis","id":"p1032","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1034","attributes":{"mantissas":[1,2,5],"dimension":"lat"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1033","attributes":{"dimension":"lat"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1035"}}}],"below":[{"type":"object","name":"MercatorAxis","id":"p1021","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1023","attributes":{"mantissas":[1,2,5],"dimension":"lon"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1022","attributes":{"dimension":"lon"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1024"}}}],"center":[{"type":"object","name":"Grid","id":"p1031","attributes":{"axis":{"id":"p1021"}}},{"type":"object","name":"Grid","id":"p1042","attributes":{"dimension":1,"axis":{"id":"p1032"}}}]}}],"callbacks":{"type":"map"}}};
+  const render_items = [{"docid":"331b4688-2e91-4761-b612-eed5120fc0fb","roots":{"p1004":"060fcbfd-11f2-45b1-bbda-f3fa8682918d"},"root_ids":["p1004"]}];
   root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
   }
   if (root.Bokeh !== undefined) {
@@ -809,7 +806,7 @@ if (force === true) {
   <div class="footer-item">
     
 <p class="sphinx-version">
-Created using <a href="http://sphinx-doc.org/">Sphinx</a> 5.3.0.<br>
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 7.0.0.<br>
 </p>
 
   </div>
