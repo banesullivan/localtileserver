@@ -92,6 +92,10 @@ html_theme_options = {
         },
     ],
     "navbar_end": ["navbar-icon-links"],
+    "logo": {
+        "image_light": "logo-light.png",
+        "image_dark": "logo-dark.png",
+   }
 }
 
 html_sidebars = {
