@@ -1,9 +1,10 @@
 import io
 import json
+import pathlib
 import time
 from urllib.parse import unquote
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageDraw, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
 import large_image
@@ -16,6 +17,7 @@ from localtileserver.tileserver import style, utilities
 from localtileserver.tileserver.blueprint import cache, tileserver
 from localtileserver.tileserver.data import str_to_bool
 from localtileserver.tileserver.palettes import get_palettes
+from localtileserver.tileserver.utilities import format_to_encoding
 
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
 
@@ -130,9 +132,9 @@ REGION_PARAMS = {
 
 
 def make_cache_key(*args, **kwargs):
-    path = request.path
+    path = str(request.path)
     args = str(hash(frozenset(request.args.items())))
-    return (path + args).encode("utf-8")
+    return path + args
 
 
 class ListPalettes(View):
@@ -150,7 +152,7 @@ class ListTileSources(View):
 
 @api.doc(params=BASE_PARAMS)
 class BaseImageView(View):
-    def get_tile_source(self, projection="EPSG:3857"):
+    def get_tile_source(self, projection=None):
         """Return the built tile source."""
         try:
             filename = utilities.get_clean_filename_from_request()
@@ -208,7 +210,11 @@ class BaseImageView(View):
 
 class ValidateCOGView(BaseImageView):
     def get(self):
-        from localtileserver.validate import ValidateCloudOptimizedGeoTIFFException, validate_cog
+        from osgeo_utils.samples.validate_cloud_optimized_geotiff import (
+            ValidateCloudOptimizedGeoTIFFException,
+        )
+
+        from localtileserver.validate import validate_cog
 
         tile_source = self.get_tile_source()
         try:
@@ -253,13 +259,21 @@ class BoundsView(BaseImageView):
 @api.doc(params=STYLE_PARAMS)
 class ThumbnailView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
-    def get(self):
+    def get(self, format: str = "png"):
+        try:
+            encoding = format_to_encoding(format)
+        except ValueError:
+            raise BadRequest(f"Format {format} is not a valid encoding.")
         tile_source = self.get_tile_source()
-        encoding = request.args.get("encoding", "PNG")
         thumb_data, mime_type = tile_source.getThumbnail(encoding=encoding)
+        if isinstance(thumb_data, bytes):
+            thumb_data = io.BytesIO(thumb_data)
+        elif isinstance(thumb_data, (str, pathlib.Path)):
+            with open(thumb_data, "rb") as f:
+                thumb_data = io.BytesIO(f.read())
         return send_file(
-            io.BytesIO(thumb_data),
-            download_name="thumbnail.png",
+            thumb_data,
+            download_name=f"thumbnail.{format}",
             mimetype=mime_type,
         )
 
@@ -267,10 +281,15 @@ class ThumbnailView(BaseImageView):
 @api.doc(params=STYLE_PARAMS)
 class BaseTileView(BaseImageView):
     @staticmethod
-    def add_border_to_image(content):
+    def add_border_to_image(content, msg: str = None):
         img = Image.open(io.BytesIO(content))
         img = ImageOps.crop(img, 1)
         border = ImageOps.expand(img, border=1, fill="black")
+        if msg is not None:
+            draw = ImageDraw.Draw(border)
+            w = draw.textlength(msg, direction="rtl")
+            h = draw.textlength(msg, direction="ttb")
+            draw.text(((255 - w) / 2, (255 - h) / 2), msg, fill="red")
         img_bytes = io.BytesIO()
         border.save(img_bytes, format="PNG")
         return img_bytes.getvalue()
@@ -298,6 +317,11 @@ class TileDebugView(View):
     def get(self, x: int, y: int, z: int):
         img = Image.new("RGBA", (254, 254))
         img = ImageOps.expand(img, border=1, fill="black")
+        draw = ImageDraw.Draw(img)
+        msg = f"{x}/{y}/{z}"
+        w = draw.textlength(msg, direction="rtl")
+        h = draw.textlength(msg, direction="ttb")
+        draw.text(((255 - w) / 2, (255 - h) / 2), msg, fill="black")
         img_bytes = io.BytesIO()
         img.save(img_bytes, format="PNG")
         img_bytes.seek(0)
@@ -330,7 +354,7 @@ class TileView(BaseTileView):
         mime_type = tile_source.getTileMimeType()
         grid = str_to_bool(request.args.get("grid", "False"))
         if grid:
-            tile_binary = self.add_border_to_image(tile_binary)
+            tile_binary = self.add_border_to_image(tile_binary, msg=f"{x}/{y}/{z}")
         return send_file(
             io.BytesIO(tile_binary),
             download_name=f"{x}.{y}.{z}.png",
@@ -351,14 +375,14 @@ class BaseRegionView(BaseImageView):
 class RegionWorldView(BaseRegionView):
     """Returns region tile binary from world coordinates in given EPSG.
 
-    Use the `units` query parameter to inidicate the projection of the given
+    Use the `units` query parameter to indicate the projection of the given
     coordinates. This can be different than the `projection` parameter used
     to open the tile source. `units` defaults to `EPSG:4326`.
 
     """
 
     def get(self):
-        tile_source = self.get_tile_source()
+        tile_source = self.get_tile_source(projection="EPSG:3857")
         if not isinstance(tile_source, GDALFileTileSource):
             raise BadRequest("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")

@@ -29,7 +29,7 @@ dependencies:
   - folium
   - jupyter-server-proxy
   - codespell
-  - flake8
+  - flake8 <5.0.0
   - black
   - isort
   - pydocstyle
@@ -38,6 +38,7 @@ dependencies:
   - flake8-bugbear
   - sphinx-notfound-page
   - sphinx-copybutton
+  - werkzeug <2.2
   - pip
   - pip:
     - sentry-sdk[flask]

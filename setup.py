@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 5, 6
+version_info = 0, 6, 4
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -24,7 +24,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Bane Sullivan",
-    author_email="banesullivan@gmail.com",
+    author_email="hello@banesullivan.com",
     url="https://github.com/banesullivan/localtileserver",
     packages=find_packages(),
     include_package_data=True,
@@ -34,7 +34,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python",
     ],
     python_requires=">=3.7",
@@ -49,11 +49,13 @@ setup(
         "requests",
         "server-thread",
         "scooby",
+        "werkzeug",
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
         "sources": ["large-image[gdal,pil,tiff]>=1.14.1"],
         "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
+        "helpers": ["shapely", "rasterio"],
     },
     entry_points={
         "console_scripts": [

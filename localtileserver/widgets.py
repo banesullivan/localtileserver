@@ -1,7 +1,7 @@
 import logging
 import os
 import pathlib
-from typing import List, Union
+from typing import List, Optional, Union
 
 try:
     from rasterio.io import DatasetReaderBase
@@ -14,11 +14,17 @@ logger = logging.getLogger(__name__)
 DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesullivan/localtileserver' target='_blank'>localtileserver</a>."
 
 
+class LocalTileServerLayerMixin:
+    """Mixin class for tile layers using localtileserver."""
+
+    pass
+
+
 def get_leaflet_tile_layer(
     source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
-    projection: str = "EPSG:3857",
+    projection: Optional[str] = "",
     band: Union[int, List[int]] = None,
     palette: Union[str, List[str]] = None,
     vmin: Union[Union[float, int], List[Union[float, int]]] = None,
@@ -29,6 +35,7 @@ def get_leaflet_tile_layer(
     attribution: str = None,
     style: dict = None,
     cmap: Union[str, List[str]] = None,
+    default_projection: Optional[str] = "EPSG:3857",
     **kwargs,
 ):
     """Generate an ipyleaflet TileLayer for the given TileClient.
@@ -91,20 +98,22 @@ def get_leaflet_tile_layer(
     """
     # Safely import ipyleaflet
     try:
-        from ipyleaflet import TileLayer
+        from ipyleaflet import TileLayer, projections
         from traitlets import Tuple, Union
     except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `ipyleaflet`: {e}")
 
-    class BoundTileLayer(TileLayer):
+    class BoundTileLayer(TileLayer, LocalTileServerLayerMixin):
         # https://github.com/jupyter-widgets/ipyleaflet/issues/888
         # https://github.com/ipython/traitlets/issues/626#issuecomment-699957829
         bounds = Union((Tuple(),), default_value=None, allow_none=True).tag(sync=True, o=True)
 
-    source, created = get_or_create_tile_client(source, port=port, debug=debug)
+    source, created = get_or_create_tile_client(
+        source, port=port, debug=debug, default_projection=default_projection
+    )
     url = source.get_tile_url(
         projection=projection,
-        band=band,
+        band=kwargs.get("bands", band),
         palette=palette,
         vmin=vmin,
         vmax=vmax,
@@ -117,8 +126,16 @@ def get_leaflet_tile_layer(
     )
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
-    kwargs.setdefault("max_native_zoom", source.metadata()["levels"])
-    tile_layer = BoundTileLayer(url=url, attribution=attribution, **kwargs)
+    kwargs.setdefault("max_native_zoom", source.max_zoom)
+    kwargs.setdefault("max_zoom", source.max_zoom)
+    kwargs.setdefault("show_loading", True)
+    if projection is None or (not projection and source.default_projection is None):
+        kwargs.setdefault("crs", projections.Simple)
+        bounds = None
+    else:
+        b = source.bounds()
+        bounds = ((b[0], b[2]), (b[1], b[3]))
+    tile_layer = BoundTileLayer(url=url, attribution=attribution, bounds=bounds, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source
@@ -201,7 +218,7 @@ def get_leaflet_roi_controls(
         output_path = output_path / f"roi_{basename}_{left}_{right}_{bottom}_{top}.{ext}"
         draw_control.output_path = output_path
         logger.error(f"output_path: {output_path}")
-        client.extract_roi(left, right, bottom, top, output_path=output_path)
+        client.extract_roi(left, right, bottom, top, output_path=output_path, return_path=True)
 
     button = widgets.Button(description="Extract ROI")
     button.on_click(on_button_clicked)
@@ -215,7 +232,7 @@ def get_folium_tile_layer(
     source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
-    projection: str = "EPSG:3857",
+    projection: Optional[str] = "",
     band: Union[int, List[int]] = None,
     palette: Union[str, List[str]] = None,
     vmin: Union[Union[float, int], List[Union[float, int]]] = None,
@@ -226,6 +243,7 @@ def get_folium_tile_layer(
     attr: str = None,
     style: dict = None,
     cmap: Union[str, List[str]] = None,
+    default_projection: Optional[str] = "EPSG:3857",
     **kwargs,
 ):
     """Generate a folium TileLayer for the given TileClient.
@@ -291,10 +309,16 @@ def get_folium_tile_layer(
         from folium import TileLayer
     except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `folium`: {e}")
-    source, created = get_or_create_tile_client(source, port=port, debug=debug)
+
+    class FoliumTileLayer(TileLayer, LocalTileServerLayerMixin):
+        pass
+
+    source, created = get_or_create_tile_client(
+        source, port=port, debug=debug, default_projection=default_projection
+    )
     url = source.get_tile_url(
         projection=projection,
-        band=band,
+        band=kwargs.get("bands", band),
         palette=palette,
         vmin=vmin,
         vmax=vmax,
@@ -307,7 +331,9 @@ def get_folium_tile_layer(
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION
-    tile_layer = TileLayer(tiles=url, attr=attr, **kwargs)
+    if projection is None or (not projection and source.default_projection is None):
+        kwargs.setdefault("crs", "Simple")
+    tile_layer = FoliumTileLayer(tiles=url, attr=attr, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source

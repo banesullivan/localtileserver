@@ -3,6 +3,8 @@ from urllib.parse import quote
 
 import requests
 
+from localtileserver.tileserver.application import run_app
+
 
 def test_home_page_with_file(bahamas):
     r = requests.get(bahamas.server_base_url)
@@ -62,3 +64,10 @@ def test_cog_validate_endpoint(flask_client, remote_file_url):
     non_cog = "https://data.kitware.com/api/v1/file/60747d792fa25629b9a79565/download"
     r = flask_client.get(f"/api/validate?filename={non_cog}")
     assert r.status_code == 415
+
+
+def test_run_app():
+    app = run_app("bahamas", browser=False, run=False)
+    with app.test_client() as f_client:
+        r = f_client.get("/api/sources")
+        assert r.status_code == 200

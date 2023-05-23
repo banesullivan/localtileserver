@@ -45,11 +45,4 @@ Other Helpers
 
 .. autofunction:: localtileserver.validate.validate_cog
 
-
-Exceptions
-----------
-
-
-.. autoclass:: localtileserver.validate.ValidateCloudOptimizedGeoTIFFException
-   :members:
-   :undoc-members:
+.. autofunction:: localtileserver.helpers.polygon_to_geojson

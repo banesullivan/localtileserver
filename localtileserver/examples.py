@@ -2,13 +2,16 @@ from functools import wraps
 from typing import Union
 
 from localtileserver.client import TileClient
+from localtileserver.helpers import parse_shapely
 from localtileserver.tileserver import (
+    get_co_elevation_url,
     get_data_path,
     get_elevation_us_url,
     get_oam2_url,
     get_pine_gulch_url,
     get_sf_bay_url,
 )
+from localtileserver.tileserver.data import DIRECTORY
 
 
 def _get_example_client(
@@ -78,4 +81,26 @@ def get_oam2(*args, **kwargs):
 @wraps(_get_example_client)
 def get_elevation_us(*args, **kwargs):
     path = get_elevation_us_url()
+    return TileClient(path, *args, **kwargs)
+
+
+@wraps(_get_example_client)
+def get_pelvis(*args, **kwargs):
+    path = get_data_path("G10-3_pelvis_crop-powers-of-3.tif")
+    kwargs.setdefault("default_projection", None)
+    return TileClient(path, *args, **kwargs)
+
+
+def load_presidio():
+    """Load Presidio of San Francisco boundary as Shapely Polygon."""
+    with open(DIRECTORY / "presidio.wkb", "rb") as f:
+        return parse_shapely(f.read())
+
+
+@wraps(_get_example_client)
+def get_co_elevation(*args, local_roi=False, **kwargs):
+    if local_roi:
+        path = get_data_path("co_elevation_roi.tif")
+    else:
+        path = get_co_elevation_url()
     return TileClient(path, *args, **kwargs)
