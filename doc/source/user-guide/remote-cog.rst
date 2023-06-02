@@ -17,7 +17,7 @@ we can view tiles of the remote file very efficiently in a Jupyter notebook.
   from localtileserver import TileClient
   import folium, ipyleaflet
 
-  url = 'https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif'
+  url = 'https://data.kitware.com/api/v1/file/626854a14acac99f42126a74/download'
 
   # First, create a tile server from the URL raster file
   client = TileClient(url)

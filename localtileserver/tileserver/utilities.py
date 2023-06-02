@@ -15,7 +15,6 @@ from osgeo import gdal
 from localtileserver.tileserver.data import (
     clean_url,
     get_data_path,
-    get_pine_gulch_url,
     get_sf_bay_url,
 )
 
@@ -183,8 +182,6 @@ def get_clean_filename(filename: str):
         filename = get_data_path("aws_elevation_tiles_prod.xml")
     elif filename == "bahamas":
         filename = get_data_path("bahamas_rgb.tif")
-    elif filename == "pine_gulch":
-        filename = get_pine_gulch_url()
 
     if str(filename).startswith("/vsi"):
         return filename

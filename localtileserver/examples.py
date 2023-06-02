@@ -8,7 +8,6 @@ from localtileserver.tileserver import (
     get_data_path,
     get_elevation_us_url,
     get_oam2_url,
-    get_pine_gulch_url,
     get_sf_bay_url,
 )
 from localtileserver.tileserver.data import DIRECTORY
@@ -51,12 +50,6 @@ def get_elevation(*args, **kwargs):
 @wraps(_get_example_client)
 def get_bahamas(*args, **kwargs):
     path = get_data_path("bahamas_rgb.tif")
-    return TileClient(path, *args, **kwargs)
-
-
-@wraps(_get_example_client)
-def get_pine_gulch(*args, **kwargs):
-    path = get_pine_gulch_url()
     return TileClient(path, *args, **kwargs)
 
 

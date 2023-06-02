@@ -34,11 +34,6 @@ def test_get_bahamas():
     assert client.metadata()
 
 
-def test_get_pine_gulch():
-    client = examples.get_pine_gulch()
-    assert client.metadata()
-
-
 def test_get_landsat():
     client = examples.get_landsat()
     assert client.metadata()
