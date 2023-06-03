@@ -453,6 +453,16 @@ This will only work when opening a raster in read-mode.</p>
 <span class="n">m</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> actually uses <code class="docutils literal notranslate"><span class="pre">rasterio</span></code> under the hood for everything
+and keeps a reference to a <code class="docutils literal notranslate"><span class="pre">rasterio.DatasetReader</span></code> for all clients.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">examples</span>
+
+<span class="c1"># Load example tile layer from publicly available DEM source</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_elevation</span><span class="p">()</span>
+
+<span class="n">client</span><span class="o">.</span><span class="n">rasterio</span>
+</pre></div>
+</div>
 </section>
 
 

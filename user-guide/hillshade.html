@@ -440,15 +440,14 @@ document.write(`
 colors represent the shadows and highlights that you would visually expect to
 see in a terrain model. Hillshades are often used as an underlay in a map, to
 make the data appear more 3-Dimensional.</p>
-<p>This example was adopted from <a class="reference external" href="https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html">EarthPy</a></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This example requires <code class="docutils literal notranslate"><span class="pre">rasterio</span></code> to be installed.</p>
+<p>This example was adopted from <a class="reference external" href="https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html">EarthPy</a></p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">TileClient</span><span class="p">,</span> <span class="n">get_leaflet_tile_layer</span>
 <span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">examples</span><span class="p">,</span> <span class="n">helpers</span>
 <span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span><span class="p">,</span> <span class="n">SplitMapControl</span>
-<span class="kn">import</span> <span class="nn">rasterio</span> <span class="k">as</span> <span class="nn">rio</span>
+<span class="kn">import</span> <span class="nn">rasterio</span>
 
 <span class="c1"># Example DEM dataset</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_co_elevation</span><span class="p">()</span>
@@ -474,7 +473,7 @@ function (adopted from EarthPy).</p>
 <span class="n">hs_arr</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">hillshade</span><span class="p">(</span><span class="n">dem</span><span class="p">)</span>
 
 <span class="c1"># Save hillshade arrays as new raster and open with rasterio</span>
-<span class="n">hs</span> <span class="o">=</span> <span class="n">rio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">helpers</span><span class="o">.</span><span class="n">save_new_raster</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">hs_arr</span><span class="p">))</span>
+<span class="n">hs</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">helpers</span><span class="o">.</span><span class="n">save_new_raster</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">hs_arr</span><span class="p">))</span>
 </pre></div>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make an ipyleaflet tile layer of the hillshade</span>

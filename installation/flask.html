@@ -430,7 +430,7 @@ document.write(`
 <p>Under the hood, <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> is a basic Flask Blueprint that can be easily
 incorporated into any Flask application. To utilize in your own application:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
-<span class="kn">from</span> <span class="nn">localtileserver.tileserver.blueprint</span> <span class="kn">import</span> <span class="n">cache</span><span class="p">,</span> <span class="n">tileserver</span>
+<span class="kn">from</span> <span class="nn">localtileserver.web.blueprint</span> <span class="kn">import</span> <span class="n">cache</span><span class="p">,</span> <span class="n">tileserver</span>
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 <span class="n">cache</span><span class="o">.</span><span class="n">init_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>

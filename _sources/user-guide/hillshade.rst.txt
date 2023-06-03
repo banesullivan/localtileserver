@@ -9,12 +9,9 @@ see in a terrain model. Hillshades are often used as an underlay in a map, to
 make the data appear more 3-Dimensional.
 
 
-This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html>`_
-
-
 .. note::
 
-  This example requires ``rasterio`` to be installed.
+  This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html>`_
 
 
 .. code:: python
@@ -22,7 +19,7 @@ This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest
   from localtileserver import TileClient, get_leaflet_tile_layer
   from localtileserver import examples, helpers
   from ipyleaflet import Map, SplitMapControl
-  import rasterio as rio
+  import rasterio
 
   # Example DEM dataset
   client = examples.get_co_elevation()
@@ -55,7 +52,7 @@ function (adopted from EarthPy).
   hs_arr = helpers.hillshade(dem)
 
   # Save hillshade arrays as new raster and open with rasterio
-  hs = rio.open(helpers.save_new_raster(client, hs_arr))
+  hs = rasterio.open(helpers.save_new_raster(client, hs_arr))
 
 
 .. code:: python
