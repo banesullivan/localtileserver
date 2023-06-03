@@ -1,6 +1,6 @@
 import logging
 
-from localtileserver.tileserver import create_app
+from localtileserver.web import create_app
 
 logging.getLogger("werkzeug").setLevel(logging.DEBUG)
 logging.getLogger("gdal").setLevel(logging.DEBUG)

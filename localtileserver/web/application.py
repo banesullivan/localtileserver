@@ -9,14 +9,14 @@ from flask import Flask
 from flask_cors import CORS
 
 from localtileserver.tiler.utilities import get_clean_filename
-from localtileserver.tileserver.blueprint import cache, tileserver
+from localtileserver.web.blueprint import cache, tileserver
 
 
 def create_app(
     url_prefix: str = "/", cors_all: bool = False, debug: bool = False, cesium_token: str = ""
 ):
     try:
-        from localtileserver.tileserver import sentry  # noqa: F401
+        from localtileserver.web import sentry  # noqa: F401
     except Exception:
         pass
     app = Flask(__name__)

@@ -2,7 +2,7 @@ import pytest
 import rasterio
 
 from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path
-from localtileserver.tileserver import create_app
+from localtileserver.web import create_app
 
 
 @pytest.fixture

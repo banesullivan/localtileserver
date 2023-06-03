@@ -14,5 +14,5 @@ COPY localtileserver/ /build-context/localtileserver/
 RUN python setup.py bdist_wheel
 RUN pip install dist/localtileserver*.whl
 
-ENTRYPOINT ["gunicorn", "--bind=0.0.0.0:8000", "localtileserver.tileserver.wsgi:app"]
+ENTRYPOINT ["gunicorn", "--bind=0.0.0.0:8000", "localtileserver.web.wsgi:app"]
 # docker run --rm -it -p 8000:8000 localtileserver

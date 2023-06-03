@@ -29,8 +29,8 @@ from localtileserver.tiler.utilities import (
     get_tile_bounds,
     get_tile_source,
 )
-from localtileserver.tileserver.blueprint import cache, tileserver
-from localtileserver.tileserver.utils import get_clean_filename_from_request
+from localtileserver.web.blueprint import cache, tileserver
+from localtileserver.web.utils import get_clean_filename_from_request
 
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
 

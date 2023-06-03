@@ -6,8 +6,8 @@ from flask.views import View
 from large_image.exceptions import TileSourceError
 
 from localtileserver.tiler import data, utilities
-from localtileserver.tileserver.blueprint import tileserver
-from localtileserver.tileserver.utils import get_clean_filename_from_request
+from localtileserver.web.blueprint import tileserver
+from localtileserver.web.utils import get_clean_filename_from_request
 
 logger = logging.getLogger(__name__)
 
