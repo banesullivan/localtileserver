@@ -9,12 +9,9 @@ see in a terrain model. Hillshades are often used as an underlay in a map, to
 make the data appear more 3-Dimensional.
 
 
-This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html>`_
-
-
 .. note::
 
-  This example requires ``rasterio`` to be installed.
+  This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html>`_
 
 
 .. code:: python

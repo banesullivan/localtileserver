@@ -2,7 +2,7 @@
 from localtileserver._version import __version__
 from localtileserver.client import RemoteTileClient, TileClient, get_or_create_tile_client
 from localtileserver.report import Report
-from localtileserver.tiler.utilities import get_cache_dir, make_vsi, purge_cache
+from localtileserver.tiler import get_cache_dir, make_vsi, purge_cache
 from localtileserver.validate import validate_cog
 from localtileserver.widgets import (
     LocalTileServerLayerMixin,

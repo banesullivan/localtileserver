@@ -16,6 +16,19 @@ viewing a different set of bands:
   # First, create TileClient using example file
   client = examples.get_landsat()
 
+
+.. jupyter-execute::
+
+  client.thumbnail(band=[7, 5, 4])
+
+
+.. jupyter-execute::
+
+  client.thumbnail(band=[5, 3, 2])
+
+
+.. jupyter-execute::
+
   # Create 2 tile layers from same raster viewing different bands
   l = get_leaflet_tile_layer(client, band=[7, 5, 4])
   r = get_leaflet_tile_layer(client, band=[5, 3, 2])
@@ -48,6 +61,11 @@ See https://girder.github.io/large_image/tilesource_options.html#style
       {'band': 2, 'palette': '#00f'},
     ]
   }
+
+  client.thumbnail(style=style)
+
+
+.. jupyter-execute::
 
   l = get_leaflet_tile_layer(client, style=style)
 

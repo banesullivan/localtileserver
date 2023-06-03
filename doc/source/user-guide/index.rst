@@ -40,6 +40,20 @@ Here is the "one-liner" to visualize a large geospatial image with
 The :class:`localtileserver.TileClient` class utilizes the ``_ipython_display_``
 method to automatically display the tiles with ``ipyleaflet`` in a Notebook.
 
+You can also get a single tile by:
+
+.. jupyter-execute::
+
+  # z, x, y
+  client.get_tile(10, 163, 395)
+
+
+And get a thumbnail preview by:
+
+.. jupyter-execute::
+
+  client.thumbnail()
+
 
 🍃 ``ipyleaflet`` Tile Layers
 -----------------------------

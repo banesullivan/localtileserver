@@ -7,8 +7,7 @@ from typing import Optional, Union
 from urllib.parse import urlencode, urlparse
 
 import large_image
-from large_image.tilesource import FileTileSource
-from large_image.tilesource.geo import GeoBaseFileTileSource
+from large_image_source_rasterio import RasterioFileTileSource
 
 from localtileserver.tiler.data import clean_url, get_data_path, get_pine_gulch_url
 
@@ -62,17 +61,18 @@ def purge_cache():
     return get_cache_dir()
 
 
-def is_geospatial(source: FileTileSource) -> bool:
+def is_geospatial(source: RasterioFileTileSource) -> bool:
     return source.getMetadata().get("geospatial", False)
 
 
 def get_tile_source(
     path: Union[pathlib.Path, str], projection: str = None, style: str = None, encoding: str = "PNG"
-) -> FileTileSource:
-    return large_image.open(str(path), projection=projection, style=style, encoding=encoding)
+) -> RasterioFileTileSource:
+    path = get_clean_filename(path)
+    return RasterioFileTileSource(str(path), projection=projection, style=style, encoding=encoding)
 
 
-def _get_region(tile_source: FileTileSource, region: dict, encoding: str):
+def _get_region(tile_source: RasterioFileTileSource, region: dict, encoding: str):
     result, mime_type = tile_source.getRegion(region=region, encoding=encoding)
     if encoding == "TILED":
         path = result
@@ -89,7 +89,7 @@ def _get_region(tile_source: FileTileSource, region: dict, encoding: str):
 
 
 def get_region_world(
-    tile_source: FileTileSource,
+    tile_source: RasterioFileTileSource,
     left: float,
     right: float,
     bottom: float,
@@ -102,7 +102,7 @@ def get_region_world(
 
 
 def get_region_pixel(
-    tile_source: FileTileSource,
+    tile_source: RasterioFileTileSource,
     left: int,
     right: int,
     bottom: int,
@@ -113,18 +113,15 @@ def get_region_pixel(
     left, right = min(left, right), max(left, right)
     top, bottom = min(top, bottom), max(top, bottom)
     region = dict(left=left, right=right, bottom=bottom, top=top, units=units)
-    if isinstance(tile_source, GeoBaseFileTileSource) and encoding is None:
+    if encoding is None:
         # Use tiled encoding by default for geospatial rasters
         #   output will be a tiled TIF
         encoding = "TILED"
-    elif encoding is None:
-        # Otherwise use JPEG encoding by default
-        encoding = "JPEG"
     return _get_region(tile_source, region, encoding)
 
 
 def get_tile_bounds(
-    tile_source: FileTileSource,
+    tile_source: RasterioFileTileSource,
     projection: str = "EPSG:4326",
 ):
     if not is_geospatial(tile_source):
@@ -137,7 +134,7 @@ def get_tile_bounds(
     return bounds
 
 
-def get_meta_data(tile_source: FileTileSource):
+def get_meta_data(tile_source: RasterioFileTileSource):
     meta = tile_source.getMetadata()
     meta.update(tile_source.getInternalMetadata())
     # Override bounds for EPSG:4326
@@ -191,14 +188,14 @@ def get_clean_filename(filename: str):
     return filename
 
 
-def format_to_encoding(format: Optional[str]) -> str:
+def format_to_encoding(fmt: Optional[str]) -> str:
     """Translate format extension (e.g., `tiff`) to encoding (e.g., `TILED`)."""
-    if not format:
+    if not fmt:
         return "PNG"
-    if format.lower() not in ["tif", "tiff", "png", "jpeg", "jpg"]:
-        raise ValueError(f"Format {format!r} is not valid. Try `png`, `jpeg`, or `tif`")
-    if format.lower() in ["tif", "tiff"]:
+    if fmt.lower() not in ["tif", "tiff", "png", "jpeg", "jpg"]:
+        raise ValueError(f"Format {fmt!r} is not valid. Try `png`, `jpeg`, or `tif`")
+    if fmt.lower() in ["tif", "tiff"]:
         return "TILED"
-    if format.lower() == "jpg":
-        format = "jpeg"
-    return format.upper()  # jpeg, png
+    if fmt.lower() == "jpg":
+        fmt = "jpeg"
+    return fmt.upper()  # jpeg, png

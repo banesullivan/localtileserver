@@ -1,27 +1,18 @@
-import json
 import os
 import platform
 
-import large_image
-from large_image.exceptions import TileSourceError
 import pytest
 import rasterio
 import requests
-from server_thread import ServerManager
+from server_thread import ServerDownError, ServerManager
 
-from localtileserver.client import TileClient, get_or_create_tile_client
-from localtileserver.helpers import parse_shapely, polygon_to_geojson
-from localtileserver.tiler import (
-    get_cache_dir,
-    get_clean_filename,
-    get_tile_bounds,
-    get_tile_source,
-)
+from localtileserver.client import RestTileClient
+from localtileserver.tiler import get_clean_filename, get_tile_bounds, get_tile_source
 from localtileserver.utilities import ImageBytes
 
 skip_shapely = False
 try:
-    from shapely.geometry import Polygon
+    from shapely.geometry import box
 except ImportError:
     skip_shapely = True
 
@@ -40,7 +31,7 @@ def get_content(url):
 
 def test_create_tile_client(bahamas_file):
     assert ServerManager.server_count() == 0
-    tile_client = TileClient(bahamas_file, debug=True)
+    tile_client = RestTileClient(bahamas_file, debug=True)
     assert tile_client.filename == get_clean_filename(bahamas_file)
     assert tile_client.server_port
     assert tile_client.server_base_url
@@ -75,12 +66,13 @@ def test_create_tile_client(bahamas_file):
 
 def test_create_tile_client_bad(bahamas_file):
     with pytest.raises(OSError):
-        TileClient("foo.tif", debug=True)
+        RestTileClient("foo.tif", debug=True)
     with pytest.raises(ValueError):
-        TileClient(bahamas_file, port="0", debug=True)
+        RestTileClient(bahamas_file, port="0", debug=True)
 
 
-def test_client_force_shutdown(bahamas):
+def test_client_force_shutdown(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     tile_url = bahamas.get_tile_url().format(z=8, x=72, y=110)
     r = requests.get(tile_url)
     r.raise_for_status()
@@ -91,9 +83,11 @@ def test_client_force_shutdown(bahamas):
     with pytest.raises(requests.ConnectionError):
         r = requests.get(tile_url)
         r.raise_for_status()
+    with pytest.raises(ServerDownError):
+        bahamas.bounds()
 
 
-# def test_multiple_tile_clients_one_server(bahamas, blue_marble):
+# def test_multiple_tile_clients_one_server(bahamas_file, blue_marble):
 #     assert ServerManager.server_count() == 1
 #     tile_url_a = bahamas.get_tile_url().format(z=8, x=72, y=110)
 #     tile_url_b = blue_marble.get_tile_url().format(z=8, x=72, y=110)
@@ -103,7 +97,8 @@ def test_client_force_shutdown(bahamas):
 #     assert get_content(thumb_url_a) != get_content(thumb_url_b)
 
 
-def test_extract_roi_world(bahamas):
+def test_extract_roi_world(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     # -78.047, -77.381, 24.056, 24.691
     path = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691, return_path=True)
     assert path.exists()
@@ -122,9 +117,8 @@ def test_extract_roi_world(bahamas):
 
 
 @pytest.mark.skipif(skip_shapely, reason="shapely not installed")
-def test_extract_roi_world_shape(bahamas):
-    from shapely.geometry import box
-
+def test_extract_roi_world_shape(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     poly = box(-78.047, 24.056, -77.381, 24.691)
     path = bahamas.extract_roi_shape(poly, return_path=True)
     assert path.exists()
@@ -140,7 +134,8 @@ def test_extract_roi_world_shape(bahamas):
 
 
 @pytest.mark.skip
-def test_extract_roi_pixel(bahamas):
+def test_extract_roi_pixel(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     path = bahamas.extract_roi_pixel(100, 500, 300, 600, return_path=True)
     assert path.exists()
     source = get_tile_source(path)
@@ -153,7 +148,8 @@ def test_extract_roi_pixel(bahamas):
     assert isinstance(roi, ImageBytes)
 
 
-def test_caching_query_params(bahamas):
+def test_caching_query_params(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     thumb_url_a = bahamas.create_url("api/thumbnail.png")
     thumb_url_b = bahamas.create_url("api/thumbnail.png?band=1")
     assert get_content(thumb_url_a) != get_content(thumb_url_b)
@@ -161,7 +157,8 @@ def test_caching_query_params(bahamas):
     assert get_content(thumb_url_a) == get_content(thumb_url_c)
 
 
-def test_multiband(bahamas):
+def test_multiband(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     # Create an RGB tile in several ways and make sure all same
     url_a = bahamas.get_tile_url(
         band=[1, 2, 3],
@@ -183,7 +180,8 @@ def test_multiband(bahamas):
     assert get_content(url)  # just make sure it doesn't fail
 
 
-def test_multiband_vmin_vmax(bahamas):
+def test_multiband_vmin_vmax(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     # Check that other options are well handled
     url = bahamas.get_tile_url(
         band=[3, 2, 1],
@@ -203,25 +201,14 @@ def test_multiband_vmin_vmax(bahamas):
 
 
 def test_launch_non_default_server(bahamas_file):
-    default = TileClient(bahamas_file)
-    diff = TileClient(bahamas_file, port=0)
+    default = RestTileClient(bahamas_file)
+    diff = RestTileClient(bahamas_file, port=0)
     assert default.server != diff.server
     assert default.server_port != diff.server_port
 
 
-def test_get_or_create_tile_client(bahamas_file):
-    tile_client, _ = get_or_create_tile_client(bahamas_file)
-    same, created = get_or_create_tile_client(tile_client)
-    assert not created
-    assert tile_client == same
-    diff, created = get_or_create_tile_client(bahamas_file)
-    assert created
-    assert tile_client != diff
-    with pytest.raises(TileSourceError):
-        _, _ = get_or_create_tile_client(__file__)
-
-
-def test_pixel(bahamas):
+def test_pixel(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     # pix = bahamas.pixel(0, 0)  # pixel space
     # assert "bands" in pix
     pix = bahamas.pixel(24.56, -77.76, units="EPSG:4326")  # world coordinates
@@ -229,30 +216,31 @@ def test_pixel(bahamas):
 
 
 @pytest.mark.skip
-def test_histogram(bahamas):
+def test_histogram(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     hist = bahamas.histogram()
     assert len(hist)
 
 
 @pytest.mark.parametrize("encoding", ["PNG", "JPEG", "JPG"])
-def test_thumbnail_encodings(bahamas, encoding):
+def test_thumbnail_encodings(bahamas_file, encoding):
+    bahamas = RestTileClient(bahamas_file)
     # large-image's rasterio source cannot handle: "TIF", "TIFF"
     thumbnail = bahamas.thumbnail(encoding=encoding)
     assert thumbnail  # TODO: check content
     assert isinstance(thumbnail, ImageBytes)
-    output_path = get_cache_dir() / f"thumbnail.{encoding}"
-    if output_path.exists():
-        os.remove(output_path)
-    thumbnail = bahamas.thumbnail(encoding=encoding, output_path=output_path)
-    assert os.path.exists(output_path)
+    thumbnail = bahamas.thumbnail(encoding=encoding, output_path=True)
+    assert os.path.exists(thumbnail)
 
 
-def test_thumbnail_bad_encoding(bahamas):
+def test_thumbnail_bad_encoding(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     with pytest.raises(ValueError):
         bahamas.thumbnail(encoding="foo")
 
 
-def test_custom_palette(bahamas):
+def test_custom_palette(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     palette = ["#006633", "#E5FFCC", "#662A00", "#D8D8D8", "#F5F5F5"]
     thumbnail = bahamas.thumbnail(
         band=1,
@@ -268,7 +256,8 @@ def test_custom_palette(bahamas):
     assert thumbnail  # TODO: check colors in produced image
 
 
-def test_style_dict(bahamas):
+def test_style_dict(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     style = {
         "bands": [
             {"band": 1, "palette": ["#000", "#0f0"]},
@@ -280,51 +269,8 @@ def test_style_dict(bahamas):
     assert thumbnail  # TODO: check colors in produced image
 
 
-def test_large_image_to_client(bahamas_file):
-    src = large_image.open(bahamas_file)
-    tile_client = TileClient(src)
-    assert tile_client.filename == get_clean_filename(bahamas_file)
-    assert "bounds" in tile_client.metadata()
-
-
-def test_default_zoom(bahamas):
-    assert bahamas.default_zoom == 8
-
-
-@pytest.mark.skipif(skip_shapely, reason="shapely not installed")
-def test_bounds_polygon(bahamas):
-    poly = bahamas.bounds(return_polygon=True)
-    assert isinstance(poly, Polygon)
-    e = poly.bounds
-    assert e[0] == pytest.approx(-78.9586, abs=TOLERANCE)
-    assert e[1] == pytest.approx(23.5650, abs=TOLERANCE)
-    assert e[2] == pytest.approx(-76.5749, abs=TOLERANCE)
-    assert e[3] == pytest.approx(25.5509, abs=TOLERANCE)
-    wkt = bahamas.bounds(return_wkt=True)
-    assert isinstance(wkt, str)
-
-
-@pytest.mark.skipif(skip_shapely, reason="shapely not installed")
-def test_bounds_geojson(bahamas):
-    poly = bahamas.bounds(return_polygon=True)
-    assert isinstance(poly, Polygon)
-    geojson = polygon_to_geojson(poly)
-    assert isinstance(geojson, str)
-    obj = json.loads(geojson)
-    assert isinstance(obj[0], dict)
-
-
-@pytest.mark.skipif(skip_shapely, reason="shapely not installed")
-def test_center_shapely(bahamas):
-    from shapely.geometry import Point
-
-    pt = bahamas.center(return_point=True)
-    assert isinstance(pt, Point)
-    wkt = bahamas.center(return_wkt=True)
-    assert parse_shapely(wkt)
-
-
-def test_rasterio_property(bahamas):
+def test_rasterio_property(bahamas_file):
+    bahamas = RestTileClient(bahamas_file)
     src = bahamas.rasterio
     assert isinstance(src, rasterio.io.DatasetReaderBase)
     assert src == bahamas.rasterio

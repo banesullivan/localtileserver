@@ -2,8 +2,8 @@ import logging
 
 from flask import current_app, request
 
+from localtileserver.tiler import get_clean_filename
 from localtileserver.tiler.data import get_sf_bay_url
-from localtileserver.tiler.utilities import get_clean_filename
 
 logger = logging.getLogger(__name__)
 
