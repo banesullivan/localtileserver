@@ -116,14 +116,8 @@
   
   
   
-    
-    
-      
-    
-    
-    <img src="../_static/logo-light.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../_static/logo-dark.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
+    <p class="title logo__title">🌐 localtileserver</p>
   
 </a></div>
     
@@ -436,8 +430,8 @@ document.write(`
 <p>Included in this repository’s packages is a pre-built Docker image that can be
 used as a local tile serving service. To use, pull the image and run it by
 mounting your local volume where the imagery is stored and forward port 8000.</p>
-<p>This is particularly useful if you do not want to install GDAL on your system
-or want a dedicated and isolated service for tile serving.</p>
+<p>This is particularly useful if you do not want to install the dependencies on
+your system or want a dedicated and isolated service for tile serving.</p>
 <p>To use the docker image:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/banesullivan/localtileserver:latest
 docker<span class="w"> </span>run<span class="w"> </span>-p<span class="w"> </span><span class="m">8000</span>:8000<span class="w"> </span>ghcr.io/banesullivan/localtileserver:latest

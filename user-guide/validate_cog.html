@@ -54,7 +54,7 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="🩻 Non-geospatial visualization" href="non-geo.html" />
+    <link rel="next" title="🎨 Plotting with Bokeh" href="bokeh.html" />
     <link rel="prev" title="🧩 Rasterio" href="rasterio.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -116,14 +116,8 @@
   
   
   
-    
-    
-      
-    
-    
-    <img src="../_static/logo-light.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../_static/logo-dark.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
+    <p class="title logo__title">🌐 localtileserver</p>
   
 </a></div>
     
@@ -380,7 +374,6 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="ipyleaflet_deep_zoom.html">🔬 Deep Zoom with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="rasterio.html">🧩 Rasterio</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">✅ Validate COG</a></li>
-<li class="toctree-l1"><a class="reference internal" href="non-geo.html">🩻 Non-geospatial visualization</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bokeh.html">🎨 Plotting with Bokeh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hillshade.html">⛰️ DEM Hillshade</a></li>
 </ul>
@@ -448,7 +441,7 @@ source image meets the requirements of a Cloud Optimized GeoTiff.</p>
 <code class="docutils literal notranslate"><span class="pre">validate_cloud_optimized_geotiff</span></code> script from <code class="docutils literal notranslate"><span class="pre">osgeo_utils</span></code> to check if
 an image is a GeoTiff with the proper tiling and overviews to be considered
 “Cloud Optimized”. If the validation fails, this method will raise an
-<code class="docutils literal notranslate"><span class="pre">osgeo_utils.samples.validate_cloud_optimized_geotiff.ValidateCloudOptimizedGeoTIFFException</span></code>
+<code class="docutils literal notranslate"><span class="pre">large_image.exceptions.TileSourceInefficientError</span></code>
 error.</p>
 <p>You can use the script by:</p>
 <div class="jupyter_cell jupyter_container docutils container">
@@ -458,7 +451,7 @@ error.</p>
 <span class="c1"># Path to raster (URL or local path)</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif&#39;</span>
 
-<span class="c1"># If invalid, raises ValidateCloudOptimizedGeoTIFFException</span>
+<span class="c1"># If invalid, raises TileSourceInefficientError</span>
 <span class="n">validate_cog</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -476,7 +469,7 @@ error.</p>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_san_francisco</span><span class="p">()</span>
 
-<span class="c1"># If invalid, raises ValidateCloudOptimizedGeoTIFFException</span>
+<span class="c1"># If invalid, raises TileSourceInefficientError</span>
 <span class="n">validate_cog</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 </pre></div>
 </div>

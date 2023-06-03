@@ -116,14 +116,8 @@
   
   
   
-    
-    
-      
-    
-    
-    <img src="../_static/logo-light.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../_static/logo-dark.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
+    <p class="title logo__title">🌐 localtileserver</p>
   
 </a></div>
     
@@ -446,23 +440,10 @@ easy and this is the recommended method to install:</p>
 <section id="installing-with-pip">
 <h2>🎡 Installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code><a class="headerlink" href="#installing-with-pip" title="Permalink to this heading">#</a></h2>
 <a class="reference external image-reference" href="https://pypi.org/project/localtileserver/"><img alt="PyPI" src="https://img.shields.io/pypi/v/localtileserver.svg?logo=python&amp;logoColor=white" /></a>
-<p>If you prefer pip, and know how to install GDAL on your system, then you can
-install from PyPI: <a class="reference external" href="https://pypi.org/project/localtileserver/">https://pypi.org/project/localtileserver/</a></p>
+<p>If you prefer pip, then you can install from PyPI: <a class="reference external" href="https://pypi.org/project/localtileserver/">https://pypi.org/project/localtileserver/</a></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>localtileserver<span class="w"> </span>ipyleaflet
 </pre></div>
 </div>
-<section id="a-brief-note-on-installing-gdal">
-<h3>📝 A Brief Note on Installing GDAL<a class="headerlink" href="#a-brief-note-on-installing-gdal" title="Permalink to this heading">#</a></h3>
-<p>GDAL can be a pain in the 🍑 to install, so you may want to handle GDAL
-before installing <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> when using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
-<p>If on linux, I highly recommend using the <a class="reference external" href="https://github.com/girder/large_image_wheels">large_image_wheels</a> from Kitware.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>--find-links<span class="o">=</span>https://girder.github.io/large_image_wheels<span class="w"> </span>--no-cache<span class="w"> </span>GDAL
-</pre></div>
-</div>
-<p>Otherwise, <em>one does not simply pip install GDAL</em>. You will want to either use
-conda or install GDAL using your system package manager (e.g.: apt, Homebrew, etc.)</p>
-<img alt="One does not simply pip install GDAL" class="align-center" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/pip-gdal.jpg" />
-</section>
 </section>
 </section>
 
@@ -484,10 +465,7 @@ conda or install GDAL using your system package manager (e.g.: apt, Homebrew, et
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-with-conda">🐍 Installing with <code class="docutils literal notranslate"><span class="pre">conda</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-with-pip">🎡 Installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-brief-note-on-installing-gdal">📝 A Brief Note on Installing GDAL</a></li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installing-with-pip">🎡 Installing with <code class="docutils literal notranslate"><span class="pre">pip</span></code></a></li>
 </ul>
   </nav></div>
 

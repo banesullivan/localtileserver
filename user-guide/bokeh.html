@@ -55,7 +55,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="⛰️ DEM Hillshade" href="hillshade.html" />
-    <link rel="prev" title="🩻 Non-geospatial visualization" href="non-geo.html" />
+    <link rel="prev" title="✅ Validate COG" href="validate_cog.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -116,14 +116,8 @@
   
   
   
-    
-    
-      
-    
-    
-    <img src="../_static/logo-light.png" class="logo__image only-light" alt="Logo image"/>
-    <script>document.write(`<img src="../_static/logo-dark.png" class="logo__image only-dark" alt="Logo image"/>`);</script>
   
+    <p class="title logo__title">🌐 localtileserver</p>
   
 </a></div>
     
@@ -380,7 +374,6 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="ipyleaflet_deep_zoom.html">🔬 Deep Zoom with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="rasterio.html">🧩 Rasterio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="validate_cog.html">✅ Validate COG</a></li>
-<li class="toctree-l1"><a class="reference internal" href="non-geo.html">🩻 Non-geospatial visualization</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">🎨 Plotting with Bokeh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hillshade.html">⛰️ DEM Hillshade</a></li>
 </ul>
@@ -446,7 +439,6 @@ document.write(`
 <div class="cell_input code_cell docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bokeh.plotting</span> <span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">show</span>
 <span class="kn">from</span> <span class="nn">bokeh.io</span> <span class="kn">import</span> <span class="n">output_notebook</span>
-<span class="kn">from</span> <span class="nn">bokeh.tile_providers</span> <span class="kn">import</span> <span class="n">CARTODBPOSITRON</span><span class="p">,</span> <span class="n">get_provider</span>
 <span class="kn">from</span> <span class="nn">bokeh.models</span> <span class="kn">import</span> <span class="n">WMTSTileSource</span>
 <span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">TileClient</span><span class="p">,</span> <span class="n">examples</span>
 
@@ -456,10 +448,9 @@ document.write(`
 <span class="n">raster_provider</span> <span class="o">=</span> <span class="n">WMTSTileSource</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">get_tile_url</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
 <span class="n">bounds</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;EPSG:3857&#39;</span><span class="p">)</span>
 
-<span class="n">basemap</span> <span class="o">=</span> <span class="n">get_provider</span><span class="p">(</span><span class="n">CARTODBPOSITRON</span><span class="p">)</span>
 <span class="n">p</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span><span class="n">x_range</span><span class="o">=</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">y_range</span><span class="o">=</span><span class="p">(</span><span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
            <span class="n">x_axis_type</span><span class="o">=</span><span class="s2">&quot;mercator&quot;</span><span class="p">,</span> <span class="n">y_axis_type</span><span class="o">=</span><span class="s2">&quot;mercator&quot;</span><span class="p">)</span>
-<span class="n">p</span><span class="o">.</span><span class="n">add_tile</span><span class="p">(</span><span class="n">basemap</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_tile</span><span class="p">(</span><span class="s1">&#39;CARTODBPOSITRON&#39;</span><span class="p">)</span>
 <span class="n">p</span><span class="o">.</span><span class="n">add_tile</span><span class="p">(</span><span class="n">raster_provider</span><span class="p">)</span>
 <span class="n">show</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 </pre></div>
@@ -476,7 +467,7 @@ document.write(`
     </style>
     <div>
         <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-        <span id="p1001">Loading BokehJS ...</span>
+        <span id="e17b3eee-0d6f-4e99-9846-71546da8b580">Loading BokehJS ...</span>
     </div>
 </div><script type="application/javascript">(function(root) {
   function now() {
@@ -635,7 +626,7 @@ const JS_MIME_TYPE = 'application/javascript';
      "</div>"}};
 
   function display_loaded() {
-    const el = document.getElementById("p1001");
+    const el = document.getElementById("e17b3eee-0d6f-4e99-9846-71546da8b580");
     if (el != null) {
       el.textContent = "BokehJS is loading...";
     }
@@ -718,7 +709,7 @@ const JS_MIME_TYPE = 'application/javascript';
     document.body.appendChild(element);
   }
 
-  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.1.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.1.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.1.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.1.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.1.0.min.js"];
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.1.1.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.1.1.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.1.1.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.1.1.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.1.1.min.js"];
   const css_urls = [];
 
   const inline_js = [    function(Bokeh) {
@@ -741,7 +732,7 @@ if (force === true) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("p1001")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("e17b3eee-0d6f-4e99-9846-71546da8b580")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -756,11 +747,11 @@ if (force === true) {
     });
   }
 }(window));</script><div class="output text_html">
-<div id="b92a3076-6309-4d11-adf6-506ce6c77019" data-root-id="p1004" style="display: contents;"></div>
+<div id="a1976750-90fc-438c-8d43-9c09f8a469fa" data-root-id="p1002" style="display: contents;"></div>
 </div><script type="application/javascript">(function(root) {
   function embed_document(root) {
-  const docs_json = {"49f0bc26-b322-40a9-a239-03c8f60c2ca5":{"version":"3.1.0","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Figure","id":"p1004","attributes":{"x_range":{"type":"object","name":"Range1d","id":"p1013","attributes":{"start":-13660993.43811085,"end":-13594198.136883384}},"y_range":{"type":"object","name":"Range1d","id":"p1015","attributes":{"start":4502326.297712617,"end":4586806.951318035}},"x_scale":{"type":"object","name":"LinearScale","id":"p1017"},"y_scale":{"type":"object","name":"LinearScale","id":"p1019"},"title":{"type":"object","name":"Title","id":"p1009"},"renderers":[{"type":"object","name":"TileRenderer","id":"p1058","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1003","attributes":{"url":"https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png","max_zoom":20,"attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>"}}}},{"type":"object","name":"TileRenderer","id":"p1060","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1002","attributes":{"url":"https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fdata.kitware.com%252Fapi%252Fv1%252Ffile%252F626854a14acac99f42126a74%252Fdownload%26use_head%3Dno%26list_dir%3Dno&n_colors=255&projection=EPSG%3A3857"}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1012","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1043"},{"type":"object","name":"WheelZoomTool","id":"p1044"},{"type":"object","name":"BoxZoomTool","id":"p1045","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1046","attributes":{"syncable":false,"level":"overlay","visible":false,"left_units":"canvas","right_units":"canvas","bottom_units":"canvas","top_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1047"},{"type":"object","name":"ResetTool","id":"p1048"},{"type":"object","name":"HelpTool","id":"p1049"}]}},"left":[{"type":"object","name":"MercatorAxis","id":"p1032","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1034","attributes":{"mantissas":[1,2,5],"dimension":"lat"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1033","attributes":{"dimension":"lat"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1035"}}}],"below":[{"type":"object","name":"MercatorAxis","id":"p1021","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1023","attributes":{"mantissas":[1,2,5],"dimension":"lon"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1022","attributes":{"dimension":"lon"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1024"}}}],"center":[{"type":"object","name":"Grid","id":"p1031","attributes":{"axis":{"id":"p1021"}}},{"type":"object","name":"Grid","id":"p1042","attributes":{"dimension":1,"axis":{"id":"p1032"}}}]}}],"callbacks":{"type":"map"}}};
-  const render_items = [{"docid":"49f0bc26-b322-40a9-a239-03c8f60c2ca5","roots":{"p1004":"b92a3076-6309-4d11-adf6-506ce6c77019"},"root_ids":["p1004"]}];
+  const docs_json = {"d8498b27-ea1f-49dc-bbc0-922bc0c12758":{"version":"3.1.1","title":"Bokeh Application","defs":[],"roots":[{"type":"object","name":"Figure","id":"p1002","attributes":{"x_range":{"type":"object","name":"Range1d","id":"p1011","attributes":{"start":-13660993.43811085,"end":-13594198.136883384}},"y_range":{"type":"object","name":"Range1d","id":"p1013","attributes":{"start":4502326.297712617,"end":4586806.951318035}},"x_scale":{"type":"object","name":"LinearScale","id":"p1015"},"y_scale":{"type":"object","name":"LinearScale","id":"p1017"},"title":{"type":"object","name":"Title","id":"p1008"},"renderers":[{"type":"object","name":"TileRenderer","id":"p1057","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1056","attributes":{"url":"https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png","max_zoom":20,"attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>"}}}},{"type":"object","name":"TileRenderer","id":"p1059","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1001","attributes":{"url":"https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fdata.kitware.com%252Fapi%252Fv1%252Ffile%252F626854a14acac99f42126a74%252Fdownload%26use_head%3Dno%26list_dir%3Dno&n_colors=255&projection=EPSG%3A3857"}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1007","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1041"},{"type":"object","name":"WheelZoomTool","id":"p1042"},{"type":"object","name":"BoxZoomTool","id":"p1043","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1044","attributes":{"syncable":false,"level":"overlay","visible":false,"left_units":"canvas","right_units":"canvas","bottom_units":"canvas","top_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1045"},{"type":"object","name":"ResetTool","id":"p1046"},{"type":"object","name":"HelpTool","id":"p1047"}]}},"left":[{"type":"object","name":"MercatorAxis","id":"p1030","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1032","attributes":{"mantissas":[1,2,5],"dimension":"lat"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1031","attributes":{"dimension":"lat"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1033"}}}],"below":[{"type":"object","name":"MercatorAxis","id":"p1019","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1021","attributes":{"mantissas":[1,2,5],"dimension":"lon"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1020","attributes":{"dimension":"lon"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1022"}}}],"center":[{"type":"object","name":"Grid","id":"p1029","attributes":{"axis":{"id":"p1019"}}},{"type":"object","name":"Grid","id":"p1040","attributes":{"dimension":1,"axis":{"id":"p1030"}}}]}}],"callbacks":{"type":"map"}}};
+  const render_items = [{"docid":"d8498b27-ea1f-49dc-bbc0-922bc0c12758","roots":{"p1002":"a1976750-90fc-438c-8d43-9c09f8a469fa"},"root_ids":["p1002"]}];
   root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
   }
   if (root.Bokeh !== undefined) {

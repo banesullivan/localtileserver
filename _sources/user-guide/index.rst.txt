@@ -21,7 +21,6 @@
    ipyleaflet_deep_zoom
    rasterio
    validate_cog
-   non-geo
    bokeh
    hillshade
 
