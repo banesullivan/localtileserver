@@ -1,6 +1,7 @@
 import io
 import json
 import pathlib
+import re
 import time
 from urllib.parse import unquote
 
@@ -185,6 +186,14 @@ class BaseImageView(View):
         else:
             style_args = style.reformat_style_query_parameters(request.args)
             band = style_args.get("band", 0)
+            if isinstance(band, str) and len(band) > 1:
+                try:
+                    band = int(band)
+                except ValueError:
+                    if re.match(r"^\d+(,\d+)*$", band.strip("[]")):
+                        band = [int(b) for b in band.strip("[]").split(",")]
+                    else:
+                        raise BadRequest("`band` query parameter has invalid band values")
             vmin = style_args.get("min", None)
             vmax = style_args.get("max", None)
             palette = style_args.get("palette", style_args.get("cmap", None))
