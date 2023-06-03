@@ -2,7 +2,7 @@ import logging
 from typing import Union
 
 import large_image
-from large_image.tilesource import FileTileSource
+from large_image_source_rasterio import RasterioFileTileSource
 
 from localtileserver.client import BaseTileClient
 from localtileserver.tiler import get_clean_filename
@@ -11,11 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 def validate_cog(
-    path: Union[str, FileTileSource, BaseTileClient],
+    path: Union[str, RasterioFileTileSource, BaseTileClient],
     strict: bool = True,
     warn: bool = True,
 ):
-    if isinstance(path, FileTileSource):
+    if isinstance(path, RasterioFileTileSource):
         src = path
     elif isinstance(path, BaseTileClient):
         path = path.filename

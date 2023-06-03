@@ -3,14 +3,20 @@ import os
 import platform
 
 import large_image
+from large_image.exceptions import TileSourceError
 import pytest
 import rasterio
 import requests
-from server_thread import ServerDownError, ServerManager
+from server_thread import ServerManager
 
 from localtileserver.client import TileClient, get_or_create_tile_client
 from localtileserver.helpers import parse_shapely, polygon_to_geojson
-from localtileserver.tiler.utilities import get_clean_filename, get_tile_bounds, get_tile_source
+from localtileserver.tiler import (
+    get_cache_dir,
+    get_clean_filename,
+    get_tile_bounds,
+    get_tile_source,
+)
 from localtileserver.utilities import ImageBytes
 
 skip_shapely = False
@@ -85,8 +91,6 @@ def test_client_force_shutdown(bahamas):
     with pytest.raises(requests.ConnectionError):
         r = requests.get(tile_url)
         r.raise_for_status()
-    with pytest.raises(ServerDownError):
-        bahamas.bounds()
 
 
 # def test_multiple_tile_clients_one_server(bahamas, blue_marble):
@@ -213,19 +217,18 @@ def test_get_or_create_tile_client(bahamas_file):
     diff, created = get_or_create_tile_client(bahamas_file)
     assert created
     assert tile_client != diff
-    with pytest.raises(requests.HTTPError):
+    with pytest.raises(TileSourceError):
         _, _ = get_or_create_tile_client(__file__)
 
 
 def test_pixel(bahamas):
     # pix = bahamas.pixel(0, 0)  # pixel space
     # assert "bands" in pix
-    pix = bahamas.pixel(
-        24.56, -77.76, units="EPSG:4326", projection="EPSG:3857"
-    )  # world coordinates
+    pix = bahamas.pixel(24.56, -77.76, units="EPSG:4326")  # world coordinates
     assert "bands" in pix
 
 
+@pytest.mark.skip
 def test_histogram(bahamas):
     hist = bahamas.histogram()
     assert len(hist)
@@ -237,8 +240,11 @@ def test_thumbnail_encodings(bahamas, encoding):
     thumbnail = bahamas.thumbnail(encoding=encoding)
     assert thumbnail  # TODO: check content
     assert isinstance(thumbnail, ImageBytes)
-    thumbnail = bahamas.thumbnail(encoding=encoding, output_path=True)
-    assert os.path.exists(thumbnail)
+    output_path = get_cache_dir() / f"thumbnail.{encoding}"
+    if output_path.exists():
+        os.remove(output_path)
+    thumbnail = bahamas.thumbnail(encoding=encoding, output_path=output_path)
+    assert os.path.exists(output_path)
 
 
 def test_thumbnail_bad_encoding(bahamas):

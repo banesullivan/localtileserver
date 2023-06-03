@@ -8,7 +8,7 @@ import click
 from flask import Flask
 from flask_cors import CORS
 
-from localtileserver.tiler.utilities import get_clean_filename
+from localtileserver.tiler import get_clean_filename
 from localtileserver.web.blueprint import cache, tileserver
 
 

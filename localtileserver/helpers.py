@@ -4,7 +4,7 @@ import uuid
 import numpy as np
 import rasterio
 
-from localtileserver.tiler.utilities import get_cache_dir
+from localtileserver.tiler import get_cache_dir
 
 
 def get_extensions_from_driver(driver: str):

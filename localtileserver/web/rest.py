@@ -14,14 +14,10 @@ from large_image.exceptions import (
     TileSourceInefficientError,
     TileSourceXYZRangeError,
 )
-from large_image.tilesource.geo import GeoBaseFileTileSource
 from werkzeug.exceptions import BadRequest, UnsupportedMediaType
 
 from localtileserver import __version__
-from localtileserver.tiler.data import str_to_bool
-from localtileserver.tiler.palettes import get_palettes
-from localtileserver.tiler.style import make_style, reformat_style_query_parameters
-from localtileserver.tiler.utilities import (
+from localtileserver.tiler import (
     format_to_encoding,
     get_meta_data,
     get_region_pixel,
@@ -29,6 +25,9 @@ from localtileserver.tiler.utilities import (
     get_tile_bounds,
     get_tile_source,
 )
+from localtileserver.tiler.data import str_to_bool
+from localtileserver.tiler.palettes import get_palettes
+from localtileserver.tiler.style import make_style, reformat_style_query_parameters
 from localtileserver.web.blueprint import cache, tileserver
 from localtileserver.web.utils import get_clean_filename_from_request
 
@@ -400,8 +399,6 @@ class RegionWorldView(BaseRegionView):
 
     def get(self):
         tile_source = self.get_tile_source(projection="EPSG:3857")
-        if not isinstance(tile_source, GeoBaseFileTileSource):
-            raise BadRequest("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")
         encoding = request.args.get("encoding", "TILED")
         left, right, bottom, top = self.get_bounds()

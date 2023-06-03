@@ -4,10 +4,11 @@ from functools import wraps
 import json
 import logging
 import pathlib
+import shutil
 from typing import List, Optional, Union
 from urllib.parse import quote
 
-from large_image.tilesource import FileTileSource
+from large_image_source_rasterio import RasterioFileTileSource
 import rasterio
 import requests
 
@@ -25,7 +26,18 @@ from server_thread import ServerManager, launch_server
 from localtileserver.configure import get_default_client_params
 from localtileserver.helpers import parse_shapely
 from localtileserver.manager import AppManager
-from localtileserver.tiler import get_building_docs, get_clean_filename, palette_valid_or_raise
+from localtileserver.tiler import (
+    format_to_encoding,
+    get_building_docs,
+    get_clean_filename,
+    get_meta_data,
+    get_region_pixel,
+    get_region_world,
+    get_tile_bounds,
+    get_tile_source,
+    make_style,
+    palette_valid_or_raise,
+)
 from localtileserver.utilities import ImageBytes, add_query_parameters, save_file_from_request
 
 BUILDING_DOCS = get_building_docs()
@@ -454,6 +466,216 @@ class BaseTileClient:
             return f.read()
 
 
+class LocalTileClient(BaseTileClient):
+    """Connect to a localtileserver instance.
+
+    This is a base class for performing all operations locally.
+
+    """
+
+    def __init__(
+        self,
+        filename: Union[pathlib.Path, str],
+        default_projection: Optional[str] = "EPSG:3857",
+    ):
+        super().__init__(filename, default_projection)
+        self._tile_source = get_tile_source(self.filename, self.default_projection)
+
+    @property
+    def tile_source(self):
+        return self._tile_source
+
+    @property
+    def rasterio(self):
+        return self._tile_source.dataset
+
+    def get_tile(
+        self,
+        z: int,
+        x: int,
+        y: int,
+        band: Union[int, List[int]] = None,
+        palette: Union[str, List[str]] = None,
+        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        scheme: Union[str, List[str]] = None,
+        n_colors: int = 255,
+        output_path: pathlib.Path = None,
+        style: dict = None,
+        cmap: Union[str, List[str]] = None,
+        encoding: str = "PNG",
+    ):
+        if encoding.lower() not in ["png", "jpeg", "jpg"]:
+            raise ValueError(f"Encoding ({encoding}) not supported.")
+        encoding = format_to_encoding(encoding)
+
+        if cmap is not None:
+            palette = cmap  # simple alias
+
+        if style is None:
+            style = make_style(
+                band,
+                palette,
+                vmin,
+                vmax,
+                nodata,
+                scheme,
+                n_colors,
+            )
+        tile_source = get_tile_source(
+            self.filename, self.default_projection, style=style, encoding=encoding
+        )
+        tile_binary = tile_source.getTile(x, y, z)
+        mimetype = tile_source.getTileMimeType()
+        if output_path:
+            with open(output_path, "wb") as f:
+                f.write(tile_binary)
+        return ImageBytes(tile_binary, mimetype=mimetype)
+
+    def extract_roi(
+        self,
+        left: float,
+        right: float,
+        bottom: float,
+        top: float,
+        units: str = "EPSG:4326",
+        encoding: str = "TILED",
+        output_path: pathlib.Path = None,
+        return_bytes: bool = False,
+        return_path: bool = False,
+    ):
+        path, mimetype = get_region_world(
+            self.tile_source,
+            left,
+            right,
+            bottom,
+            top,
+            units,
+            encoding,
+        )
+        if output_path is not None:
+            shutil.move(path, output_path)
+        else:
+            output_path = path
+        if return_bytes:
+            with open(output_path, "rb") as f:
+                return ImageBytes(f.read(), mimetype=mimetype)
+        if return_path:
+            return output_path
+        return TileClient(output_path)
+
+    def extract_roi_pixel(
+        self,
+        left: int,
+        right: int,
+        bottom: int,
+        top: int,
+        encoding: str = "TILED",
+        output_path: pathlib.Path = None,
+        return_bytes: bool = False,
+        return_path: bool = False,
+    ):
+        path, mimetype = get_region_pixel(
+            self.tile_source,
+            left,
+            right,
+            bottom,
+            top,
+            "pixels",
+            encoding,
+        )
+        if output_path is not None:
+            shutil.move(path, output_path)
+        else:
+            output_path = path
+        if return_bytes:
+            with open(output_path, "rb") as f:
+                return ImageBytes(f.read(), mimetype=mimetype)
+        if return_path:
+            return output_path
+        return TileClient(output_path)
+
+    def metadata(self, projection: Optional[str] = ""):
+        if projection not in self._metadata:
+            if projection == "":
+                projection = self.default_projection
+            tile_source = get_tile_source(self.filename, projection)
+            self._metadata[projection] = get_meta_data(tile_source)
+        return self._metadata[projection]
+
+    def bounds(
+        self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
+    ):
+        bounds = get_tile_bounds(self.tile_source, projection=projection)
+        extent = (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
+        if not return_polygon and not return_wkt:
+            return extent
+        # Safely import shapely
+        try:
+            from shapely.geometry import Polygon
+        except ImportError as e:  # pragma: no cover
+            raise ImportError(f"Please install `shapely`: {e}")
+        coords = (
+            (bounds["xmin"], bounds["ymax"]),
+            (bounds["xmin"], bounds["ymax"]),
+            (bounds["xmax"], bounds["ymax"]),
+            (bounds["xmax"], bounds["ymin"]),
+            (bounds["xmin"], bounds["ymin"]),
+            (bounds["xmin"], bounds["ymax"]),  # Close the loop
+        )
+        poly = Polygon(coords)
+        if return_wkt:
+            return poly.wkt
+        return poly
+
+    def thumbnail(
+        self,
+        band: Union[int, List[int]] = None,
+        palette: Union[str, List[str]] = None,
+        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
+        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
+        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        scheme: Union[str, List[str]] = None,
+        n_colors: int = 255,
+        output_path: pathlib.Path = None,
+        style: dict = None,
+        cmap: Union[str, List[str]] = None,
+        encoding: str = "PNG",
+    ):
+        if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
+            raise ValueError(f"Encoding ({encoding}) not supported.")
+        encoding = format_to_encoding(encoding)
+
+        if cmap is not None:
+            palette = cmap  # simple alias
+
+        if style is None:
+            style = make_style(
+                band,
+                palette,
+                vmin,
+                vmax,
+                nodata,
+                scheme,
+                n_colors,
+            )
+        tile_source = get_tile_source(self.filename, self.default_projection, style=style)
+        thumb_data, mimetype = tile_source.getThumbnail(encoding=encoding)
+        if output_path:
+            with open(output_path, "wb") as f:
+                f.write(thumb_data)
+        return ImageBytes(thumb_data, mimetype=mimetype)
+
+    def pixel(self, y: float, x: float, units: str = "pixels"):
+        region = {"left": x, "top": y, "units": units}
+        return self.tile_source.getPixel(region=region)
+
+    def histogram(self, bins: int = 256, density: bool = False):
+        result = self.tile_source.histogram(bins=bins, density=density)
+        return result["histogram"]
+
+
 class RestfulTileClient(BaseTileClient):
     """Connect to a localtileserver instance.
 
@@ -647,7 +869,7 @@ class RemoteTileClient(RestfulTileClient):
         return self.server_host
 
 
-class TileClient(RestfulTileClient):
+class TileClient(LocalTileClient):
     """Serve tiles from a local raster file in a background thread.
 
     Parameters
@@ -669,7 +891,7 @@ class TileClient(RestfulTileClient):
 
     def __init__(
         self,
-        filename: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase, FileTileSource],
+        filename: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase, RasterioFileTileSource],
         default_projection: Optional[str] = "EPSG:3857",
         port: Union[int, str] = "default",
         debug: bool = False,
@@ -681,7 +903,7 @@ class TileClient(RestfulTileClient):
     ):
         if isinstance(filename, rasterio.io.DatasetReaderBase) and hasattr(filename, "name"):
             filename = filename.name
-        elif isinstance(filename, FileTileSource):
+        elif isinstance(filename, RasterioFileTileSource):
             filename = filename._getLargeImagePath()
         super().__init__(filename=filename, default_projection=default_projection)
         app = AppManager.get_or_create_app(cors_all=cors_all)
@@ -807,7 +1029,9 @@ class TileClient(RestfulTileClient):
 
 
 def get_or_create_tile_client(
-    source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase, FileTileSource],
+    source: Union[
+        pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase, RasterioFileTileSource
+    ],
     port: Union[int, str] = "default",
     debug: bool = False,
     default_projection: Optional[str] = "EPSG:3857",
