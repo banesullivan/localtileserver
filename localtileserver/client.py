@@ -869,7 +869,7 @@ class RemoteTileClient(BaseRestfulTileClient):
         return self.server_host
 
 
-class TileClient(LocalTileClient):
+class BaseTileClient:
     """Serve tiles from a local raster file in a background thread.
 
     Parameters
@@ -1026,6 +1026,14 @@ class TileClient(LocalTileClient):
         return add_query_parameters(
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
         )
+
+
+class TileClient(BaseTileClient, LocalTileClient):
+    pass
+
+
+class RestTileClient(BaseTileClient, BaseRestfulTileClient):
+    pass
 
 
 def get_or_create_tile_client(
