@@ -1,4 +1,4 @@
-FROM jupyter/base-notebook:python-3.9.7
+FROM jupyter/base-notebook:python-3.11.3
 LABEL maintainer="Bane Sullivan"
 LABEL repo="https://github.com/banesullivan/localtileserver"
 
@@ -11,6 +11,7 @@ RUN python -m pip install --upgrade pip
 COPY requirements.txt /build-context/
 COPY requirements_jupyter.txt /build-context/
 RUN pip install -r requirements_jupyter.txt
+RUN pip install rasterio
 
 COPY setup.py /build-context/
 COPY MANIFEST.in /build-context/

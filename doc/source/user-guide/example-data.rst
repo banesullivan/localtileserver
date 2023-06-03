@@ -11,16 +11,16 @@ useful one has global elevation data which you can use to create high resolution
   from ipyleaflet import Map
 
   # Load example tile layer from publicly available DEM source
-  tile_client = examples.get_elevation()
+  client = examples.get_elevation()
 
   # Create ipyleaflet tile layer from that server
-  t = get_leaflet_tile_layer(tile_client,
+  t = get_leaflet_tile_layer(client,
                              band=1, vmin=-500, vmax=5000,
                              palette='plasma',
                              opacity=0.75)
 
   # Create ipyleaflet controls to extract an ROI
-  draw_control, roi_control = get_leaflet_roi_controls(tile_client)
+  draw_control, roi_control = get_leaflet_roi_controls(client)
 
   m = Map(zoom=2)
   m.add_layer(t)
@@ -65,10 +65,10 @@ Here is another example with the Virtual Earth satellite imagery
   from ipyleaflet import Map
 
   # Load example tile layer from publicly available imagery
-  tile_client = examples.get_virtual_earth()
+  client = examples.get_virtual_earth()
 
   # Create ipyleaflet tile layer from that server
-  t = get_leaflet_tile_layer(tile_client, opacity=1)
+  t = get_leaflet_tile_layer(client, opacity=1)
 
   m = Map(center=(39.751343612695145, -105.22181306125279), zoom=18)
   m.add_layer(t)

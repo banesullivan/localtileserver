@@ -10,7 +10,7 @@ tileserver.add_url_rule("/split/form/", view_func=views.SplitViewForm.as_view("s
 # REST endpoints
 rest.api.add_resource(
     rest.ThumbnailView,
-    "/thumbnail.png",
+    "/thumbnail.<string:format>",
     endpoint="thumbnail",
 )
 rest.api.add_resource(
@@ -62,4 +62,9 @@ rest.api.add_resource(
     rest.ListTileSources,
     "/sources",
     endpoint="sources",
+)
+rest.api.add_resource(
+    rest.ValidateCOGView,
+    "/validate",
+    endpoint="validate",
 )

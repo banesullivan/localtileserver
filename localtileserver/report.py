@@ -8,23 +8,23 @@ class Report(scooby.Report):
         # Mandatory packages.
         large_image_core = [
             "large_image",
-            "large_image_source_gdal",
+            "large_image_source_rasterio",
             "cachetools",
             "PIL",
             "psutil",
             "numpy",
             "palettable",
-            "pyproj",
-            "osgeo.gdal",
         ]
         core = [
             "localtileserver",
             "flask",
             "flask_caching",
+            "flask_cors",
             "flask_restx",
             "requests",
             "werkzeug",
             "click",
+            "server_thread",
             "scooby",
         ] + large_image_core
 
@@ -33,18 +33,23 @@ class Report(scooby.Report):
             "gunicorn",
             "pylibmc",
             "ipyleaflet",
+            "jupyterlab",
             "traitlets",
             "shapely",
             "folium",
             "matplotlib",
             "colorcet",
             "cmocean",
+            "large_image_source_gdal",
             "large_image_source_mapnik",
             "large_image_source_pil",
             "large_image_source_tiff",
             "large_image_converter",
             "tifftools",
             "pyvips",
+            "pylibtiff",
+            "osgeo.gdal",
+            "pyproj",
         ]
 
         scooby.Report.__init__(

@@ -70,7 +70,8 @@ html_context = {
 }
 
 html_theme_options = {
-    "google_analytics_id": "G-14GFZDPSQG",
+    # "default_mode": "light",
+    # "google_analytics_id": "G-14GFZDPSQG",
     "show_prev_next": False,
     "github_url": "https://github.com/banesullivan/localtileserver",
     "icon_links": [
@@ -90,6 +91,7 @@ html_theme_options = {
             "icon": "fa fa-user fa-fw",
         },
     ],
+    "navbar_end": ["navbar-icon-links"],
 }
 
 html_sidebars = {

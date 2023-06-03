@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 5, 1
+version_info = 0, 6, 4
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -24,7 +24,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Bane Sullivan",
-    author_email="banesullivan@gmail.com",
+    author_email="hello@banesullivan.com",
     url="https://github.com/banesullivan/localtileserver",
     packages=find_packages(),
     include_package_data=True,
@@ -34,7 +34,9 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python",
     ],
     python_requires=">=3.7",
@@ -42,17 +44,18 @@ setup(
         "click",
         "flask>=2.0.0",
         "Flask-Caching",
+        "flask-cors",
         "flask-restx>=0.5.0",
-        "GDAL",
-        "large-image>=1.13",
-        "large-image-source-gdal>=1.13",
+        "large-image[rasterio,pil]>=1.22.1",
         "requests",
+        "server-thread",
         "scooby",
+        "werkzeug",
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
-        "sources": ["large-image-source-pil>=1.13", "large-image-source-tiff>=1.13"],
         "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
+        "helpers": ["rio-cogeo", "shapely"],
     },
     entry_points={
         "console_scripts": [

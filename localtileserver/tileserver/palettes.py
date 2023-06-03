@@ -45,9 +45,9 @@ def is_mpl_cmap(name: str):
     try:
         import matplotlib
 
-        matplotlib.cm.get_cmap(name)
+        matplotlib.colormaps.get_cmap(name)
         return True
-    except ImportError:
+    except ImportError:  # pragma: no cover
         logger.error("Install matplotlib for additional colormap choices.")
     except ValueError:
         pass
@@ -75,6 +75,7 @@ def mpl_to_palette(cmap: str, n_colors: int = 255):
     import matplotlib
     import matplotlib.colors as mcolors
 
+    # TODO: this is deprecated but it isn't obvious how to do with new API
     cmap = matplotlib.cm.get_cmap(cmap, n_colors)
     color_list = [mcolors.rgb2hex(cmap(i)) for i in range(cmap.N)]
     return color_list
@@ -111,7 +112,7 @@ def get_palettes():
         import matplotlib.pyplot
 
         cmaps["matplotlib"] = list(matplotlib.pyplot.colormaps())
-    except ImportError:
+    except ImportError:  # pragma: no cover
         logger.error("Install matplotlib for additional colormap choices.")
     cmaps["simple"] = [s for s in SIMPLE_PALETTES.keys() if len(s) > 1]
     return cmaps

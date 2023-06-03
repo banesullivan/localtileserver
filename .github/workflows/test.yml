@@ -1,7 +1,12 @@
 name: Tests
 on:
+  workflow_dispatch:
   pull_request:
   push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   test:
@@ -9,22 +14,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.7, 3.8, 3.9, "3.10"]
+        python-version: [3.8, 3.9, "3.10"]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      # Handle GDAL
-      - name: Install GDAL
-        run: |
-          python -m pip install --upgrade pip
-          pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
-      - name: Test GDAL installation
-        run: |
-          python -c "from osgeo import gdal"
-          gdalinfo --version
       # Install everything else
       - name: Install other dependencies
         run: |
@@ -41,39 +37,12 @@ jobs:
       #   run: |
       #     make doctest
       - name: Stash coverage
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: coverage.xml
           path: coverage.xml
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
           verbose: true
-
-  test-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install miniconda
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          auto-activate-base: true
-          python-version: 3.8
-      # Handle GDAL
-      - name: Install GDAL
-        run: conda install -c conda-forge gdal=3.4.0 --yes
-      - name: Test GDAL installation
-        run: |
-          python -c "from osgeo import gdal"
-          gdalinfo --version
-      # Install everything else
-      - name: Install other dependencies
-        run: |
-          pip install -r requirements_win.txt
-      - name: Install localtileserver
-        run: pip install -e .
-      - name: Scooby Report
-        run: python -c "import localtileserver;print(localtileserver.Report())"
-      - name: Run Tests
-        run: pytest -v --cov=localtileserver

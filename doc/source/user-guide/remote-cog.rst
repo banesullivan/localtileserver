@@ -20,7 +20,7 @@ we can view tiles of the remote file very efficiently in a Jupyter notebook.
   url = 'https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif'
 
   # First, create a tile server from the URL raster file
-  tile_client = TileClient(url)
+  client = TileClient(url)
 
 
 Here we can create a folium map with the raster overlain:
@@ -28,9 +28,9 @@ Here we can create a folium map with the raster overlain:
 .. jupyter-execute::
 
   # Create folium tile layer from that server
-  t = get_folium_tile_layer(tile_client)
+  t = get_folium_tile_layer(client)
 
-  m = folium.Map(location=tile_client.center(), zoom_start=10)
+  m = folium.Map(location=client.center(), zoom_start=client.default_zoom)
   m.add_child(t)
   m
 
@@ -40,9 +40,9 @@ Or we can do the same ipyleaflet:
 .. jupyter-execute::
 
   # Create ipyleaflet tile layer from that server
-  l = get_leaflet_tile_layer(tile_client)
+  l = get_leaflet_tile_layer(client)
 
-  m = ipyleaflet.Map(center=tile_client.center(), zoom=10)
+  m = ipyleaflet.Map(center=client.center(), zoom=client.default_zoom)
   m.add_layer(l)
   m
 

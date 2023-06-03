@@ -1,12 +1,14 @@
+from large_image.exceptions import TileSourceInefficientError
 import pytest
 
-from localtileserver import Report
+from localtileserver import Report, TileClient
 from localtileserver.tileserver.palettes import (
     get_palette_by_name,
     get_palettes,
     is_valid_palette_name,
     mpl_to_palette,
 )
+from localtileserver.validate import validate_cog
 
 has_mpl = False
 try:
@@ -36,3 +38,14 @@ def test_report():
 
 def test_get_palettes():
     assert isinstance(get_palettes(), dict)
+
+
+def test_cog_validate(remote_file_url):
+    assert validate_cog(remote_file_url)
+    client = TileClient(remote_file_url)
+    assert validate_cog(client)
+
+
+def test_cog_validate_error(bahamas):
+    with pytest.raises(TileSourceInefficientError):
+        assert validate_cog(bahamas)

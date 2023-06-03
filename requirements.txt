@@ -1,16 +1,17 @@
 click
 flask>=2.0.0
 Flask-Caching
+flask-cors
 flask-restx>=0.5.0
 sentry-sdk[flask]
---find-links https://girder.github.io/large_image_wheels GDAL
-large-image[memcached]>=1.13
-large-image-source-gdal>=1.13
-large-image-source-pil>=1.13
+large-image[memcached,rasterio,pil]>=1.22.1
 requests
+rio-cogeo
+server-thread
 scooby
 pytest
 pytest-cov
 matplotlib
 gunicorn
 cmocean
+werkzeug

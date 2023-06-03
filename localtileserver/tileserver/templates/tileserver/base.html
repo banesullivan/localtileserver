@@ -146,6 +146,19 @@
     <div id="content">
       {% block content %} {% endblock %}
     </div>
+
+    <script>
+      if (filename.startsWith('/vsi') || filename.startsWith('s3://') || filename.startsWith('http')) {
+        fetch(`${host}/api/validate?filename=${filename}`)
+          .then(response => {
+            if (!response.ok && response.status == 415) {
+              response.json().then(data => {
+                console.log(data)
+              });
+            }
+          });
+      }
+    </script>
   </div>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
