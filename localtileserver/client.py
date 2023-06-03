@@ -8,6 +8,7 @@ from typing import List, Optional, Union
 from urllib.parse import quote
 
 from large_image.tilesource import FileTileSource
+import rasterio
 import requests
 
 try:
@@ -82,8 +83,6 @@ class BaseTileClient:
         """Open dataset with rasterio."""
         if hasattr(self, "_rasterio_ds"):
             return self._rasterio_ds
-        import rasterio
-
         self._rasterio_ds = rasterio.open(self.filename, "r")
         return self._rasterio_ds
 

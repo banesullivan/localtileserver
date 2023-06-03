@@ -22,7 +22,7 @@ This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest
   from localtileserver import TileClient, get_leaflet_tile_layer
   from localtileserver import examples, helpers
   from ipyleaflet import Map, SplitMapControl
-  import rasterio as rio
+  import rasterio
 
   # Example DEM dataset
   client = examples.get_co_elevation()
@@ -55,7 +55,7 @@ function (adopted from EarthPy).
   hs_arr = helpers.hillshade(dem)
 
   # Save hillshade arrays as new raster and open with rasterio
-  hs = rio.open(helpers.save_new_raster(client, hs_arr))
+  hs = rasterio.open(helpers.save_new_raster(client, hs_arr))
 
 
 .. code:: python

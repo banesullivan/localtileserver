@@ -4,7 +4,7 @@ import platform
 
 import large_image
 import pytest
-import rasterio as rio
+import rasterio
 import requests
 from server_thread import ServerDownError, ServerManager
 
@@ -338,5 +338,5 @@ def test_center_shapely(bahamas):
 
 def test_rasterio_property(bahamas):
     src = bahamas.rasterio
-    assert isinstance(src, rio.io.DatasetReaderBase)
+    assert isinstance(src, rasterio.io.DatasetReaderBase)
     assert src == bahamas.rasterio

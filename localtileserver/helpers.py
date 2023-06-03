@@ -2,14 +2,13 @@ import json
 import uuid
 
 import numpy as np
+import rasterio
 
 from localtileserver.tiler.utilities import get_cache_dir
 
 
 def get_extensions_from_driver(driver: str):
-    import rasterio as rio
-
-    d = rio.drivers.raster_driver_extensions()
+    d = rasterio.drivers.raster_driver_extensions()
     if driver not in d.values():
         raise KeyError(f"Driver {driver} not found.")
     return [k for k, v in d.items() if v == driver]
@@ -33,8 +32,6 @@ def numpy_to_raster(ras_meta, data, out_path: str = None):
         use a temporary file
 
     """
-    import rasterio as rio
-
     ras_meta = ras_meta.copy()
     ras_meta.update({"count": data.shape[0]})
     ras_meta.update({"dtype": str(data.dtype)})
@@ -45,7 +42,7 @@ def numpy_to_raster(ras_meta, data, out_path: str = None):
         ext = get_extensions_from_driver(ras_meta["driver"])[0]
         out_path = get_cache_dir() / f"{uuid.uuid4()}.{ext}"
 
-    with rio.open(out_path, "w", **ras_meta) as dst:
+    with rasterio.open(out_path, "w", **ras_meta) as dst:
         for i, band in enumerate(data):
             dst.write(band, i + 1)
 
@@ -70,8 +67,6 @@ def save_new_raster(src, data, out_path: str = None):
         use a temporary file
 
     """
-    import rasterio as rio
-
     from localtileserver.client import BaseTileClient
 
     if data.ndim == 2:
@@ -81,10 +76,10 @@ def save_new_raster(src, data, out_path: str = None):
 
     if isinstance(src, BaseTileClient):
         src = src.rasterio
-    if isinstance(src, rio.io.DatasetReaderBase):
+    if isinstance(src, rasterio.io.DatasetReaderBase):
         ras_meta = src.meta.copy()
     else:
-        with rio.open(src, "r") as src:
+        with rasterio.open(src, "r") as src:
             # Get metadata / spatial reference
             ras_meta = src.meta
 
