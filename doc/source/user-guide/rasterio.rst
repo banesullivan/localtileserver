@@ -21,3 +21,17 @@ This will only work when opening a raster in read-mode.
     m = Map(center=client.center(), zoom=client.default_zoom)
     m.add_layer(t)
     m
+
+
+``localtileserver`` actually uses ``rasterio`` under the hood for everything
+and keeps a reference to a ``rasterio.DatasetReader`` for all clients.
+
+
+.. code-block:: python
+
+    from localtileserver import examples
+
+    # Load example tile layer from publicly available DEM source
+    client = examples.get_elevation()
+
+    client.rasterio
