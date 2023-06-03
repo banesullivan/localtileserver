@@ -35,6 +35,8 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python",
     ],
     python_requires=">=3.7",
@@ -44,7 +46,7 @@ setup(
         "Flask-Caching",
         "flask-cors",
         "flask-restx>=0.5.0",
-        "large-image[rasterio]>=1.22.1",
+        "large-image[rasterio,pil]>=1.22.1",
         "requests",
         "server-thread",
         "scooby",
@@ -52,9 +54,8 @@ setup(
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
-        "sources": ["large-image[rasterio,pil]>=1.22.1"],
         "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
-        "helpers": ["shapely", "rasterio"],
+        "helpers": ["rio-cogeo", "shapely"],
     },
     entry_points={
         "console_scripts": [
