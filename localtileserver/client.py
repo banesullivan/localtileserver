@@ -45,7 +45,7 @@ DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
 logger = logging.getLogger(__name__)
 
 
-class BaseTileClient:
+class BaseTileClientInterface:
     """Base TileClient methods and configuration.
 
     This class does not perform any RESTful operations but will interface
@@ -466,7 +466,7 @@ class BaseTileClient:
             return f.read()
 
 
-class LocalTileClient(BaseTileClient):
+class LocalTileClient(BaseTileClientInterface):
     """Connect to a localtileserver instance.
 
     This is a base class for performing all operations locally.
@@ -676,7 +676,7 @@ class LocalTileClient(BaseTileClient):
         return result["histogram"]
 
 
-class RestfulTileClient(BaseTileClient):
+class BaseRestfulTileClient(BaseTileClientInterface):
     """Connect to a localtileserver instance.
 
     This is a base class for performing all operations over the RESTful API.
@@ -830,7 +830,7 @@ class RestfulTileClient(BaseTileClient):
         return r.json()
 
 
-class RemoteTileClient(RestfulTileClient):
+class RemoteTileClient(BaseRestfulTileClient):
     """Connect to a remote localtileserver instance at a given host URL.
 
     Parameters
@@ -1020,7 +1020,7 @@ class TileClient(LocalTileClient):
             return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
-    @wraps(BaseTileClient.get_tile_url_params)
+    @wraps(BaseTileClientInterface.get_tile_url_params)
     def get_tile_url(self, *args, client: bool = False, **kwargs):
         params = self.get_tile_url_params(*args, **kwargs)
         return add_query_parameters(
