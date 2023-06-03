@@ -12,10 +12,6 @@ import rasterio
 import requests
 
 try:
-    from rasterio.io import DatasetReaderBase
-except ImportError:  # pragma: no cover
-    DatasetReaderBase = None
-try:
     import ipyleaflet
 except ImportError:  # pragma: no cover
     ipyleaflet = None
@@ -673,7 +669,7 @@ class TileClient(RestfulTileClient):
 
     def __init__(
         self,
-        filename: Union[pathlib.Path, str, DatasetReaderBase, FileTileSource],
+        filename: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase, FileTileSource],
         default_projection: Optional[str] = "EPSG:3857",
         port: Union[int, str] = "default",
         debug: bool = False,
@@ -683,11 +679,7 @@ class TileClient(RestfulTileClient):
         client_prefix: str = None,
         cors_all: bool = False,
     ):
-        if (
-            DatasetReaderBase
-            and isinstance(filename, DatasetReaderBase)
-            and hasattr(filename, "name")
-        ):
+        if isinstance(filename, rasterio.io.DatasetReaderBase) and hasattr(filename, "name"):
             filename = filename.name
         elif isinstance(filename, FileTileSource):
             filename = filename._getLargeImagePath()
@@ -815,7 +807,7 @@ class TileClient(RestfulTileClient):
 
 
 def get_or_create_tile_client(
-    source: Union[pathlib.Path, str, TileClient, DatasetReaderBase, FileTileSource],
+    source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase, FileTileSource],
     port: Union[int, str] = "default",
     debug: bool = False,
     default_projection: Optional[str] = "EPSG:3857",

@@ -3,10 +3,7 @@ import os
 import pathlib
 from typing import List, Optional, Union
 
-try:
-    from rasterio.io import DatasetReaderBase
-except ImportError:
-    DatasetReaderBase = None
+import rasterio
 
 from localtileserver.client import TileClient, get_or_create_tile_client
 
@@ -21,7 +18,7 @@ class LocalTileServerLayerMixin:
 
 
 def get_leaflet_tile_layer(
-    source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
+    source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
     projection: Optional[str] = "",
@@ -229,7 +226,7 @@ def get_leaflet_roi_controls(
 
 
 def get_folium_tile_layer(
-    source: Union[pathlib.Path, str, TileClient, DatasetReaderBase],
+    source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
     projection: Optional[str] = "",
