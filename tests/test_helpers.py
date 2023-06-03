@@ -1,7 +1,6 @@
 import os
 
 import numpy as np
-import pytest
 import rasterio as rio
 
 from localtileserver import helpers
