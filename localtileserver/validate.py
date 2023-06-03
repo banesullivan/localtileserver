@@ -1,6 +1,7 @@
 import logging
 from typing import Union
 
+import large_image
 from large_image.tilesource import FileTileSource
 
 from localtileserver.client import BaseTileClient
@@ -11,30 +12,15 @@ logger = logging.getLogger(__name__)
 
 def validate_cog(
     path: Union[str, FileTileSource, BaseTileClient],
-    check_tiled: bool = True,
-    full_check: bool = False,
     strict: bool = True,
     warn: bool = True,
 ):
-    from osgeo_utils.samples.validate_cloud_optimized_geotiff import (
-        ValidateCloudOptimizedGeoTIFFException,
-        validate as gdal_validate,
-    )
-
     if isinstance(path, FileTileSource):
-        path = path._getLargeImagePath()
+        src = path
     elif isinstance(path, BaseTileClient):
         path = path.filename
+        src = large_image.open(path)
     else:
         path = get_clean_filename(path)
-    warnings, errors, details = gdal_validate(
-        str(path), check_tiled=check_tiled, full_check=full_check
-    )
-    if errors:
-        raise ValidateCloudOptimizedGeoTIFFException(errors)
-    if strict and warnings:
-        raise ValidateCloudOptimizedGeoTIFFException(warnings)
-    if warn:
-        for warning in warnings:
-            logger.warning(warning)
-    return True
+        src = large_image.open(path)
+    return src.validateCOG(strict=strict, warn=warn)

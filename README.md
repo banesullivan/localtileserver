@@ -87,22 +87,10 @@ conda install -c conda-forge localtileserver
 
 ### 🎡 Installing with `pip`
 
-If you prefer pip, and know how to install GDAL on your system, then you can
-install from PyPI: https://pypi.org/project/localtileserver/
+If you prefer pip, then you can install from PyPI: https://pypi.org/project/localtileserver/
 
 ```
 pip install localtileserver
-```
-
-#### 📝 A Brief Note on Installing GDAL
-
-GDAL can be a pain in the 🍑 to install, so you may want to handle GDAL
-before installing `localtileserver` when using `pip`.
-
-If on linux, I highly recommend using the [large_image_wheels](https://github.com/girder/large_image_wheels) from Kitware.
-
-```
-pip install --find-links=https://girder.github.io/large_image_wheels --no-cache GDAL
 ```
 
 ## 💭 Feedback

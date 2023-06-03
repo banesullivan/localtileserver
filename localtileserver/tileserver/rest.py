@@ -8,8 +8,12 @@ from PIL import Image, ImageDraw, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
 import large_image
-from large_image.exceptions import TileSourceError, TileSourceXYZRangeError
-from large_image_source_gdal import GDALFileTileSource
+from large_image.exceptions import (
+    TileSourceError,
+    TileSourceInefficientError,
+    TileSourceXYZRangeError,
+)
+from large_image.tilesource.geo import GeoBaseFileTileSource
 from werkzeug.exceptions import BadRequest, UnsupportedMediaType
 
 from localtileserver import __version__
@@ -210,16 +214,12 @@ class BaseImageView(View):
 
 class ValidateCOGView(BaseImageView):
     def get(self):
-        from osgeo_utils.samples.validate_cloud_optimized_geotiff import (
-            ValidateCloudOptimizedGeoTIFFException,
-        )
-
         from localtileserver.validate import validate_cog
 
         tile_source = self.get_tile_source()
         try:
             validate_cog(tile_source)
-        except ValidateCloudOptimizedGeoTIFFException as e:
+        except TileSourceInefficientError as e:
             raise UnsupportedMediaType(f"Not a valid Cloud Optimized GeoTiff: {str(e)}")
         return "Valid Cloud Optimized GeoTiff"
 
@@ -383,7 +383,7 @@ class RegionWorldView(BaseRegionView):
 
     def get(self):
         tile_source = self.get_tile_source(projection="EPSG:3857")
-        if not isinstance(tile_source, GDALFileTileSource):
+        if not isinstance(tile_source, GeoBaseFileTileSource):
             raise BadRequest("Source image must have geospatial reference.")
         units = request.args.get("units", "EPSG:4326")
         encoding = request.args.get("encoding", "TILED")
@@ -480,6 +480,7 @@ class PixelView(BasePixelOperation):
         tile_source = self.get_tile_source(projection=projection)
         region = {"left": x, "top": y, "units": units}
         pixel = tile_source.getPixel(region=region)
+        pixel.pop("value", None)
         pixel.update(region)
         return pixel
 

@@ -3,9 +3,8 @@ channels:
   - conda-forge
 dependencies:
   - python>=3.8
-  - large-image-source-gdal
+  - large-image-source-rasterio
   - large-image-source-tiff
-  - large-image-converter
   - click
   - requests
   - flask >=2.0.0

@@ -84,13 +84,6 @@ def get_elevation_us(*args, **kwargs):
     return TileClient(path, *args, **kwargs)
 
 
-@wraps(_get_example_client)
-def get_pelvis(*args, **kwargs):
-    path = get_data_path("G10-3_pelvis_crop-powers-of-3.tif")
-    kwargs.setdefault("default_projection", None)
-    return TileClient(path, *args, **kwargs)
-
-
 def load_presidio():
     """Load Presidio of San Francisco boundary as Shapely Polygon."""
     with open(DIRECTORY / "presidio.wkb", "rb") as f:
