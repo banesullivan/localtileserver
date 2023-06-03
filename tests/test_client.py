@@ -13,14 +13,6 @@ from localtileserver.helpers import parse_shapely, polygon_to_geojson
 from localtileserver.tiler.utilities import get_clean_filename, get_tile_bounds, get_tile_source
 from localtileserver.utilities import ImageBytes
 
-skip_pil_source = True
-try:
-    import large_image_source_pil  # noqa
-
-    skip_pil_source = False
-except ImportError:
-    pass
-
 skip_shapely = False
 try:
     from shapely.geometry import Polygon
@@ -155,16 +147,6 @@ def test_extract_roi_pixel(bahamas):
     assert roi.metadata()["geospatial"]
     roi = bahamas.extract_roi_pixel(100, 500, 300, 600, return_bytes=True)
     assert isinstance(roi, ImageBytes)
-
-
-@pytest.mark.skipif(skip_pil_source, reason="`large-image-source-pil` not installed")
-def test_extract_roi_pixel_pil(bahamas):
-    path = bahamas.extract_roi_pixel(100, 550, 300, 650, encoding="PNG", return_path=True)
-    assert path.exists()
-    source = get_tile_source(path)
-    assert "geospatial" not in source.getMetadata()
-    assert source.getMetadata()["sizeX"] == 450
-    assert source.getMetadata()["sizeY"] == 350
 
 
 def test_caching_query_params(bahamas):

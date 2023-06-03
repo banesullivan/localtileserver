@@ -46,7 +46,7 @@ setup(
         "Flask-Caching",
         "flask-cors",
         "flask-restx>=0.5.0",
-        "large-image[rasterio,pil]>=1.22.1",
+        "large-image[rasterio]>=1.22.1",
         "requests",
         "server-thread",
         "scooby",
