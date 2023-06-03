@@ -1,4 +1,4 @@
-from localtileserver.tileserver import create_app
+from localtileserver.web import create_app
 
 
 class AppManager:

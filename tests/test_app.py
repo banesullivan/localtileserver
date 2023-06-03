@@ -3,7 +3,7 @@ from urllib.parse import quote
 
 import requests
 
-from localtileserver.tileserver.application import run_app
+from localtileserver.web.application import run_app
 
 
 def test_home_page_with_file(bahamas):

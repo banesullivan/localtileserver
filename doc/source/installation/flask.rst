@@ -7,7 +7,7 @@ incorporated into any Flask application. To utilize in your own application:
 .. code:: python
 
   from flask import Flask
-  from localtileserver.tileserver.blueprint import cache, tileserver
+  from localtileserver.web.blueprint import cache, tileserver
 
   app = Flask(__name__)
   cache.init_app(app)

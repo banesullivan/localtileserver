@@ -18,11 +18,19 @@ from large_image.tilesource.geo import GeoBaseFileTileSource
 from werkzeug.exceptions import BadRequest, UnsupportedMediaType
 
 from localtileserver import __version__
-from localtileserver.tileserver import style, utilities
-from localtileserver.tileserver.blueprint import cache, tileserver
-from localtileserver.tileserver.data import str_to_bool
-from localtileserver.tileserver.palettes import get_palettes
-from localtileserver.tileserver.utilities import format_to_encoding
+from localtileserver.tiler.data import str_to_bool
+from localtileserver.tiler.palettes import get_palettes
+from localtileserver.tiler.style import make_style, reformat_style_query_parameters
+from localtileserver.tiler.utilities import (
+    format_to_encoding,
+    get_meta_data,
+    get_region_pixel,
+    get_region_world,
+    get_tile_bounds,
+    get_tile_source,
+)
+from localtileserver.web.blueprint import cache, tileserver
+from localtileserver.web.utils import get_clean_filename_from_request
 
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
 
@@ -160,7 +168,7 @@ class BaseImageView(View):
     def get_tile_source(self, projection=None):
         """Return the built tile source."""
         try:
-            filename = utilities.get_clean_filename_from_request()
+            filename = get_clean_filename_from_request()
         except OSError as e:
             raise BadRequest(str(e))
         projection = request.args.get("projection", projection)
@@ -184,7 +192,7 @@ class BaseImageView(View):
                 )
         # else, fallback to supported query parameters for viewing a single band
         else:
-            style_args = style.reformat_style_query_parameters(request.args)
+            style_args = reformat_style_query_parameters(request.args)
             band = style_args.get("band", 0)
             if isinstance(band, str) and len(band) > 1:
                 try:
@@ -204,7 +212,7 @@ class BaseImageView(View):
             else:
                 n_colors = 255
             try:
-                sty = style.make_style(
+                sty = make_style(
                     band,
                     vmin=vmin,
                     vmax=vmax,
@@ -216,7 +224,7 @@ class BaseImageView(View):
             except ValueError as e:
                 raise BadRequest(str(e))
         try:
-            return utilities.get_tile_source(filename, projection, encoding=encoding, style=sty)
+            return get_tile_source(filename, projection, encoding=encoding, style=sty)
         except TileSourceError as e:
             raise BadRequest(f"TileSourceError: {str(e)}")
 
@@ -237,7 +245,7 @@ class MetadataView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self):
         tile_source = self.get_tile_source()
-        meta = utilities.get_meta_data(tile_source)
+        meta = get_meta_data(tile_source)
         meta["filename"] = tile_source.largeImagePath
         return meta
 
@@ -257,7 +265,7 @@ class BoundsView(BaseImageView):
         tile_source = self.get_tile_source()
         # Override default projection for bounds
         units = request.args.get("units", "EPSG:4326")
-        bounds = utilities.get_tile_bounds(
+        bounds = get_tile_bounds(
             tile_source,
             projection=units,
         )
@@ -397,7 +405,7 @@ class RegionWorldView(BaseRegionView):
         units = request.args.get("units", "EPSG:4326")
         encoding = request.args.get("encoding", "TILED")
         left, right, bottom, top = self.get_bounds()
-        path, mime_type = utilities.get_region_world(
+        path, mime_type = get_region_world(
             tile_source,
             left,
             right,
@@ -423,7 +431,7 @@ class RegionPixelView(BaseRegionView):
         tile_source = self.get_tile_source()
         encoding = request.args.get("encoding", None)
         left, right, bottom, top = self.get_bounds()
-        path, mime_type = utilities.get_region_pixel(
+        path, mime_type = get_region_pixel(
             tile_source,
             left,
             right,

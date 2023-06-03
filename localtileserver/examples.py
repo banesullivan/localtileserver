@@ -3,7 +3,7 @@ from typing import Union
 
 from localtileserver.client import TileClient
 from localtileserver.helpers import parse_shapely
-from localtileserver.tileserver import (
+from localtileserver.tiler import (
     get_co_elevation_url,
     get_data_path,
     get_elevation_us_url,
@@ -11,7 +11,7 @@ from localtileserver.tileserver import (
     get_pine_gulch_url,
     get_sf_bay_url,
 )
-from localtileserver.tileserver.data import DIRECTORY
+from localtileserver.tiler.data import DIRECTORY
 
 
 def _get_example_client(

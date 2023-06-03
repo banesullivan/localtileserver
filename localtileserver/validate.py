@@ -5,7 +5,7 @@ import large_image
 from large_image.tilesource import FileTileSource
 
 from localtileserver.client import BaseTileClient
-from localtileserver.tileserver import get_clean_filename
+from localtileserver.tiler import get_clean_filename
 
 logger = logging.getLogger(__name__)
 

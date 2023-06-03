@@ -28,7 +28,7 @@ from server_thread import ServerManager, launch_server
 from localtileserver.configure import get_default_client_params
 from localtileserver.helpers import parse_shapely
 from localtileserver.manager import AppManager
-from localtileserver.tileserver import get_building_docs, get_clean_filename, palette_valid_or_raise
+from localtileserver.tiler import get_building_docs, get_clean_filename, palette_valid_or_raise
 from localtileserver.utilities import ImageBytes, add_query_parameters, save_file_from_request
 
 BUILDING_DOCS = get_building_docs()

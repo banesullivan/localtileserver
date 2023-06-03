@@ -4,7 +4,7 @@ import numpy as np
 import rasterio as rio
 
 from localtileserver import helpers
-from localtileserver.tileserver import get_data_path
+from localtileserver.tiler import get_data_path
 
 
 def test_hillshade():
