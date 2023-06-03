@@ -5,8 +5,9 @@ from flask import current_app, render_template, request
 from flask.views import View
 from large_image.exceptions import TileSourceError
 
-from localtileserver.tileserver import data, utilities
+from localtileserver.tiler import data, utilities
 from localtileserver.tileserver.blueprint import tileserver
+from localtileserver.tileserver.utils import get_clean_filename_from_request
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ class BaseViewer(View):
         projection = request.args.get("projection", None)
         # Check opening the file with large image
         try:
-            filename = utilities.get_clean_filename_from_request()
+            filename = get_clean_filename_from_request()
             _ = utilities.get_tile_source(filename, projection=projection)
         except (OSError, AttributeError, TileSourceError):
             return render_template("tileserver/404file.html"), 404
@@ -37,13 +38,13 @@ class CesiumViewer(BaseViewer):
 class CesiumSplitViewer(View):
     def dispatch_request(self):
         try:
-            filename = utilities.get_clean_filename_from_request("filenameA", strict=True)
+            filename = get_clean_filename_from_request("filenameA", strict=True)
             _ = utilities.get_tile_source(filename)
         except (OSError, AttributeError, TileSourceError):
             f = request.args.get("filenameA")
             return render_template("tileserver/404file.html", filename=f), 404
         try:
-            filename = utilities.get_clean_filename_from_request("filenameB", strict=True)
+            filename = get_clean_filename_from_request("filenameB", strict=True)
             _ = utilities.get_tile_source(filename)
         except (OSError, AttributeError, TileSourceError):
             f = request.args.get("filenameB")
@@ -59,7 +60,7 @@ class SplitViewForm(View):
 @tileserver.context_processor
 def raster_context():
     try:
-        filename = utilities.get_clean_filename_from_request()
+        filename = get_clean_filename_from_request()
     except OSError:
         filename = request.args.get("filename", "")
     context = {}

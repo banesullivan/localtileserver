@@ -3,7 +3,7 @@ import uuid
 
 import numpy as np
 
-from localtileserver.tileserver.utilities import get_cache_dir
+from localtileserver.tiler.utilities import get_cache_dir
 
 
 def get_extensions_from_driver(driver: str):

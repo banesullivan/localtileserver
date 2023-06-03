@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_caching import Cache
 
-from localtileserver.tileserver.utilities import get_memcache_config
+from localtileserver.tiler.utilities import get_memcache_config
 
 tileserver = Blueprint(
     "tileserver",

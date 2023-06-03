@@ -10,11 +10,7 @@ from server_thread import ServerDownError, ServerManager
 
 from localtileserver.client import TileClient, get_or_create_tile_client
 from localtileserver.helpers import parse_shapely, polygon_to_geojson
-from localtileserver.tileserver.utilities import (
-    get_clean_filename,
-    get_tile_bounds,
-    get_tile_source,
-)
+from localtileserver.tiler.utilities import get_clean_filename, get_tile_bounds, get_tile_source
 from localtileserver.utilities import ImageBytes
 
 skip_pil_source = True

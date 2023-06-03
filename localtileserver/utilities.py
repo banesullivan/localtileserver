@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 import requests
 
-from localtileserver.tileserver import get_cache_dir
+from localtileserver.tiler.utilities import get_cache_dir
 
 
 class ImageBytes(bytes):

@@ -8,8 +8,8 @@ import click
 from flask import Flask
 from flask_cors import CORS
 
+from localtileserver.tiler.utilities import get_clean_filename
 from localtileserver.tileserver.blueprint import cache, tileserver
-from localtileserver.tileserver.utilities import get_clean_filename
 
 
 def create_app(

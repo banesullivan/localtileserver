@@ -2,7 +2,7 @@ from large_image.exceptions import TileSourceInefficientError
 import pytest
 
 from localtileserver import Report, TileClient
-from localtileserver.tileserver.palettes import (
+from localtileserver.tiler.palettes import (
     get_palette_by_name,
     get_palettes,
     is_valid_palette_name,
