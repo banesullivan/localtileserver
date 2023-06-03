@@ -7,8 +7,8 @@ Included in this repository's packages is a pre-built Docker image that can be
 used as a local tile serving service. To use, pull the image and run it by
 mounting your local volume where the imagery is stored and forward port 8000.
 
-This is particularly useful if you do not want to install GDAL on your system
-or want a dedicated and isolated service for tile serving.
+This is particularly useful if you do not want to install the dependencies on
+your system or want a dedicated and isolated service for tile serving.
 
 To use the docker image:
 

@@ -9,8 +9,7 @@ from urllib.parse import urlencode, urlparse
 from flask import current_app, request
 import large_image
 from large_image.tilesource import FileTileSource
-from large_image_source_gdal import GDALFileTileSource
-from osgeo import gdal
+from large_image.tilesource.geo import GeoBaseFileTileSource
 
 from localtileserver.tileserver.data import (
     clean_url,
@@ -54,8 +53,8 @@ def get_cache_dir():
 
 
 configure_large_image_memcache(*get_memcache_config())
-gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
-gdal.SetConfigOption("GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache"))
+# gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
+# gdal.SetConfigOption("GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache"))
 
 
 def purge_cache():
@@ -120,7 +119,7 @@ def get_region_pixel(
     left, right = min(left, right), max(left, right)
     top, bottom = min(top, bottom), max(top, bottom)
     region = dict(left=left, right=right, bottom=bottom, top=top, units=units)
-    if isinstance(tile_source, GDALFileTileSource) and encoding is None:
+    if isinstance(tile_source, GeoBaseFileTileSource) and encoding is None:
         # Use tiled encoding by default for geospatial rasters
         #   output will be a tiled TIF
         encoding = "TILED"
@@ -158,13 +157,13 @@ def make_vsi(url: str, **options):
         s3_path = url.replace("s3://", "")
         vsi = f"/vsis3/{s3_path}"
     else:
-        gdal_options = {
+        uoptions = {
             "url": str(url),
             "use_head": "no",
             "list_dir": "no",
         }
-        gdal_options.update(options)
-        vsi = f"/vsicurl?{urlencode(gdal_options)}"
+        uoptions.update(options)
+        vsi = f"/vsicurl?{urlencode(uoptions)}"
     return vsi
 
 

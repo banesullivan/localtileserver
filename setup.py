@@ -44,8 +44,7 @@ setup(
         "Flask-Caching",
         "flask-cors",
         "flask-restx>=0.5.0",
-        "GDAL",
-        "large-image[gdal]>=1.14.1",
+        "large-image[rasterio]>=1.22.1",
         "requests",
         "server-thread",
         "scooby",
@@ -53,7 +52,7 @@ setup(
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
-        "sources": ["large-image[gdal,pil,tiff]>=1.14.1"],
+        "sources": ["large-image[rasterio,pil]>=1.22.1"],
         "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
         "helpers": ["shapely", "rasterio"],
     },

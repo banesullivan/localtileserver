@@ -1,5 +1,5 @@
-from osgeo import gdal
 import pytest
+import rasterio
 
 from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path, get_pelvis
 from localtileserver.tileserver import create_app
@@ -48,7 +48,5 @@ def remote_file_url():
 
 @pytest.fixture
 def remote_file_s3():
-    gdal.SetConfigOption("AWS_NO_SIGN_REQUEST", "YES")
-    gdal.SetConfigOption("GDAL_PAM_ENABLED", "NO")
-    yield "s3://sentinel-cogs/sentinel-s2-l2a-cogs/2020/S2A_34JCL_20200309_0_L2A/B01.tif"
-    gdal.SetConfigOption("GDAL_PAM_ENABLED", "YES")
+    with rasterio.Env(GDAL_PAM_ENABLED="NO", AWS_NO_SIGN_REQUEST="YES"):
+        yield "s3://sentinel-cogs/sentinel-s2-l2a-cogs/2020/S2A_34JCL_20200309_0_L2A/B01.tif"

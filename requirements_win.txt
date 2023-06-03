@@ -2,7 +2,7 @@ click
 flask>=2.0.0
 Flask-Caching
 flask-cors
-large-image[gdal,pil]>=1.14.1
+large-image[rasterio,pil]>=1.22.1
 requests
 server-thread
 scooby

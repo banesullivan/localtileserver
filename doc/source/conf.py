@@ -95,7 +95,7 @@ html_theme_options = {
     "logo": {
         "image_light": "logo-light.png",
         "image_dark": "logo-dark.png",
-   }
+    },
 }
 
 html_sidebars = {

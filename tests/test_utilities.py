@@ -1,6 +1,4 @@
-from osgeo_utils.samples.validate_cloud_optimized_geotiff import (
-    ValidateCloudOptimizedGeoTIFFException,
-)
+from large_image.exceptions import TileSourceInefficientError
 import pytest
 
 from localtileserver import Report, TileClient
@@ -49,5 +47,5 @@ def test_cog_validate(remote_file_url):
 
 
 def test_cog_validate_error(bahamas):
-    with pytest.raises(ValidateCloudOptimizedGeoTIFFException):
+    with pytest.raises(TileSourceInefficientError):
         assert validate_cog(bahamas)
