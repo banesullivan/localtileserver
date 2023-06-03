@@ -19,7 +19,7 @@ def get_building_docs():
 
 def get_data_path(name):
     if get_building_docs():
-        return f"https://github.com/banesullivan/localtileserver/raw/main/localtileserver/tileserver/data/{name}"
+        return f"https://github.com/banesullivan/localtileserver/raw/main/localtileserver/tiler/data/{name}"
     else:
         return DIRECTORY / name
 

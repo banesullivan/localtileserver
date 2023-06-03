@@ -1,5 +1,5 @@
-graft localtileserver/tileserver/static
-graft localtileserver/tileserver/templates
+graft localtileserver/web/static
+graft localtileserver/web/templates
 global-exclude *.pyc
-graft localtileserver/tileserver/data
-exclude localtileserver/tileserver/data/*.aux.xml
+graft localtileserver/tiler/data
+exclude localtileserver/tiler/data/*.aux.xml

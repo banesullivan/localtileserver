@@ -68,6 +68,7 @@ def is_geospatial(source: RasterioFileTileSource) -> bool:
 def get_tile_source(
     path: Union[pathlib.Path, str], projection: str = None, style: str = None, encoding: str = "PNG"
 ) -> RasterioFileTileSource:
+    path = get_clean_filename(path)
     return RasterioFileTileSource(str(path), projection=projection, style=style, encoding=encoding)
 
 
