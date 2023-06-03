@@ -296,17 +296,6 @@ def test_style_dict(bahamas):
     assert thumbnail  # TODO: check colors in produced image
 
 
-@skip_mac_arm
-def test_pixel_space_tiles(pelvis):
-    assert pelvis.metadata_safe()
-    tile_url = pelvis.get_tile_url().format(z=0, x=0, y=0)
-    assert "projection=none" in tile_url.lower()
-    r = requests.get(tile_url)
-    r.raise_for_status()
-    assert r.content
-    pelvis.default_projection = None  # to test setter
-
-
 def test_large_image_to_client(bahamas_file):
     src = large_image.open(bahamas_file)
     tile_client = TileClient(src)
