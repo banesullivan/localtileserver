@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 7, 0
+version_info = 0, 7, 1
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -46,7 +46,7 @@ setup(
         "Flask-Caching",
         "flask-cors",
         "flask-restx>=0.5.0",
-        "large-image[rasterio]>=1.22.1",
+        "large-image[rasterio]>=1.22.2",
         "requests",
         "server-thread",
         "scooby",
