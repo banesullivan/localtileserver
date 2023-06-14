@@ -34,6 +34,7 @@ class Report(scooby.Report):
             "pylibmc",
             "ipyleaflet",
             "jupyterlab",
+            "jupyter_server_proxy",
             "traitlets",
             "shapely",
             "folium",
