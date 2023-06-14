@@ -32,11 +32,16 @@ def numpy_to_raster(ras_meta, data, out_path: str = None):
         use a temporary file
 
     """
+    if data.ndim == 2:
+        data = data[np.newaxis, ...]
+
     ras_meta = ras_meta.copy()
     ras_meta.update({"count": data.shape[0]})
     ras_meta.update({"dtype": str(data.dtype)})
     ras_meta.update({"height": data.shape[1]})
     ras_meta.update({"width": data.shape[2]})
+    ras_meta.update({"compress": "lzw"})
+    ras_meta.update({"driver": "GTiff"})
 
     if not out_path:
         ext = get_extensions_from_driver(ras_meta["driver"])[0]
