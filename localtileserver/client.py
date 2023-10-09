@@ -410,10 +410,6 @@ class BaseTileClientInterface:
         """
         raise NotImplementedError  # pragma: no cover
 
-    def histogram(self, bins: int = 256, density: bool = False):
-        """Get a histoogram for each band."""
-        raise NotImplementedError  # pragma: no cover
-
     @property
     def default_zoom(self):
         m = self.metadata_safe()
@@ -671,10 +667,6 @@ class LocalTileClient(BaseTileClientInterface):
         region = {"left": x, "top": y, "units": units}
         return self.tile_source.getPixel(region=region)
 
-    def histogram(self, bins: int = 256, density: bool = False):
-        result = self.tile_source.histogram(bins=bins, density=density)
-        return result["histogram"]
-
 
 class BaseRestfulTileClient(BaseTileClientInterface):
     """Connect to a localtileserver instance.
@@ -690,51 +682,6 @@ class BaseRestfulTileClient(BaseTileClientInterface):
         if output_path:
             return save_file_from_request(r, output_path)
         return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-
-    def extract_roi(
-        self,
-        left: float,
-        right: float,
-        bottom: float,
-        top: float,
-        units: str = "EPSG:4326",
-        encoding: str = "TILED",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        path = f"api/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
-        r = requests.get(self.create_url(path))
-        r.raise_for_status()
-        if return_bytes:
-            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-        output_path = save_file_from_request(r, output_path)
-        if return_path:
-            return output_path
-        return TileClient(output_path)
-
-    def extract_roi_pixel(
-        self,
-        left: int,
-        right: int,
-        bottom: int,
-        top: int,
-        encoding: str = "TILED",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        path = f"/api/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
-        r = requests.get(self.create_url(path))
-        r.raise_for_status()
-        if return_bytes:
-            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-        output_path = save_file_from_request(r, output_path)
-        if return_path:
-            return output_path
-        return TileClient(
-            output_path, default_projection="EPSG:3857" if encoding == "TILED" else None
-        )
 
     def metadata(self, projection: Optional[str] = ""):
         if projection not in self._metadata:
@@ -816,15 +763,6 @@ class BaseRestfulTileClient(BaseTileClientInterface):
         if projection:
             params["projection"] = projection
         url = add_query_parameters(self.create_url("api/pixel"), params)
-        r = requests.get(url)
-        r.raise_for_status()
-        return r.json()
-
-    def histogram(self, bins: int = 256, density: bool = False):
-        params = {}
-        params["density"] = density
-        params["bins"] = bins
-        url = add_query_parameters(self.create_url("api/histogram"), params)
         r = requests.get(url)
         r.raise_for_status()
         return r.json()

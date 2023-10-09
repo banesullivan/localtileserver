@@ -8,6 +8,7 @@ from urllib.parse import urlencode, urlparse
 
 import large_image
 from large_image_source_rasterio import RasterioFileTileSource
+from rasterio import CRS
 
 from localtileserver.tiler.data import clean_url, get_data_path, get_pine_gulch_url
 
@@ -139,6 +140,8 @@ def get_meta_data(tile_source: RasterioFileTileSource):
     meta.update(tile_source.getInternalMetadata())
     # Override bounds for EPSG:4326
     meta["bounds"] = get_tile_bounds(tile_source)
+    if isinstance(meta["projection"], CRS):
+        meta["projection"] = meta["projection"].to_string()
     return meta
 
 
