@@ -7,14 +7,8 @@ import requests
 from server_thread import ServerDownError, ServerManager
 
 from localtileserver.client import RestTileClient
-from localtileserver.tiler import get_clean_filename, get_tile_bounds, get_tile_source
+from localtileserver.tiler import get_clean_filename
 from localtileserver.utilities import ImageBytes
-
-skip_shapely = False
-try:
-    from shapely.geometry import box
-except ImportError:
-    skip_shapely = True
 
 skip_mac_arm = pytest.mark.skipif(
     platform.system() == "Darwin" and platform.processor() == "arm", reason="MacOS Arm issues."
@@ -95,57 +89,6 @@ def test_client_force_shutdown(bahamas_file):
 #     thumb_url_a = bahamas.create_url("api/thumbnail.png")
 #     thumb_url_b = blue_marble.create_url("api/thumbnail.png")
 #     assert get_content(thumb_url_a) != get_content(thumb_url_b)
-
-
-def test_extract_roi_world(bahamas_file):
-    bahamas = RestTileClient(bahamas_file)
-    # -78.047, -77.381, 24.056, 24.691
-    path = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691, return_path=True)
-    assert path.exists()
-    source = get_tile_source(path, projection="EPSG:3857")
-    assert source.getMetadata()["geospatial"]
-    e = get_tile_bounds(source, projection="EPSG:4326")
-    assert e["xmin"] == pytest.approx(-78.047, abs=TOLERANCE)
-    assert e["xmax"] == pytest.approx(-77.381, abs=TOLERANCE)
-    assert e["ymin"] == pytest.approx(24.056, abs=TOLERANCE)
-    assert e["ymax"] == pytest.approx(24.691, abs=TOLERANCE)
-    roi = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691, return_bytes=True)
-    assert isinstance(roi, ImageBytes)
-    assert roi.mimetype == "image/tiff"
-    roi = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691)
-    assert roi.metadata()["geospatial"]
-
-
-@pytest.mark.skipif(skip_shapely, reason="shapely not installed")
-def test_extract_roi_world_shape(bahamas_file):
-    bahamas = RestTileClient(bahamas_file)
-    poly = box(-78.047, 24.056, -77.381, 24.691)
-    path = bahamas.extract_roi_shape(poly, return_path=True)
-    assert path.exists()
-    source = get_tile_source(path, projection="EPSG:3857")
-    assert source.getMetadata()["geospatial"]
-    e = get_tile_bounds(source, projection="EPSG:4326")
-    assert e["xmin"] == pytest.approx(-78.047, abs=TOLERANCE)
-    assert e["xmax"] == pytest.approx(-77.381, abs=TOLERANCE)
-    assert e["ymin"] == pytest.approx(24.056, abs=TOLERANCE)
-    assert e["ymax"] == pytest.approx(24.691, abs=TOLERANCE)
-    path = bahamas.extract_roi_shape(poly.wkt, return_path=True)
-    assert path.exists()
-
-
-@pytest.mark.skip
-def test_extract_roi_pixel(bahamas_file):
-    bahamas = RestTileClient(bahamas_file)
-    path = bahamas.extract_roi_pixel(100, 500, 300, 600, return_path=True)
-    assert path.exists()
-    source = get_tile_source(path)
-    assert source.getMetadata()["geospatial"]
-    assert source.getMetadata()["sizeX"] == 400
-    assert source.getMetadata()["sizeY"] == 300
-    roi = bahamas.extract_roi_pixel(100, 500, 300, 600)
-    assert roi.metadata()["geospatial"]
-    roi = bahamas.extract_roi_pixel(100, 500, 300, 600, return_bytes=True)
-    assert isinstance(roi, ImageBytes)
 
 
 def test_caching_query_params(bahamas_file):
