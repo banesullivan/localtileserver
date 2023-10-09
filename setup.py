@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 7, 1
+version_info = 0, 7, 2
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -42,7 +42,7 @@ setup(
     python_requires=">=3.7",
     install_requires=[
         "click",
-        "flask>=2.0.0",
+        "flask>=2.0.0,<3",
         "Flask-Caching",
         "flask-cors",
         "flask-restx>=0.5.0",
