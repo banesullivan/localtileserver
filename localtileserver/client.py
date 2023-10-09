@@ -410,10 +410,6 @@ class BaseTileClientInterface:
         """
         raise NotImplementedError  # pragma: no cover
 
-    def histogram(self, bins: int = 256, density: bool = False):
-        """Get a histoogram for each band."""
-        raise NotImplementedError  # pragma: no cover
-
     @property
     def default_zoom(self):
         m = self.metadata_safe()
@@ -671,10 +667,6 @@ class LocalTileClient(BaseTileClientInterface):
         region = {"left": x, "top": y, "units": units}
         return self.tile_source.getPixel(region=region)
 
-    def histogram(self, bins: int = 256, density: bool = False):
-        result = self.tile_source.histogram(bins=bins, density=density)
-        return result["histogram"]
-
 
 class BaseRestfulTileClient(BaseTileClientInterface):
     """Connect to a localtileserver instance.
@@ -771,15 +763,6 @@ class BaseRestfulTileClient(BaseTileClientInterface):
         if projection:
             params["projection"] = projection
         url = add_query_parameters(self.create_url("api/pixel"), params)
-        r = requests.get(url)
-        r.raise_for_status()
-        return r.json()
-
-    def histogram(self, bins: int = 256, density: bool = False):
-        params = {}
-        params["density"] = density
-        params["bins"] = bins
-        url = add_query_parameters(self.create_url("api/histogram"), params)
         r = requests.get(url)
         r.raise_for_status()
         return r.json()

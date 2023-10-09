@@ -158,13 +158,6 @@ def test_pixel(bahamas_file):
     assert "bands" in pix
 
 
-@pytest.mark.skip
-def test_histogram(bahamas_file):
-    bahamas = RestTileClient(bahamas_file)
-    hist = bahamas.histogram()
-    assert len(hist)
-
-
 @pytest.mark.parametrize("encoding", ["PNG", "JPEG", "JPG"])
 def test_thumbnail_encodings(bahamas_file, encoding):
     bahamas = RestTileClient(bahamas_file)

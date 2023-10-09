@@ -228,12 +228,6 @@ def test_pixel(bahamas):
     assert "bands" in pix
 
 
-@pytest.mark.skip
-def test_histogram(bahamas):
-    hist = bahamas.histogram()
-    assert len(hist)
-
-
 @pytest.mark.parametrize("encoding", ["PNG", "JPEG", "JPG"])
 def test_thumbnail_encodings(bahamas, encoding):
     # large-image's rasterio source cannot handle: "TIF", "TIFF"

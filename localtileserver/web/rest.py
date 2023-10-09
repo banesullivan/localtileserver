@@ -497,36 +497,3 @@ class PixelView(BasePixelOperation):
         pixel.pop("value", None)
         pixel.update(region)
         return pixel
-
-
-@api.doc(
-    params={
-        "bins": {
-            "type": "int",
-            "default": 256,
-        },
-        "density": {
-            "type": "bool",
-            "default": False,
-        },
-    }
-)
-class HistogramView(BasePixelOperation):
-    """Returns histogram."""
-
-    def get(self):
-        kwargs = dict(
-            bins=int(request.args.get("bins", 256)),
-            density=str_to_bool(request.args.get("density", "False")),
-        )
-        tile_source = self.get_tile_source(projection=None)
-        result = tile_source.histogram(**kwargs)
-        result = result["histogram"]
-        for entry in result:
-            for key in {"bin_edges", "hist", "range"}:
-                if key in entry:
-                    entry[key] = [float(val) for val in list(entry[key])]
-            for key in {"min", "max", "samples"}:
-                if key in entry:
-                    entry[key] = float(entry[key])
-        return result
