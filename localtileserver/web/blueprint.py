@@ -1,8 +1,6 @@
 from flask import Blueprint
 from flask_caching import Cache
 
-from localtileserver.tiler import get_memcache_config
-
 tileserver = Blueprint(
     "tileserver",
     __name__,
@@ -12,7 +10,7 @@ tileserver = Blueprint(
 )
 
 
-def create_cache(url: str, username: str = None, password: str = None):
+def create_cache(url: str = None, username: str = None, password: str = None):
     if url:
         config = {"CACHE_MEMCACHED_SERVERS": url.split(",")}
         if username and password:
@@ -27,4 +25,4 @@ def create_cache(url: str, username: str = None, password: str = None):
     return Cache(config=config)
 
 
-cache = create_cache(*get_memcache_config())
+cache = create_cache()

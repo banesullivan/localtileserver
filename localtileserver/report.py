@@ -6,14 +6,10 @@ class Report(scooby.Report):
         """Initiate a scooby.Report instance."""
 
         # Mandatory packages.
-        large_image_core = [
-            "large_image",
-            "large_image_source_rasterio",
-            "cachetools",
-            "PIL",
-            "psutil",
+        rio_tiler_core = [
+            "rasterio",
+            "rio_tiler",
             "numpy",
-            "palettable",
         ]
         core = [
             "localtileserver",
@@ -26,7 +22,7 @@ class Report(scooby.Report):
             "click",
             "server_thread",
             "scooby",
-        ] + large_image_core
+        ] + rio_tiler_core
 
         # Optional packages.
         optional = [
@@ -41,12 +37,6 @@ class Report(scooby.Report):
             "matplotlib",
             "colorcet",
             "cmocean",
-            "large_image_source_gdal",
-            "large_image_source_mapnik",
-            "large_image_source_pil",
-            "large_image_source_tiff",
-            "large_image_converter",
-            "tifftools",
             "pyvips",
             "pylibtiff",
             "osgeo.gdal",

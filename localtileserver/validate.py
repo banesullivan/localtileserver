@@ -1,8 +1,8 @@
 import logging
 from typing import Union
 
-import large_image
-from large_image_source_rasterio import RasterioFileTileSource
+from rio_cogeo import cog_validate
+from rio_tiler.io import Reader
 
 from localtileserver.client import BaseTileClientInterface
 from localtileserver.tiler import get_clean_filename
@@ -11,16 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 def validate_cog(
-    path: Union[str, RasterioFileTileSource, BaseTileClientInterface],
+    path: Union[str, Reader, BaseTileClientInterface],
     strict: bool = True,
-    warn: bool = True,
+    quiet: bool = False,
 ):
-    if isinstance(path, RasterioFileTileSource):
-        src = path
+    if isinstance(path, Reader):
+        path = path.dataset.name
     elif isinstance(path, BaseTileClientInterface):
         path = path.filename
-        src = large_image.open(path)
     else:
         path = get_clean_filename(path)
-        src = large_image.open(path)
-    return src.validateCOG(strict=strict, warn=warn)
+    return cog_validate(path, strict=strict, quiet=quiet)

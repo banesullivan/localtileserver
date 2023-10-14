@@ -3,9 +3,9 @@ import os
 import platform
 
 import large_image
-from large_image.exceptions import TileSourceError
 import pytest
 import rasterio
+from rasterio.errors import RasterioIOError
 import requests
 from server_thread import ServerManager
 
@@ -217,7 +217,7 @@ def test_get_or_create_tile_client(bahamas_file):
     diff, created = get_or_create_tile_client(bahamas_file)
     assert created
     assert tile_client != diff
-    with pytest.raises(TileSourceError):
+    with pytest.raises(RasterioIOError):
         _, _ = get_or_create_tile_client(__file__)
 
 

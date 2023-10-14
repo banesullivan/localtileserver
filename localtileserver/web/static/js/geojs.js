@@ -13,7 +13,7 @@ var basemapLayer = map.createLayer('osm', {
   gcs: 'EPSG:3857' // web mercator
 });
 
-// Tile layer for showing rasters/images with large_image
+// Tile layer for showing rasters/images
 var tileLayer = map.createLayer('osm', {
   keepLower: false,
   attribution: '',

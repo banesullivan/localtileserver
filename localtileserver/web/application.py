@@ -27,13 +27,13 @@ def create_app(
     app.config.JSONIFY_PRETTYPRINT_REGULAR = True
     app.config.SWAGGER_UI_DOC_EXPANSION = "list"
     app.config["DEBUG"] = debug
+    cesium_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJlZDM5NDRlNC05NGFiLTRmMzctYjhlNi1iMDJkMjU1NjcyM2QiLCJpZCI6MzAwNDYsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1OTMwMjMyNDh9.8YbUgVxncQzVXRtrzz2sXbmKUJDKeqjfPPReWmM587s"
     app.config["cesium_token"] = cesium_token
     if debug:
         logging.getLogger("werkzeug").setLevel(logging.DEBUG)
         logging.getLogger("gdal").setLevel(logging.DEBUG)
-        logging.getLogger("large_image").setLevel(logging.DEBUG)
-        logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
-        logging.getLogger("large_image_source_rasterio").setLevel(logging.DEBUG)
+        logging.getLogger("rasterio").setLevel(logging.DEBUG)
+        logging.getLogger("rio_tiler").setLevel(logging.DEBUG)
     return app
 
 

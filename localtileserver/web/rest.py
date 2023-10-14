@@ -1,33 +1,23 @@
 import io
-import json
 import pathlib
-import re
 import time
-from urllib.parse import unquote
 
 from PIL import Image, ImageDraw, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
-import large_image
-from large_image.exceptions import (
-    TileSourceError,
-    TileSourceInefficientError,
-    TileSourceXYZRangeError,
-)
-from werkzeug.exceptions import BadRequest, UnsupportedMediaType
+from rasterio import RasterioIOError
+from rio_tiler.errors import TileOutsideBounds
+from werkzeug.exceptions import BadRequest, UnsupportedMediaType, NotFound
 
 from localtileserver import __version__
 from localtileserver.tiler import (
     format_to_encoding,
     get_meta_data,
-    get_region_pixel,
-    get_region_world,
     get_tile_bounds,
     get_tile_source,
 )
 from localtileserver.tiler.data import str_to_bool
 from localtileserver.tiler.palettes import get_palettes
-from localtileserver.tiler.style import make_style, reformat_style_query_parameters
 from localtileserver.web.blueprint import cache, tileserver
 from localtileserver.web.utils import get_clean_filename_from_request
 
@@ -155,77 +145,18 @@ class ListPalettes(View):
         return get_palettes()
 
 
-class ListTileSources(View):
-    def get(self):
-        large_image.tilesource.loadTileSources()
-        sources = large_image.tilesource.AvailableTileSources
-        return {k: str(v) for k, v in sources.items()}
-
-
 @api.doc(params=BASE_PARAMS)
 class BaseImageView(View):
-    def get_tile_source(self, projection=None):
+    def get_tile_source(self):
         """Return the built tile source."""
         try:
             filename = get_clean_filename_from_request()
         except OSError as e:
             raise BadRequest(str(e))
-        projection = request.args.get("projection", projection)
-        if isinstance(projection, str) and projection.lower() in [
-            "none",
-            "pixel",
-            "pixels",
-            "null",
-            "undefined",
-        ]:
-            projection = None
-        encoding = request.args.get("encoding", "PNG")
-        if "style" in request.args:
-            sty = unquote(request.args.get("style"))
-            try:
-                # Check that style is valid JSON before passing to large-image
-                _ = json.loads(sty)
-            except json.JSONDecodeError as e:
-                raise BadRequest(
-                    f"`style` query parameter is malformed and likely not properly URL encoded: {e}"
-                )
-        # else, fallback to supported query parameters for viewing a single band
-        else:
-            style_args = reformat_style_query_parameters(request.args)
-            band = style_args.get("band", 0)
-            if isinstance(band, str) and len(band) > 1:
-                try:
-                    band = int(band)
-                except ValueError:
-                    if re.match(r"^\d+(,\d+)*$", band.strip("[]")):
-                        band = [int(b) for b in band.strip("[]").split(",")]
-                    else:
-                        raise BadRequest("`band` query parameter has invalid band values")
-            vmin = style_args.get("min", None)
-            vmax = style_args.get("max", None)
-            palette = style_args.get("palette", style_args.get("cmap", None))
-            scheme = style_args.get("scheme", None)
-            nodata = style_args.get("nodata", None)
-            if style_args.get("n_colors", ""):
-                n_colors = int(style_args.get("n_colors"))
-            else:
-                n_colors = 255
-            try:
-                sty = make_style(
-                    band,
-                    vmin=vmin,
-                    vmax=vmax,
-                    palette=palette,
-                    nodata=nodata,
-                    scheme=scheme,
-                    n_colors=n_colors,
-                )
-            except ValueError as e:
-                raise BadRequest(str(e))
         try:
-            return get_tile_source(filename, projection, encoding=encoding, style=sty)
-        except TileSourceError as e:
-            raise BadRequest(f"TileSourceError: {str(e)}")
+            return get_tile_source(filename)
+        except RasterioIOError as e:
+            raise BadRequest(f"RasterioIOError: {str(e)}")
 
 
 class ValidateCOGView(BaseImageView):
@@ -233,25 +164,25 @@ class ValidateCOGView(BaseImageView):
         from localtileserver.validate import validate_cog
 
         tile_source = self.get_tile_source()
-        try:
-            validate_cog(tile_source)
-        except TileSourceInefficientError as e:
-            raise UnsupportedMediaType(f"Not a valid Cloud Optimized GeoTiff: {str(e)}")
-        return "Valid Cloud Optimized GeoTiff"
+        valid = True  # validate_cog(tile_source, strict=True)
+        if valid:
+            return "Valid Cloud Optimized GeoTiff."
+        # TODO: better error/out?
+        return "Not valid"
 
 
 class MetadataView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self):
         tile_source = self.get_tile_source()
-        meta = get_meta_data(tile_source)
-        meta["filename"] = tile_source.largeImagePath
-        return meta
+        metadata = get_meta_data(tile_source)
+        metadata["filename"] = str(get_clean_filename_from_request())
+        return metadata
 
 
 @api.doc(
     params={
-        "units": {
+        "crs": {
             "description": "The projection of the bounds.",
             "in": "query",
             "type": "str",
@@ -262,13 +193,11 @@ class MetadataView(BaseImageView):
 class BoundsView(BaseImageView):
     def get(self):
         tile_source = self.get_tile_source()
-        # Override default projection for bounds
-        units = request.args.get("units", "EPSG:4326")
         bounds = get_tile_bounds(
             tile_source,
-            projection=units,
+            projection=request.args.get("crs", "EPSG:4326"),
         )
-        bounds["filename"] = tile_source.largeImagePath
+        bounds["filename"] = str(get_clean_filename_from_request())
         return bounds
 
 
@@ -281,16 +210,12 @@ class ThumbnailView(BaseImageView):
         except ValueError:
             raise BadRequest(f"Format {format} is not a valid encoding.")
         tile_source = self.get_tile_source()
-        thumb_data, mime_type = tile_source.getThumbnail(encoding=encoding)
-        if isinstance(thumb_data, bytes):
-            thumb_data = io.BytesIO(thumb_data)
-        elif isinstance(thumb_data, (str, pathlib.Path)):
-            with open(thumb_data, "rb") as f:
-                thumb_data = io.BytesIO(f.read())
+        thumb_data = tile_source.preview().render(img_format="png")
+        thumb_data = io.BytesIO(thumb_data)
         return send_file(
             thumb_data,
             download_name=f"thumbnail.{format}",
-            mimetype=mime_type,
+            mimetype="image/png",  # TODO
         )
 
 
@@ -364,85 +289,16 @@ class TileView(BaseTileView):
     def get(self, x: int, y: int, z: int):
         tile_source = self.get_tile_source()
         try:
-            tile_binary = tile_source.getTile(x, y, z)
-        except TileSourceXYZRangeError as e:
-            raise BadRequest(str(e))
-        mime_type = tile_source.getTileMimeType()
+            tile_binary = tile_source.tile(x, y, z).render(img_format="png")
+        except TileOutsideBounds as e:
+            raise NotFound(str(e))
         grid = str_to_bool(request.args.get("grid", "False"))
         if grid:
             tile_binary = self.add_border_to_image(tile_binary, msg=f"{x}/{y}/{z}")
         return send_file(
             io.BytesIO(tile_binary),
             download_name=f"{x}.{y}.{z}.png",
-            mimetype=mime_type,
-        )
-
-
-@api.doc(params=REGION_PARAMS)
-class BaseRegionView(BaseImageView):
-    def get_bounds(self):
-        left = float(request.args.get("left"))
-        right = float(request.args.get("right"))
-        bottom = float(request.args.get("bottom"))
-        top = float(request.args.get("top"))
-        return (left, right, bottom, top)
-
-
-class RegionWorldView(BaseRegionView):
-    """Returns region tile binary from world coordinates in given EPSG.
-
-    Use the `units` query parameter to indicate the projection of the given
-    coordinates. This can be different than the `projection` parameter used
-    to open the tile source. `units` defaults to `EPSG:4326`.
-
-    """
-
-    def get(self):
-        tile_source = self.get_tile_source(projection="EPSG:3857")
-        units = request.args.get("units", "EPSG:4326")
-        encoding = request.args.get("encoding", "TILED")
-        left, right, bottom, top = self.get_bounds()
-        path, mime_type = get_region_world(
-            tile_source,
-            left,
-            right,
-            bottom,
-            top,
-            units,
-            encoding,
-        )
-        if not path:
-            raise BadRequest(
-                "No output generated, check that the bounds of your ROI overlap source imagery and that your `projection` and `units` are correct."
-            )
-        return send_file(
-            path,
-            mimetype=mime_type,
-        )
-
-
-class RegionPixelView(BaseRegionView):
-    """Returns region tile binary from pixel coordinates."""
-
-    def get(self):
-        tile_source = self.get_tile_source()
-        encoding = request.args.get("encoding", None)
-        left, right, bottom, top = self.get_bounds()
-        path, mime_type = get_region_pixel(
-            tile_source,
-            left,
-            right,
-            bottom,
-            top,
-            encoding=encoding,
-        )
-        if not path:
-            raise BadRequest(
-                "No output generated, check that the bounds of your ROI overlap source imagery."
-            )
-        return send_file(
-            path,
-            mimetype=mime_type,
+            mimetype="image/png",
         )
 
 
@@ -497,36 +353,3 @@ class PixelView(BasePixelOperation):
         pixel.pop("value", None)
         pixel.update(region)
         return pixel
-
-
-@api.doc(
-    params={
-        "bins": {
-            "type": "int",
-            "default": 256,
-        },
-        "density": {
-            "type": "bool",
-            "default": False,
-        },
-    }
-)
-class HistogramView(BasePixelOperation):
-    """Returns histogram."""
-
-    def get(self):
-        kwargs = dict(
-            bins=int(request.args.get("bins", 256)),
-            density=str_to_bool(request.args.get("density", "False")),
-        )
-        tile_source = self.get_tile_source(projection=None)
-        result = tile_source.histogram(**kwargs)
-        result = result["histogram"]
-        for entry in result:
-            for key in {"bin_edges", "hist", "range"}:
-                if key in entry:
-                    entry[key] = [float(val) for val in list(entry[key])]
-            for key in {"min", "max", "samples"}:
-                if key in entry:
-                    entry[key] = float(entry[key])
-        return result

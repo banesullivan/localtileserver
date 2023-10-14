@@ -34,16 +34,6 @@ rest.api.add_resource(
     endpoint="tiles-debug",
 )
 rest.api.add_resource(
-    rest.RegionWorldView,
-    "/world/region.tif",
-    endpoint="region-world",
-)
-rest.api.add_resource(
-    rest.RegionPixelView,
-    "/pixel/region.tif",
-    endpoint="region-pixel",
-)
-rest.api.add_resource(
     rest.ListPalettes,
     "/palettes",
     endpoint="palettes",
@@ -52,16 +42,6 @@ rest.api.add_resource(
     rest.PixelView,
     "/pixel",
     endpoint="pixel",
-)
-rest.api.add_resource(
-    rest.HistogramView,
-    "/histogram",
-    endpoint="histogram",
-)
-rest.api.add_resource(
-    rest.ListTileSources,
-    "/sources",
-    endpoint="sources",
 )
 rest.api.add_resource(
     rest.ValidateCOGView,

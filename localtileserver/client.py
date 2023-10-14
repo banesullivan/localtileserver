@@ -65,7 +65,6 @@ class BaseTileClientInterface:
     ):
         self._filename = get_clean_filename(filename)
         self._metadata = {}
-        self._is_geospatial = None
 
         if default_projection != "EPSG:3857":
             self._default_projection = default_projection
@@ -79,7 +78,7 @@ class BaseTileClientInterface:
     @property
     def default_projection(self):
         if self._default_projection == "":
-            self._default_projection = "EPSG:3857" if self.is_geospatial else None
+            self._default_projection = "EPSG:3857"
         return self._default_projection
 
     @default_projection.setter
@@ -313,11 +312,7 @@ class BaseTileClientInterface:
         raise NotImplementedError  # pragma: no cover
 
     def metadata_safe(self, projection: Optional[str] = ""):
-        if self.is_geospatial:
-            m = self.metadata(projection=projection)
-        else:
-            m = self.metadata(projection=None)
-        return m
+        return self.metadata(projection=projection)
 
     def bounds(
         self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
@@ -390,6 +385,8 @@ class BaseTileClientInterface:
         style: dict = None,
         cmap: Union[str, List[str]] = None,
         encoding: str = "PNG",
+        width: int = None,
+        height: int = None,
     ):
         raise NotImplementedError  # pragma: no cover
 
@@ -426,12 +423,6 @@ class BaseTileClientInterface:
     def max_zoom(self):
         m = self.metadata_safe()
         return m.get("levels")
-
-    @property
-    def is_geospatial(self):
-        if self._is_geospatial is None:
-            self._is_geospatial = self.metadata(projection=None).get("geospatial", False)
-        return self._is_geospatial
 
     if ipyleaflet:
 
@@ -479,7 +470,7 @@ class LocalTileClient(BaseTileClientInterface):
         default_projection: Optional[str] = "EPSG:3857",
     ):
         super().__init__(filename, default_projection)
-        self._tile_source = get_tile_source(self.filename, self.default_projection)
+        self._tile_source = get_tile_source(self.filename)
 
     @property
     def tile_source(self):
@@ -523,15 +514,13 @@ class LocalTileClient(BaseTileClientInterface):
                 scheme,
                 n_colors,
             )
-        tile_source = get_tile_source(
-            self.filename, self.default_projection, style=style, encoding=encoding
-        )
-        tile_binary = tile_source.getTile(x, y, z)
-        mimetype = tile_source.getTileMimeType()
+        tile_source = get_tile_source(self.filename)
+        # TODO: handle format and mimetype
+        tile_binary = tile_source.tile(x, y, z).render(img_format="png")
         if output_path:
             with open(output_path, "wb") as f:
                 f.write(tile_binary)
-        return ImageBytes(tile_binary, mimetype=mimetype)
+        return ImageBytes(tile_binary, mimetype="image/png")
 
     def extract_roi(
         self,
@@ -600,7 +589,7 @@ class LocalTileClient(BaseTileClientInterface):
         if projection not in self._metadata:
             if projection == "":
                 projection = self.default_projection
-            tile_source = get_tile_source(self.filename, projection)
+            tile_source = get_tile_source(self.filename)
             self._metadata[projection] = get_meta_data(tile_source)
         return self._metadata[projection]
 
@@ -642,6 +631,8 @@ class LocalTileClient(BaseTileClientInterface):
         style: dict = None,
         cmap: Union[str, List[str]] = None,
         encoding: str = "PNG",
+        width: int = None,
+        height: int = None,
     ):
         if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
             raise ValueError(f"Encoding ({encoding}) not supported.")
@@ -660,8 +651,10 @@ class LocalTileClient(BaseTileClientInterface):
                 scheme,
                 n_colors,
             )
-        tile_source = get_tile_source(self.filename, self.default_projection, style=style)
-        thumb_data, mimetype = tile_source.getThumbnail(encoding=encoding)
+        tile_source = get_tile_source(self.filename)
+        thumb_data, mimetype = tile_source.getThumbnail(
+            encoding=encoding, width=width, height=height
+        )
         if output_path:
             with open(output_path, "wb") as f:
                 f.write(thumb_data)
@@ -787,6 +780,8 @@ class BaseRestfulTileClient(BaseTileClientInterface):
         style: dict = None,
         cmap: Union[str, List[str]] = None,
         encoding: str = "PNG",
+        width: int = None,  # TODO
+        height: int = None,  # TODO
     ):
         if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
             raise ValueError(f"Encoding ({encoding}) not supported.")
@@ -920,13 +915,9 @@ class BaseTileClient:
             self._client_host = DEMO_REMOTE_TILE_SERVER
 
         if not debug:
-            logging.getLogger("gdal").setLevel(logging.ERROR)
-            logging.getLogger("large_image").setLevel(logging.ERROR)
+            logging.getLogger("rasterio").setLevel(logging.ERROR)
         else:
-            logging.getLogger("gdal").setLevel(logging.DEBUG)
-            logging.getLogger("large_image").setLevel(logging.DEBUG)
-            logging.getLogger("large_image_source_gdal").setLevel(logging.DEBUG)
-            logging.getLogger("large_image_source_rasterio").setLevel(logging.DEBUG)
+            logging.getLogger("rasterio").setLevel(logging.DEBUG)
 
         try:
             import google.colab  # noqa
