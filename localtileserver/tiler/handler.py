@@ -133,6 +133,10 @@ def _render_image(
     vmin: float | None = None,
     vmax: float | None = None,
 ):
+    if isinstance(vmin, str):
+        vmin = float(vmin)
+    if isinstance(vmax, str):
+        vmax = float(vmax)
     colormap = cmap.get(colormap) if colormap else None
     if (
         not colormap
