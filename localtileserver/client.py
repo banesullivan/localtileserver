@@ -45,7 +45,7 @@ DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
 logger = logging.getLogger(__name__)
 
 
-class BaseTileClientInterface:
+class LocalTileClient:
     """Base TileClient methods and configuration.
 
     This class does not perform any RESTful operations but will interface
@@ -66,7 +66,7 @@ class BaseTileClientInterface:
         self._filename = get_clean_filename(filename)
         self._metadata = {}
 
-        self._rasterio_ds = rasterio.open(self.filename, "r")
+        self._tile_source = get_tile_source(self.filename)
 
         if default_projection != "EPSG:3857":
             self._default_projection = default_projection
@@ -88,9 +88,12 @@ class BaseTileClientInterface:
         self._default_projection = value
 
     @property
+    def tile_source(self):
+        return self._tile_source
+
+    @property
     def rasterio(self):
-        """Open dataset with rasterio."""
-        return self._rasterio_ds
+        return self._tile_source.dataset
 
     @property
     def server_host(self):
@@ -233,234 +236,6 @@ class BaseTileClientInterface:
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
         )
 
-    def get_tile(self, z: int, x: int, y: int, *args, **kwargs):
-        """Get single tile binary."""
-        raise NotImplementedError  # pragma: no cover
-
-    def extract_roi(
-        self,
-        left: float,
-        right: float,
-        bottom: float,
-        top: float,
-        units: str = "EPSG:4326",
-        encoding: str = "TILED",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        """Extract ROI in world coordinates."""
-        raise NotImplementedError  # pragma: no cover
-
-    def extract_roi_shape(
-        self,
-        shape,
-        units: str = "EPSG:4326",
-        encoding: str = "TILED",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        """Extract ROI in world coordinates using a Shapely Polygon.
-
-        Parameters
-        ----------
-        shape
-            Anything shape-like (GeoJSON dict, WKT string, Shapely.Polygon) or
-            anything with a ``bounds`` property that returns the
-            bounding coordinates of the shape as: ``left``, ``bottom``, ``right``,
-            ``top``.
-
-        """
-        if not hasattr(shape, "bounds"):
-            shape = parse_shapely(shape)
-        left, bottom, right, top = shape.bounds
-        return self.extract_roi(
-            left,
-            right,
-            bottom,
-            top,
-            units=units,
-            encoding=encoding,
-            output_path=output_path,
-            return_bytes=return_bytes,
-            return_path=return_path,
-        )
-
-    def extract_roi_pixel(
-        self,
-        left: int,
-        right: int,
-        bottom: int,
-        top: int,
-        encoding: str = "TILED",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        """Extract ROI in pixel coordinates."""
-        raise NotImplementedError  # pragma: no cover
-
-    def metadata(self, projection: Optional[str] = ""):
-        raise NotImplementedError  # pragma: no cover
-
-    def metadata_safe(self, projection: Optional[str] = ""):
-        return self.metadata(projection=projection)
-
-    def bounds(
-        self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
-    ):
-        """Get bounds in form of (ymin, ymax, xmin, xmax).
-
-        Parameters
-        ----------
-        projection : str
-            The EPSG projection of the returned coordinates. Can also be a
-            Proj4 projection.
-
-        return_polygon : bool, optional
-            If true, return a shapely.Polygon object of the bounding polygon
-            of the raster.
-
-        return_wkt : bool, optional
-            If true, return Well Known Text (WKT) string of the bounding
-            polygon of the raster.
-
-        """
-        raise NotImplementedError  # pragma: no cover
-
-    def center(
-        self, projection: str = "EPSG:4326", return_point: bool = False, return_wkt: bool = False
-    ):
-        """Get center in the form of (y <lat>, x <lon>).
-
-        Parameters
-        ----------
-        projection : str
-            The srs or projection as a Proj4 string of the returned coordinates
-
-        return_point : bool, optional
-            If true, returns a shapely.Point object.
-
-        return_wkt : bool, optional
-            If true, returns a Well Known Text (WKT) string of center
-            coordinates.
-
-        """
-        bounds = self.bounds(projection=projection)
-        point = (
-            (bounds[1] - bounds[0]) / 2 + bounds[0],
-            (bounds[3] - bounds[2]) / 2 + bounds[2],
-        )
-        if return_point or return_wkt:
-            # Safely import shapely
-            try:
-                from shapely.geometry import Point
-            except ImportError as e:  # pragma: no cover
-                raise ImportError(f"Please install `shapely`: {e}")
-
-            point = Point(point)
-            if return_wkt:
-                return point.wkt
-
-        return point
-
-    def thumbnail(
-        self,
-        band: Union[int, List[int]] = None,
-        palette: Union[str, List[str]] = None,
-        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
-        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
-        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
-        scheme: Union[str, List[str]] = None,
-        n_colors: int = 255,
-        output_path: pathlib.Path = None,
-        style: dict = None,
-        cmap: Union[str, List[str]] = None,
-        encoding: str = "PNG",
-        width: int = None,
-        height: int = None,
-    ):
-        raise NotImplementedError  # pragma: no cover
-
-    def pixel(self, x: float, y: float):
-        """Get pixel values for each band at the given coordinates (y <lat>, x <lon>).
-
-        Parameters
-        ----------
-        y : float
-            The Y coordinate (from top of image if `pixels` units or latitude if using EPSG)
-        x : float
-            The X coordinate (from left of image if `pixels` units or longitude if using EPSG)
-
-        """
-        raise NotImplementedError  # pragma: no cover
-
-    @property
-    def default_zoom(self):
-        return 9  # TODO: implement this
-
-    @property
-    def max_zoom(self):
-        m = self.metadata_safe()
-        return m.get("levels")
-
-    if ipyleaflet:
-
-        def _ipython_display_(self):
-            from IPython.display import display
-            from ipyleaflet import Map, WKTLayer, projections
-
-            from localtileserver.widgets import get_leaflet_tile_layer
-
-            t = get_leaflet_tile_layer(self)
-            if self.default_projection is None:
-                m = Map(
-                    basemap=t,
-                    min_zoom=0,
-                    max_zoom=self.max_zoom,
-                    zoom=0,
-                    crs=projections.Simple,
-                )
-            else:
-                m = Map(center=self.center(), zoom=self.default_zoom)
-                m.add_layer(t)
-                if shapely:
-                    wlayer = WKTLayer(
-                        wkt_string=self.bounds(return_wkt=True),
-                        style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
-                    )
-                    m.add_layer(wlayer)
-            return display(m)
-
-    def _repr_png_(self):
-        with open(self.thumbnail(encoding="PNG"), "rb") as f:
-            return f.read()
-
-
-class LocalTileClient(BaseTileClientInterface):
-    """Connect to a localtileserver instance.
-
-    This is a base class for performing all operations locally.
-
-    """
-
-    def __init__(
-        self,
-        filename: Union[pathlib.Path, str],
-        default_projection: Optional[str] = "EPSG:3857",
-    ):
-        super().__init__(filename, default_projection)
-        self._tile_source = get_tile_source(self.filename)
-
-    @property
-    def tile_source(self):
-        return self._tile_source
-
-    @property
-    def rasterio(self):
-        return self._tile_source.dataset
-
     def get_tile(
         self,
         z: int,
@@ -535,6 +310,41 @@ class LocalTileClient(BaseTileClientInterface):
             return output_path
         return TileClient(output_path)
 
+    def extract_roi_shape(
+        self,
+        shape,
+        units: str = "EPSG:4326",
+        encoding: str = "TILED",
+        output_path: pathlib.Path = None,
+        return_bytes: bool = False,
+        return_path: bool = False,
+    ):
+        """Extract ROI in world coordinates using a Shapely Polygon.
+
+        Parameters
+        ----------
+        shape
+            Anything shape-like (GeoJSON dict, WKT string, Shapely.Polygon) or
+            anything with a ``bounds`` property that returns the
+            bounding coordinates of the shape as: ``left``, ``bottom``, ``right``,
+            ``top``.
+
+        """
+        if not hasattr(shape, "bounds"):
+            shape = parse_shapely(shape)
+        left, bottom, right, top = shape.bounds
+        return self.extract_roi(
+            left,
+            right,
+            bottom,
+            top,
+            units=units,
+            encoding=encoding,
+            output_path=output_path,
+            return_bytes=return_bytes,
+            return_path=return_path,
+        )
+
     def extract_roi_pixel(
         self,
         left: int,
@@ -574,6 +384,9 @@ class LocalTileClient(BaseTileClientInterface):
             self._metadata[projection] = get_meta_data(tile_source)
         return self._metadata[projection]
 
+    def metadata_safe(self, projection: Optional[str] = ""):
+        return self.metadata(projection=projection)
+
     def bounds(
         self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
     ):
@@ -598,6 +411,42 @@ class LocalTileClient(BaseTileClientInterface):
         if return_wkt:
             return poly.wkt
         return poly
+
+    def center(
+        self, projection: str = "EPSG:4326", return_point: bool = False, return_wkt: bool = False
+    ):
+        """Get center in the form of (y <lat>, x <lon>).
+
+        Parameters
+        ----------
+        projection : str
+            The srs or projection as a Proj4 string of the returned coordinates
+
+        return_point : bool, optional
+            If true, returns a shapely.Point object.
+
+        return_wkt : bool, optional
+            If true, returns a Well Known Text (WKT) string of center
+            coordinates.
+
+        """
+        bounds = self.bounds(projection=projection)
+        point = (
+            (bounds[1] - bounds[0]) / 2 + bounds[0],
+            (bounds[3] - bounds[2]) / 2 + bounds[2],
+        )
+        if return_point or return_wkt:
+            # Safely import shapely
+            try:
+                from shapely.geometry import Point
+            except ImportError as e:  # pragma: no cover
+                raise ImportError(f"Please install `shapely`: {e}")
+
+            point = Point(point)
+            if return_wkt:
+                return point.wkt
+
+        return point
 
     def thumbnail(
         self,
@@ -646,182 +495,49 @@ class LocalTileClient(BaseTileClientInterface):
         tile_source = get_tile_source(self.filename)
         return tile_source.point(lon, lat, **kwargs)
 
-
-class BaseRestfulTileClient(BaseTileClientInterface):
-    """Connect to a localtileserver instance.
-
-    This is a base class for performing all operations over the RESTful API.
-
-    """
-
-    def get_tile(self, z: int, x: int, y: int, *args, output_path=None, **kwargs):
-        url = self.get_tile_url(*args, **kwargs)
-        r = requests.get(url.format(z=z, x=x, y=y))
-        r.raise_for_status()
-        if output_path:
-            return save_file_from_request(r, output_path)
-        return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-
-    def extract_roi(
-        self,
-        left: float,
-        right: float,
-        bottom: float,
-        top: float,
-        units: str = "EPSG:4326",
-        encoding: str = "TILED",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        path = f"api/world/region.tif?units={units}&encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
-        r = requests.get(self.create_url(path))
-        r.raise_for_status()
-        if return_bytes:
-            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-        output_path = save_file_from_request(r, output_path)
-        if return_path:
-            return output_path
-        return TileClient(output_path)
-
-    def extract_roi_pixel(
-        self,
-        left: int,
-        right: int,
-        bottom: int,
-        top: int,
-        encoding: str = "TILED",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        path = f"/api/pixel/region.tif?encoding={encoding}&left={left}&right={right}&bottom={bottom}&top={top}"
-        r = requests.get(self.create_url(path))
-        r.raise_for_status()
-        if return_bytes:
-            return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-        output_path = save_file_from_request(r, output_path)
-        if return_path:
-            return output_path
-        return TileClient(
-            output_path, default_projection="EPSG:3857" if encoding == "TILED" else None
-        )
-
-    def metadata(self, projection: Optional[str] = ""):
-        if projection not in self._metadata:
-            if projection == "":
-                projection = self.default_projection
-            r = requests.get(self.create_url(f"/api/metadata?projection={projection}"))
-            r.raise_for_status()
-            self._metadata[projection] = r.json()
-        return self._metadata[projection]
-
-    def bounds(
-        self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
-    ):
-        r = requests.get(
-            self.create_url(f"/api/bounds?units={projection}&projection={self.default_projection}")
-        )
-        r.raise_for_status()
-        bounds = r.json()
-        extent = (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
-        if not return_polygon and not return_wkt:
-            return extent
-        # Safely import shapely
-        try:
-            from shapely.geometry import Polygon
-        except ImportError as e:  # pragma: no cover
-            raise ImportError(f"Please install `shapely`: {e}")
-        coords = (
-            (bounds["xmin"], bounds["ymax"]),
-            (bounds["xmin"], bounds["ymax"]),
-            (bounds["xmax"], bounds["ymax"]),
-            (bounds["xmax"], bounds["ymin"]),
-            (bounds["xmin"], bounds["ymin"]),
-            (bounds["xmin"], bounds["ymax"]),  # Close the loop
-        )
-        poly = Polygon(coords)
-        if return_wkt:
-            return poly.wkt
-        return poly
-
-    def thumbnail(
-        self,
-        band: Union[int, List[int]] = None,
-        palette: Union[str, List[str]] = None,
-        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
-        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
-        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
-        scheme: Union[str, List[str]] = None,
-        n_colors: int = 255,
-        output_path: pathlib.Path = None,
-        style: dict = None,
-        cmap: Union[str, List[str]] = None,
-        encoding: str = "PNG",
-        width: int = None,  # TODO
-        height: int = None,  # TODO
-    ):
-        if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
-            raise ValueError(f"Encoding ({encoding}) not supported.")
-        params = self._get_style_params(
-            band=band,
-            palette=palette,
-            vmin=vmin,
-            vmax=vmax,
-            nodata=nodata,
-            scheme=scheme,
-            n_colors=n_colors,
-            style=style,
-            cmap=cmap,
-        )
-        url = add_query_parameters(self.create_url(f"api/thumbnail.{encoding.lower()}"), params)
-        r = requests.get(url)
-        r.raise_for_status()
-        if output_path:
-            return save_file_from_request(r, output_path)
-        return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-
-
-class RemoteTileClient(BaseRestfulTileClient):
-    """Connect to a remote localtileserver instance at a given host URL.
-
-    Parameters
-    ----------
-    path : pathlib.Path, str
-        The path on disk to use as the source raster for the tiles.
-    host : str
-        The base URL of your remote localtileserver instance.
-
-    """
-
-    def __init__(
-        self,
-        filename: Union[pathlib.Path, str],
-        default_projection: Optional[str] = "EPSG:3857",
-        host: str = None,
-    ):
-        super().__init__(filename=filename, default_projection=default_projection)
-        if host is None:
-            host = DEMO_REMOTE_TILE_SERVER
-            logger.error(
-                "WARNING: You are using a demo instance of localtileserver that has incredibly limited resources: it is unreliable and prone to crash. Please launch your own remote instance of localtileserver."
-            )
-        self._host = host
+    @property
+    def default_zoom(self):
+        return 9  # TODO: implement this
 
     @property
-    def server_host(self):
-        return self._host
+    def max_zoom(self):
+        m = self.metadata_safe()
+        return m.get("levels")
 
-    @server_host.setter
-    def server_host(self, host):
-        self._host = host
+    if ipyleaflet:
 
-    @property
-    def server_base_url(self):
-        return self.server_host
+        def _ipython_display_(self):
+            from IPython.display import display
+            from ipyleaflet import Map, WKTLayer, projections
+
+            from localtileserver.widgets import get_leaflet_tile_layer
+
+            t = get_leaflet_tile_layer(self)
+            if self.default_projection is None:
+                m = Map(
+                    basemap=t,
+                    min_zoom=0,
+                    max_zoom=self.max_zoom,
+                    zoom=0,
+                    crs=projections.Simple,
+                )
+            else:
+                m = Map(center=self.center(), zoom=self.default_zoom)
+                m.add_layer(t)
+                if shapely:
+                    wlayer = WKTLayer(
+                        wkt_string=self.bounds(return_wkt=True),
+                        style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
+                    )
+                    m.add_layer(wlayer)
+            return display(m)
+
+    def _repr_png_(self):
+        with open(self.thumbnail(encoding="PNG"), "rb") as f:
+            return f.read()
 
 
-class BaseTileClient:
+class _TileServerManager:
     """Serve tiles from a local raster file in a background thread.
 
     Parameters
@@ -968,7 +684,7 @@ class BaseTileClient:
             return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
         return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
-    @wraps(BaseTileClientInterface.get_tile_url_params)
+    @wraps(LocalTileClient.get_tile_url_params)
     def get_tile_url(self, *args, client: bool = False, **kwargs):
         params = self.get_tile_url_params(*args, **kwargs)
         return add_query_parameters(
@@ -976,11 +692,7 @@ class BaseTileClient:
         )
 
 
-class TileClient(BaseTileClient, LocalTileClient):
-    pass
-
-
-class RestTileClient(BaseTileClient, BaseRestfulTileClient):
+class TileClient(_TileServerManager, LocalTileClient):
     pass
 
 
@@ -1001,8 +713,6 @@ def get_or_create_tile_client(
     default is for all TileClient's to share a single server.
 
     """
-    if isinstance(source, RemoteTileClient):
-        return source, False
     _internally_created = False
     # Launch tile server if file path is given
     if not isinstance(source, TileClient):

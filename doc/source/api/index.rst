@@ -8,17 +8,12 @@ Python Client
 .. autofunction:: localtileserver.get_or_create_tile_client
 
 
-.. autoclass:: localtileserver.client.BaseTileClientInterface
+.. autoclass:: localtileserver.client.LocalTileClient
    :members:
    :undoc-members:
 
 
 .. autoclass:: localtileserver.TileClient
-   :members:
-   :undoc-members:
-
-
-.. autoclass:: localtileserver.RemoteTileClient
    :members:
    :undoc-members:
 

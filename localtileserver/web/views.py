@@ -10,8 +10,6 @@ from localtileserver.tiler.handler import get_meta_data, get_source_bounds, get_
 from localtileserver.web.blueprint import tileserver
 from localtileserver.web.utils import get_clean_filename_from_request
 
-from .utils import get_clean_filename_from_request
-
 logger = logging.getLogger(__name__)
 
 
