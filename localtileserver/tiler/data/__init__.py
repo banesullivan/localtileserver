@@ -1,4 +1,3 @@
-# flake8: noqa: W503
 import os
 import pathlib
 

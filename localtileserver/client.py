@@ -1,8 +1,6 @@
-# flake8: noqa: W503
 from collections.abc import Iterable
 import logging
 import pathlib
-import shutil
 from typing import List, Union
 
 import rasterio
@@ -33,7 +31,7 @@ from localtileserver.tiler import (
     get_tile,
     palette_valid_or_raise,
 )
-from localtileserver.utilities import add_query_parameters, save_file_from_request
+from localtileserver.utilities import add_query_parameters
 
 BUILDING_DOCS = get_building_docs()
 DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
@@ -476,7 +474,7 @@ class TileServerMixin:
 
         def _ipython_display_(self):
             from IPython.display import display
-            from ipyleaflet import Map, WKTLayer, projections
+            from ipyleaflet import Map, WKTLayer
 
             from localtileserver.widgets import get_leaflet_tile_layer
 
