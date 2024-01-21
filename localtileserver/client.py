@@ -462,6 +462,11 @@ class TileServerMixin:
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
         )
 
+    def as_leaflet_layer(self):
+        from localtileserver.widgets import get_leaflet_tile_layer
+
+        return get_leaflet_tile_layer(self)
+
     if ipyleaflet:
 
         def _ipython_display_(self):
@@ -472,13 +477,13 @@ class TileServerMixin:
 
             t = get_leaflet_tile_layer(self)
             m = Map(center=self.center(), zoom=self.default_zoom)
-            m.add_layer(t)
+            m.add(t)
             if shapely:
                 wlayer = WKTLayer(
                     wkt_string=self.bounds(return_wkt=True),
                     style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
                 )
-                m.add_layer(wlayer)
+                m.add(wlayer)
             return display(m)
 
 

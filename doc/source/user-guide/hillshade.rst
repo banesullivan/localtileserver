@@ -27,7 +27,7 @@ make the data appear more 3-Dimensional.
   tdem = get_leaflet_tile_layer(client, colormap='gist_earth')
 
   m = Map(center=client.center(), zoom=client.default_zoom)
-  m.add_layer(tdem)
+  m.add(tdem)
   m
 
 
@@ -74,8 +74,8 @@ effect:
 .. code:: python
 
   m = Map(center=client.center(), zoom=client.default_zoom)
-  m.add_layer(tdem)
-  m.add_layer(get_leaflet_tile_layer(hs, opacity=0.5))
+  m.add(tdem)
+  m.add(get_leaflet_tile_layer(hs, opacity=0.5))
   m
 
 

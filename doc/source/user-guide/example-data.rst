@@ -21,7 +21,7 @@ Digital Elevation Models (DEMs) of a local region.
                              opacity=0.75)
 
   m = Map(zoom=2)
-  m.add_layer(t)
+  m.add(t)
   m
 
 
@@ -42,7 +42,7 @@ Here is another example with the Virtual Earth satellite imagery
   t = get_leaflet_tile_layer(client, opacity=1)
 
   m = Map(center=(39.751343612695145, -105.22181306125279), zoom=18)
-  m.add_layer(t)
+  m.add(t)
   m
 
 

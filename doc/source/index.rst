@@ -27,7 +27,7 @@
   t = get_leaflet_tile_layer(client)
   # Create ipyleaflet map, add tile layer, and display
   m = Map(center=client.center(), zoom=client.default_zoom)
-  m.add_layer(t)
+  m.add(t)
   m
 
 

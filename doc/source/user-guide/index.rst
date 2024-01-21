@@ -22,6 +22,7 @@
    validate_cog
    bokeh
    hillshade
+   in-memory
 
 
 Here is the "one-liner" to visualize a large geospatial image with
@@ -80,7 +81,7 @@ a Jupyter notebook. Here is an example:
 
   # Create ipyleaflet map, add tile layer, and display
   m = Map(zoom=3)
-  m.add_layer(t)
+  m.add(t)
   m
 
 
@@ -91,7 +92,7 @@ Similarly to the support provided for ``ipyleaflet``, I have included a utility
 to generate a :class:`folium.TileLayer` (see `reference <https://python-visualization.github.io/folium/modules.html#folium.raster_layers.TileLayer>`_)
 with :func:`get_folium_tile_layer`. Here is an example with almost the exact same
 code as the ``ipyleaflet`` example, just note that :class:`folium.Map` is imported from
-``folium`` and we use :func:`add_child` instead of :func:`add_layer`:
+``folium`` and we use :func:`add_child` instead of :func:`add`:
 
 
 .. jupyter-execute::
