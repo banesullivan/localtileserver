@@ -163,7 +163,7 @@ class TilerInterface:
         colormap: Optional[str] = None,
         vmin: Optional[float] = None,
         vmax: Optional[float] = None,
-        nodata: Optional[int | float] = None,
+        nodata: Optional[Union[int, float]] = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
         band: Union[int, List[int]] = None,
@@ -222,7 +222,7 @@ class TilerInterface:
         colormap: Optional[str] = None,
         vmin: Optional[float] = None,
         vmax: Optional[float] = None,
-        nodata: Optional[int | float] = None,
+        nodata: Optional[Union[int, float]] = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
         max_size: int = 512,
@@ -419,7 +419,7 @@ class TileServerMixin:
         colormap: Optional[str] = None,
         vmin: Optional[float] = None,
         vmax: Optional[float] = None,
-        nodata: Optional[int | float] = None,
+        nodata: Optional[Union[int, float]] = None,
         client: bool = False,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).

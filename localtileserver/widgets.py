@@ -25,7 +25,7 @@ def get_leaflet_tile_layer(
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
-    nodata: Optional[int | float] = None,
+    nodata: Optional[Union[int, float]] = None,
     attribution: str = None,
     **kwargs,
 ):
@@ -125,7 +125,7 @@ def get_folium_tile_layer(
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
-    nodata: Optional[int | float] = None,
+    nodata: Optional[Union[int, float]] = None,
     attr: str = None,
     **kwargs,
 ):

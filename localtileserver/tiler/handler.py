@@ -83,7 +83,7 @@ def _handle_band_indexes(tile_source: Reader, indexes: Optional[List[int]] = Non
     return indexes
 
 
-def _handle_nodata(tile_source: Reader, nodata: Optional[int | float] = None):
+def _handle_nodata(tile_source: Reader, nodata: Optional[Union[int, float]] = None):
     floaty = False
     if any(dtype.startswith("float") for dtype in tile_source.dataset.dtypes):
         floaty = True
@@ -140,7 +140,7 @@ def get_tile(
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
-    nodata: Optional[int | float] = None,
+    nodata: Optional[Union[int, float]] = None,
     img_format: str = "PNG",
 ):
     if colormap is not None and indexes is None:
@@ -174,7 +174,7 @@ def get_preview(
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
-    nodata: Optional[int | float] = None,
+    nodata: Optional[Union[int, float]] = None,
     img_format: str = "PNG",
     max_size: int = 512,
 ):
