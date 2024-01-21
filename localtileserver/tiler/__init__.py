@@ -14,7 +14,6 @@ from localtileserver.tiler.handler import (
     get_point,
     get_preview,
     get_reader,
-    get_region_world,
     get_source_bounds,
     get_tile,
 )

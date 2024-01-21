@@ -19,19 +19,19 @@ viewing a different set of bands:
 
 .. jupyter-execute::
 
-  client.thumbnail(band=[7, 5, 4])
+  client.thumbnail(indexes=[7, 5, 4])
 
 
 .. jupyter-execute::
 
-  client.thumbnail(band=[5, 3, 2])
+  client.thumbnail(indexes=[5, 3, 2])
 
 
 .. jupyter-execute::
 
   # Create 2 tile layers from same raster viewing different bands
-  l = get_leaflet_tile_layer(client, band=[7, 5, 4])
-  r = get_leaflet_tile_layer(client, band=[5, 3, 2])
+  l = get_leaflet_tile_layer(client, indexes=[7, 5, 4])
+  r = get_leaflet_tile_layer(client, indexes=[5, 3, 2])
 
   # Make the ipyleaflet map
   m = Map(center=client.center(), zoom=client.default_zoom)

@@ -15,7 +15,6 @@
    rgb
    remote-cog
    compare
-   roi
    example-data
    web-app
    ipyleaflet_deep_zoom
@@ -76,7 +75,7 @@ a Jupyter notebook. Here is an example:
 
   # Create ipyleaflet tile layer from that server
   t = get_leaflet_tile_layer(client,
-                             band=1, vmin=-5000, vmax=5000, palette='cmo.topo',
+                             indexes=1, vmin=-5000, vmax=5000, colormap='cmo.topo',
                              opacity=0.65)
 
   # Create ipyleaflet map, add tile layer, and display
@@ -117,7 +116,6 @@ code as the ``ipyleaflet`` example, just note that :class:`folium.Map` is import
 --------------
 
 - :func:`get_leaflet_tile_layer` accepts either an existing :class:`TileClient` or a path from which to create a :class:`TileClient` under the hood.
-- The color palette choices come from `palettable <https://jiffyclub.github.io/palettable/>`_.
 - If matplotlib is installed, any matplotlib colormap name cane be used a palette choice
 
 

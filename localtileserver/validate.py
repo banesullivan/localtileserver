@@ -1,4 +1,3 @@
-import logging
 from typing import Union
 
 from rio_cogeo import cog_validate
@@ -6,8 +5,6 @@ from rio_tiler.io import Reader
 
 from localtileserver.client import TilerInterface
 from localtileserver.tiler import get_clean_filename
-
-logger = logging.getLogger(__name__)
 
 
 def validate_cog(

@@ -35,7 +35,7 @@ Read the DEM data as a NumPy array using rasterio:
 
 .. code:: python
 
-  dem = client.rasterio.read()[0, :, :]
+  dem = client.dataset.read()[0, :, :]
   dem.shape
 
 

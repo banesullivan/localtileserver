@@ -1,5 +1,4 @@
 import logging
-import os
 import pathlib
 from typing import Union
 
@@ -43,38 +42,22 @@ def get_leaflet_tile_layer(
     debug : bool
         Run the tile server in debug mode (if creating a tileserver. This is
         ignored if a file path is given).
-    projection : str
-        The Proj projection to use for the tile layer. Default is `EPSG:3857`.
-    band : int
-        The band of the source raster to use (default in None to show RGB if
+    indexes : int
+        The band of the source raster to use (default if None is to show RGB if
         available). Band indexing starts at 1. This can also be a list of
         integers to set which 3 bands to use for RGB.
-    palette : str
-        The name of the color palette from `palettable` to use when plotting
-        a single band. Default is greyscale.
+    colormap : str
+        The name of the matplotlib colormap to use when plotting a single band.
+        Default is greyscale.
     vmin : float
-        The minimum value to use when colormapping the palette when plotting
-        a single band.
+        The minimum value to use when colormapping a single band.
     vmax : float
-        The maximized value to use when colormapping the palette when plotting
-        a single band.
+        The maximized value to use when colormapping a single band.
     nodata : float
         The value from the band to use to interpret as not valid data.
-    scheme : str
-        This is either ``linear`` (the default) or ``discrete``. If a
-        palette is specified, ``linear`` uses a piecewise linear
-        interpolation, and ``discrete`` uses exact colors from the palette
-        with the range of the data mapped into the specified number of
-        colors (e.g., a palette with two colors will split exactly halfway
-        between the min and max values).
-    n_colors : int
-        The number (positive integer) of colors to discretize the matplotlib
-        color palettes when used.
     attribution : str
         Attribution for the source raster. This
         defaults to a message about it being a local file.
-    cmap : str
-        Alias for palette if not specified.
     **kwargs
         All additional keyword arguments are passed to ``ipyleaflet.TileLayer``.
 
@@ -122,92 +105,6 @@ def get_leaflet_tile_layer(
     return tile_layer
 
 
-def get_leaflet_roi_controls(
-    client: TileClient,
-    button_position: str = "topright",
-    output_directory: pathlib.Path = ".",
-    debug: bool = False,
-):
-    """Generate an ipyleaflet DrawControl and WidgetControl to add to your map for ROI extraction.
-
-    Parameters
-    ----------
-    button_position : str
-        The button position of the WidgetControl.
-    output_directory : pathlib.Path
-        The directory to save the ROIs. Defaults to working directory.
-    debug : bool
-        Return a `widgets.Output` to debug the ROI extraction callback.
-
-    Returns
-    -------
-    tuple(ipyleaflet.DrawControl, ipyleaflet.WidgetControl)
-
-    """
-    # Safely import ipyleaflet
-    try:
-        from ipyleaflet import DrawControl, WidgetControl
-        import ipywidgets as widgets
-        from shapely.geometry import Polygon
-    except ImportError as e:  # pragma: no cover
-        raise ImportError(f"Please install `ipyleaflet` and `shapely`: {e}")
-    draw_control = DrawControl()
-    # Disable polyline and circle
-    draw_control.polyline = {}
-    draw_control.circlemarker = {}
-    draw_control.polygon = {
-        "shapeOptions": {
-            "fillColor": "#6be5c3",
-            "color": "#6be5c3",
-            "fillOpacity": 0.75,
-        },
-    }
-    draw_control.rectangle = {
-        "shapeOptions": {
-            "fillColor": "#fca45d",
-            "color": "#fca45d",
-            "fillOpacity": 0.75,
-        }
-    }
-
-    # Set up the "Extract ROI" button
-    debug_view = widgets.Output(layout={"border": "1px solid black"})
-
-    @debug_view.capture(clear_output=False)
-    def on_button_clicked(b):
-        logger.error(f"\non_button_clicked {button_position}")
-        # Inspect `draw_control.data` to get the ROI
-        if not draw_control.data:
-            # No ROI to extract
-            logger.error("No polygons on map to use.")
-            return
-        p = None
-        for poly in draw_control.data:
-            t = Polygon([tuple(coord) for coord in poly["geometry"]["coordinates"][0]])
-            if not p:
-                p = t
-            else:
-                p = p.union(t)
-        left, bottom, right, top = p.bounds
-        # Get filename in working directory
-        split = os.path.basename(client.filename).split(".")
-        ext = split[-1]
-        basename = ".".join(split[:1])
-        output_path = pathlib.Path(output_directory).absolute()
-        output_path.mkdir(parents=True, exist_ok=True)
-        output_path = output_path / f"roi_{basename}_{left}_{right}_{bottom}_{top}.{ext}"
-        draw_control.output_path = output_path
-        logger.error(f"output_path: {output_path}")
-        client.extract_roi(left, right, bottom, top, output_path=output_path, return_path=True)
-
-    button = widgets.Button(description="Extract ROI")
-    button.on_click(on_button_clicked)
-    button_control = WidgetControl(widget=button, position=button_position)
-    if debug:
-        return draw_control, button_control, debug_view
-    return draw_control, button_control
-
-
 def get_folium_tile_layer(
     source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
     port: Union[int, str] = "default",
@@ -234,38 +131,22 @@ def get_folium_tile_layer(
     debug : bool
         Run the tile server in debug mode (if creating a tileserver. This is
         ignored if a file path is given).
-    projection : str
-        The Proj projection to use for the tile layer. Default is `EPSG:3857`.
-    band : int
-        The band of the source raster to use (default in None to show RGB if
+    indexes : int
+        The band of the source raster to use (default if None is to show RGB if
         available). Band indexing starts at 1. This can also be a list of
         integers to set which 3 bands to use for RGB.
-    palette : str
-        The name of the color palette from `palettable` to use when plotting
-        a single band. Default is greyscale.
+    colormap : str
+        The name of the matplotlib colormap to use when plotting a single band.
+        Default is greyscale.
     vmin : float
-        The minimum value to use when colormapping the palette when plotting
-        a single band.
+        The minimum value to use when colormapping a single band.
     vmax : float
-        The maximized value to use when colormapping the palette when plotting
-        a single band.
+        The maximized value to use when colormapping a single band.
     nodata : float
         The value from the band to use to interpret as not valid data.
-    scheme : str
-        This is either ``linear`` (the default) or ``discrete``. If a
-        palette is specified, ``linear`` uses a piecewise linear
-        interpolation, and ``discrete`` uses exact colors from the palette
-        with the range of the data mapped into the specified number of
-        colors (e.g., a palette with two colors will split exactly halfway
-        between the min and max values).
-    n_colors : int
-        The number (positive integer) of colors to discretize the matplotlib
-        color palettes when used.
     attr : str
         Folium requires the custom tile source have an attribution. This
         defaults to a message about it being a local file.
-    cmap : str
-        Alias for palette if not specified.
     **kwargs
         All additional keyword arguments are passed to ``folium.TileLayer``.
 

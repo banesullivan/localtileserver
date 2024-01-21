@@ -34,4 +34,4 @@ and keeps a reference to a ``rasterio.DatasetReader`` for all clients.
     # Load example tile layer from publicly available DEM source
     client = examples.get_elevation()
 
-    client.rasterio
+    client.dataset

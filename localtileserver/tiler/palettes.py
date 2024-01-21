@@ -1,8 +1,4 @@
 import logging
-from operator import attrgetter
-import re
-
-import palettable
 
 try:
     import cmocean  # noqa
@@ -32,18 +28,11 @@ def is_mpl_cmap(name: str):
 
 def palette_valid_or_raise(name: str):
     if not is_mpl_cmap(name):
-        raise ValueError(
-            f"Please use a valid matplotlib colormap name or palettable palette name. Invalid: {name}"
-        )
+        raise ValueError(f"Please use a valid matplotlib colormap name. Invalid: {name}")
 
 
 def get_palettes():
-    """List of available palettes.
-
-    This does not currently list the palettable palettes there isn't a clean
-    way to list all of them.
-
-    """
+    """List of available palettes."""
     cmaps = {}
     try:
         import matplotlib.pyplot

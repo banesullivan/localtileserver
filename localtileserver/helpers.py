@@ -80,7 +80,7 @@ def save_new_raster(src, data, out_path: str = None):
         raise AssertionError("data must be ndim 3: (bands, height, width)")
 
     if isinstance(src, TilerInterface):
-        src = src.rasterio
+        src = src.dataset
     if isinstance(src, rasterio.io.DatasetReaderBase):
         ras_meta = src.meta.copy()
     else:

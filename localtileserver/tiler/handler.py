@@ -1,7 +1,5 @@
 """Methods for working with images."""
-import os
 import pathlib
-import tempfile
 from typing import Union
 
 import numpy as np
@@ -11,7 +9,7 @@ from rio_tiler.colormap import cmap
 from rio_tiler.io import Reader
 from rio_tiler.models import ImageData
 
-from .utilities import ImageBytes, get_cache_dir, get_clean_filename, make_crs
+from .utilities import ImageBytes, get_clean_filename, make_crs
 
 # gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
 # gdal.SetConfigOption("GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache"))
@@ -28,28 +26,6 @@ def get_meta_data(tile_source: Reader):
     metadata.update(crs=metadata["crs"].to_wkt(), transform=list(metadata["transform"]))
     metadata["bounds"] = get_source_bounds(tile_source)
     return metadata
-
-
-def get_region_world(
-    tile_source: Reader,
-    left: float,
-    right: float,
-    bottom: float,
-    top: float,
-    units: str = "EPSG:4326",
-):
-    raise NotImplementedError
-    region = dict(left=left, right=right, bottom=bottom, top=top, units=units)
-    result, mime_type = tile_source.getRegion(region=region, encoding=encoding)
-    # Write content to temporary file
-    fd, path = tempfile.mkstemp(
-        suffix=f".{encoding}", prefix="pixelRegion_", dir=str(get_cache_dir())
-    )
-    os.close(fd)
-    path = pathlib.Path(path)
-    with open(path, "wb") as f:
-        f.write(result)
-    return path, mime_type
 
 
 def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decimal_places: int = 6):
@@ -149,11 +125,13 @@ def get_tile(
     y: int,
     indexes: list[int] | None = None,
     colormap: str | None = None,
-    img_format: str = "PNG",
-    nodata: int | float | None = None,
     vmin: float | None = None,
     vmax: float | None = None,
+    nodata: int | float | None = None,
+    img_format: str = "PNG",
 ):
+    if colormap is not None and indexes is None:
+        indexes = [1]
     indexes = _handle_band_indexes(tile_source, indexes)
     nodata = _handle_nodata(tile_source, nodata)
     img = tile_source.tile(x, y, z, indexes=indexes, nodata=nodata)
@@ -180,13 +158,15 @@ def get_point(
 def get_preview(
     tile_source: Reader,
     indexes: list[int] | None = None,
-    max_size: int = 1024,
     colormap: str | None = None,
-    img_format: str = "PNG",
-    nodata: int | float | None = None,
     vmin: float | None = None,
     vmax: float | None = None,
+    nodata: int | float | None = None,
+    img_format: str = "PNG",
+    max_size: int = 1024,
 ):
+    if colormap is not None and indexes is None:
+        indexes = [1]
     indexes = _handle_band_indexes(tile_source, indexes)
     nodata = _handle_nodata(tile_source, nodata)
     img = tile_source.preview(max_size=max_size, indexes=indexes, nodata=nodata)

@@ -32,7 +32,6 @@ from localtileserver.tiler import (
     get_point,
     get_preview,
     get_reader,
-    get_region_world,
     get_source_bounds,
     get_tile,
     palette_valid_or_raise,
@@ -159,13 +158,38 @@ class TilerInterface:
         y: int,
         indexes: list[int] | None = None,
         colormap: str | None = None,
-        nodata: int | float | None = None,
         vmin: float | None = None,
         vmax: float | None = None,
+        nodata: int | float | None = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
         band: Union[int, List[int]] = None,
     ):
+        """Generate a tile from the source raster.
+
+        Parameters
+        ----------
+        z : int
+            The zoom level of the tile.
+        x : int
+            The x coordinate of the tile.
+        y : int
+            The y coordinate of the tile.
+        indexes : int
+            The band of the source raster to use (default if None is to show RGB if
+            available). Band indexing starts at 1. This can also be a list of
+            integers to set which 3 bands to use for RGB.
+        colormap : str
+            The name of the matplotlib colormap to use when plotting a single band.
+            Default is greyscale.
+        vmin : float
+            The minimum value to use when colormapping a single band.
+        vmax : float
+            The maximized value to use when colormapping a single band.
+        nodata : float
+            The value from the band to use to interpret as not valid data.
+
+        """
         if indexes is None:
             # TODO: properly deprecate
             indexes = band
@@ -191,22 +215,41 @@ class TilerInterface:
 
     def thumbnail(
         self,
-        cmap: Union[str, List[str]] = None,
-        indexes: Union[int, List[int]] = None,
-        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
-        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
-        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
+        indexes: list[int] | None = None,
+        colormap: str | None = None,
+        vmin: float | None = None,
+        vmax: float | None = None,
+        nodata: int | float | None = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
         max_size: int = 512,
     ):
+        """Generate a thumbnail preview of the dataset.
+
+        Parameters
+        ----------
+        indexes : int
+            The band of the source raster to use (default if None is to show RGB if
+            available). Band indexing starts at 1. This can also be a list of
+            integers to set which 3 bands to use for RGB.
+        colormap : str
+            The name of the matplotlib colormap to use when plotting a single band.
+            Default is greyscale.
+        vmin : float
+            The minimum value to use when colormapping a single band.
+        vmax : float
+            The maximized value to use when colormapping a single band.
+        nodata : float
+            The value from the band to use to interpret as not valid data.
+
+        """
         if encoding.lower() not in ["png", "jpeg", "jpg"]:
             raise ValueError(f"Encoding ({encoding}) not supported.")
         encoding = format_to_encoding(encoding)
         thumb_data = get_preview(
             self.reader,
             max_size=max_size,
-            colormap=cmap,
+            colormap=colormap,
             indexes=indexes,
             nodata=nodata,
             img_format=encoding,
@@ -221,73 +264,6 @@ class TilerInterface:
 
     def point(self, lon: float, lat: float, **kwargs):
         return get_point(self.reader, lon, lat, **kwargs)
-
-    def extract_roi(
-        self,
-        left: float,
-        right: float,
-        bottom: float,
-        top: float,
-        units: str = "EPSG:4326",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        raise NotImplementedError
-        path, mimetype = get_region_world(
-            self.reader,
-            left,
-            right,
-            bottom,
-            top,
-            units,
-            encoding,
-        )
-        if output_path is not None:
-            shutil.move(path, output_path)
-        else:
-            output_path = path
-        if return_bytes:
-            with open(output_path, "rb") as f:
-                return ImageBytes(f.read(), mimetype=mimetype)
-        if return_path:
-            return output_path
-        return TileClient(output_path)
-
-    def extract_roi_shape(
-        self,
-        shape,
-        units: str = "EPSG:4326",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        """Extract ROI in world coordinates using a Shapely Polygon.
-
-        Parameters
-        ----------
-        shape
-            Anything shape-like (GeoJSON dict, WKT string, Shapely.Polygon) or
-            anything with a ``bounds`` property that returns the
-            bounding coordinates of the shape as: ``left``, ``bottom``, ``right``,
-            ``top``.
-
-        """
-        raise NotImplementedError
-        if not hasattr(shape, "bounds"):
-            shape = parse_shapely(shape)
-        left, bottom, right, top = shape.bounds
-        return self.extract_roi(
-            left,
-            right,
-            bottom,
-            top,
-            units=units,
-            encoding=encoding,
-            output_path=output_path,
-            return_bytes=return_bytes,
-            return_path=return_path,
-        )
 
     def _repr_png_(self):
         return self.thumbnail(encoding="png")
@@ -438,46 +414,28 @@ class TileServerMixin:
         self,
         indexes: list[int] | None = None,
         colormap: str | None = None,
-        nodata: int | float | None = None,
         vmin: float | None = None,
         vmax: float | None = None,
+        nodata: int | float | None = None,
         client: bool = False,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
 
         Parameters
         ----------
-        projection : str
-            The Proj projection to use for the tile layer. Default is `EPSG:3857`.
-        band : int
-            The band of the source raster to use (default in None to show RGB if
+        indexes : int
+            The band of the source raster to use (default if None is to show RGB if
             available). Band indexing starts at 1. This can also be a list of
             integers to set which 3 bands to use for RGB.
-        palette : str
-            The name of the color palette from `palettable` or colormap from
-            matplotlib to use when plotting a single band. Default is greyscale.
-            If viewing a single band, a list of hex colors can be passed for a
-            user-defined color palette.
+        colormap : str
+            The name of the matplotlib colormap to use when plotting a single band.
+            Default is greyscale.
         vmin : float
-            The minimum value to use when colormapping the palette when plotting
-            a single band.
+            The minimum value to use when colormapping a single band.
         vmax : float
-            The maximized value to use when colormapping the palette when plotting
-            a single band.
+            The maximized value to use when colormapping a single band.
         nodata : float
             The value from the band to use to interpret as not valid data.
-        scheme : str
-            This is either ``linear`` (the default) or ``discrete``. If a
-            palette is specified, ``linear`` uses a piecewise linear
-            interpolation, and ``discrete`` uses exact colors from the palette
-            with the range of the data mapped into the specified number of
-            colors (e.g., a palette with two colors will split exactly halfway
-            between the min and max values).
-        n_colors : int
-            The number (positive integer) of colors to discretize the matplotlib
-            color palettes when used.
-        cmap : str
-            Alias for palette if not specified.
 
         """
         # First handle query parameters to check for errors
@@ -525,6 +483,25 @@ class TileServerMixin:
 
 
 class TileClient(TilerInterface, TileServerMixin):
+    """Tile client interface for generateing and serving tiles.
+
+    Parameters
+    ----------
+    source : pathlib.Path, str, Reader, DatasetReaderBase
+        The source dataset to use for the tile client.
+    port : int
+        The port on your host machine to use for the tile server. This defaults
+        to getting an available port.
+    debug : bool
+        Run the tile server in debug mode.
+    client_port : int
+        The port on your client browser to use for fetching tiles. This is
+        useful when running in Docker and performing port forwarding.
+    client_host : str
+        The host on which your client browser can access the server.
+
+    """
+
     def __init__(
         self,
         source: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase],

@@ -1,12 +1,7 @@
 import pytest
 
 from localtileserver import Report, TileClient
-from localtileserver.tiler.palettes import (
-    get_palette_by_name,
-    get_palettes,
-    is_mpl_cmap,
-    mpl_to_palette,
-)
+from localtileserver.tiler.palettes import get_palettes, is_mpl_cmap
 from localtileserver.validate import validate_cog
 
 has_mpl = False
@@ -19,7 +14,7 @@ except ImportError:
 
 
 def test_is_valid_palette_name():
-    assert is_mpl_cmap("matplotlib.Viridis_20")
+    assert is_mpl_cmap("viridis")
     assert not is_mpl_cmap("foobar")
 
 
@@ -27,8 +22,6 @@ def test_is_valid_palette_name():
 def test_mpl_colormaps():
     assert is_mpl_cmap("viridis")
     assert is_mpl_cmap("jet")
-    assert len(mpl_to_palette("jet"))
-    assert get_palette_by_name("jet")
 
 
 def test_report():

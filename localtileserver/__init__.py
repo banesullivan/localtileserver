@@ -8,6 +8,5 @@ from localtileserver.validate import validate_cog
 from localtileserver.widgets import (
     LocalTileServerLayerMixin,
     get_folium_tile_layer,
-    get_leaflet_roi_controls,
     get_leaflet_tile_layer,
 )
