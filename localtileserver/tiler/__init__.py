@@ -11,9 +11,11 @@ from localtileserver.tiler.data import (
 )
 from localtileserver.tiler.handler import (
     get_meta_data,
-    get_region_pixel,
+    get_point,
+    get_preview,
     get_region_world,
     get_source_bounds,
+    get_tile,
     get_tile_source,
     yield_tile_source,
 )

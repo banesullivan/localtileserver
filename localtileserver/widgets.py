@@ -79,10 +79,6 @@ def get_leaflet_tile_layer(
     attribution : str
         Attribution for the source raster. This
         defaults to a message about it being a local file.
-    style : dict, optional
-        large-image JSON style. See
-        https://girder.github.io/large_image/tilesource_options.html#style
-        If given, this will override all other styling parameters.
     cmap : str
         Alias for palette if not specified.
     **kwargs
@@ -287,10 +283,6 @@ def get_folium_tile_layer(
     attr : str
         Folium requires the custom tile source have an attribution. This
         defaults to a message about it being a local file.
-    style : dict, optional
-        large-image JSON style. See
-        https://girder.github.io/large_image/tilesource_options.html#style
-        If given, this will override all other styling parameters.
     cmap : str
         Alias for palette if not specified.
     **kwargs

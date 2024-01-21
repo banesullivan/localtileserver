@@ -1,7 +1,6 @@
 import pytest
 
 from localtileserver import LocalTileServerLayerMixin, get_folium_tile_layer
-from localtileserver.client import DEMO_REMOTE_TILE_SERVER
 
 skip_folium = False
 try:

@@ -6,7 +6,6 @@ regions of interest (ROIs):
 
 - :func:`localtileserver.TileClient.extract_roi`
 - :func:`localtileserver.TileClient.extract_roi_shape`
-- :func:`localtileserver.TileClient.extract_roi_pixel`
 
 These methods can be used to extract rectangular regions from large images
 using world coordinates, Shapely geometry, or pixel bounds.

@@ -2,7 +2,6 @@ import json
 import os
 import platform
 
-import large_image
 import pytest
 import rasterio
 from rasterio.errors import RasterioIOError
@@ -131,20 +130,6 @@ def test_extract_roi_world_shape(bahamas):
     assert path.exists()
 
 
-@pytest.mark.skip
-def test_extract_roi_pixel(bahamas):
-    path = bahamas.extract_roi_pixel(100, 500, 300, 600, return_path=True)
-    assert path.exists()
-    source = get_tile_source(path)
-    assert source.getMetadata()["geospatial"]
-    assert source.getMetadata()["sizeX"] == 400
-    assert source.getMetadata()["sizeY"] == 300
-    roi = bahamas.extract_roi_pixel(100, 500, 300, 600)
-    assert roi.metadata()["geospatial"]
-    roi = bahamas.extract_roi_pixel(100, 500, 300, 600, return_bytes=True)
-    assert isinstance(roi, ImageBytes)
-
-
 def test_caching_query_params(bahamas):
     thumb_url_a = bahamas.create_url("api/thumbnail.png")
     thumb_url_b = bahamas.create_url("api/thumbnail.png?band=1")
@@ -213,8 +198,8 @@ def test_get_or_create_tile_client(bahamas_file):
         _, _ = get_or_create_tile_client(__file__)
 
 
-def test_pixel(bahamas):
-    assert bahamas.pixel(-77.76, 24.56, coord_crs="EPSG:4326")
+def test_point(bahamas):
+    assert bahamas.point(-77.76, 24.56, coord_crs="EPSG:4326")
 
 
 @pytest.mark.parametrize("encoding", ["PNG", "JPEG", "JPG"])
@@ -260,13 +245,6 @@ def test_style_dict(bahamas):
         style=style,
     )
     assert thumbnail  # TODO: check colors in produced image
-
-
-def test_large_image_to_client(bahamas_file):
-    src = large_image.open(bahamas_file)
-    tile_client = TileClient(src)
-    assert tile_client.filename == get_clean_filename(bahamas_file)
-    assert "crs" in tile_client.metadata()
 
 
 def test_default_zoom(bahamas):

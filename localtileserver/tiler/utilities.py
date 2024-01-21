@@ -79,7 +79,7 @@ def get_clean_filename(filename: str):
 def format_to_encoding(fmt: Optional[str]) -> str:
     """Translate format extension (e.g., `tiff`) to encoding (e.g., `TILED`)."""
     if not fmt:
-        return "PNG"
+        return "png"
     if fmt.lower() not in ["tif", "tiff", "png", "jpeg", "jpg"]:
         raise ValueError(f"Format {fmt!r} is not valid. Try `png`, `jpeg`, or `tif`")
     if fmt.lower() in ["tif", "tiff"]:

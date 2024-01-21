@@ -1,8 +1,5 @@
 import io
-import pathlib
-import time
 
-from PIL import Image, ImageDraw, ImageOps
 from flask import request, send_file
 from flask_restx import Api, Resource as View
 from rasterio import RasterioIOError
@@ -13,7 +10,10 @@ from localtileserver import __version__
 from localtileserver.tiler import (
     format_to_encoding,
     get_meta_data,
+    get_point,
+    get_preview,
     get_source_bounds,
+    get_tile,
     get_tile_source,
 )
 from localtileserver.tiler.data import str_to_bool
@@ -87,11 +87,6 @@ STYLE_PARAMS = {
         "in": "query",
         "type": "float",
     },
-    "style": {
-        "description": "Encoded JSON style following https://girder.github.io/large_image/tilesource_options.html#style",
-        "in": "query",
-        "type": "str",
-    },
 }
 REGION_PARAMS = {
     "left": {
@@ -164,7 +159,7 @@ class ValidateCOGView(BaseImageView):
         from localtileserver.validate import validate_cog
 
         tile_source = self.get_tile_source()
-        valid = True  # validate_cog(tile_source, strict=True)
+        valid = validate_cog(tile_source, strict=True)
         if valid:
             return "Valid Cloud Optimized GeoTiff."
         # TODO: better error/out?
@@ -210,7 +205,7 @@ class ThumbnailView(BaseImageView):
         except ValueError:
             raise BadRequest(f"Format {format} is not a valid encoding.")
         tile_source = self.get_tile_source()
-        thumb_data = tile_source.preview().render(img_format="png")
+        thumb_data = get_preview(tile_source, img_format=encoding)
         thumb_data = io.BytesIO(thumb_data)
         return send_file(
             thumb_data,

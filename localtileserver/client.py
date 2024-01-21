@@ -8,7 +8,6 @@ import shutil
 from typing import List, Optional, Union
 from urllib.parse import quote
 
-from large_image_source_rasterio import RasterioFileTileSource
 import rasterio
 import requests
 
@@ -31,9 +30,11 @@ from localtileserver.tiler import (
     get_building_docs,
     get_clean_filename,
     get_meta_data,
-    get_region_pixel,
+    get_point,
+    get_preview,
     get_region_world,
     get_source_bounds,
+    get_tile,
     get_tile_source,
     make_style,
     palette_valid_or_raise,
@@ -48,8 +49,7 @@ logger = logging.getLogger(__name__)
 class LocalTileClient:
     """Base TileClient methods and configuration.
 
-    This class does not perform any RESTful operations but will interface
-    directly with rasterio and rio-tiler to produce results.
+    This class interfaces directly with rasterio and rio-tiler.
 
     Parameters
     ----------
@@ -94,24 +94,6 @@ class LocalTileClient:
     @property
     def rasterio(self):
         return self._tile_source.dataset
-
-    @property
-    def server_host(self):
-        raise NotImplementedError  # pragma: no cover
-
-    @property
-    def server_port(self):
-        raise NotImplementedError  # pragma: no cover
-
-    @property
-    def server_base_url(self):
-        raise NotImplementedError  # pragma: no cover
-
-    def _produce_url(self, base: str):
-        return add_query_parameters(base, {"filename": self._filename})
-
-    def create_url(self, path: str, **kwargs):
-        return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
 
     def _get_style_params(
         self,
@@ -205,10 +187,6 @@ class LocalTileClient:
         n_colors : int
             The number (positive integer) of colors to discretize the matplotlib
             color palettes when used.
-        style : dict, optional
-            large-image JSON style. See
-            https://girder.github.io/large_image/tilesource_options.html#style
-            If given, this will override all other styling parameters.
         cmap : str
             Alias for palette if not specified.
 
@@ -241,38 +219,38 @@ class LocalTileClient:
         z: int,
         x: int,
         y: int,
-        band: Union[int, List[int]] = None,
-        palette: Union[str, List[str]] = None,
+        cmap: Union[str, List[str]] = None,
+        indexes: Union[int, List[int]] = None,
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
         vmax: Union[Union[float, int], List[Union[float, int]]] = None,
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
         scheme: Union[str, List[str]] = None,
         n_colors: int = 255,
         output_path: pathlib.Path = None,
-        style: dict = None,
-        cmap: Union[str, List[str]] = None,
         encoding: str = "PNG",
+        band: Union[int, List[int]] = None,
     ):
+        if indexes is None:
+            # TODO: properly deprecate
+            indexes = band
         if encoding.lower() not in ["png", "jpeg", "jpg"]:
             raise ValueError(f"Encoding ({encoding}) not supported.")
         encoding = format_to_encoding(encoding)
 
-        if cmap is not None:
-            palette = cmap  # simple alias
-
-        if style is None:
-            style = make_style(
-                band,
-                palette,
-                vmin,
-                vmax,
-                nodata,
-                scheme,
-                n_colors,
-            )
         tile_source = get_tile_source(self.filename)
         # TODO: handle format and mimetype
-        tile_binary = tile_source.tile(x, y, z).render(img_format="png")
+        tile_binary = get_tile(
+            tile_source,
+            z,
+            x,
+            y,
+            colormap=cmap,
+            indexes=indexes,
+            nodata=nodata,
+            img_format=encoding,
+            vmin=vmin,
+            vmax=vmax,
+        )
         if output_path:
             with open(output_path, "wb") as f:
                 f.write(tile_binary)
@@ -344,37 +322,6 @@ class LocalTileClient:
             return_bytes=return_bytes,
             return_path=return_path,
         )
-
-    def extract_roi_pixel(
-        self,
-        left: int,
-        right: int,
-        bottom: int,
-        top: int,
-        encoding: str = "TILED",
-        output_path: pathlib.Path = None,
-        return_bytes: bool = False,
-        return_path: bool = False,
-    ):
-        path, mimetype = get_region_pixel(
-            self.tile_source,
-            left,
-            right,
-            bottom,
-            top,
-            "pixels",
-            encoding,
-        )
-        if output_path is not None:
-            shutil.move(path, output_path)
-        else:
-            output_path = path
-        if return_bytes:
-            with open(output_path, "rb") as f:
-                return ImageBytes(f.read(), mimetype=mimetype)
-        if return_path:
-            return output_path
-        return TileClient(output_path)
 
     def metadata(self, projection: Optional[str] = ""):
         if projection not in self._metadata:
@@ -450,50 +397,45 @@ class LocalTileClient:
 
     def thumbnail(
         self,
-        band: Union[int, List[int]] = None,
-        palette: Union[str, List[str]] = None,
+        cmap: Union[str, List[str]] = None,
+        indexes: Union[int, List[int]] = None,
         vmin: Union[Union[float, int], List[Union[float, int]]] = None,
         vmax: Union[Union[float, int], List[Union[float, int]]] = None,
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
         scheme: Union[str, List[str]] = None,
         n_colors: int = 255,
         output_path: pathlib.Path = None,
-        style: dict = None,
-        cmap: Union[str, List[str]] = None,
         encoding: str = "PNG",
-        width: int = 512,
-        height: int = 512,
+        band: Union[int, List[int]] = None,
+        max_size: int = 512,
     ):
-        if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
+        if indexes is None:
+            # TODO: properly deprecate
+            indexes = band
+        if encoding.lower() not in ["png", "jpeg", "jpg"]:
             raise ValueError(f"Encoding ({encoding}) not supported.")
         encoding = format_to_encoding(encoding)
 
-        if cmap is not None:
-            palette = cmap  # simple alias
-
-        if style is None:
-            style = make_style(
-                band,
-                palette,
-                vmin,
-                vmax,
-                nodata,
-                scheme,
-                n_colors,
-            )
         tile_source = get_tile_source(self.filename)
-        img = tile_source.preview(width=width, height=height, indexes=band)
-
-        thumb_data = img.render(img_format=encoding)
+        thumb_data = get_preview(
+            tile_source,
+            max_size=max_size,
+            colormap=cmap,
+            indexes=indexes,
+            nodata=nodata,
+            img_format=encoding,
+            vmin=vmin,
+            vmax=vmax,
+        )
 
         if output_path:
             with open(output_path, "wb") as f:
                 f.write(thumb_data)
         return ImageBytes(thumb_data, mimetype=f"image/{encoding.lower()}")
 
-    def pixel(self, lon: float, lat: float, **kwargs):
+    def point(self, lon: float, lat: float, **kwargs):
         tile_source = get_tile_source(self.filename)
-        return tile_source.point(lon, lat, **kwargs)
+        return get_point(tile_source, lon, lat, **kwargs)
 
     @property
     def default_zoom(self):
@@ -559,7 +501,7 @@ class _TileServerManager:
 
     def __init__(
         self,
-        filename: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase, RasterioFileTileSource],
+        filename: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase],
         default_projection: Optional[str] = "EPSG:3857",
         port: Union[int, str] = "default",
         debug: bool = False,
@@ -571,8 +513,6 @@ class _TileServerManager:
     ):
         if isinstance(filename, rasterio.io.DatasetReaderBase) and hasattr(filename, "name"):
             filename = filename.name
-        elif isinstance(filename, RasterioFileTileSource):
-            filename = filename._getLargeImagePath()
         super().__init__(filename=filename, default_projection=default_projection)
         app = AppManager.get_or_create_app(cors_all=cors_all)
         self._key = launch_server(app, port=port, debug=debug, host=host)
@@ -675,6 +615,9 @@ class _TileServerManager:
             base = f"/{base.lstrip('/')}"
         return base
 
+    def _produce_url(self, base: str):
+        return add_query_parameters(base, {"filename": self._filename})
+
     def create_url(self, path: str, client: bool = False):
         if client and (
             self.client_port is not None
@@ -698,7 +641,10 @@ class TileClient(_TileServerManager, LocalTileClient):
 
 def get_or_create_tile_client(
     source: Union[
-        pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase, RasterioFileTileSource
+        pathlib.Path,
+        str,
+        TileClient,
+        rasterio.io.DatasetReaderBase,
     ],
     port: Union[int, str] = "default",
     debug: bool = False,

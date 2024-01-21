@@ -6,8 +6,12 @@ import pathlib
 import tempfile
 from typing import Union
 
+import numpy as np
 import rasterio
+from rasterio.enums import ColorInterp
+from rio_tiler.colormap import cmap
 from rio_tiler.io import Reader
+from rio_tiler.models import ImageData
 
 from .utilities import get_cache_dir, get_clean_filename, make_crs
 
@@ -67,25 +71,6 @@ def get_region_world(
     return _get_region(tile_source, region, encoding)
 
 
-def get_region_pixel(
-    tile_source: Reader,
-    left: int,
-    right: int,
-    bottom: int,
-    top: int,
-    units: str = "pixels",
-    encoding: str = None,
-):
-    left, right = min(left, right), max(left, right)
-    top, bottom = min(top, bottom), max(top, bottom)
-    region = dict(left=left, right=right, bottom=bottom, top=top, units=units)
-    if encoding is None:
-        # Use tiled encoding by default for geospatial rasters
-        #   output will be a tiled TIF
-        encoding = "TILED"
-    return _get_region(tile_source, region, encoding)
-
-
 def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decimal_places: int = 6):
     src_crs = tile_source.dataset.crs
     dst_crs = make_crs(projection)
@@ -103,3 +88,118 @@ def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decima
         "east": round(right, decimal_places),
         "north": round(top, decimal_places),
     }
+
+
+def _handle_band_indexes(tile_source: Reader, indexes: list[int] | None = None):
+    if not indexes:
+        RGB_INTERPRETATIONS = [ColorInterp.red, ColorInterp.green, ColorInterp.blue]
+        RGB_DESCRIPTORS = ["red", "green", "blue"]
+        if set(RGB_INTERPRETATIONS).issubset(set(tile_source.dataset.colorinterp)):
+            indexes = [tile_source.dataset.colorinterp.index(i) + 1 for i in RGB_INTERPRETATIONS]
+        elif set(RGB_DESCRIPTORS).issubset(set(tile_source.dataset.descriptions)):
+            indexes = [tile_source.dataset.descriptions.index(i) + 1 for i in RGB_DESCRIPTORS]
+        elif len(tile_source.dataset.indexes) >= 3:
+            indexes = [1, 2, 3]
+        elif len(tile_source.dataset.indexes) < 3:
+            indexes = [1]
+        else:
+            raise ValueError("Could not determine band indexes")
+    return indexes
+
+
+def _handle_nodata(tile_source: Reader, nodata: int | float | None = None):
+    floaty = False
+    if any(dtype.startswith("float") for dtype in tile_source.dataset.dtypes):
+        floaty = True
+    if floaty and nodata is None and tile_source.dataset.nodata is not None:
+        nodata = np.nan
+    return nodata
+
+
+def _render_image(
+    tile_source: Reader,
+    img: ImageData,
+    indexes: list[int] = None,
+    colormap: str | None = None,
+    img_format: str = "PNG",
+    vmin: float | None = None,
+    vmax: float | None = None,
+):
+    colormap = cmap.get(colormap) if colormap else None
+    if (
+        not colormap
+        and len(indexes) == 1
+        and tile_source.dataset.colorinterp[indexes[0] - 1] == ColorInterp.palette
+    ):
+        colormap = tile_source.dataset.colormap(indexes[0])
+    elif img.data.dtype != np.dtype("uint8") or vmin is not None or vmax is not None:
+        stats = tile_source.statistics()
+        in_range = [
+            (s.min if vmin is None else vmin, s.max if vmax is None else vmax)
+            for s in stats.values()
+        ]
+        print(in_range)
+        img.rescale(
+            in_range=in_range,
+            out_range=[(0, 255)],
+        )
+    return img.render(img_format=img_format, colormap=colormap if colormap else None)
+
+
+def get_tile(
+    tile_source: Reader,
+    z: int,
+    x: int,
+    y: int,
+    indexes: list[int] | None = None,
+    colormap: str | None = None,
+    img_format: str = "PNG",
+    nodata: int | float | None = None,
+    vmin: float | None = None,
+    vmax: float | None = None,
+):
+    indexes = _handle_band_indexes(tile_source, indexes)
+    nodata = _handle_nodata(tile_source, nodata)
+    img = tile_source.tile(x, y, z, indexes=indexes, nodata=nodata)
+    return _render_image(
+        tile_source,
+        img,
+        indexes=indexes,
+        colormap=colormap,
+        img_format=img_format,
+        vmin=vmin,
+        vmax=vmax,
+    )
+
+
+def get_point(
+    tile_source: Reader,
+    lon: float,
+    lat: float,
+    **kwargs,
+):
+    return tile_source.point(lon, lat, **kwargs)
+
+
+def get_preview(
+    tile_source: Reader,
+    indexes: list[int] | None = None,
+    max_size: int = 1024,
+    colormap: str | None = None,
+    img_format: str = "PNG",
+    nodata: int | float | None = None,
+    vmin: float | None = None,
+    vmax: float | None = None,
+):
+    indexes = _handle_band_indexes(tile_source, indexes)
+    nodata = _handle_nodata(tile_source, nodata)
+    img = tile_source.preview(max_size=max_size, indexes=indexes, nodata=nodata)
+    return _render_image(
+        tile_source,
+        img,
+        indexes=indexes,
+        colormap=colormap,
+        img_format=img_format,
+        vmin=vmin,
+        vmax=vmax,
+    )

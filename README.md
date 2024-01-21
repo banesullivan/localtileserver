@@ -62,9 +62,7 @@ thread which will serve raster imagery to a viewer (usually `ipyleaflet` or
 
 This tile server can efficiently deliver varying resolutions of your
 raster imagery to your viewer; it helps to have pre-tiled,
-[Cloud Optimized GeoTIFFs (COGs)](https://www.cogeo.org/), but no wories if
-not as the backing library, [`large_image`](https://github.com/girder/large_image),
-will tile and cache for you when opening the raster.
+[Cloud Optimized GeoTIFFs (COGs)](https://www.cogeo.org/).
 
 There is an included, standalone web viewer leveraging
 [CesiumJS](https://cesium.com/platform/cesiumjs/) and [GeoJS](https://opengeoscience.github.io/geojs/).
