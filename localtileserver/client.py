@@ -21,13 +21,10 @@ except ImportError:  # pragma: no cover
 from server_thread import ServerManager, launch_server
 
 from localtileserver.configure import get_default_client_params
-from localtileserver.helpers import parse_shapely
 from localtileserver.manager import AppManager
 from localtileserver.tiler import (
-    ImageBytes,
     format_to_encoding,
     get_building_docs,
-    get_clean_filename,
     get_meta_data,
     get_point,
     get_preview,
@@ -79,16 +76,24 @@ class TilerInterface:
         return self.dataset.name
 
     @property
+    def info(self):
+        return self.reader.info()
+
+    @property
     def metadata(self):
         return get_meta_data(self.reader)
 
     @property
-    def default_zoom(self):
-        return 9  # TODO: implement this
+    def min_zoom(self):
+        return self.info.minzoom
 
     @property
     def max_zoom(self):
-        return self.metadata.get("levels", None)
+        return self.info.maxzoom
+
+    @property
+    def default_zoom(self):
+        return self.min_zoom
 
     def bounds(
         self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
