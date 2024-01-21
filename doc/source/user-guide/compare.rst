@@ -11,7 +11,7 @@
   r_client = TileClient('https://www.dropbox.com/s/ysxscp059rtrw0d/L5039035_03520060512_B70.TIF?dl=0')
 
   # Shared display parameters
-  display = dict(vmin=50, vmax=150, cmap='coolwarm')
+  display = dict(vmin=50, vmax=150, colormap='coolwarm')
 
   # Create 2 tile layers from different raster
   l = get_leaflet_tile_layer(l_client, **display)

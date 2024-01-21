@@ -98,7 +98,11 @@ class BaseImageView(View):
             raise BadRequest(f"RasterioIOError: {str(e)}") from e
 
     def get_clean_args(self):
-        return {k: v for k, v in reformat_list_query_parameters(request.args).items() if k in STYLE_PARAMS}
+        return {
+            k: v
+            for k, v in reformat_list_query_parameters(request.args).items()
+            if k in STYLE_PARAMS
+        }
 
 
 class ValidateCOGView(BaseImageView):

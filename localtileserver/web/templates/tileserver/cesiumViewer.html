@@ -21,7 +21,7 @@
   var tileLayer;
   var layers = viewer.scene.imageryLayers;
 
-  var rectangle = Cesium.Rectangle.fromDegrees(extents.west, extents.south, extents.east, extents.north)
+  var rectangle = Cesium.Rectangle.fromDegrees(extents.left, extents.bottom, extents.right, extents.top)
 
   function updateTileLayer() {
     layers.remove(tileLayer)

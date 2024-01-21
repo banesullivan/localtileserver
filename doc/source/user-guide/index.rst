@@ -75,7 +75,7 @@ a Jupyter notebook. Here is an example:
 
   # Create ipyleaflet tile layer from that server
   t = get_leaflet_tile_layer(client,
-                             indexes=1, vmin=-5000, vmax=5000, colormap='cmo.topo',
+                             indexes=1, vmin=-5000, vmax=5000,
                              opacity=0.65)
 
   # Create ipyleaflet map, add tile layer, and display

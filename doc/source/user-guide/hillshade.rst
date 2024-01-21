@@ -24,7 +24,7 @@ make the data appear more 3-Dimensional.
   # Example DEM dataset
   client = examples.get_co_elevation()
 
-  tdem = get_leaflet_tile_layer(client, cmap='gist_earth')
+  tdem = get_leaflet_tile_layer(client, colormap='gist_earth')
 
   m = Map(center=client.center(), zoom=client.default_zoom)
   m.add_layer(tdem)
