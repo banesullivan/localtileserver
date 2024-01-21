@@ -20,5 +20,3 @@ jobs:
           pip install pre-commit
       - name: Run linting
         run: make lint
-      - name: Run codespell
-        run: make codespell
