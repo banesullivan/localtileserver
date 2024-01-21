@@ -45,7 +45,7 @@ You can also get a single tile by:
 .. jupyter-execute::
 
   # z, x, y
-  client.get_tile(10, 163, 395)
+  client.tile(10, 163, 395)
 
 
 And get a thumbnail preview by:

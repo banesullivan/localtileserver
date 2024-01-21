@@ -1,5 +1,4 @@
 """Methods for working with images."""
-from contextlib import contextmanager
 import logging
 import os
 import pathlib
@@ -24,14 +23,8 @@ logger = logging.getLogger(__name__)
 # TODO: should I set these in a rasterio.Env?
 
 
-def get_tile_source(path: Union[pathlib.Path, str]) -> Reader:
+def get_reader(path: Union[pathlib.Path, str]) -> Reader:
     return Reader(get_clean_filename(path))
-
-
-@contextmanager
-def yield_tile_source(path: Union[pathlib.Path, str]) -> Reader:
-    with get_tile_source(path) as source:
-        yield source
 
 
 def get_meta_data(tile_source: Reader):

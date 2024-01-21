@@ -8,7 +8,7 @@ Python Client
 .. autofunction:: localtileserver.get_or_create_tile_client
 
 
-.. autoclass:: localtileserver.client.LocalTileClient
+.. autoclass:: localtileserver.client.TilerInterface
    :members:
    :undoc-members:
 

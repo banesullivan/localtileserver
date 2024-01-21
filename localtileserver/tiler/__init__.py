@@ -13,11 +13,10 @@ from localtileserver.tiler.handler import (
     get_meta_data,
     get_point,
     get_preview,
+    get_reader,
     get_region_world,
     get_source_bounds,
     get_tile,
-    get_tile_source,
-    yield_tile_source,
 )
 from localtileserver.tiler.palettes import get_palettes, palette_valid_or_raise
 from localtileserver.tiler.utilities import (

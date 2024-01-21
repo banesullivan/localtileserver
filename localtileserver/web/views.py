@@ -6,7 +6,7 @@ from flask.views import View
 from rasterio.errors import RasterioIOError
 
 from localtileserver.tiler import data
-from localtileserver.tiler.handler import get_meta_data, get_source_bounds, get_tile_source
+from localtileserver.tiler.handler import get_meta_data, get_reader, get_source_bounds
 from localtileserver.web.blueprint import tileserver
 from localtileserver.web.utils import get_clean_filename_from_request
 
@@ -18,7 +18,7 @@ class BaseViewer(View):
         """Check the file in the arguments and 404 if invalid."""
         try:
             filename = get_clean_filename_from_request()
-            _ = get_tile_source(filename)
+            _ = get_reader(filename)
         except (OSError, AttributeError, RasterioIOError):
             return render_template("tileserver/404file.html"), 404
         return render_template(template)
@@ -38,13 +38,13 @@ class CesiumSplitViewer(View):
     def dispatch_request(self):
         try:
             filename = get_clean_filename_from_request("filenameA", strict=True)
-            _ = get_tile_source(filename)
+            _ = get_reader(filename)
         except (OSError, AttributeError, RasterioIOError):
             f = request.args.get("filenameA")
             return render_template("tileserver/404file.html", filename=f), 404
         try:
             filename = get_clean_filename_from_request("filenameB", strict=True)
-            _ = get_tile_source(filename)
+            _ = get_reader(filename)
         except (OSError, AttributeError, RasterioIOError):
             f = request.args.get("filenameB")
             return render_template("tileserver/404file.html", filename=f), 404
@@ -65,7 +65,7 @@ def raster_context():
     context = {}
     context["filename"] = str(filename)
     try:
-        tile_source = get_tile_source(filename)
+        tile_source = get_reader(filename)
     except (OSError, AttributeError, RasterioIOError):
         return context
     context.update(get_meta_data(tile_source))

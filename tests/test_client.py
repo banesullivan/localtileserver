@@ -10,12 +10,7 @@ from server_thread import ServerManager
 
 from localtileserver.client import TileClient, get_or_create_tile_client
 from localtileserver.helpers import parse_shapely, polygon_to_geojson
-from localtileserver.tiler import (
-    get_cache_dir,
-    get_clean_filename,
-    get_source_bounds,
-    get_tile_source,
-)
+from localtileserver.tiler import get_cache_dir, get_clean_filename, get_reader, get_source_bounds
 from localtileserver.utilities import ImageBytes
 
 skip_shapely = False
@@ -52,7 +47,7 @@ def test_create_tile_client(bahamas_file):
     r = requests.get(tile_url, timeout=5)
     r.raise_for_status()
     assert r.content
-    tile_conent = tile_client.get_tile(z=8, x=72, y=110)
+    tile_conent = tile_client.tile(z=8, x=72, y=110)
     assert tile_conent
     tile_url = tile_client.get_tile_url(palette="matplotlib.Plasma_6").format(z=8, x=72, y=110)
     r = requests.get(tile_url, timeout=5)
@@ -98,7 +93,7 @@ def test_extract_roi_world(bahamas):
     # -78.047, -77.381, 24.056, 24.691
     path = bahamas.extract_roi(-78.047, -77.381, 24.056, 24.691, return_path=True)
     assert path.exists()
-    source = get_tile_source(path, projection="EPSG:3857")
+    source = get_reader(path, projection="EPSG:3857")
     assert source.getMetadata()["geospatial"]
     e = get_source_bounds(source, projection="EPSG:4326")
     assert e["xmin"] == pytest.approx(-78.047, abs=TOLERANCE)
@@ -119,7 +114,7 @@ def test_extract_roi_world_shape(bahamas):
     poly = box(-78.047, 24.056, -77.381, 24.691)
     path = bahamas.extract_roi_shape(poly, return_path=True)
     assert path.exists()
-    source = get_tile_source(path, projection="EPSG:3857")
+    source = get_reader(path, projection="EPSG:3857")
     assert source.getMetadata()["geospatial"]
     e = get_source_bounds(source, projection="EPSG:4326")
     assert e["xmin"] == pytest.approx(-78.047, abs=TOLERANCE)

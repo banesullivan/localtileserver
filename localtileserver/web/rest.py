@@ -11,9 +11,9 @@ from localtileserver.tiler import (
     format_to_encoding,
     get_meta_data,
     get_preview,
+    get_reader,
     get_source_bounds,
     get_tile,
-    get_tile_source,
 )
 from localtileserver.tiler.palettes import get_palettes
 from localtileserver.web.blueprint import cache, tileserver
@@ -87,14 +87,14 @@ class ListPalettes(View):
 
 @api.doc(params=BASE_PARAMS)
 class BaseImageView(View):
-    def get_tile_source(self):
+    def get_reader(self):
         """Return the built tile source."""
         try:
             filename = get_clean_filename_from_request()
         except OSError as e:
             raise BadRequest(str(e)) from e
         try:
-            return get_tile_source(filename)
+            return get_reader(filename)
         except RasterioIOError as e:
             raise BadRequest(f"RasterioIOError: {str(e)}") from e
 
@@ -103,7 +103,7 @@ class ValidateCOGView(BaseImageView):
     def get(self):
         from localtileserver.validate import validate_cog
 
-        tile_source = self.get_tile_source()
+        tile_source = self.get_reader()
         valid = validate_cog(tile_source, strict=True)
         if not valid:
             raise UnsupportedMediaType("Not a valid Cloud Optimized GeoTiff.")
@@ -113,7 +113,7 @@ class ValidateCOGView(BaseImageView):
 class MetadataView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self):
-        tile_source = self.get_tile_source()
+        tile_source = self.get_reader()
         metadata = get_meta_data(tile_source)
         metadata["filename"] = str(get_clean_filename_from_request())
         return metadata
@@ -131,7 +131,7 @@ class MetadataView(BaseImageView):
 )
 class BoundsView(BaseImageView):
     def get(self):
-        tile_source = self.get_tile_source()
+        tile_source = self.get_reader()
         bounds = get_source_bounds(
             tile_source,
             projection=request.args.get("crs", "EPSG:4326"),
@@ -148,7 +148,7 @@ class ThumbnailView(BaseImageView):
             encoding = format_to_encoding(format)
         except ValueError as e:
             raise BadRequest(f"Format {format} is not a valid encoding.") from e
-        tile_source = self.get_tile_source()
+        tile_source = self.get_reader()
         thumb_data = get_preview(tile_source, img_format=encoding, **supported_kwargs(request.args))
         thumb_data = io.BytesIO(thumb_data)
         return send_file(
@@ -162,7 +162,7 @@ class ThumbnailView(BaseImageView):
 class TileView(BaseImageView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self, x: int, y: int, z: int, format: str = "png"):
-        tile_source = self.get_tile_source()
+        tile_source = self.get_reader()
         img_format = format_to_encoding(format)
         try:
             tile_binary = get_tile(
