@@ -7,7 +7,7 @@ from flask import request, send_file
 from flask_restx import Api, Resource as View
 from rasterio import RasterioIOError
 from rio_tiler.errors import TileOutsideBounds
-from werkzeug.exceptions import BadRequest, UnsupportedMediaType, NotFound
+from werkzeug.exceptions import BadRequest, NotFound, UnsupportedMediaType
 
 from localtileserver import __version__
 from localtileserver.tiler import (

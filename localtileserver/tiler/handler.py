@@ -84,11 +84,7 @@ def get_region_pixel(
     return _get_region(tile_source, region, encoding)
 
 
-def get_tile_bounds(
-    tile_source: Reader,
-    projection: str = "EPSG:4326",
-    decimal_places : int = 6
-):
+def get_tile_bounds(tile_source: Reader, projection: str = "EPSG:4326", decimal_places: int = 6):
     src_crs = tile_source.dataset.crs
     dst_crs = make_crs(projection)
     left, bottom, right, top = rasterio.warp.transform_bounds(
