@@ -57,9 +57,7 @@ standalone web app or in your own web deployments needing dynamic tile serving.
 
 - Launch a tile server for large geospatial images
 - View local or remote* raster files with ``ipyleaflet`` or ``folium`` in Jupyter
-- View rasters with CesiumJS with the built-in Flask web application
-- Extract regions of interest (ROIs) interactively
-- Use the example datasets to generate Digital Elevation Models
+- View rasters with CesiumJS with the built-in web application
 
 *remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
 
@@ -75,9 +73,7 @@ raster imagery to your viewer; it helps to have pre-tiled,
 `Cloud Optimized GeoTIFFs (COG) <https://www.cogeo.org/>`_.
 
 There is an included, standalone web viewer leveraging
-`CesiumJS <https://cesium.com/platform/cesiumjs/>`_ and
-`GeoJS <https://opengeoscience.github.io/geojs/>`_.
-You can use the web viewer to select and extract regions of interest from rasters.
+`CesiumJS <https://cesium.com/platform/cesiumjs/>`_.
 
 
 🪢 Community Usage

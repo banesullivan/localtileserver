@@ -24,11 +24,6 @@ class BaseViewer(View):
         return render_template(template)
 
 
-class GeoJSViewer(BaseViewer):
-    def dispatch_request(self):
-        return self.render_or_404("tileserver/geojsViewer.html")
-
-
 class CesiumViewer(BaseViewer):
     def dispatch_request(self):
         return self.render_or_404("tileserver/cesiumViewer.html")
