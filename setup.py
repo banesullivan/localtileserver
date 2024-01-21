@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 7, 2
+version_info = 0, 10, "0dev0"
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -46,7 +46,8 @@ setup(
         "Flask-Caching",
         "flask-cors",
         "flask-restx>=0.5.0",
-        "large-image[rasterio]>=1.22.2",
+        "rio-tiler",
+        "rio-cogeo",
         "requests",
         "server-thread",
         "scooby",
@@ -54,8 +55,8 @@ setup(
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
-        "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
-        "helpers": ["rio-cogeo", "shapely"],
+        "jupyter": ["jupyter-server-proxy", "ipyleaflet"],
+        "helpers": ["shapely"],
     },
     entry_points={
         "console_scripts": [

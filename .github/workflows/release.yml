@@ -1,7 +1,8 @@
 name: Package Release
 on:
   push:
-    tags: "*"
+    tags:
+      - "*"
 jobs:
   publish:
     runs-on: ubuntu-latest

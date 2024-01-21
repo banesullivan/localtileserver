@@ -3,9 +3,10 @@ import os
 
 from flask import current_app, render_template, request
 from flask.views import View
-from large_image.exceptions import TileSourceError
+from rasterio.errors import RasterioIOError
 
-from localtileserver.tiler import data, utilities
+from localtileserver.tiler import data
+from localtileserver.tiler.handler import get_meta_data, get_reader, get_source_bounds
 from localtileserver.web.blueprint import tileserver
 from localtileserver.web.utils import get_clean_filename_from_request
 
@@ -15,19 +16,12 @@ logger = logging.getLogger(__name__)
 class BaseViewer(View):
     def render_or_404(self, template: str):
         """Check the file in the arguments and 404 if invalid."""
-        projection = request.args.get("projection", None)
-        # Check opening the file with large image
         try:
             filename = get_clean_filename_from_request()
-            _ = utilities.get_tile_source(filename, projection=projection)
-        except (OSError, AttributeError, TileSourceError):
+            _ = get_reader(filename)
+        except (OSError, AttributeError, RasterioIOError):
             return render_template("tileserver/404file.html"), 404
         return render_template(template)
-
-
-class GeoJSViewer(BaseViewer):
-    def dispatch_request(self):
-        return self.render_or_404("tileserver/geojsViewer.html")
 
 
 class CesiumViewer(BaseViewer):
@@ -39,14 +33,14 @@ class CesiumSplitViewer(View):
     def dispatch_request(self):
         try:
             filename = get_clean_filename_from_request("filenameA", strict=True)
-            _ = utilities.get_tile_source(filename)
-        except (OSError, AttributeError, TileSourceError):
+            _ = get_reader(filename)
+        except (OSError, AttributeError, RasterioIOError):
             f = request.args.get("filenameA")
             return render_template("tileserver/404file.html", filename=f), 404
         try:
             filename = get_clean_filename_from_request("filenameB", strict=True)
-            _ = utilities.get_tile_source(filename)
-        except (OSError, AttributeError, TileSourceError):
+            _ = get_reader(filename)
+        except (OSError, AttributeError, RasterioIOError):
             f = request.args.get("filenameB")
             return render_template("tileserver/404file.html", filename=f), 404
         return render_template("tileserver/cesiumSplitViewer.html")
@@ -64,13 +58,13 @@ def raster_context():
     except OSError:
         filename = request.args.get("filename", "")
     context = {}
-    context["filename"] = filename
+    context["filename"] = str(filename)
     try:
-        tile_source = utilities.get_tile_source(filename)
-    except (OSError, AttributeError, TileSourceError):
+        tile_source = get_reader(filename)
+    except (OSError, AttributeError, RasterioIOError):
         return context
-    context.update(utilities.get_meta_data(tile_source))
-    context["bounds"] = utilities.get_tile_bounds(tile_source, projection="EPSG:4326")
+    context.update(get_meta_data(tile_source))
+    context["bounds"] = get_source_bounds(tile_source, projection="EPSG:4326")
     return context
 
 

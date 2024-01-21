@@ -1,5 +1,5 @@
 -r requirements.txt
-ipyleaflet
-shapely
 folium
+ipyleaflet
 jupyter-server-proxy
+shapely

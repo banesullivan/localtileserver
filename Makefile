@@ -21,9 +21,8 @@ doctest:
 
 lint:
 	@echo "Linting with flake8"
-	flake8 --ignore=E501 localtileserver tests
+	pre-commit run --all-files
 
 format:
 	@echo "Formatting"
-	black .
-	isort .
+	pre-commit run --all-files

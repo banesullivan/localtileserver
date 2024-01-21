@@ -19,7 +19,7 @@ This will only work when opening a raster in read-mode.
     t = get_leaflet_tile_layer(client)
 
     m = Map(center=client.center(), zoom=client.default_zoom)
-    m.add_layer(t)
+    m.add(t)
     m
 
 
@@ -34,4 +34,4 @@ and keeps a reference to a ``rasterio.DatasetReader`` for all clients.
     # Load example tile layer from publicly available DEM source
     client = examples.get_elevation()
 
-    client.rasterio
+    client.dataset

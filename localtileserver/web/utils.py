@@ -27,3 +27,18 @@ def get_clean_filename_from_request(param_name: str = "filename", strict: bool =
             logger.error(message)
             filename = get_clean_filename(get_sf_bay_url())
     return filename
+
+
+def reformat_list_query_parameters(args: dict):
+    out = {}
+    for k, v in args.items():
+        name = k.split(".")[0]
+        if name in out:
+            out[name].append(v)
+        else:
+            out.setdefault(name, [v])
+    # If not multiple, remove list
+    for k, v in out.items():
+        if len(v) == 1:
+            out[k] = v[0]
+    return out

@@ -27,7 +27,7 @@
   t = get_leaflet_tile_layer(client)
   # Create ipyleaflet map, add tile layer, and display
   m = Map(center=client.center(), zoom=client.default_zoom)
-  m.add_layer(t)
+  m.add(t)
   m
 
 
@@ -57,9 +57,7 @@ standalone web app or in your own web deployments needing dynamic tile serving.
 
 - Launch a tile server for large geospatial images
 - View local or remote* raster files with ``ipyleaflet`` or ``folium`` in Jupyter
-- View rasters with CesiumJS with the built-in Flask web application
-- Extract regions of interest (ROIs) interactively
-- Use the example datasets to generate Digital Elevation Models
+- View rasters with CesiumJS with the built-in web application
 
 *remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
 
@@ -72,21 +70,17 @@ thread which will serve raster imagery to a viewer (see ``ipyleaflet`` and
 
 This tile server can efficiently deliver varying resolutions of your
 raster imagery to your viewer; it helps to have pre-tiled,
-`Cloud Optimized GeoTIFFs (COG) <https://www.cogeo.org/>`_, but no wories if
-not as the backing library, `large_image <https://github.com/girder/large_image>`_,
-will tile and cache for you when opening the raster.
+`Cloud Optimized GeoTIFFs (COG) <https://www.cogeo.org/>`_.
 
 There is an included, standalone web viewer leveraging
-`CesiumJS <https://cesium.com/platform/cesiumjs/>`_ and
-`GeoJS <https://opengeoscience.github.io/geojs/>`_.
-You can use the web viewer to select and extract regions of interest from rasters.
+`CesiumJS <https://cesium.com/platform/cesiumjs/>`_.
 
 
 🪢 Community Usage
 ==================
 
 - `leafmap <https://github.com/giswqs/leafmap>`_ and `geemap <https://github.com/giswqs/geemap>`_: use localtileserver for visualizing large raster images in a Jupyter-based geospatial mapping application
-- `streamlit-geospatial <https://github.com/giswqs/streamlit-geospatial>`_: uses localtileserver's flask-based remote tile server for viewing image tiles
+- `streamlit-geospatial <https://github.com/giswqs/streamlit-geospatial>`_: uses localtileserver's remote tile server for viewing image tiles
 - `remotetileserver <https://github.com/banesullivan/remotetileserver>`_: uses the core flask application to spin up a production ready tile server
 - `Kaustav Mukherjee's blog post <https://kaustavmukherjee-66179.medium.com/visualize-raster-tiles-locally-using-localtileserver-0-4-1-and-jupyter-notebook-cccd59e6420a>`_: a user-created demonstration on how to get started with localtileserver
 - `Serving up SpaceNet Imagery for Bokeh <https://medium.com/geodesic/serving-up-spacenet-imagery-for-bokeh-e85b8fffe05>`_: Adam Van Etten's blog post using localtileserver to view imagery with Bokeh

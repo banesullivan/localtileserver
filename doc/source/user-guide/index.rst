@@ -15,7 +15,6 @@
    rgb
    remote-cog
    compare
-   roi
    example-data
    web-app
    ipyleaflet_deep_zoom
@@ -23,6 +22,7 @@
    validate_cog
    bokeh
    hillshade
+   in-memory
 
 
 Here is the "one-liner" to visualize a large geospatial image with
@@ -45,7 +45,7 @@ You can also get a single tile by:
 .. jupyter-execute::
 
   # z, x, y
-  client.get_tile(10, 163, 395)
+  client.tile(10, 163, 395)
 
 
 And get a thumbnail preview by:
@@ -76,12 +76,12 @@ a Jupyter notebook. Here is an example:
 
   # Create ipyleaflet tile layer from that server
   t = get_leaflet_tile_layer(client,
-                             band=1, vmin=-5000, vmax=5000, palette='cmo.topo',
+                             indexes=1, vmin=-5000, vmax=5000,
                              opacity=0.65)
 
   # Create ipyleaflet map, add tile layer, and display
   m = Map(zoom=3)
-  m.add_layer(t)
+  m.add(t)
   m
 
 
@@ -92,7 +92,7 @@ Similarly to the support provided for ``ipyleaflet``, I have included a utility
 to generate a :class:`folium.TileLayer` (see `reference <https://python-visualization.github.io/folium/modules.html#folium.raster_layers.TileLayer>`_)
 with :func:`get_folium_tile_layer`. Here is an example with almost the exact same
 code as the ``ipyleaflet`` example, just note that :class:`folium.Map` is imported from
-``folium`` and we use :func:`add_child` instead of :func:`add_layer`:
+``folium`` and we use :func:`add_child` instead of :func:`add`:
 
 
 .. jupyter-execute::
@@ -117,7 +117,6 @@ code as the ``ipyleaflet`` example, just note that :class:`folium.Map` is import
 --------------
 
 - :func:`get_leaflet_tile_layer` accepts either an existing :class:`TileClient` or a path from which to create a :class:`TileClient` under the hood.
-- The color palette choices come from `palettable <https://jiffyclub.github.io/palettable/>`_.
 - If matplotlib is installed, any matplotlib colormap name cane be used a palette choice
 
 

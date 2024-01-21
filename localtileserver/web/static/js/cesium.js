@@ -13,20 +13,20 @@ let CartoAttribution = 'Map tiles by <a href="https://carto.com">Carto</a>, unde
 // - these can be used without Cesium Ion
 var imageryViewModels = [];
 
-imageryViewModels.push(new Cesium.ProviderViewModel({
-  name: 'OpenStreetMap',
-  iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/openStreetMap.png'),
-  tooltip: 'OpenStreetMap (OSM) is a collaborative project to create a free editable \
-map of the world.\nhttp://www.openstreetmap.org',
-  creationFunction: function() {
-    return new Cesium.UrlTemplateImageryProvider({
-      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      subdomains: 'abc',
-      minimumLevel: 0,
-      maximumLevel: 19
-    });
-  }
-}));
+// imageryViewModels.push(new Cesium.ProviderViewModel({
+//   name: 'OpenStreetMap',
+//   iconUrl: Cesium.buildModuleUrl('Widgets/Images/ImageryProviders/openStreetMap.png'),
+//   tooltip: 'OpenStreetMap (OSM) is a collaborative project to create a free editable \
+// map of the world.\nhttp://www.openstreetmap.org',
+//   creationFunction: function() {
+//     return new Cesium.UrlTemplateImageryProvider({
+//       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+//       subdomains: 'abc',
+//       minimumLevel: 0,
+//       maximumLevel: 19
+//     });
+//   }
+// }));
 imageryViewModels.push(new Cesium.ProviderViewModel({
   name: 'Positron',
   tooltip: 'CartoDB Positron basemap',
@@ -117,63 +117,11 @@ imageryViewModels.push(new Cesium.ProviderViewModel({
     });
   }
 }));
-imageryViewModels.push(new Cesium.ProviderViewModel({
-  name: 'Stamen Terrain',
-  iconUrl: 'https://stamen-tiles-a.a.ssl.fastly.net/terrain/5/15/12.png',
-  creationFunction: function() {
-    return new Cesium.UrlTemplateImageryProvider({
-      url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png',
-      credit: StamenAttribution,
-      subdomains: 'abcd',
-      minimumLevel: 0,
-      maximumLevel: 14
-    });
-  }
-}));
-imageryViewModels.push(new Cesium.ProviderViewModel({
-  name: 'Stamen Terrain Background',
-  iconUrl: 'https://stamen-tiles-a.a.ssl.fastly.net/terrain-background/5/15/12.png',
-  creationFunction: function() {
-    return new Cesium.UrlTemplateImageryProvider({
-      url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-background/{z}/{x}/{y}.png',
-      credit: StamenAttribution,
-      subdomains: 'abcd',
-      minimumLevel: 0,
-      maximumLevel: 14
-    });
-  }
-}));
-imageryViewModels.push(new Cesium.ProviderViewModel({
-  name: 'Stamen Toner',
-  iconUrl: 'https://stamen-tiles-a.a.ssl.fastly.net/toner/5/15/12.png',
-  creationFunction: function() {
-    return new Cesium.UrlTemplateImageryProvider({
-      url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png',
-      credit: StamenAttribution,
-      subdomains: 'abcd',
-      minimumLevel: 0,
-      maximumLevel: 14
-    });
-  }
-}));
-imageryViewModels.push(new Cesium.ProviderViewModel({
-  name: 'Stamen Toner Lite',
-  iconUrl: 'https://stamen-tiles-a.a.ssl.fastly.net/toner-lite/5/15/12.png',
-  creationFunction: function() {
-    return new Cesium.UrlTemplateImageryProvider({
-      url: 'https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png',
-      credit: StamenAttribution,
-      subdomains: 'abcd',
-      minimumLevel: 0,
-      maximumLevel: 14
-    });
-  }
-}));
 
 // Initialize the viewer - this works without a token!
 viewer = new Cesium.Viewer('cesiumContainer', {
   imageryProviderViewModels: imageryViewModels,
-  selectedImageryProviderViewModel: imageryViewModels[8], // Terrain
+  selectedImageryProviderViewModel: imageryViewModels[0],
   animation: false,
   timeline: false,
   infoBox: false,

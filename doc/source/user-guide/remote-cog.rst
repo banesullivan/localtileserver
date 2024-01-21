@@ -43,7 +43,7 @@ Or we can do the same ipyleaflet:
   l = get_leaflet_tile_layer(client)
 
   m = ipyleaflet.Map(center=client.center(), zoom=client.default_zoom)
-  m.add_layer(l)
+  m.add(l)
   m
 
 

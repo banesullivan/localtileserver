@@ -6,7 +6,6 @@
 
    remote-jupyter
    docker
-   flask
 
 
 Get started with ``localtileserver`` to view rasters locally in Jupyter or
