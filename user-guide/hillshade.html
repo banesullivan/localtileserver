@@ -54,7 +54,7 @@
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="📖 API" href="../api/index.html" />
+    <link rel="next" title="🧠 In-Memory Rasters" href="in-memory.html" />
     <link rel="prev" title="🎨 Plotting with Bokeh" href="bokeh.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -368,7 +368,6 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="rgb.html">🧮 Controlling the RGB Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="remote-cog.html">☁️ Remote Cloud Optimized GeoTiffs (COGs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compare.html">🥓 Two Rasters at Once</a></li>
-<li class="toctree-l1"><a class="reference internal" href="roi.html">🎯 ROI Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example-data.html">🗺️ Example Datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-app.html">🖥️ Local Web Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipyleaflet_deep_zoom.html">🔬 Deep Zoom with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code></a></li>
@@ -376,6 +375,7 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="validate_cog.html">✅ Validate COG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bokeh.html">🎨 Plotting with Bokeh</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">⛰️ DEM Hillshade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="in-memory.html">🧠 In-Memory Rasters</a></li>
 </ul>
 </div>
 </nav></div>
@@ -452,15 +452,15 @@ make the data appear more 3-Dimensional.</p>
 <span class="c1"># Example DEM dataset</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_co_elevation</span><span class="p">()</span>
 
-<span class="n">tdem</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gist_earth&#39;</span><span class="p">)</span>
+<span class="n">tdem</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="s1">&#39;gist_earth&#39;</span><span class="p">)</span>
 
 <span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">default_zoom</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">tdem</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tdem</span><span class="p">)</span>
 <span class="n">m</span>
 </pre></div>
 </div>
 <p>Read the DEM data as a NumPy array using rasterio:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dem</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">rasterio</span><span class="o">.</span><span class="n">read</span><span class="p">()[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dem</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">read</span><span class="p">()[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
 <span class="n">dem</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
@@ -489,8 +489,8 @@ function (adopted from EarthPy).</p>
 <p>We can also overlay the hillshade on the original DEM so that it gives it a 3D
 effect:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">default_zoom</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">tdem</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tdem</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">hs</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">))</span>
 <span class="n">m</span>
 </pre></div>
 </div>
@@ -540,7 +540,7 @@ effect:</p>
         <div class="footer-item">
   <p class="copyright">
     
-      © Copyright 2021-2023, Bane Sullivan.
+      © Copyright 2021-2024, Bane Sullivan.
       <br/>
     
   </p>

@@ -368,7 +368,6 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="rgb.html">🧮 Controlling the RGB Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="remote-cog.html">☁️ Remote Cloud Optimized GeoTiffs (COGs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compare.html">🥓 Two Rasters at Once</a></li>
-<li class="toctree-l1"><a class="reference internal" href="roi.html">🎯 ROI Extraction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="example-data.html">🗺️ Example Datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-app.html">🖥️ Local Web Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipyleaflet_deep_zoom.html">🔬 Deep Zoom with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code></a></li>
@@ -376,6 +375,7 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="validate_cog.html">✅ Validate COG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bokeh.html">🎨 Plotting with Bokeh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hillshade.html">⛰️ DEM Hillshade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="in-memory.html">🧠 In-Memory Rasters</a></li>
 </ul>
 </div>
 </nav></div>
@@ -449,7 +449,7 @@ This will only work when opening a raster in read-mode.</p>
 <span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 
 <span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">center</span><span class="p">(),</span> <span class="n">zoom</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">default_zoom</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="n">m</span>
 </pre></div>
 </div>
@@ -460,7 +460,7 @@ and keeps a reference to a <code class="docutils literal notranslate"><span clas
 <span class="c1"># Load example tile layer from publicly available DEM source</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_elevation</span><span class="p">()</span>
 
-<span class="n">client</span><span class="o">.</span><span class="n">rasterio</span>
+<span class="n">client</span><span class="o">.</span><span class="n">dataset</span>
 </pre></div>
 </div>
 </section>
@@ -508,7 +508,7 @@ and keeps a reference to a <code class="docutils literal notranslate"><span clas
         <div class="footer-item">
   <p class="copyright">
     
-      © Copyright 2021-2023, Bane Sullivan.
+      © Copyright 2021-2024, Bane Sullivan.
       <br/>
     
   </p>

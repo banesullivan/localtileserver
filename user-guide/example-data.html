@@ -55,7 +55,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="🖥️ Local Web Application" href="web-app.html" />
-    <link rel="prev" title="🎯 ROI Extraction" href="roi.html" />
+    <link rel="prev" title="🥓 Two Rasters at Once" href="compare.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -368,7 +368,6 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="rgb.html">🧮 Controlling the RGB Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="remote-cog.html">☁️ Remote Cloud Optimized GeoTiffs (COGs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="compare.html">🥓 Two Rasters at Once</a></li>
-<li class="toctree-l1"><a class="reference internal" href="roi.html">🎯 ROI Extraction</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">🗺️ Example Datasets</a></li>
 <li class="toctree-l1"><a class="reference internal" href="web-app.html">🖥️ Local Web Application</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ipyleaflet_deep_zoom.html">🔬 Deep Zoom with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code></a></li>
@@ -376,6 +375,7 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="validate_cog.html">✅ Validate COG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bokeh.html">🎨 Plotting with Bokeh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hillshade.html">⛰️ DEM Hillshade</a></li>
+<li class="toctree-l1"><a class="reference internal" href="in-memory.html">🧠 In-Memory Rasters</a></li>
 </ul>
 </div>
 </nav></div>
@@ -436,8 +436,9 @@ document.write(`
   <section id="example-datasets">
 <h1>🗺️ Example Datasets<a class="headerlink" href="#example-datasets" title="Permalink to this heading">#</a></h1>
 <p>A few example datasets are included with <cite>localtileserver</cite>. A particularly
-useful one has global elevation data which you can use to create high resolution Digital Elevation Models (DEMs) of a local region.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">get_leaflet_roi_controls</span><span class="p">,</span> <span class="n">examples</span>
+useful one has global elevation data which you can use to create high resolution
+Digital Elevation Models (DEMs) of a local region.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
 <span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
 
 <span class="c1"># Load example tile layer from publicly available DEM source</span>
@@ -445,39 +446,16 @@ useful one has global elevation data which you can use to create high resolution
 
 <span class="c1"># Create ipyleaflet tile layer from that server</span>
 <span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">,</span>
-                           <span class="n">band</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">500</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
-                           <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span><span class="p">,</span>
+                           <span class="n">indexes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">500</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+                           <span class="n">colormap</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span><span class="p">,</span>
                            <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
 
-<span class="c1"># Create ipyleaflet controls to extract an ROI</span>
-<span class="n">draw_control</span><span class="p">,</span> <span class="n">roi_control</span> <span class="o">=</span> <span class="n">get_leaflet_roi_controls</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
-
 <span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">zoom</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span><span class="n">draw_control</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_control</span><span class="p">(</span><span class="n">roi_control</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="n">m</span>
 </pre></div>
 </div>
 <img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png" />
-<p>Then you can follow the same routine as described above to extract an ROI.</p>
-<p>I zoomed in over Golden, Colorado and drew a polygon of the extent of the DEM I would like to create:</p>
-<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-roi.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-roi.png" />
-<p>And perform the extraction:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">roi_path</span> <span class="o">=</span> <span class="s1">&#39;...&#39;</span>  <span class="c1"># Look in your working directory</span>
-
-<span class="n">r</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">roi_path</span><span class="p">,</span> <span class="n">band</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                           <span class="n">palette</span><span class="o">=</span><span class="s1">&#39;plasma&#39;</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
-
-<span class="n">m2</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span>
-        <span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">39.763427033262175</span><span class="p">,</span> <span class="o">-</span><span class="mf">105.20614908076823</span><span class="p">),</span>
-        <span class="n">zoom</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-       <span class="p">)</span>
-<span class="n">m2</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-<span class="n">m2</span>
-</pre></div>
-</div>
-<img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-dem.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/golden-dem.png" />
 <p>Here is another example with the Virtual Earth satellite imagery</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
 <span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
@@ -489,7 +467,7 @@ useful one has global elevation data which you can use to create high resolution
 <span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">m</span> <span class="o">=</span> <span class="n">Map</span><span class="p">(</span><span class="n">center</span><span class="o">=</span><span class="p">(</span><span class="mf">39.751343612695145</span><span class="p">,</span> <span class="o">-</span><span class="mf">105.22181306125279</span><span class="p">),</span> <span class="n">zoom</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-<span class="n">m</span><span class="o">.</span><span class="n">add_layer</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 <span class="n">m</span>
 </pre></div>
 </div>
@@ -539,7 +517,7 @@ useful one has global elevation data which you can use to create high resolution
         <div class="footer-item">
   <p class="copyright">
     
-      © Copyright 2021-2023, Bane Sullivan.
+      © Copyright 2021-2024, Bane Sullivan.
       <br/>
     
   </p>
