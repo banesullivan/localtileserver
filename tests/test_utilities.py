@@ -4,7 +4,7 @@ from localtileserver import Report, TileClient
 from localtileserver.tiler.palettes import (
     get_palette_by_name,
     get_palettes,
-    is_valid_palette_name,
+    is_mpl_cmap,
     mpl_to_palette,
 )
 from localtileserver.validate import validate_cog
@@ -19,14 +19,14 @@ except ImportError:
 
 
 def test_is_valid_palette_name():
-    assert is_valid_palette_name("matplotlib.Viridis_20")
-    assert not is_valid_palette_name("foobar")
+    assert is_mpl_cmap("matplotlib.Viridis_20")
+    assert not is_mpl_cmap("foobar")
 
 
 @pytest.mark.skipif(not has_mpl, reason="matplotlib not installed.")
 def test_mpl_colormaps():
-    assert is_valid_palette_name("viridis")
-    assert is_valid_palette_name("jet")
+    assert is_mpl_cmap("viridis")
+    assert is_mpl_cmap("jet")
     assert len(mpl_to_palette("jet"))
     assert get_palette_by_name("jet")
 

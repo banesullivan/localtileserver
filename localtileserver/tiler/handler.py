@@ -1,5 +1,4 @@
 """Methods for working with images."""
-import logging
 import os
 import pathlib
 import tempfile
@@ -13,9 +12,6 @@ from rio_tiler.io import Reader
 from rio_tiler.models import ImageData
 
 from .utilities import ImageBytes, get_cache_dir, get_clean_filename, make_crs
-
-logger = logging.getLogger(__name__)
-
 
 # gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
 # gdal.SetConfigOption("GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache"))
@@ -34,23 +30,6 @@ def get_meta_data(tile_source: Reader):
     return metadata
 
 
-def _get_region(tile_source: Reader, region: dict, encoding: str):
-    raise NotImplementedError
-    result, mime_type = tile_source.getRegion(region=region, encoding=encoding)
-    if encoding == "TILED":
-        path = result
-    else:
-        # Write content to temporary file
-        fd, path = tempfile.mkstemp(
-            suffix=f".{encoding}", prefix="pixelRegion_", dir=str(get_cache_dir())
-        )
-        os.close(fd)
-        path = pathlib.Path(path)
-        with open(path, "wb") as f:
-            f.write(result)
-    return path, mime_type
-
-
 def get_region_world(
     tile_source: Reader,
     left: float,
@@ -58,10 +37,19 @@ def get_region_world(
     bottom: float,
     top: float,
     units: str = "EPSG:4326",
-    encoding: str = "TILED",
 ):
+    raise NotImplementedError
     region = dict(left=left, right=right, bottom=bottom, top=top, units=units)
-    return _get_region(tile_source, region, encoding)
+    result, mime_type = tile_source.getRegion(region=region, encoding=encoding)
+    # Write content to temporary file
+    fd, path = tempfile.mkstemp(
+        suffix=f".{encoding}", prefix="pixelRegion_", dir=str(get_cache_dir())
+    )
+    os.close(fd)
+    path = pathlib.Path(path)
+    with open(path, "wb") as f:
+        f.write(result)
+    return path, mime_type
 
 
 def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decimal_places: int = 6):
@@ -76,10 +64,10 @@ def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decima
         "right": round(right, decimal_places),
         "top": round(top, decimal_places),
         # west, south, east, north
-        "west": round(left, decimal_places),
-        "south": round(bottom, decimal_places),
-        "east": round(right, decimal_places),
-        "north": round(top, decimal_places),
+        # "west": round(left, decimal_places),
+        # "south": round(bottom, decimal_places),
+        # "east": round(right, decimal_places),
+        # "north": round(top, decimal_places),
     }
 
 

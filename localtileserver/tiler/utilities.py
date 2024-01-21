@@ -1,4 +1,3 @@
-import logging
 import os
 import pathlib
 import shutil
@@ -9,8 +8,6 @@ from urllib.parse import urlencode, urlparse
 from rasterio import CRS
 
 from localtileserver.tiler.data import clean_url, get_data_path, get_pine_gulch_url
-
-logger = logging.getLogger(__name__)
 
 
 class ImageBytes(bytes):
@@ -103,16 +100,14 @@ def get_clean_filename(filename: str):
 
 
 def format_to_encoding(fmt: Optional[str]) -> str:
-    """Translate format extension (e.g., `tiff`) to encoding (e.g., `TILED`)."""
+    """Validate encoding."""
     if not fmt:
         return "png"
-    if fmt.lower() not in ["tif", "tiff", "png", "jpeg", "jpg"]:
-        raise ValueError(f"Format {fmt!r} is not valid. Try `png`, `jpeg`, or `tif`")
-    if fmt.lower() in ["tif", "tiff"]:
-        return "TILED"
+    if fmt.lower() not in ["png", "jpeg", "jpg"]:
+        raise ValueError(f"Format {fmt!r} is not valid. Try `png` or `jpeg`")
     if fmt.lower() == "jpg":
         fmt = "jpeg"
-    return fmt.upper()  # jpeg, png
+    return fmt.upper()  # PNG, JPEG
 
 
 def make_crs(projection):
