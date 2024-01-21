@@ -1,6 +1,6 @@
 import logging
 import pathlib
-from typing import Optional, Union
+from typing import List, Optional, Union
 import warnings
 
 import rasterio
@@ -21,7 +21,7 @@ def get_leaflet_tile_layer(
     source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
-    indexes: Optional[list[int]] = None,
+    indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
@@ -121,7 +121,7 @@ def get_folium_tile_layer(
     source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
-    indexes: Optional[list[int]] = None,
+    indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,

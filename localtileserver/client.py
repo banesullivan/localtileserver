@@ -159,7 +159,7 @@ class TilerInterface:
         z: int,
         x: int,
         y: int,
-        indexes: Optional[list[int]] = None,
+        indexes: Optional[List[int]] = None,
         colormap: Optional[str] = None,
         vmin: Optional[float] = None,
         vmax: Optional[float] = None,
@@ -218,7 +218,7 @@ class TilerInterface:
 
     def thumbnail(
         self,
-        indexes: Optional[list[int]] = None,
+        indexes: Optional[List[int]] = None,
         colormap: Optional[str] = None,
         vmin: Optional[float] = None,
         vmax: Optional[float] = None,
@@ -415,7 +415,7 @@ class TileServerMixin:
 
     def get_tile_url(
         self,
-        indexes: Optional[list[int]] = None,
+        indexes: Optional[List[int]] = None,
         colormap: Optional[str] = None,
         vmin: Optional[float] = None,
         vmax: Optional[float] = None,

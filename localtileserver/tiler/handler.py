@@ -1,6 +1,6 @@
 """Methods for working with images."""
 import pathlib
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import numpy as np
 import rasterio
@@ -59,7 +59,7 @@ def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decima
     }
 
 
-def _handle_band_indexes(tile_source: Reader, indexes: Optional[list[int]] = None):
+def _handle_band_indexes(tile_source: Reader, indexes: Optional[List[int]] = None):
     if not indexes:
         RGB_INTERPRETATIONS = [ColorInterp.red, ColorInterp.green, ColorInterp.blue]
         RGB_DESCRIPTORS = ["red", "green", "blue"]
@@ -98,7 +98,7 @@ def _handle_nodata(tile_source: Reader, nodata: Optional[int | float] = None):
 def _render_image(
     tile_source: Reader,
     img: ImageData,
-    indexes: Optional[list[int]] = None,
+    indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
@@ -136,7 +136,7 @@ def get_tile(
     z: int,
     x: int,
     y: int,
-    indexes: Optional[list[int]] = None,
+    indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
@@ -170,7 +170,7 @@ def get_point(
 
 def get_preview(
     tile_source: Reader,
-    indexes: Optional[list[int]] = None,
+    indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
     vmin: Optional[float] = None,
     vmax: Optional[float] = None,
