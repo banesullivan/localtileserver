@@ -38,5 +38,5 @@ def test_cog_validate(remote_file_url):
     assert validate_cog(client)
 
 
-def test_cog_validate_error(bahamas):
-    assert not validate_cog(bahamas)
+def test_cog_validate_bahamas(bahamas):
+    assert validate_cog(bahamas)

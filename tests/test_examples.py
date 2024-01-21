@@ -8,8 +8,6 @@ try:
 except ImportError:
     skip_shapely = True
 
-pytestmark = pytest.mark.skip("TODO: Fix tests")
-
 
 def test_get_blue_marble():
     client = examples.get_blue_marble()

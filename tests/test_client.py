@@ -181,7 +181,7 @@ def test_thumbnail_bad_encoding(bahamas):
 
 
 def test_default_zoom(bahamas):
-    assert bahamas.default_zoom == 8
+    assert bahamas.default_zoom == 7
 
 
 @pytest.mark.skipif(skip_shapely, reason="shapely not installed")

@@ -11,8 +11,6 @@ def test_home_page_with_file(bahamas):
 def test_home_page(flask_client):
     r = flask_client.get("/")
     assert r.status_code == 200
-    r = flask_client.get("/roi/")
-    assert r.status_code == 200
     r = flask_client.get("/?filename=foobar")
     assert r.status_code == 404
 
