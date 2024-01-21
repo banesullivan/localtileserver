@@ -13,7 +13,7 @@ else:
     long_description = ""
 
 # major, minor, patch
-version_info = 0, 7, 1
+version_info = 0, 10, "0dev0"
 # Nice string for the version
 __version__ = ".".join(map(str, version_info))
 
@@ -55,7 +55,7 @@ setup(
     ],
     extras_require={
         "colormaps": ["matplotlib", "colorcet", "cmocean"],
-        "jupyter": ["jupyter-server-proxy", "ipyleaflet", "folium"],
+        "jupyter": ["jupyter-server-proxy", "ipyleaflet"],
         "helpers": ["shapely"],
     },
     entry_points={

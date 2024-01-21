@@ -3,7 +3,7 @@ import scooby
 
 class Report(scooby.Report):
     def __init__(self, additional=None, ncol=3, text_width=80, sort=False):
-        """Initiate a scooby.Report instance."""
+        """Generate a report on the dependencies of localtileserver in this environment."""
 
         # Mandatory packages.
         rio_tiler_core = [
@@ -18,6 +18,7 @@ class Report(scooby.Report):
             "flask_cors",
             "flask_restx",
             "requests",
+            "rio_cogeo",
             "werkzeug",
             "click",
             "server_thread",
@@ -27,7 +28,6 @@ class Report(scooby.Report):
         # Optional packages.
         optional = [
             "gunicorn",
-            "pylibmc",
             "ipyleaflet",
             "jupyterlab",
             "jupyter_server_proxy",
@@ -37,10 +37,6 @@ class Report(scooby.Report):
             "matplotlib",
             "colorcet",
             "cmocean",
-            "pyvips",
-            "pylibtiff",
-            "osgeo.gdal",
-            "pyproj",
         ]
 
         scooby.Report.__init__(
