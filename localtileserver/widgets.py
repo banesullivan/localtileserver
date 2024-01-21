@@ -1,6 +1,6 @@
 import logging
 import pathlib
-from typing import Union
+from typing import Optional, Union
 import warnings
 
 import rasterio
@@ -21,11 +21,11 @@ def get_leaflet_tile_layer(
     source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
-    indexes: list[int] | None = None,
-    colormap: str | None = None,
-    nodata: int | float | None = None,
-    vmin: float | None = None,
-    vmax: float | None = None,
+    indexes: Optional[list[int]] = None,
+    colormap: Optional[str] = None,
+    vmin: Optional[float] = None,
+    vmax: Optional[float] = None,
+    nodata: Optional[int | float] = None,
     attribution: str = None,
     **kwargs,
 ):
@@ -121,11 +121,11 @@ def get_folium_tile_layer(
     source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
     port: Union[int, str] = "default",
     debug: bool = False,
-    indexes: list[int] | None = None,
-    colormap: str | None = None,
-    nodata: int | float | None = None,
-    vmin: float | None = None,
-    vmax: float | None = None,
+    indexes: Optional[list[int]] = None,
+    colormap: Optional[str] = None,
+    vmin: Optional[float] = None,
+    vmax: Optional[float] = None,
+    nodata: Optional[int | float] = None,
     attr: str = None,
     **kwargs,
 ):

@@ -1,6 +1,6 @@
 """Methods for working with images."""
 import pathlib
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
 import rasterio
@@ -59,7 +59,7 @@ def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decima
     }
 
 
-def _handle_band_indexes(tile_source: Reader, indexes: list[int] | None = None):
+def _handle_band_indexes(tile_source: Reader, indexes: Optional[list[int]] = None):
     if not indexes:
         RGB_INTERPRETATIONS = [ColorInterp.red, ColorInterp.green, ColorInterp.blue]
         RGB_DESCRIPTORS = ["red", "green", "blue"]
@@ -83,7 +83,7 @@ def _handle_band_indexes(tile_source: Reader, indexes: list[int] | None = None):
     return indexes
 
 
-def _handle_nodata(tile_source: Reader, nodata: int | float | None = None):
+def _handle_nodata(tile_source: Reader, nodata: Optional[int | float] = None):
     floaty = False
     if any(dtype.startswith("float") for dtype in tile_source.dataset.dtypes):
         floaty = True
@@ -98,11 +98,11 @@ def _handle_nodata(tile_source: Reader, nodata: int | float | None = None):
 def _render_image(
     tile_source: Reader,
     img: ImageData,
-    indexes: list[int] = None,
-    colormap: str | None = None,
+    indexes: Optional[list[int]] = None,
+    colormap: Optional[str] = None,
+    vmin: Optional[float] = None,
+    vmax: Optional[float] = None,
     img_format: str = "PNG",
-    vmin: float | None = None,
-    vmax: float | None = None,
 ):
     if isinstance(vmin, str):
         vmin = float(vmin)
@@ -136,11 +136,11 @@ def get_tile(
     z: int,
     x: int,
     y: int,
-    indexes: list[int] | None = None,
-    colormap: str | None = None,
-    vmin: float | None = None,
-    vmax: float | None = None,
-    nodata: int | float | None = None,
+    indexes: Optional[list[int]] = None,
+    colormap: Optional[str] = None,
+    vmin: Optional[float] = None,
+    vmax: Optional[float] = None,
+    nodata: Optional[int | float] = None,
     img_format: str = "PNG",
 ):
     if colormap is not None and indexes is None:
@@ -170,11 +170,11 @@ def get_point(
 
 def get_preview(
     tile_source: Reader,
-    indexes: list[int] | None = None,
-    colormap: str | None = None,
-    vmin: float | None = None,
-    vmax: float | None = None,
-    nodata: int | float | None = None,
+    indexes: Optional[list[int]] = None,
+    colormap: Optional[str] = None,
+    vmin: Optional[float] = None,
+    vmax: Optional[float] = None,
+    nodata: Optional[int | float] = None,
     img_format: str = "PNG",
     max_size: int = 512,
 ):

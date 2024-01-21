@@ -1,7 +1,7 @@
 from collections.abc import Iterable
 import logging
 import pathlib
-from typing import List, Union
+from typing import List, Optional, Union
 
 import rasterio
 import requests
@@ -159,11 +159,11 @@ class TilerInterface:
         z: int,
         x: int,
         y: int,
-        indexes: list[int] | None = None,
-        colormap: str | None = None,
-        vmin: float | None = None,
-        vmax: float | None = None,
-        nodata: int | float | None = None,
+        indexes: Optional[list[int]] = None,
+        colormap: Optional[str] = None,
+        vmin: Optional[float] = None,
+        vmax: Optional[float] = None,
+        nodata: Optional[int | float] = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
         band: Union[int, List[int]] = None,
@@ -218,11 +218,11 @@ class TilerInterface:
 
     def thumbnail(
         self,
-        indexes: list[int] | None = None,
-        colormap: str | None = None,
-        vmin: float | None = None,
-        vmax: float | None = None,
-        nodata: int | float | None = None,
+        indexes: Optional[list[int]] = None,
+        colormap: Optional[str] = None,
+        vmin: Optional[float] = None,
+        vmax: Optional[float] = None,
+        nodata: Optional[int | float] = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
         max_size: int = 512,
@@ -415,11 +415,11 @@ class TileServerMixin:
 
     def get_tile_url(
         self,
-        indexes: list[int] | None = None,
-        colormap: str | None = None,
-        vmin: float | None = None,
-        vmax: float | None = None,
-        nodata: int | float | None = None,
+        indexes: Optional[list[int]] = None,
+        colormap: Optional[str] = None,
+        vmin: Optional[float] = None,
+        vmax: Optional[float] = None,
+        nodata: Optional[int | float] = None,
         client: bool = False,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
