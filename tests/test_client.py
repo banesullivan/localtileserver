@@ -104,11 +104,13 @@ def test_multiband(bahamas):
     url_a = bahamas.get_tile_url(
         indexes=[1, 2, 3],
     ).format(z=8, x=72, y=110)
+    assert get_content(url_a)
     url_b = bahamas.get_tile_url(
         indexes=[3, 2, 1],
     ).format(z=8, x=72, y=110)
+    assert get_content(url_b)
     url_c = bahamas.get_tile_url().format(z=8, x=72, y=110)
-    # assert get_content(url_a) == get_content(url_b) == get_content(url_c)
+    assert get_content(url_c)
     # Check that other options are well handled
     url = bahamas.get_tile_url(
         indexes=[1, 2, 3],
