@@ -93,7 +93,7 @@ def get_tile_bounds(tile_source: Reader, projection: str = "EPSG:4326", decimal_
     return {
         "left": round(left, decimal_places),
         "bottom": round(bottom, decimal_places),
-        "right:": round(right, decimal_places),
+        "right": round(right, decimal_places),
         "top": round(top, decimal_places),
         # west, south, east, north
         "west": round(left, decimal_places),

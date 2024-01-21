@@ -597,7 +597,7 @@ class LocalTileClient(BaseTileClientInterface):
         self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
     ):
         bounds = get_tile_bounds(self.tile_source, projection=projection)
-        extent = (bounds["ymin"], bounds["ymax"], bounds["xmin"], bounds["xmax"])
+        extent = (bounds["bottom"], bounds["top"], bounds["left"], bounds["right"])
         if not return_polygon and not return_wkt:
             return extent
         # Safely import shapely
@@ -606,12 +606,12 @@ class LocalTileClient(BaseTileClientInterface):
         except ImportError as e:  # pragma: no cover
             raise ImportError(f"Please install `shapely`: {e}")
         coords = (
-            (bounds["xmin"], bounds["ymax"]),
-            (bounds["xmin"], bounds["ymax"]),
-            (bounds["xmax"], bounds["ymax"]),
-            (bounds["xmax"], bounds["ymin"]),
-            (bounds["xmin"], bounds["ymin"]),
-            (bounds["xmin"], bounds["ymax"]),  # Close the loop
+            (bounds["left"], bounds["top"]),
+            (bounds["left"], bounds["top"]),
+            (bounds["right"], bounds["top"]),
+            (bounds["right"], bounds["bottom"]),
+            (bounds["left"], bounds["bottom"]),
+            (bounds["left"], bounds["top"]),  # Close the loop
         )
         poly = Polygon(coords)
         if return_wkt:
