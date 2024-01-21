@@ -66,6 +66,8 @@ def _handle_band_indexes(tile_source: Reader, indexes: list[int] | None = None):
             indexes = int(indexes)
         if isinstance(indexes, int):
             indexes = [indexes]
+        if isinstance(indexes, list):
+            indexes = [int(i) for i in indexes]
     return indexes
 
 
@@ -163,7 +165,7 @@ def get_preview(
     vmax: float | None = None,
     nodata: int | float | None = None,
     img_format: str = "PNG",
-    max_size: int = 1024,
+    max_size: int = 512,
 ):
     if colormap is not None and indexes is None:
         indexes = [1]

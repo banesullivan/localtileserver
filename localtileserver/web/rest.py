@@ -17,7 +17,10 @@ from localtileserver.tiler import (
 )
 from localtileserver.tiler.palettes import get_palettes
 from localtileserver.web.blueprint import cache, tileserver
-from localtileserver.web.utils import get_clean_filename_from_request
+from localtileserver.web.utils import (
+    get_clean_filename_from_request,
+    reformat_list_query_parameters,
+)
 
 REQUEST_CACHE_TIMEOUT = 60 * 60 * 2
 
@@ -69,10 +72,6 @@ STYLE_PARAMS = {
 }
 
 
-def supported_kwargs(kwargs):
-    return {k: v for k, v in kwargs.items() if k in STYLE_PARAMS}
-
-
 def make_cache_key(*args, **kwargs):
     path = str(request.path)
     args = str(hash(frozenset(request.args.items())))
@@ -97,6 +96,9 @@ class BaseImageView(View):
             return get_reader(filename)
         except RasterioIOError as e:
             raise BadRequest(f"RasterioIOError: {str(e)}") from e
+
+    def get_clean_args(self):
+        return {k: v for k, v in reformat_list_query_parameters(request.args).items() if k in STYLE_PARAMS}
 
 
 class ValidateCOGView(BaseImageView):
@@ -149,7 +151,7 @@ class ThumbnailView(BaseImageView):
         except ValueError as e:
             raise BadRequest(f"Format {format} is not a valid encoding.") from e
         tile_source = self.get_reader()
-        thumb_data = get_preview(tile_source, img_format=encoding, **supported_kwargs(request.args))
+        thumb_data = get_preview(tile_source, img_format=encoding, **self.get_clean_args())
         thumb_data = io.BytesIO(thumb_data)
         return send_file(
             thumb_data,
@@ -160,13 +162,13 @@ class ThumbnailView(BaseImageView):
 
 @api.doc(params=STYLE_PARAMS)
 class TileView(BaseImageView):
-    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
+    # @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self, x: int, y: int, z: int, format: str = "png"):
         tile_source = self.get_reader()
         img_format = format_to_encoding(format)
         try:
             tile_binary = get_tile(
-                tile_source, z, x, y, img_format=img_format, **supported_kwargs(request.args)
+                tile_source, z, x, y, img_format=img_format, **self.get_clean_args()
             )
         except TileOutsideBounds as e:
             raise NotFound(str(e)) from e
