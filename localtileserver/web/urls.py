@@ -25,18 +25,13 @@ rest.api.add_resource(
 )
 rest.api.add_resource(
     rest.TileView,
-    "/tiles/<int:z>/<int:x>/<int:y>.png",
+    "/tiles/<int:z>/<int:x>/<int:y>.<string:format>",
     endpoint="tiles",
 )
 rest.api.add_resource(
     rest.ListPalettes,
     "/palettes",
     endpoint="palettes",
-)
-rest.api.add_resource(
-    rest.PixelView,
-    "/pixel",
-    endpoint="pixel",
 )
 rest.api.add_resource(
     rest.ValidateCOGView,

@@ -26,6 +26,7 @@ from localtileserver.configure import get_default_client_params
 from localtileserver.helpers import parse_shapely
 from localtileserver.manager import AppManager
 from localtileserver.tiler import (
+    ImageBytes,
     format_to_encoding,
     get_building_docs,
     get_clean_filename,
@@ -36,10 +37,9 @@ from localtileserver.tiler import (
     get_source_bounds,
     get_tile,
     get_tile_source,
-    make_style,
     palette_valid_or_raise,
 )
-from localtileserver.utilities import ImageBytes, add_query_parameters, save_file_from_request
+from localtileserver.utilities import add_query_parameters, save_file_from_request
 
 BUILDING_DOCS = get_building_docs()
 DEMO_REMOTE_TILE_SERVER = "https://tileserver.banesullivan.com/"
@@ -61,31 +61,15 @@ class LocalTileClient:
     def __init__(
         self,
         filename: Union[pathlib.Path, str],
-        default_projection: Optional[str] = "EPSG:3857",
     ):
         self._filename = get_clean_filename(filename)
         self._metadata = {}
 
         self._tile_source = get_tile_source(self.filename)
 
-        if default_projection != "EPSG:3857":
-            self._default_projection = default_projection
-        else:
-            self._default_projection = ""
-
     @property
     def filename(self):
         return self._filename
-
-    @property
-    def default_projection(self):
-        if self._default_projection == "":
-            self._default_projection = "EPSG:3857"
-        return self._default_projection
-
-    @default_projection.setter
-    def default_projection(self, value):
-        self._default_projection = value
 
     @property
     def tile_source(self):
@@ -97,62 +81,41 @@ class LocalTileClient:
 
     def _get_style_params(
         self,
-        band: Union[int, List[int]] = None,
-        palette: Union[str, List[str]] = None,
-        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
-        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
-        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
-        scheme: Union[str, List[str]] = None,
-        n_colors: int = 255,
-        style: dict = None,
-        cmap: Union[str, List[str]] = None,
+        indexes: list[int] | None = None,
+        colormap: str | None = None,
+        nodata: int | float | None = None,
+        vmin: float | None = None,
+        vmax: float | None = None,
     ):
-        if style:
-            return {"style": quote(json.dumps(style))}
         # First handle query parameters to check for errors
         params = {}
-        if band is not None:
-            params["band"] = band
-        if palette is not None or cmap is not None:
-            if palette is None:
-                palette = cmap
+        if indexes is not None:
+            params["indexes"] = indexes
+        if colormap is not None:
             # make sure palette is valid
-            palette_valid_or_raise(palette)
-            params["palette"] = palette
+            palette_valid_or_raise(colormap)
+            params["colormap"] = colormap
         if vmin is not None:
-            if isinstance(vmin, Iterable) and not isinstance(band, Iterable):
-                raise ValueError("`band` must be explicitly set if `vmin` is an iterable.")
+            if isinstance(vmin, Iterable) and not isinstance(indexes, Iterable):
+                raise ValueError("`indexes` must be explicitly set if `vmin` is an iterable.")
             params["min"] = vmin
         if vmax is not None:
-            if isinstance(vmax, Iterable) and not isinstance(band, Iterable):
-                raise ValueError("`band` must be explicitly set if `vmax` is an iterable.")
+            if isinstance(vmax, Iterable) and not isinstance(indexes, Iterable):
+                raise ValueError("`indexes` must be explicitly set if `vmax` is an iterable.")
             params["max"] = vmax
         if nodata is not None:
-            if isinstance(nodata, Iterable) and not isinstance(band, Iterable):
-                raise ValueError("`band` must be explicitly set if `nodata` is an iterable.")
+            if isinstance(nodata, Iterable) and not isinstance(indexes, Iterable):
+                raise ValueError("`indexes` must be explicitly set if `nodata` is an iterable.")
             params["nodata"] = nodata
-        if scheme is not None:
-            if (not isinstance(scheme, str) and isinstance(scheme, Iterable)) and not isinstance(
-                band, Iterable
-            ):
-                raise ValueError("`band` must be explicitly set if `scheme` is an iterable.")
-            params["scheme"] = scheme
-        if n_colors:
-            params["n_colors"] = n_colors
         return params
 
     def get_tile_url_params(
         self,
-        projection: Optional[str] = "",
-        band: Union[int, List[int]] = None,
-        palette: Union[str, List[str]] = None,
-        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
-        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
-        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
-        scheme: Union[str, List[str]] = None,
-        n_colors: int = 255,
-        style: dict = None,
-        cmap: Union[str, List[str]] = None,
+        indexes: list[int] | None = None,
+        colormap: str | None = None,
+        nodata: int | float | None = None,
+        vmin: float | None = None,
+        vmax: float | None = None,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
 
@@ -192,40 +155,24 @@ class LocalTileClient:
 
         """
         params = self._get_style_params(
-            band=band,
-            palette=palette,
+            indexes=indexes,
+            colormap=colormap,
             vmin=vmin,
             vmax=vmax,
             nodata=nodata,
-            scheme=scheme,
-            n_colors=n_colors,
-            style=style,
-            cmap=cmap,
         )
-        if not projection:
-            projection = self.default_projection
-        params["projection"] = projection
         return params
-
-    @wraps(get_tile_url_params)
-    def get_tile_url(self, *args, client: bool = False, **kwargs):
-        params = self.get_tile_url_params(*args, **kwargs)
-        return add_query_parameters(
-            self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
-        )
 
     def get_tile(
         self,
         z: int,
         x: int,
         y: int,
-        cmap: Union[str, List[str]] = None,
-        indexes: Union[int, List[int]] = None,
-        vmin: Union[Union[float, int], List[Union[float, int]]] = None,
-        vmax: Union[Union[float, int], List[Union[float, int]]] = None,
-        nodata: Union[Union[float, int], List[Union[float, int]]] = None,
-        scheme: Union[str, List[str]] = None,
-        n_colors: int = 255,
+        indexes: list[int] | None = None,
+        colormap: str | None = None,
+        nodata: int | float | None = None,
+        vmin: float | None = None,
+        vmax: float | None = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
         band: Union[int, List[int]] = None,
@@ -244,7 +191,7 @@ class LocalTileClient:
             z,
             x,
             y,
-            colormap=cmap,
+            colormap=colormap,
             indexes=indexes,
             nodata=nodata,
             img_format=encoding,
@@ -254,7 +201,7 @@ class LocalTileClient:
         if output_path:
             with open(output_path, "wb") as f:
                 f.write(tile_binary)
-        return ImageBytes(tile_binary, mimetype="image/png")
+        return tile_binary
 
     def extract_roi(
         self,
@@ -323,10 +270,8 @@ class LocalTileClient:
             return_path=return_path,
         )
 
-    def metadata(self, projection: Optional[str] = ""):
+    def metadata(self, projection: Optional[str] = "EPSG:3857"):
         if projection not in self._metadata:
-            if projection == "":
-                projection = self.default_projection
             tile_source = get_tile_source(self.filename)
             self._metadata[projection] = get_meta_data(tile_source)
         return self._metadata[projection]
@@ -431,7 +376,7 @@ class LocalTileClient:
         if output_path:
             with open(output_path, "wb") as f:
                 f.write(thumb_data)
-        return ImageBytes(thumb_data, mimetype=f"image/{encoding.lower()}")
+        return thumb_data
 
     def point(self, lon: float, lat: float, **kwargs):
         tile_source = get_tile_source(self.filename)
@@ -455,23 +400,14 @@ class LocalTileClient:
             from localtileserver.widgets import get_leaflet_tile_layer
 
             t = get_leaflet_tile_layer(self)
-            if self.default_projection is None:
-                m = Map(
-                    basemap=t,
-                    min_zoom=0,
-                    max_zoom=self.max_zoom,
-                    zoom=0,
-                    crs=projections.Simple,
+            m = Map(center=self.center(), zoom=self.default_zoom)
+            m.add_layer(t)
+            if shapely:
+                wlayer = WKTLayer(
+                    wkt_string=self.bounds(return_wkt=True),
+                    style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
                 )
-            else:
-                m = Map(center=self.center(), zoom=self.default_zoom)
-                m.add_layer(t)
-                if shapely:
-                    wlayer = WKTLayer(
-                        wkt_string=self.bounds(return_wkt=True),
-                        style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
-                    )
-                    m.add_layer(wlayer)
+                m.add_layer(wlayer)
             return display(m)
 
     def _repr_png_(self):
@@ -502,7 +438,6 @@ class _TileServerManager:
     def __init__(
         self,
         filename: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase],
-        default_projection: Optional[str] = "EPSG:3857",
         port: Union[int, str] = "default",
         debug: bool = False,
         host: str = "127.0.0.1",
@@ -513,7 +448,7 @@ class _TileServerManager:
     ):
         if isinstance(filename, rasterio.io.DatasetReaderBase) and hasattr(filename, "name"):
             filename = filename.name
-        super().__init__(filename=filename, default_projection=default_projection)
+        super().__init__(filename=filename)
         app = AppManager.get_or_create_app(cors_all=cors_all)
         self._key = launch_server(app, port=port, debug=debug, host=host)
         # Store actual port just in case
@@ -630,9 +565,11 @@ class _TileServerManager:
     @wraps(LocalTileClient.get_tile_url_params)
     def get_tile_url(self, *args, client: bool = False, **kwargs):
         params = self.get_tile_url_params(*args, **kwargs)
-        return add_query_parameters(
+        url = add_query_parameters(
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
         )
+        print(url)
+        return url
 
 
 class TileClient(_TileServerManager, LocalTileClient):
@@ -648,7 +585,6 @@ def get_or_create_tile_client(
     ],
     port: Union[int, str] = "default",
     debug: bool = False,
-    default_projection: Optional[str] = "EPSG:3857",
 ):
     """A helper to safely get a TileClient from a path on disk.
 
@@ -662,7 +598,7 @@ def get_or_create_tile_client(
     _internally_created = False
     # Launch tile server if file path is given
     if not isinstance(source, TileClient):
-        source = TileClient(source, port=port, debug=debug, default_projection=default_projection)
+        source = TileClient(source, port=port, debug=debug)
         _internally_created = True
 
     # Check that the tile source is valid and no server errors

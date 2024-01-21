@@ -20,8 +20,8 @@ from localtileserver.tiler.handler import (
     yield_tile_source,
 )
 from localtileserver.tiler.palettes import get_palettes, palette_valid_or_raise
-from localtileserver.tiler.style import make_style
 from localtileserver.tiler.utilities import (
+    ImageBytes,
     format_to_encoding,
     get_cache_dir,
     get_clean_filename,

@@ -55,49 +55,20 @@ def is_mpl_cmap(name: str):
 
 
 def is_valid_palette_name(name: str):
-    return is_palettable_palette(name) or name in SIMPLE_PALETTES or is_mpl_cmap(name)
+    # return is_palettable_palette(name) or name in SIMPLE_PALETTES or is_mpl_cmap(name)
+    return is_mpl_cmap(name)
 
 
 def palette_valid_or_raise(name: str):
     status = False
     if isinstance(name, str):
         status = is_valid_palette_name(name)
-    elif isinstance(name, (list, tuple)):
-        status = all([is_valid_palette_name(p) for p in name]) or all([is_hex_str(p) for p in name])
+    # elif isinstance(name, (list, tuple)):
+    #     status = all([is_valid_palette_name(p) for p in name]) or all([is_hex_str(p) for p in name])
     if not status:
         raise ValueError(
             f"Please use a valid matplotlib colormap name or palettable palette name. Invalid: {name}"
         )
-
-
-def mpl_to_palette(cmap: str, n_colors: int = 255):
-    """Convert Matplotlib colormap to a palette."""
-    import matplotlib
-    import matplotlib.colors as mcolors
-
-    # TODO: this is deprecated but it isn't obvious how to do with new API
-    cmap = matplotlib.cm.get_cmap(cmap, n_colors)
-    color_list = [mcolors.rgb2hex(cmap(i)) for i in range(cmap.N)]
-    return color_list
-
-
-def get_palette_by_name(name: str, n_colors: int = 255):
-    """Get a palette by name.
-
-    This supports matplotlib colormaps and palettable palettes.
-
-    If the palette is a valid palettable name, return that name. Otherwise,
-    this will generate a full palette from the given name.
-
-    ``n_colors`` is only used if fetching a Matplotlib colormap.
-    """
-    palette_valid_or_raise(name)
-    if is_palettable_palette(name):
-        return name
-    if name in SIMPLE_PALETTES:
-        return SIMPLE_PALETTES[name]
-    if is_mpl_cmap(name):
-        return mpl_to_palette(name, n_colors=n_colors)
 
 
 def get_palettes():

@@ -1,6 +1,3 @@
-import json
-from urllib.parse import quote
-
 import requests
 
 from localtileserver.web.application import run_app
@@ -33,28 +30,13 @@ def test_cesium_split_view(flask_client):
     assert r.status_code == 200
 
 
-def test_style_json(flask_client):
-    style = {
-        "bands": [
-            {"band": 1, "palette": ["#000", "#0f0"]},
-        ]
-    }
-    style_encoded = quote(json.dumps(style))
-    r = flask_client.get(f"/api/thumbnail.png?style={style_encoded}")
+def test_style(flask_client):
+    r = flask_client.get("/api/thumbnail.png?colormap=viridis&indexes=1")
     assert r.status_code == 200
-    # Test bad style
-    bad_style = "foobar"
-    r = flask_client.get(f"/api/thumbnail.png?style={bad_style}")
-    assert r.status_code == 400
 
 
 def test_list_palettes(flask_client):
     r = flask_client.get("/api/palettes")
-    assert r.status_code == 200
-
-
-def test_list_sources(flask_client):
-    r = flask_client.get("/api/sources")
     assert r.status_code == 200
 
 
@@ -69,5 +51,5 @@ def test_cog_validate_endpoint(flask_client, remote_file_url):
 def test_run_app():
     app = run_app("bahamas", browser=False, run=False)
     with app.test_client() as f_client:
-        r = f_client.get("/api/sources")
+        r = f_client.get("/api/palettes")
         assert r.status_code == 200

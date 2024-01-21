@@ -13,7 +13,7 @@ from rio_tiler.colormap import cmap
 from rio_tiler.io import Reader
 from rio_tiler.models import ImageData
 
-from .utilities import get_cache_dir, get_clean_filename, make_crs
+from .utilities import ImageBytes, get_cache_dir, get_clean_filename, make_crs
 
 logger = logging.getLogger(__name__)
 
@@ -104,6 +104,11 @@ def _handle_band_indexes(tile_source: Reader, indexes: list[int] | None = None):
             indexes = [1]
         else:
             raise ValueError("Could not determine band indexes")
+    else:
+        if isinstance(indexes, str):
+            indexes = int(indexes)
+        if isinstance(indexes, int):
+            indexes = [indexes]
     return indexes
 
 
@@ -113,6 +118,9 @@ def _handle_nodata(tile_source: Reader, nodata: int | float | None = None):
         floaty = True
     if floaty and nodata is None and tile_source.dataset.nodata is not None:
         nodata = np.nan
+    elif nodata is not None:
+        if isinstance(nodata, str):
+            nodata = float(nodata)
     return nodata
 
 
@@ -143,7 +151,10 @@ def _render_image(
             in_range=in_range,
             out_range=[(0, 255)],
         )
-    return img.render(img_format=img_format, colormap=colormap if colormap else None)
+    return ImageBytes(
+        img.render(img_format=img_format, colormap=colormap if colormap else None),
+        mimetype=f"image/{img_format.lower()}",
+    )
 
 
 def get_tile(
