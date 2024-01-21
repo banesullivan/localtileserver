@@ -7,7 +7,7 @@ import requests
 from server_thread import ServerDownError, ServerManager
 
 from localtileserver.client import RestTileClient
-from localtileserver.tiler import get_clean_filename, get_tile_bounds, get_tile_source
+from localtileserver.tiler import get_clean_filename, get_source_bounds, get_tile_source
 from localtileserver.utilities import ImageBytes
 
 skip_shapely = False
@@ -35,7 +35,7 @@ def test_create_tile_client(bahamas_file):
     assert tile_client.filename == get_clean_filename(bahamas_file)
     assert tile_client.server_port
     assert tile_client.server_base_url
-    assert "bounds" in tile_client.metadata()
+    assert "crs" in tile_client.metadata()
     assert tile_client.bounds()
     center = tile_client.center()
     assert center[0] == pytest.approx(24.5579, abs=TOLERANCE)
@@ -46,14 +46,6 @@ def test_create_tile_client(bahamas_file):
     assert r.content
     tile_conent = tile_client.get_tile(z=8, x=72, y=110)
     assert tile_conent
-    tile_url = tile_client.get_tile_url(grid=True).format(z=8, x=72, y=110)
-    r = requests.get(tile_url)
-    r.raise_for_status()
-    assert r.content
-    tile_url = tile_client.create_url("api/tiles/debug/{z}/{x}/{y}.png".format(z=8, x=72, y=110))
-    r = requests.get(tile_url)
-    r.raise_for_status()
-    assert r.content
     tile_url = tile_client.get_tile_url(palette="matplotlib.Plasma_6").format(z=8, x=72, y=110)
     r = requests.get(tile_url)
     r.raise_for_status()
@@ -104,7 +96,7 @@ def test_extract_roi_world(bahamas_file):
     assert path.exists()
     source = get_tile_source(path, projection="EPSG:3857")
     assert source.getMetadata()["geospatial"]
-    e = get_tile_bounds(source, projection="EPSG:4326")
+    e = get_source_bounds(source, projection="EPSG:4326")
     assert e["xmin"] == pytest.approx(-78.047, abs=TOLERANCE)
     assert e["xmax"] == pytest.approx(-77.381, abs=TOLERANCE)
     assert e["ymin"] == pytest.approx(24.056, abs=TOLERANCE)
@@ -124,7 +116,7 @@ def test_extract_roi_world_shape(bahamas_file):
     assert path.exists()
     source = get_tile_source(path, projection="EPSG:3857")
     assert source.getMetadata()["geospatial"]
-    e = get_tile_bounds(source, projection="EPSG:4326")
+    e = get_source_bounds(source, projection="EPSG:4326")
     assert e["xmin"] == pytest.approx(-78.047, abs=TOLERANCE)
     assert e["xmax"] == pytest.approx(-77.381, abs=TOLERANCE)
     assert e["ymin"] == pytest.approx(24.056, abs=TOLERANCE)
@@ -213,13 +205,6 @@ def test_pixel(bahamas_file):
     # assert "bands" in pix
     pix = bahamas.pixel(24.56, -77.76, units="EPSG:4326")  # world coordinates
     assert "bands" in pix
-
-
-@pytest.mark.skip
-def test_histogram(bahamas_file):
-    bahamas = RestTileClient(bahamas_file)
-    hist = bahamas.histogram()
-    assert len(hist)
 
 
 @pytest.mark.parametrize("encoding", ["PNG", "JPEG", "JPG"])

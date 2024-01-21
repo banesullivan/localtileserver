@@ -29,11 +29,6 @@ rest.api.add_resource(
     endpoint="tiles",
 )
 rest.api.add_resource(
-    rest.TileDebugView,
-    "/tiles/debug/<int:z>/<int:x>/<int:y>.png",
-    endpoint="tiles-debug",
-)
-rest.api.add_resource(
     rest.ListPalettes,
     "/palettes",
     endpoint="palettes",

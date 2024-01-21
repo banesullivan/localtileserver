@@ -13,7 +13,7 @@ from localtileserver.tiler.handler import (
     get_meta_data,
     get_region_pixel,
     get_region_world,
-    get_tile_bounds,
+    get_source_bounds,
     get_tile_source,
     yield_tile_source,
 )

@@ -33,7 +33,7 @@ from localtileserver.tiler import (
     get_meta_data,
     get_region_pixel,
     get_region_world,
-    get_tile_bounds,
+    get_source_bounds,
     get_tile_source,
     make_style,
     palette_valid_or_raise,
@@ -49,7 +49,7 @@ class BaseTileClientInterface:
     """Base TileClient methods and configuration.
 
     This class does not perform any RESTful operations but will interface
-    directly with rio-tiler to produce results.
+    directly with rasterio and rio-tiler to produce results.
 
     Parameters
     ----------
@@ -65,6 +65,8 @@ class BaseTileClientInterface:
     ):
         self._filename = get_clean_filename(filename)
         self._metadata = {}
+
+        self._rasterio_ds = rasterio.open(self.filename, "r")
 
         if default_projection != "EPSG:3857":
             self._default_projection = default_projection
@@ -88,9 +90,6 @@ class BaseTileClientInterface:
     @property
     def rasterio(self):
         """Open dataset with rasterio."""
-        if hasattr(self, "_rasterio_ds"):
-            return self._rasterio_ds
-        self._rasterio_ds = rasterio.open(self.filename, "r")
         return self._rasterio_ds
 
     @property
@@ -167,7 +166,6 @@ class BaseTileClientInterface:
         nodata: Union[Union[float, int], List[Union[float, int]]] = None,
         scheme: Union[str, List[str]] = None,
         n_colors: int = 255,
-        grid: bool = False,
         style: dict = None,
         cmap: Union[str, List[str]] = None,
     ):
@@ -204,9 +202,6 @@ class BaseTileClientInterface:
         n_colors : int
             The number (positive integer) of colors to discretize the matplotlib
             color palettes when used.
-        grid : bool
-            Show the outline of each tile. This is useful when debugging your
-            tile viewer.
         style : dict, optional
             large-image JSON style. See
             https://girder.github.io/large_image/tilesource_options.html#style
@@ -229,8 +224,6 @@ class BaseTileClientInterface:
         if not projection:
             projection = self.default_projection
         params["projection"] = projection
-        if grid:
-            params["grid"] = True
         return params
 
     @wraps(get_tile_url_params)
@@ -390,7 +383,7 @@ class BaseTileClientInterface:
     ):
         raise NotImplementedError  # pragma: no cover
 
-    def pixel(self, y: float, x: float, units: str = "pixels", projection: Optional[str] = None):
+    def pixel(self, x: float, y: float):
         """Get pixel values for each band at the given coordinates (y <lat>, x <lon>).
 
         Parameters
@@ -399,25 +392,13 @@ class BaseTileClientInterface:
             The Y coordinate (from top of image if `pixels` units or latitude if using EPSG)
         x : float
             The X coordinate (from left of image if `pixels` units or longitude if using EPSG)
-        units : str
-            The units of the coordinates (`pixels` or `EPSG:4326`).
-        projection : str, optional
-            The projection in which to open the image.
 
         """
         raise NotImplementedError  # pragma: no cover
 
-    def histogram(self, bins: int = 256, density: bool = False):
-        """Get a histoogram for each band."""
-        raise NotImplementedError  # pragma: no cover
-
     @property
     def default_zoom(self):
-        m = self.metadata_safe()
-        try:
-            return m["levels"] - m["sourceLevels"]
-        except KeyError:
-            return 0
+        return 9  # TODO: implement this
 
     @property
     def max_zoom(self):
@@ -596,7 +577,7 @@ class LocalTileClient(BaseTileClientInterface):
     def bounds(
         self, projection: str = "EPSG:4326", return_polygon: bool = False, return_wkt: bool = False
     ):
-        bounds = get_tile_bounds(self.tile_source, projection=projection)
+        bounds = get_source_bounds(self.tile_source, projection=projection)
         extent = (bounds["bottom"], bounds["top"], bounds["left"], bounds["right"])
         if not return_polygon and not return_wkt:
             return extent
@@ -631,8 +612,8 @@ class LocalTileClient(BaseTileClientInterface):
         style: dict = None,
         cmap: Union[str, List[str]] = None,
         encoding: str = "PNG",
-        width: int = None,
-        height: int = None,
+        width: int = 512,
+        height: int = 512,
     ):
         if encoding.lower() not in ["png", "jpeg", "jpg", "tiff", "tif"]:
             raise ValueError(f"Encoding ({encoding}) not supported.")
@@ -652,21 +633,18 @@ class LocalTileClient(BaseTileClientInterface):
                 n_colors,
             )
         tile_source = get_tile_source(self.filename)
-        thumb_data, mimetype = tile_source.getThumbnail(
-            encoding=encoding, width=width, height=height
-        )
+        img = tile_source.preview(width=width, height=height, indexes=band)
+
+        thumb_data = img.render(img_format=encoding)
+
         if output_path:
             with open(output_path, "wb") as f:
                 f.write(thumb_data)
-        return ImageBytes(thumb_data, mimetype=mimetype)
+        return ImageBytes(thumb_data, mimetype=f"image/{encoding.lower()}")
 
-    def pixel(self, y: float, x: float, units: str = "pixels"):
-        region = {"left": x, "top": y, "units": units}
-        return self.tile_source.getPixel(region=region)
-
-    def histogram(self, bins: int = 256, density: bool = False):
-        result = self.tile_source.histogram(bins=bins, density=density)
-        return result["histogram"]
+    def pixel(self, lon: float, lat: float, **kwargs):
+        tile_source = get_tile_source(self.filename)
+        return tile_source.point(lon, lat, **kwargs)
 
 
 class BaseRestfulTileClient(BaseTileClientInterface):
@@ -802,27 +780,6 @@ class BaseRestfulTileClient(BaseTileClientInterface):
         if output_path:
             return save_file_from_request(r, output_path)
         return ImageBytes(r.content, mimetype=r.headers["Content-Type"])
-
-    def pixel(self, y: float, x: float, units: str = "pixels", projection: Optional[str] = None):
-        params = {}
-        params["x"] = x
-        params["y"] = y
-        params["units"] = units
-        if projection:
-            params["projection"] = projection
-        url = add_query_parameters(self.create_url("api/pixel"), params)
-        r = requests.get(url)
-        r.raise_for_status()
-        return r.json()
-
-    def histogram(self, bins: int = 256, density: bool = False):
-        params = {}
-        params["density"] = density
-        params["bins"] = bins
-        url = add_query_parameters(self.create_url("api/histogram"), params)
-        r = requests.get(url)
-        r.raise_for_status()
-        return r.json()
 
 
 class RemoteTileClient(BaseRestfulTileClient):

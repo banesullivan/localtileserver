@@ -13,7 +13,7 @@ from localtileserver import __version__
 from localtileserver.tiler import (
     format_to_encoding,
     get_meta_data,
-    get_tile_bounds,
+    get_source_bounds,
     get_tile_source,
 )
 from localtileserver.tiler.data import str_to_bool
@@ -193,7 +193,7 @@ class MetadataView(BaseImageView):
 class BoundsView(BaseImageView):
     def get(self):
         tile_source = self.get_tile_source()
-        bounds = get_tile_bounds(
+        bounds = get_source_bounds(
             tile_source,
             projection=request.args.get("crs", "EPSG:4326"),
         )
@@ -221,69 +221,10 @@ class ThumbnailView(BaseImageView):
 
 @api.doc(params=STYLE_PARAMS)
 class BaseTileView(BaseImageView):
-    @staticmethod
-    def add_border_to_image(content, msg: str = None):
-        img = Image.open(io.BytesIO(content))
-        img = ImageOps.crop(img, 1)
-        border = ImageOps.expand(img, border=1, fill="black")
-        if msg is not None:
-            draw = ImageDraw.Draw(border)
-            w = draw.textlength(msg, direction="rtl")
-            h = draw.textlength(msg, direction="ttb")
-            draw.text(((255 - w) / 2, (255 - h) / 2), msg, fill="red")
-        img_bytes = io.BytesIO()
-        border.save(img_bytes, format="PNG")
-        return img_bytes.getvalue()
+    pass
 
 
-@api.doc(
-    params={
-        "sleep": {
-            "description": "The time in seconds to delay serving each tile (useful when debugging to slow things down).",
-            "in": "query",
-            "type": "float",
-            "default": 0.5,
-        }
-    }
-)
-class TileDebugView(View):
-    """A dummy tile server endpoint that produces borders of the tile grid.
-
-    This is used for testing tile viewers. It returns the same thing on every
-    call. This takes a query parameter `sleep` to delay the response for
-    testing (default is 0.5).
-
-    """
-
-    def get(self, x: int, y: int, z: int):
-        img = Image.new("RGBA", (254, 254))
-        img = ImageOps.expand(img, border=1, fill="black")
-        draw = ImageDraw.Draw(img)
-        msg = f"{x}/{y}/{z}"
-        w = draw.textlength(msg, direction="rtl")
-        h = draw.textlength(msg, direction="ttb")
-        draw.text(((255 - w) / 2, (255 - h) / 2), msg, fill="black")
-        img_bytes = io.BytesIO()
-        img.save(img_bytes, format="PNG")
-        img_bytes.seek(0)
-        time.sleep(float(request.args.get("sleep", 0.5)))
-        return send_file(
-            img_bytes,
-            download_name=f"{x}.{y}.{z}.png",
-            mimetype="image/png",
-        )
-
-
-@api.doc(
-    params={
-        "grid": {
-            "description": "Show a grid/outline around each tile. This is useful for debugging viewers.",
-            "in": "query",
-            "type": "bool",
-            "default": False,
-        }
-    }
-)
+@api.doc()
 class TileView(BaseTileView):
     @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self, x: int, y: int, z: int):
@@ -292,9 +233,6 @@ class TileView(BaseTileView):
             tile_binary = tile_source.tile(x, y, z).render(img_format="png")
         except TileOutsideBounds as e:
             raise NotFound(str(e))
-        grid = str_to_bool(request.args.get("grid", "False"))
-        if grid:
-            tile_binary = self.add_border_to_image(tile_binary, msg=f"{x}/{y}/{z}")
         return send_file(
             io.BytesIO(tile_binary),
             download_name=f"{x}.{y}.{z}.png",

@@ -1,4 +1,3 @@
-from large_image.exceptions import TileSourceInefficientError
 import pytest
 
 from localtileserver import Report, TileClient
@@ -47,5 +46,4 @@ def test_cog_validate(remote_file_url):
 
 
 def test_cog_validate_error(bahamas):
-    with pytest.raises(TileSourceInefficientError):
-        assert validate_cog(bahamas)
+    assert not validate_cog(bahamas)

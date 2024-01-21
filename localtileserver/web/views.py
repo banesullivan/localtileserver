@@ -6,7 +6,7 @@ from flask.views import View
 from rasterio.errors import RasterioIOError
 
 from localtileserver.tiler import data
-from localtileserver.tiler.handler import get_meta_data, get_tile_bounds, get_tile_source
+from localtileserver.tiler.handler import get_meta_data, get_source_bounds, get_tile_source
 from localtileserver.web.blueprint import tileserver
 from localtileserver.web.utils import get_clean_filename_from_request
 
@@ -71,7 +71,7 @@ def raster_context():
     except (OSError, AttributeError, RasterioIOError):
         return context
     context.update(get_meta_data(tile_source))
-    context["bounds"] = get_tile_bounds(tile_source, projection="EPSG:4326")
+    context["bounds"] = get_source_bounds(tile_source, projection="EPSG:4326")
     return context
 
 

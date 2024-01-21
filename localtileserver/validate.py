@@ -14,11 +14,11 @@ def validate_cog(
     path: Union[str, Reader, BaseTileClientInterface],
     strict: bool = True,
     quiet: bool = False,
-):
+) -> bool:
     if isinstance(path, Reader):
         path = path.dataset.name
     elif isinstance(path, BaseTileClientInterface):
         path = path.filename
     else:
         path = get_clean_filename(path)
-    return cog_validate(path, strict=strict, quiet=quiet)
+    return cog_validate(path, strict=strict, quiet=quiet)[0]
