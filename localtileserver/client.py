@@ -49,7 +49,7 @@ class BaseTileClientInterface:
     """Base TileClient methods and configuration.
 
     This class does not perform any RESTful operations but will interface
-    directly with large-image to produce results.
+    directly with rio-tiler to produce results.
 
     Parameters
     ----------

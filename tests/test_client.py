@@ -236,7 +236,6 @@ def test_histogram(bahamas):
 
 @pytest.mark.parametrize("encoding", ["PNG", "JPEG", "JPG"])
 def test_thumbnail_encodings(bahamas, encoding):
-    # large-image's rasterio source cannot handle: "TIF", "TIFF"
     thumbnail = bahamas.thumbnail(encoding=encoding)
     assert thumbnail  # TODO: check content
     assert isinstance(thumbnail, ImageBytes)
