@@ -23,13 +23,22 @@ def get_reader(path: Union[pathlib.Path, str]) -> Reader:
 
 def get_meta_data(tile_source: Reader):
     metadata = tile_source.dataset.meta
-    metadata.update(crs=metadata["crs"].to_wkt(), transform=list(metadata["transform"]))
-    metadata["bounds"] = get_source_bounds(tile_source)
+    crs = metadata["crs"].to_wkt() if hasattr(metadata["crs"], "to_wkt") else None
+    metadata.update(crs=crs, transform=list(metadata["transform"]))
+    if crs:
+        metadata["bounds"] = get_source_bounds(tile_source)
     return metadata
 
 
 def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decimal_places: int = 6):
     src_crs = tile_source.dataset.crs
+    if not src_crs:
+        return {
+            "left": -180.0,
+            "bottom": -90.0,
+            "right": 180.0,
+            "top": 90.0,
+        }
     dst_crs = make_crs(projection)
     left, bottom, right, top = rasterio.warp.transform_bounds(
         src_crs, dst_crs, *tile_source.dataset.bounds
@@ -109,7 +118,6 @@ def _render_image(
             (s.min if vmin is None else vmin, s.max if vmax is None else vmax)
             for s in stats.values()
         ]
-        print(in_range)
         img.rescale(
             in_range=in_range,
             out_range=[(0, 255)],

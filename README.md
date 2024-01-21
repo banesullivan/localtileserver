@@ -46,7 +46,7 @@ client = TileClient('path/to/geo.tif')
 t = get_leaflet_tile_layer(client)
 
 m = Map(center=client.center(), zoom=client.default_zoom)
-m.add_layer(t)
+m.add(t)
 m
 ```
 

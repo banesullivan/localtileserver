@@ -1,6 +1,7 @@
 import logging
 import pathlib
 from typing import Union
+import warnings
 
 import rasterio
 
@@ -72,6 +73,17 @@ def get_leaflet_tile_layer(
         from traitlets import Tuple, Union
     except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `ipyleaflet`: {e}") from e
+
+    if "band" in kwargs:
+        indexes = kwargs.pop("band")
+        warnings.warn(
+            "The `band` keyword argument is deprecated. Please use `indexes` instead.",
+        )
+    if "cmap" in kwargs:
+        colormap = kwargs.pop("cmap")
+        warnings.warn(
+            "The `cmap` keyword argument is deprecated. Please use `colormap` instead.",
+        )
 
     class BoundTileLayer(TileLayer, LocalTileServerLayerMixin):
         # https://github.com/jupyter-widgets/ipyleaflet/issues/888
@@ -160,6 +172,17 @@ def get_folium_tile_layer(
         from folium import TileLayer
     except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `folium`: {e}")
+
+    if "band" in kwargs:
+        indexes = kwargs.pop("band")
+        warnings.warn(
+            "The `band` keyword argument is deprecated. Please use `indexes` instead.",
+        )
+    if "cmap" in kwargs:
+        colormap = kwargs.pop("cmap")
+        warnings.warn(
+            "The `cmap` keyword argument is deprecated. Please use `colormap` instead.",
+        )
 
     class FoliumTileLayer(TileLayer, LocalTileServerLayerMixin):
         pass
