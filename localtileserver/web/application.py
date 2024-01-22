@@ -31,7 +31,6 @@ def create_app(
     app.config["cesium_token"] = cesium_token
     if debug:
         logging.getLogger("werkzeug").setLevel(logging.DEBUG)
-        logging.getLogger("gdal").setLevel(logging.DEBUG)
         logging.getLogger("rasterio").setLevel(logging.DEBUG)
         logging.getLogger("rio_tiler").setLevel(logging.DEBUG)
     return app
