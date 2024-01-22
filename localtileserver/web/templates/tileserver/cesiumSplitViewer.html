@@ -79,8 +79,8 @@
   var tileLayerB;
   var layers = viewer.scene.imageryLayers;
 
-  var tileUrlA = `${host}/api/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filenameA}`;
-  var tileUrlB = `${host}/api/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=${filenameB}`;
+  var tileUrlA = `${host}/api/tiles/{z}/{x}/{y}.png?filename=${filenameA}`;
+  var tileUrlB = `${host}/api/tiles/{z}/{x}/{y}.png?filename=${filenameB}`;
 
   fetch(`${host}/api/metadata?filename=${filenameA}`)
     .then(response => response.json())

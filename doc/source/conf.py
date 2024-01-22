@@ -118,7 +118,7 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager_labels_under/
     attribution: 'Map tiles by <a href="https://carto.com">Carto</a>, under CC BY 3.0. Data by <a href="https://www.openstreetmap.org/">OpenStreetMap</a>, under ODbL.'
 }).addTo(map);
 
-L.tileLayer('https://tileserver.banesullivan.com/api/tiles/{z}/{x}/{y}.png?projection=EPSG:3857&filename=https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif', {
+L.tileLayer('https://tileserver.banesullivan.com/api/tiles/{z}/{x}/{y}.png?filename=https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif', {
     attribution: 'Raster file served by <a href="https://github.com/banesullivan/localtileserver" target="_blank">localtileserver</a>.',
     subdomains: '',
     crossOrigin: false,
