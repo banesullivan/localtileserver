@@ -19,6 +19,8 @@ repos:
   - id: check-docstring-first
   - id: end-of-file-fixer
   - id: mixed-line-ending
+  - id: check-toml
+  - id: check-yaml
 
 - repo: https://github.com/python-jsonschema/check-jsonschema
   rev: 0.27.3
