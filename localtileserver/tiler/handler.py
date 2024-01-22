@@ -22,8 +22,13 @@ def get_reader(path: Union[pathlib.Path, str]) -> Reader:
 
 
 def get_meta_data(tile_source: Reader):
+    info = tile_source.info()
+    if hasattr(info, "model_dump"):
+        info = info.model_dump()
+    else:
+        info = info.dict()
     metadata = {
-        **tile_source.info().model_dump(),
+        **info,
         **tile_source.dataset.meta,
     }
     crs = metadata["crs"].to_wkt() if hasattr(metadata["crs"], "to_wkt") else None
