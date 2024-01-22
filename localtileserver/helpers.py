@@ -63,7 +63,7 @@ def save_new_raster(src, data, out_path: str = None):
 
     Parameters
     ----------
-    src : str, DatasetReader, BaseTileClientInterface
+    src : str, DatasetReader, TilerInterface
         The source rasterio data whose spatial reference will be copied
     data : np.ndarray
         The bands of data to save to the new raster
@@ -72,15 +72,15 @@ def save_new_raster(src, data, out_path: str = None):
         use a temporary file
 
     """
-    from localtileserver.client import BaseTileClientInterface
+    from localtileserver.client import TilerInterface
 
     if data.ndim == 2:
         data = data.reshape((1, *data.shape))
     if data.ndim != 3:
         raise AssertionError("data must be ndim 3: (bands, height, width)")
 
-    if isinstance(src, BaseTileClientInterface):
-        src = src.rasterio
+    if isinstance(src, TilerInterface):
+        src = src.dataset
     if isinstance(src, rasterio.io.DatasetReaderBase):
         ras_meta = src.meta.copy()
     else:

@@ -1,13 +1,7 @@
-from large_image.exceptions import TileSourceInefficientError
 import pytest
 
 from localtileserver import Report, TileClient
-from localtileserver.tiler.palettes import (
-    get_palette_by_name,
-    get_palettes,
-    is_valid_palette_name,
-    mpl_to_palette,
-)
+from localtileserver.tiler.palettes import get_palettes, is_mpl_cmap
 from localtileserver.validate import validate_cog
 
 has_mpl = False
@@ -20,16 +14,14 @@ except ImportError:
 
 
 def test_is_valid_palette_name():
-    assert is_valid_palette_name("matplotlib.Viridis_20")
-    assert not is_valid_palette_name("foobar")
+    assert is_mpl_cmap("viridis")
+    assert not is_mpl_cmap("foobar")
 
 
 @pytest.mark.skipif(not has_mpl, reason="matplotlib not installed.")
 def test_mpl_colormaps():
-    assert is_valid_palette_name("viridis")
-    assert is_valid_palette_name("jet")
-    assert len(mpl_to_palette("jet"))
-    assert get_palette_by_name("jet")
+    assert is_mpl_cmap("viridis")
+    assert is_mpl_cmap("jet")
 
 
 def test_report():
@@ -46,6 +38,5 @@ def test_cog_validate(remote_file_url):
     assert validate_cog(client)
 
 
-def test_cog_validate_error(bahamas):
-    with pytest.raises(TileSourceInefficientError):
-        assert validate_cog(bahamas)
+def test_cog_validate_bahamas(bahamas):
+    assert validate_cog(bahamas)

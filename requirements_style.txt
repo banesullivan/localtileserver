@@ -1,8 +1,0 @@
-codespell
-flake8
-black
-isort
-pydocstyle
-flake8-black
-flake8-isort
-flake8-bugbear

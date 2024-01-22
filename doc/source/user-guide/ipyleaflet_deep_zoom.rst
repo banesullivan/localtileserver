@@ -30,5 +30,5 @@ For more information, please see https://github.com/jupyter-widgets/ipyleaflet/i
   m = Map(center=client.center(),
           zoom=22, max_zoom=max_zoom
   )
-  m.add_layer(layer)
+  m.add(layer)
   m
