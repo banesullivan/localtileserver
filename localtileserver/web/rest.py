@@ -166,7 +166,7 @@ class ThumbnailView(BaseImageView):
 
 @api.doc(params=STYLE_PARAMS)
 class TileView(BaseImageView):
-    # @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
+    @cache.cached(timeout=REQUEST_CACHE_TIMEOUT, key_prefix=make_cache_key)
     def get(self, x: int, y: int, z: int, format: str = "png"):
         tile_source = self.get_reader()
         img_format = format_to_encoding(format)
