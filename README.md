@@ -16,8 +16,7 @@ Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinde
 
 Documentation: https://localtileserver.banesullivan.com/
 
-Under the hood, this is also a Flask blueprint/application for use as a
-standalone web app or in your own web deployments needing dynamic tile serving.
+Built on [rio-tiler](https://github.com/cogeotiff/rio-tiler)
 
 
 ## 🌟 Highlights
