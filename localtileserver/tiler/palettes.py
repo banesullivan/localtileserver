@@ -17,7 +17,7 @@ def is_mpl_cmap(name: str):
     try:
         import matplotlib
 
-        matplotlib.cm.get_cmap(name)
+        matplotlib.colormaps.get_cmap(name)
         return True
     except ImportError:  # pragma: no cover
         logger.error("Install matplotlib for additional colormap choices.")
