@@ -433,6 +433,11 @@ default is for all TileClient’s to share a single server.</p>
 <dd class="field-odd"><p><strong>source</strong> (<em>pathlib.Path</em><em>, </em><em>str</em><em>, </em><em>Reader</em><em>, </em><em>DatasetReaderBase</em>) – The source dataset to use for the tile client.</p>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="localtileserver.client.TilerInterface.band_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">band_names</span></span><a class="headerlink" href="#localtileserver.client.TilerInterface.band_names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="localtileserver.client.TilerInterface.bounds">
 <span class="sig-name descname"><span class="pre">bounds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'EPSG:4326'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_wkt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.TilerInterface.bounds" title="Link to this definition">#</a></dt>
@@ -694,6 +699,7 @@ use a temporary file</p></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-client">Python Client</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.get_or_create_tile_client"><code class="docutils literal notranslate"><span class="pre">get_or_create_tile_client()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TilerInterface"><code class="docutils literal notranslate"><span class="pre">TilerInterface</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TilerInterface.band_names"><code class="docutils literal notranslate"><span class="pre">TilerInterface.band_names</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TilerInterface.bounds"><code class="docutils literal notranslate"><span class="pre">TilerInterface.bounds()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TilerInterface.center"><code class="docutils literal notranslate"><span class="pre">TilerInterface.center()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TilerInterface.dataset"><code class="docutils literal notranslate"><span class="pre">TilerInterface.dataset</span></code></a></li>
