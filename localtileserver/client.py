@@ -82,6 +82,10 @@ class TilerInterface:
         return get_meta_data(self.reader)
 
     @property
+    def band_names(self):
+        return [desc[0] for desc in self.metadata["band_descriptions"]]
+
+    @property
     def min_zoom(self):
         return self.info.minzoom
 

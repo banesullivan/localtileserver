@@ -65,6 +65,19 @@ def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decima
 
 
 def _handle_band_indexes(tile_source: Reader, indexes: Optional[List[int]] = None):
+    band_names = [desc[0] for desc in tile_source.info().band_descriptions]
+
+    def _index_lookup(index_or_name: str):
+        try:
+            return int(index_or_name)
+        except ValueError:
+            pass
+        try:
+            return band_names.index(index_or_name) + 1
+        except ValueError:
+            pass
+        raise ValueError(f"Could not find band {index_or_name}")
+
     if not indexes:
         RGB_INTERPRETATIONS = [ColorInterp.red, ColorInterp.green, ColorInterp.blue]
         RGB_DESCRIPTORS = ["red", "green", "blue"]
@@ -84,7 +97,7 @@ def _handle_band_indexes(tile_source: Reader, indexes: Optional[List[int]] = Non
         if isinstance(indexes, int):
             indexes = [indexes]
         if isinstance(indexes, list):
-            indexes = [int(i) for i in indexes]
+            indexes = [_index_lookup(ind) for ind in indexes]
     return indexes
 
 

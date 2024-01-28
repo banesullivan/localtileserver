@@ -119,6 +119,11 @@ def test_multiband(bahamas):
         nodata=0,
     ).format(z=8, x=72, y=110)
     assert get_content(url)  # just make sure it doesn't fail
+    # Check that band names are handled
+    url = bahamas.get_tile_url(
+        indexes=bahamas.band_names,
+    ).format(z=8, x=72, y=110)
+    assert get_content(url)  # just make sure it doesn't fail
 
 
 def test_multiband_vmin_vmax(bahamas):
