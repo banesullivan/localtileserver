@@ -160,7 +160,7 @@ class ThumbnailView(BaseImageView):
         return send_file(
             thumb_data,
             download_name=f"thumbnail.{format}",
-            mimetype="image/png",  # TODO
+            mimetype=f"image/{format.lower()}",
         )
 
 

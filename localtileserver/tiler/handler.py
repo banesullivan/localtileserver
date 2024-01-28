@@ -11,10 +11,11 @@ from rio_tiler.models import ImageData
 
 from .utilities import ImageBytes, get_clean_filename, make_crs
 
-# gdal.SetConfigOption("GDAL_ENABLE_WMS_CACHE", "YES")
-# gdal.SetConfigOption("GDAL_DEFAULT_WMS_CACHE_PATH", str(get_cache_dir() / "gdalwmscache"))
-# TODO: what's the other option for directories on S3?
-# TODO: should I set these in a rasterio.Env?
+# Some GDAL options to consider setting:
+# - GDAL_ENABLE_WMS_CACHE="YES"
+# - GDAL_DEFAULT_WMS_CACHE_PATH=str(get_cache_dir() / "gdalwmscache"))
+# - GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR"
+# - GDAL_HTTP_UNSAFESSL="YES"
 
 
 def get_reader(path: Union[pathlib.Path, str]) -> Reader:

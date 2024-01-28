@@ -170,7 +170,6 @@ class TilerInterface:
         nodata: Optional[Union[int, float]] = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
-        band: Union[int, List[int]] = None,
     ):
         """Generate a tile from the source raster.
 
@@ -197,9 +196,6 @@ class TilerInterface:
             The value from the band to use to interpret as not valid data.
 
         """
-        if indexes is None:
-            # TODO: properly deprecate
-            indexes = band
         if encoding.lower() not in ["png", "jpeg", "jpg"]:
             raise ValueError(f"Encoding ({encoding}) not supported.")
         encoding = format_to_encoding(encoding)
