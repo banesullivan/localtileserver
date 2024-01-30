@@ -79,6 +79,11 @@ def get_leaflet_tile_layer(
         warnings.warn(
             "The `band` keyword argument is deprecated. Please use `indexes` instead.",
         )
+    elif "bands" in kwargs:
+        indexes = kwargs.pop("bands")
+        warnings.warn(
+            "The `bands` keyword argument is deprecated. Please use `indexes` instead.",
+        )
     if "cmap" in kwargs:
         colormap = kwargs.pop("cmap")
         warnings.warn(
@@ -177,6 +182,11 @@ def get_folium_tile_layer(
         indexes = kwargs.pop("band")
         warnings.warn(
             "The `band` keyword argument is deprecated. Please use `indexes` instead.",
+        )
+    elif "bands" in kwargs:
+        indexes = kwargs.pop("bands")
+        warnings.warn(
+            "The `bands` keyword argument is deprecated. Please use `indexes` instead.",
         )
     if "cmap" in kwargs:
         colormap = kwargs.pop("cmap")
