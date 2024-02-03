@@ -25,7 +25,7 @@ classifiers = [
 requires-python = '>=3.8'
 dependencies = [
     "click",
-    "flask>=2.0.0,<3",
+    "flask>=2.0.0,<4",
     "Flask-Caching",
     "flask-cors",
     "flask-restx>=0.5.0",
