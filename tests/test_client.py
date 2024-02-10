@@ -26,8 +26,8 @@ skip_mac_arm = pytest.mark.skipif(
 TOLERANCE = 2e-2
 
 
-def get_content(url):
-    r = requests.get(url)
+def get_content(url, timeout=5, **kwargs):
+    r = requests.get(url, timeout=timeout, **kwargs)
     r.raise_for_status()
     return r.content
 
@@ -44,15 +44,11 @@ def test_create_tile_client(bahamas_file):
     assert center[0] == pytest.approx(24.5579, abs=TOLERANCE)
     assert center[1] == pytest.approx(-77.7668, abs=TOLERANCE)
     tile_url = tile_client.get_tile_url().format(z=8, x=72, y=110)
-    r = requests.get(tile_url, timeout=5)
-    r.raise_for_status()
-    assert r.content
+    assert get_content(tile_url)  # just make sure it doesn't fail
     tile_conent = tile_client.tile(z=8, x=72, y=110)
     assert tile_conent
     tile_url = tile_client.get_tile_url(colormap="plasma").format(z=8, x=72, y=110)
-    r = requests.get(tile_url, timeout=5)
-    r.raise_for_status()
-    assert r.content
+    assert get_content(tile_url)  # just make sure it doesn't fail
     thumb = tile_client.thumbnail()
     assert isinstance(thumb, ImageBytes)
     assert thumb.mimetype == "image/png"
@@ -68,15 +64,12 @@ def test_create_tile_client_bad(bahamas_file):
 
 def test_client_force_shutdown(bahamas):
     tile_url = bahamas.get_tile_url().format(z=8, x=72, y=110)
-    r = requests.get(tile_url)
-    r.raise_for_status()
-    assert r.content
+    assert get_content(tile_url)  # just make sure it doesn't fail
     assert ServerManager.server_count() == 1
     bahamas.shutdown(force=True)
     assert ServerManager.server_count() == 0
     with pytest.raises(requests.ConnectionError):
-        r = requests.get(tile_url)
-        r.raise_for_status()
+        assert get_content(tile_url)
 
 
 # def test_multiple_tile_clients_one_server(bahamas, blue_marble):
