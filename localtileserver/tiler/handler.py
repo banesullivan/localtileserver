@@ -173,8 +173,6 @@ def _render_image(
                     stats[f"b{i}"].max if vmax[i] is None else vmax[i],
                 )
             )
-        print("====== in range")
-        print(in_range)
         img.rescale(
             in_range=in_range,
             out_range=[(0, 255)],
