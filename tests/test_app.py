@@ -16,8 +16,8 @@ def test_home_page(flask_client):
 
 
 def test_cesium_split_view(flask_client):
-    filenameA = "https%3A%2F%2Fopendata.digitalglobe.com%2Fmarshall-fire21%2Fpre%2F13%2F031131113123%2F2021-12-21%2F1050010028D5F600-visual.tif"
-    filenameB = "https%3A%2F%2Fopendata.digitalglobe.com%2Fmarshall-fire21%2Fpost-event%2F2021-12-30%2F10200100BCB1A500%2F10200100BCB1A500.tif"
+    filenameA = "https://github.com/giswqs/data/raw/main/raster/landsat7.tif"
+    filenameB = filenameA
     r = flask_client.get(f"/split/?filenameA={filenameA}&filenameB={filenameB}")
     assert r.status_code == 200
     r = flask_client.get(f"/split/?filenameA={filenameA}")

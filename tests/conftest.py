@@ -35,7 +35,7 @@ def blue_marble(port="default", debug=True):
 
 @pytest.fixture
 def remote_file_url():
-    return "https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif"
+    return "https://github.com/giswqs/data/raw/main/raster/landsat7.tif"
 
 
 @pytest.fixture

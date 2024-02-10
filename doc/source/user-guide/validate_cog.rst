@@ -15,7 +15,7 @@ You can use the script by:
    from localtileserver import validate_cog
 
    # Path to raster (URL or local path)
-   url = 'https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif'
+   url = 'https://github.com/giswqs/data/raw/main/raster/landsat7.tif'
 
    # If invalid, returns False
    validate_cog(url)

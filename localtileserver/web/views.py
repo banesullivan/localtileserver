@@ -74,7 +74,6 @@ def sample_data_context():
     context["filename_dem"] = data.get_data_path("aws_elevation_tiles_prod.xml")
     context["filename_bluemarble"] = data.get_data_path("frmt_wms_bluemarble_s3_tms.xml")
     context["filename_virtualearth"] = data.get_data_path("frmt_wms_virtualearth.xml")
-    context["filename_pine_gulch"] = data.get_pine_gulch_url()
     context["filename_sf_bay"] = data.get_sf_bay_url()
     context["filename_landsat_salt_lake"] = data.get_data_path("landsat.tif")
     context["filename_oam2"] = data.get_oam2_url()
