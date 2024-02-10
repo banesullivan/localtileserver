@@ -116,8 +116,8 @@ def _handle_nodata(tile_source: Reader, nodata: Optional[Union[int, float]] = No
 
 def _handle_vmin_vmax(
     indexes: List[int],
-    vmin: Optional[float | List[float]] = None,
-    vmax: Optional[float | List[float]] = None,
+    vmin: Optional[Union[float | List[float]]] = None,
+    vmax: Optional[Union[float | List[float]]] = None,
 ) -> Tuple[Dict[int, float], Dict[int, float]]:
     # TODO: move these string checks to the rest api
     if isinstance(vmin, (str, int)):
@@ -192,8 +192,8 @@ def get_tile(
     y: int,
     indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
-    vmin: Optional[float | List[float]] = None,
-    vmax: Optional[float | List[float]] = None,
+    vmin: Optional[Union[float | List[float]]] = None,
+    vmax: Optional[Union[float | List[float]]] = None,
     nodata: Optional[Union[int, float]] = None,
     img_format: str = "PNG",
 ):
@@ -227,8 +227,8 @@ def get_preview(
     tile_source: Reader,
     indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
-    vmin: Optional[float | List[float]] = None,
-    vmax: Optional[float | List[float]] = None,
+    vmin: Optional[Union[float | List[float]]] = None,
+    vmax: Optional[Union[float | List[float]]] = None,
     nodata: Optional[Union[int, float]] = None,
     img_format: str = "PNG",
     max_size: int = 512,
