@@ -1,6 +1,6 @@
 """Methods for working with images."""
 import pathlib
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import rasterio
@@ -114,32 +114,67 @@ def _handle_nodata(tile_source: Reader, nodata: Optional[Union[int, float]] = No
     return nodata
 
 
+def _handle_vmin_vmax(
+    indexes: List[int],
+    vmin: Optional[float | List[float]] = None,
+    vmax: Optional[float | List[float]] = None,
+) -> Tuple[Dict[int, float], Dict[int, float]]:
+    # TODO: move these string checks to the rest api
+    if isinstance(vmin, (str, int)):
+        vmin = float(vmin)
+    if isinstance(vmax, (str, int)):
+        vmax = float(vmax)
+    if isinstance(vmin, list):
+        vmin = [float(v) for v in vmin]
+    if isinstance(vmax, list):
+        vmax = [float(v) for v in vmax]
+    if isinstance(vmin, float) or vmin is None:
+        vmin = [vmin] * len(indexes)
+    if isinstance(vmax, float) or vmax is None:
+        vmax = [vmax] * len(indexes)
+    # vmin/vmax must be list of values at this point
+    if len(vmin) != len(indexes):
+        raise ValueError("vmin must be same length as indexes")
+    if len(vmax) != len(indexes):
+        raise ValueError("vmax must be same length as indexes")
+    # Now map to the band indexes
+    return dict(zip(indexes, vmin)), dict(zip(indexes, vmax))
+
+
 def _render_image(
     tile_source: Reader,
     img: ImageData,
-    indexes: Optional[List[int]] = None,
+    indexes: List[int],
+    vmin: Dict[int, Optional[float]],
+    vmax: Dict[int, Optional[float]],
     colormap: Optional[str] = None,
-    vmin: Optional[float] = None,
-    vmax: Optional[float] = None,
     img_format: str = "PNG",
 ):
-    if isinstance(vmin, str):
-        vmin = float(vmin)
-    if isinstance(vmax, str):
-        vmax = float(vmax)
     colormap = cmap.get(colormap) if colormap else None
     if (
         not colormap
         and len(indexes) == 1
         and tile_source.dataset.colorinterp[indexes[0] - 1] == ColorInterp.palette
     ):
+        # NOTE: vmin/vmax are not used for palette images
         colormap = tile_source.dataset.colormap(indexes[0])
-    elif img.data.dtype != np.dtype("uint8") or vmin is not None or vmax is not None:
-        stats = tile_source.statistics()
-        in_range = [
-            (s.min if vmin is None else vmin, s.max if vmax is None else vmax)
-            for s in stats.values()
-        ]
+    # TODO: change these to any checks for none in vmin/vmax
+    elif (
+        img.data.dtype != np.dtype("uint8")
+        or any(v is not None for v in vmin)
+        or any(v is not None for v in vmax)
+    ):
+        stats = tile_source.statistics(indexes=indexes)
+        in_range = []
+        for i in indexes:
+            in_range.append(
+                (
+                    stats[f"b{i}"].min if vmin[i] is None else vmin[i],
+                    stats[f"b{i}"].max if vmax[i] is None else vmax[i],
+                )
+            )
+        print("====== in range")
+        print(in_range)
         img.rescale(
             in_range=in_range,
             out_range=[(0, 255)],
@@ -157,8 +192,8 @@ def get_tile(
     y: int,
     indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
-    vmin: Optional[float] = None,
-    vmax: Optional[float] = None,
+    vmin: Optional[float | List[float]] = None,
+    vmax: Optional[float | List[float]] = None,
     nodata: Optional[Union[int, float]] = None,
     img_format: str = "PNG",
 ):
@@ -166,15 +201,16 @@ def get_tile(
         indexes = [1]
     indexes = _handle_band_indexes(tile_source, indexes)
     nodata = _handle_nodata(tile_source, nodata)
+    vmin, vmax = _handle_vmin_vmax(indexes, vmin, vmax)
     img = tile_source.tile(x, y, z, indexes=indexes, nodata=nodata)
     return _render_image(
         tile_source,
         img,
         indexes=indexes,
-        colormap=colormap,
-        img_format=img_format,
         vmin=vmin,
         vmax=vmax,
+        colormap=colormap,
+        img_format=img_format,
     )
 
 
@@ -191,8 +227,8 @@ def get_preview(
     tile_source: Reader,
     indexes: Optional[List[int]] = None,
     colormap: Optional[str] = None,
-    vmin: Optional[float] = None,
-    vmax: Optional[float] = None,
+    vmin: Optional[float | List[float]] = None,
+    vmax: Optional[float | List[float]] = None,
     nodata: Optional[Union[int, float]] = None,
     img_format: str = "PNG",
     max_size: int = 512,
@@ -201,13 +237,14 @@ def get_preview(
         indexes = [1]
     indexes = _handle_band_indexes(tile_source, indexes)
     nodata = _handle_nodata(tile_source, nodata)
+    vmin, vmax = _handle_vmin_vmax(indexes, vmin, vmax)
     img = tile_source.preview(max_size=max_size, indexes=indexes, nodata=nodata)
     return _render_image(
         tile_source,
         img,
         indexes=indexes,
-        colormap=colormap,
-        img_format=img_format,
         vmin=vmin,
         vmax=vmax,
+        colormap=colormap,
+        img_format=img_format,
     )
