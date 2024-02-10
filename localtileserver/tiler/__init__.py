@@ -5,7 +5,6 @@ from localtileserver.tiler.data import (
     get_data_path,
     get_elevation_us_url,
     get_oam2_url,
-    get_pine_gulch_url,
     get_sf_bay_url,
     str_to_bool,
 )

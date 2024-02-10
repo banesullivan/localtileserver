@@ -23,10 +23,6 @@ def get_data_path(name):
         return DIRECTORY / name
 
 
-def get_pine_gulch_url():
-    return "https://opendata.digitalglobe.com/events/california-fire-2020/pre-event/2018-02-16/pine-gulch-fire20/1030010076004E00.tif"
-
-
 def get_sf_bay_url():
     # Non-COG: https://data.kitware.com/#item/60747d792fa25629b9a79538
     # COG: https://data.kitware.com/#item/626854a04acac99f42126a72

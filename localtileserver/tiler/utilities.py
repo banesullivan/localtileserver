@@ -7,7 +7,7 @@ from urllib.parse import urlencode, urlparse
 
 from rasterio import CRS
 
-from localtileserver.tiler.data import clean_url, get_data_path, get_pine_gulch_url
+from localtileserver.tiler.data import clean_url, get_data_path
 
 
 class ImageBytes(bytes):
@@ -84,8 +84,6 @@ def get_clean_filename(filename: str):
         filename = get_data_path("aws_elevation_tiles_prod.xml")
     elif filename == "bahamas":
         filename = get_data_path("bahamas_rgb.tif")
-    elif filename == "pine_gulch":
-        filename = get_pine_gulch_url()
 
     if str(filename).startswith("/vsi"):
         return filename

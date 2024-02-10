@@ -145,6 +145,25 @@ def test_multiband_vmin_vmax(bahamas):
         ).format(z=8, x=72, y=110)
 
 
+def test_vmin_vmax(bahamas):
+    url = bahamas.get_tile_url(
+        indexes=[1, 2, 3],
+        vmin=[100, 200, 250],
+    ).format(z=8, x=72, y=110)
+    assert get_content(url)  # just make sure it doesn't fail
+    url = bahamas.get_tile_url(
+        indexes=[1, 2, 3],
+        vmax=[20, 50, 70],
+    ).format(z=8, x=72, y=110)
+    assert get_content(url)  # just make sure it doesn't fail
+    url = bahamas.get_tile_url(
+        indexes=[1, 2, 3],
+        vmin=[20, 50, 70],
+        vmax=[100, 200, 250],
+    ).format(z=8, x=72, y=110)
+    assert get_content(url)  # just make sure it doesn't fail
+
+
 def test_launch_non_default_server(bahamas_file):
     default = TileClient(bahamas_file)
     diff = TileClient(bahamas_file, port=0)

@@ -165,8 +165,8 @@ class TilerInterface:
         y: int,
         indexes: Optional[List[int]] = None,
         colormap: Optional[str] = None,
-        vmin: Optional[float] = None,
-        vmax: Optional[float] = None,
+        vmin: Optional[Union[float, List[float]]] = None,
+        vmax: Optional[Union[float, List[float]]] = None,
         nodata: Optional[Union[int, float]] = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
@@ -220,8 +220,8 @@ class TilerInterface:
         self,
         indexes: Optional[List[int]] = None,
         colormap: Optional[str] = None,
-        vmin: Optional[float] = None,
-        vmax: Optional[float] = None,
+        vmin: Optional[Union[float, List[float]]] = None,
+        vmax: Optional[Union[float, List[float]]] = None,
         nodata: Optional[Union[int, float]] = None,
         output_path: pathlib.Path = None,
         encoding: str = "PNG",
@@ -417,8 +417,8 @@ class TileServerMixin:
         self,
         indexes: Optional[List[int]] = None,
         colormap: Optional[str] = None,
-        vmin: Optional[float] = None,
-        vmax: Optional[float] = None,
+        vmin: Optional[Union[float, List[float]]] = None,
+        vmax: Optional[Union[float, List[float]]] = None,
         nodata: Optional[Union[int, float]] = None,
         client: bool = False,
     ):
@@ -452,11 +452,11 @@ class TileServerMixin:
         if vmin is not None:
             if isinstance(vmin, Iterable) and not isinstance(indexes, Iterable):
                 raise ValueError("`indexes` must be explicitly set if `vmin` is an iterable.")
-            params["min"] = vmin
+            params["vmin"] = vmin
         if vmax is not None:
             if isinstance(vmax, Iterable) and not isinstance(indexes, Iterable):
                 raise ValueError("`indexes` must be explicitly set if `vmax` is an iterable.")
-            params["max"] = vmax
+            params["vmax"] = vmax
         if nodata is not None:
             if isinstance(nodata, Iterable) and not isinstance(indexes, Iterable):
                 raise ValueError("`indexes` must be explicitly set if `nodata` is an iterable.")
