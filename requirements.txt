@@ -5,6 +5,7 @@ flask-cors
 flask-restx>=0.5.0
 gunicorn
 matplotlib
+pylibmc
 pytest
 pytest-cov
 python-memcached
