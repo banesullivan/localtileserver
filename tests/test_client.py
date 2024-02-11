@@ -1,6 +1,5 @@
 import json
 import os
-import platform
 
 import pytest
 import rasterio
@@ -13,6 +12,8 @@ from localtileserver.helpers import parse_shapely, polygon_to_geojson
 from localtileserver.tiler import get_cache_dir, get_clean_filename
 from localtileserver.tiler.utilities import ImageBytes
 
+from .utilities import get_content
+
 skip_shapely = False
 try:
     from shapely.geometry import Polygon
@@ -20,12 +21,6 @@ except ImportError:
     skip_shapely = True
 
 TOLERANCE = 2e-2
-
-
-def get_content(url, timeout=5, **kwargs):
-    r = requests.get(url, timeout=timeout, **kwargs)
-    r.raise_for_status()
-    return r.content
 
 
 def test_create_tile_client(bahamas_file):
@@ -89,7 +84,6 @@ def test_caching_query_params(bahamas):
 
 
 def test_multiband(bahamas):
-    # Create an RGB tile in several ways and make sure all same
     url_a = bahamas.get_tile_url(
         indexes=[1, 2, 3],
     ).format(z=8, x=72, y=110)

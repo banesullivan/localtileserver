@@ -26,3 +26,8 @@ lint:
 format:
 	@echo "Formatting"
 	pre-commit run --all-files
+
+clean-test-images:
+	@echo "Cleaning test images"
+	rm -rf tests/baseline/
+	rm -rf tests/generated/
