@@ -19,10 +19,6 @@ try:
 except ImportError:
     skip_shapely = True
 
-skip_mac_arm = pytest.mark.skipif(
-    platform.system() == "Darwin" and platform.processor() == "arm", reason="MacOS Arm issues."
-)
-
 TOLERANCE = 2e-2
 
 
