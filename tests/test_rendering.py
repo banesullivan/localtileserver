@@ -103,3 +103,9 @@ def test_tile_vmin_vmax(bahamas, compare):
     direct_content = bahamas.tile(z=8, x=72, y=110, vmin=50, vmax=100)
     assert tile_a == direct_content
     compare(direct_content)
+
+
+@pytest.mark.parametrize("nodata", [None, 0, 255])
+def test_landsat7_nodata(landsat7, compare, nodata):
+    thumbnail = landsat7.thumbnail(nodata=nodata)
+    compare(thumbnail)

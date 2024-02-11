@@ -4,7 +4,7 @@ from matplotlib.testing.compare import compare_images
 import pytest
 import rasterio
 
-from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path
+from localtileserver.examples import get_bahamas, get_blue_marble, get_data_path, get_landsat7
 from localtileserver.web import create_app
 
 
@@ -24,6 +24,14 @@ def bahamas_file():
 def bahamas(port="default", debug=True):
     # Using debug True since in a testing environment
     client = get_bahamas(port=port, debug=debug)
+    yield client
+    client.shutdown(force=True)
+
+
+@pytest.fixture
+def landsat7(port="default", debug=True):
+    # Using debug True since in a testing environment
+    client = get_landsat7(port=port, debug=debug)
     yield client
     client.shutdown(force=True)
 
