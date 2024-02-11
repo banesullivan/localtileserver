@@ -4,7 +4,7 @@ build-backend = 'setuptools.build_meta'
 
 [project]
 name = "localtileserver"
-version = "0.10.0"
+version = "0.10.1"
 description = "Locally serve geospatial raster tiles in the Slippy Map standard."
 readme = "README.md"
 authors = [
