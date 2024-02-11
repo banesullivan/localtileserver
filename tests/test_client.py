@@ -1,6 +1,5 @@
 import json
 import os
-import platform
 
 import pytest
 import rasterio
@@ -13,23 +12,15 @@ from localtileserver.helpers import parse_shapely, polygon_to_geojson
 from localtileserver.tiler import get_cache_dir, get_clean_filename
 from localtileserver.tiler.utilities import ImageBytes
 
+from .utilities import get_content
+
 skip_shapely = False
 try:
     from shapely.geometry import Polygon
 except ImportError:
     skip_shapely = True
 
-skip_mac_arm = pytest.mark.skipif(
-    platform.system() == "Darwin" and platform.processor() == "arm", reason="MacOS Arm issues."
-)
-
 TOLERANCE = 2e-2
-
-
-def get_content(url):
-    r = requests.get(url)
-    r.raise_for_status()
-    return r.content
 
 
 def test_create_tile_client(bahamas_file):
@@ -44,15 +35,11 @@ def test_create_tile_client(bahamas_file):
     assert center[0] == pytest.approx(24.5579, abs=TOLERANCE)
     assert center[1] == pytest.approx(-77.7668, abs=TOLERANCE)
     tile_url = tile_client.get_tile_url().format(z=8, x=72, y=110)
-    r = requests.get(tile_url, timeout=5)
-    r.raise_for_status()
-    assert r.content
+    assert get_content(tile_url)  # just make sure it doesn't fail
     tile_conent = tile_client.tile(z=8, x=72, y=110)
     assert tile_conent
     tile_url = tile_client.get_tile_url(colormap="plasma").format(z=8, x=72, y=110)
-    r = requests.get(tile_url, timeout=5)
-    r.raise_for_status()
-    assert r.content
+    assert get_content(tile_url)  # just make sure it doesn't fail
     thumb = tile_client.thumbnail()
     assert isinstance(thumb, ImageBytes)
     assert thumb.mimetype == "image/png"
@@ -68,15 +55,12 @@ def test_create_tile_client_bad(bahamas_file):
 
 def test_client_force_shutdown(bahamas):
     tile_url = bahamas.get_tile_url().format(z=8, x=72, y=110)
-    r = requests.get(tile_url)
-    r.raise_for_status()
-    assert r.content
+    assert get_content(tile_url)  # just make sure it doesn't fail
     assert ServerManager.server_count() == 1
     bahamas.shutdown(force=True)
     assert ServerManager.server_count() == 0
     with pytest.raises(requests.ConnectionError):
-        r = requests.get(tile_url)
-        r.raise_for_status()
+        assert get_content(tile_url)
 
 
 # def test_multiple_tile_clients_one_server(bahamas, blue_marble):
@@ -100,7 +84,6 @@ def test_caching_query_params(bahamas):
 
 
 def test_multiband(bahamas):
-    # Create an RGB tile in several ways and make sure all same
     url_a = bahamas.get_tile_url(
         indexes=[1, 2, 3],
     ).format(z=8, x=72, y=110)

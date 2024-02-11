@@ -60,6 +60,12 @@ def get_landsat(*args, **kwargs):
 
 
 @wraps(_get_example_client)
+def get_landsat7(*args, **kwargs):
+    path = get_data_path("landsat7.tif")
+    return TileClient(path, *args, **kwargs)
+
+
+@wraps(_get_example_client)
 def get_san_francisco(*args, **kwargs):
     path = get_sf_bay_url()
     return TileClient(path, *args, **kwargs)
