@@ -1,3 +1,5 @@
+import os
+
 from flask import Blueprint
 from flask_caching import Cache
 
@@ -8,6 +10,21 @@ tileserver = Blueprint(
     static_url_path="/static/tileserver",
     template_folder="templates",
 )
+
+
+def get_memcache_config():
+    url, username, password = None, None, None
+    if os.environ.get("MEMCACHED_URL", ""):
+        url = os.environ.get("MEMCACHED_URL")
+        if os.environ.get("MEMCACHED_USERNAME", "") and os.environ.get("MEMCACHED_PASSWORD", ""):
+            username = os.environ.get("MEMCACHED_USERNAME")
+            password = os.environ.get("MEMCACHED_PASSWORD")
+    elif os.environ.get("MEMCACHIER_SERVERS", ""):
+        url = os.environ.get("MEMCACHIER_SERVERS")
+        if os.environ.get("MEMCACHIER_USERNAME", "") and os.environ.get("MEMCACHIER_PASSWORD", ""):
+            username = os.environ.get("MEMCACHIER_USERNAME")
+            password = os.environ.get("MEMCACHIER_PASSWORD")
+    return url, username, password
 
 
 def create_cache(url: str = None, username: str = None, password: str = None):
@@ -25,4 +42,4 @@ def create_cache(url: str = None, username: str = None, password: str = None):
     return Cache(config=config)
 
 
-cache = create_cache()
+cache = create_cache(*get_memcache_config())
