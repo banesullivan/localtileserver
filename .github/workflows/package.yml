@@ -26,7 +26,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata for the Docker image
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build and push the Docker image
@@ -39,7 +39,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
       - name: Extract metadata for the Jupyter Docker image
         id: meta_jupyter
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-jupyter
       - name: Build and push the Jupyter Docker image
