@@ -477,9 +477,10 @@
 </style>
 <div>
     <a href="https://bokeh.org" target="_blank" class="bk-notebook-logo"></a>
-    <span id="a0a80b8a-6319-4f02-aa35-31920f45a3f8">Loading BokehJS ...</span>
+    <span id="c943fd41-42ed-4b10-919e-08e6bcf0da13">Loading BokehJS ...</span>
 </div>
-</div><script type="application/javascript">(function(root) {
+</div><script type="application/javascript">'use strict';
+(function(root) {
   function now() {
     return new Date();
   }
@@ -640,17 +641,42 @@ const JS_MIME_TYPE = 'application/javascript';
      "</code>\n"+
      "</div>"}};
 
-  function display_loaded() {
-    const el = document.getElementById("a0a80b8a-6319-4f02-aa35-31920f45a3f8");
+  function display_loaded(error = null) {
+    const el = document.getElementById("c943fd41-42ed-4b10-919e-08e6bcf0da13");
     if (el != null) {
-      el.textContent = "BokehJS is loading...";
-    }
-    if (root.Bokeh !== undefined) {
-      if (el != null) {
-        el.textContent = "BokehJS " + root.Bokeh.version + " successfully loaded.";
+      const html = (() => {
+        if (typeof root.Bokeh === "undefined") {
+          if (error == null) {
+            return "BokehJS is loading ...";
+          } else {
+            return "BokehJS failed to load.";
+          }
+        } else {
+          const prefix = `BokehJS ${root.Bokeh.version}`;
+          if (error == null) {
+            return `${prefix} successfully loaded.`;
+          } else {
+            return `${prefix} <b>encountered errors</b> while loading and may not function as expected.`;
+          }
+        }
+      })();
+      el.innerHTML = html;
+
+      if (error != null) {
+        const wrapper = document.createElement("div");
+        wrapper.style.overflow = "auto";
+        wrapper.style.height = "5em";
+        wrapper.style.resize = "vertical";
+        const content = document.createElement("div");
+        content.style.fontFamily = "monospace";
+        content.style.whiteSpace = "pre-wrap";
+        content.style.backgroundColor = "rgb(255, 221, 221)";
+        content.textContent = error.stack ?? error.toString();
+        wrapper.append(content);
+        el.append(wrapper);
       }
     } else if (Date.now() < root._bokeh_timeout) {
-      setTimeout(display_loaded, 100)
+      setTimeout(() => display_loaded(error), 100);
     }
   }
 
@@ -724,7 +750,7 @@ const JS_MIME_TYPE = 'application/javascript';
     document.body.appendChild(element);
   }
 
-  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.3.4.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.3.4.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.3.4.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.3.4.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.3.4.min.js"];
+  const js_urls = ["https://cdn.bokeh.org/bokeh/release/bokeh-3.4.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-gl-3.4.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-widgets-3.4.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-tables-3.4.0.min.js", "https://cdn.bokeh.org/bokeh/release/bokeh-mathjax-3.4.0.min.js"];
   const css_urls = [];
 
   const inline_js = [    function(Bokeh) {
@@ -736,10 +762,13 @@ function(Bokeh) {
 
   function run_inline_js() {
     if (root.Bokeh !== undefined || force === true) {
-          for (let i = 0; i < inline_js.length; i++) {
+      try {
+            for (let i = 0; i < inline_js.length; i++) {
       inline_js[i].call(root, root.Bokeh);
     }
-if (force === true) {
+
+      } catch (error) {display_loaded(error);throw error;
+      }if (force === true) {
         display_loaded();
       }} else if (Date.now() < root._bokeh_timeout) {
       setTimeout(run_inline_js, 100);
@@ -747,7 +776,7 @@ if (force === true) {
       console.log("Bokeh: BokehJS failed to load within specified timeout.");
       root._bokeh_failed_load = true;
     } else if (force !== true) {
-      const cell = $(document.getElementById("a0a80b8a-6319-4f02-aa35-31920f45a3f8")).parents('.cell').data().cell;
+      const cell = $(document.getElementById("c943fd41-42ed-4b10-919e-08e6bcf0da13")).parents('.cell').data().cell;
       cell.output_area.append_execute_result(NB_LOAD_WARNING)
     }
   }
@@ -762,12 +791,12 @@ if (force === true) {
     });
   }
 }(window));</script><div class="output text_html">
-<div id="dc1f3ff8-a59e-43c0-b726-aa08a61a02af" data-root-id="p1002" style="display: contents;"></div>
+<div id="c9a88c1e-0139-4299-8926-4f9ae2446af7" data-root-id="p1002" style="display: contents;"></div>
 </div><script type="application/javascript">(function(root) {
   function embed_document(root) {
-  const docs_json = {"4caf4521-d1cb-4749-aa83-adbd851e4684":{"version":"3.3.4","title":"Bokeh Application","roots":[{"type":"object","name":"Figure","id":"p1002","attributes":{"x_range":{"type":"object","name":"Range1d","id":"p1011","attributes":{"start":-13660993.438111,"end":-13594198.136883}},"y_range":{"type":"object","name":"Range1d","id":"p1012","attributes":{"start":4502326.297713,"end":4586806.951318}},"x_scale":{"type":"object","name":"LinearScale","id":"p1013"},"y_scale":{"type":"object","name":"LinearScale","id":"p1014"},"title":{"type":"object","name":"Title","id":"p1009"},"renderers":[{"type":"object","name":"TileRenderer","id":"p1037","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1036","attributes":{"url":"https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png","max_zoom":20,"attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>"}}}},{"type":"object","name":"TileRenderer","id":"p1039","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1001","attributes":{"url":"https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fdata.kitware.com%252Fapi%252Fv1%252Ffile%252F626854a14acac99f42126a74%252Fdownload%26use_head%3Dno%26list_dir%3Dno"}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1010","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1025"},{"type":"object","name":"WheelZoomTool","id":"p1026","attributes":{"renderers":"auto"}},{"type":"object","name":"BoxZoomTool","id":"p1027","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1028","attributes":{"syncable":false,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1033"},{"type":"object","name":"ResetTool","id":"p1034"},{"type":"object","name":"HelpTool","id":"p1035"}]}},"left":[{"type":"object","name":"MercatorAxis","id":"p1020","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1021","attributes":{"mantissas":[1,2,5],"dimension":"lat"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1022","attributes":{"dimension":"lat"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1023"}}}],"below":[{"type":"object","name":"MercatorAxis","id":"p1015","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1016","attributes":{"mantissas":[1,2,5],"dimension":"lon"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1017","attributes":{"dimension":"lon"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1018"}}}],"center":[{"type":"object","name":"Grid","id":"p1019","attributes":{"axis":{"id":"p1015"}}},{"type":"object","name":"Grid","id":"p1024","attributes":{"dimension":1,"axis":{"id":"p1020"}}}]}}]}};
-  const render_items = [{"docid":"4caf4521-d1cb-4749-aa83-adbd851e4684","roots":{"p1002":"dc1f3ff8-a59e-43c0-b726-aa08a61a02af"},"root_ids":["p1002"]}];
-  root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
+  const docs_json = {"181ed890-bbc9-46d0-b8b3-a30478409485":{"version":"3.4.0","title":"Bokeh Application","roots":[{"type":"object","name":"Figure","id":"p1002","attributes":{"x_range":{"type":"object","name":"Range1d","id":"p1011","attributes":{"start":-13660993.438111,"end":-13594198.136883}},"y_range":{"type":"object","name":"Range1d","id":"p1012","attributes":{"start":4502326.297713,"end":4586806.951318}},"x_scale":{"type":"object","name":"LinearScale","id":"p1013"},"y_scale":{"type":"object","name":"LinearScale","id":"p1014"},"title":{"type":"object","name":"Title","id":"p1009"},"renderers":[{"type":"object","name":"TileRenderer","id":"p1037","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1036","attributes":{"url":"https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png","max_zoom":20,"attribution":"&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors &copy; <a href=\"https://carto.com/attributions\">CARTO</a>"}}}},{"type":"object","name":"TileRenderer","id":"p1039","attributes":{"tile_source":{"type":"object","name":"WMTSTileSource","id":"p1001","attributes":{"url":"https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fdata.kitware.com%252Fapi%252Fv1%252Ffile%252F626854a14acac99f42126a74%252Fdownload%26use_head%3Dno%26list_dir%3Dno"}}}}],"toolbar":{"type":"object","name":"Toolbar","id":"p1010","attributes":{"tools":[{"type":"object","name":"PanTool","id":"p1025"},{"type":"object","name":"WheelZoomTool","id":"p1026","attributes":{"renderers":"auto"}},{"type":"object","name":"BoxZoomTool","id":"p1027","attributes":{"overlay":{"type":"object","name":"BoxAnnotation","id":"p1028","attributes":{"syncable":false,"level":"overlay","visible":false,"left":{"type":"number","value":"nan"},"right":{"type":"number","value":"nan"},"top":{"type":"number","value":"nan"},"bottom":{"type":"number","value":"nan"},"left_units":"canvas","right_units":"canvas","top_units":"canvas","bottom_units":"canvas","line_color":"black","line_alpha":1.0,"line_width":2,"line_dash":[4,4],"fill_color":"lightgrey","fill_alpha":0.5}}}},{"type":"object","name":"SaveTool","id":"p1033"},{"type":"object","name":"ResetTool","id":"p1034"},{"type":"object","name":"HelpTool","id":"p1035"}]}},"left":[{"type":"object","name":"MercatorAxis","id":"p1020","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1021","attributes":{"mantissas":[1,2,5],"dimension":"lat"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1022","attributes":{"dimension":"lat"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1023"}}}],"below":[{"type":"object","name":"MercatorAxis","id":"p1015","attributes":{"ticker":{"type":"object","name":"MercatorTicker","id":"p1016","attributes":{"mantissas":[1,2,5],"dimension":"lon"}},"formatter":{"type":"object","name":"MercatorTickFormatter","id":"p1017","attributes":{"dimension":"lon"}},"major_label_policy":{"type":"object","name":"AllLabels","id":"p1018"}}}],"center":[{"type":"object","name":"Grid","id":"p1019","attributes":{"axis":{"id":"p1015"}}},{"type":"object","name":"Grid","id":"p1024","attributes":{"dimension":1,"axis":{"id":"p1020"}}}]}}]}};
+  const render_items = [{"docid":"181ed890-bbc9-46d0-b8b3-a30478409485","roots":{"p1002":"c9a88c1e-0139-4299-8926-4f9ae2446af7"},"root_ids":["p1002"]}];
+  void root.Bokeh.embed.embed_items_notebook(docs_json, render_items);
   }
   if (root.Bokeh !== undefined) {
     embed_document(root);
