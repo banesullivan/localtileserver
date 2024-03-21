@@ -14,8 +14,7 @@ DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesul
 class LocalTileServerLayerMixin:
     """Mixin class for tile layers using localtileserver."""
 
-    # Prevent the client from being garbage collected
-    tile_server: TileClient
+    pass
 
 
 def get_leaflet_tile_layer(
@@ -176,6 +175,7 @@ def get_folium_tile_layer(
     # Safely import folium
     try:
         from folium import TileLayer
+        from traitlets import Tuple, Union
     except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `folium`: {e}")
 
@@ -196,7 +196,7 @@ def get_folium_tile_layer(
         )
 
     class FoliumTileLayer(TileLayer, LocalTileServerLayerMixin):
-        pass
+        bounds = Union((Tuple(),), default_value=None, allow_none=True).tag(sync=True, o=True)
 
     source, created = get_or_create_tile_client(
         source,
@@ -213,7 +213,9 @@ def get_folium_tile_layer(
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION
-    tile_layer = FoliumTileLayer(tiles=url, attr=attr, **kwargs)
+    b = source.bounds()
+    bounds = ((b[0], b[2]), (b[1], b[3]))
+    tile_layer = FoliumTileLayer(tiles=url, bounds=bounds, attr=attr, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source
