@@ -14,7 +14,8 @@ DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesul
 class LocalTileServerLayerMixin:
     """Mixin class for tile layers using localtileserver."""
 
-    pass
+    # Prevent the client from being garbage collected
+    tile_server: TileClient
 
 
 def get_leaflet_tile_layer(
