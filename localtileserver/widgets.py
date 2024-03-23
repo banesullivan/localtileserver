@@ -213,7 +213,9 @@ def get_folium_tile_layer(
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION
-    tile_layer = FoliumTileLayer(tiles=url, attr=attr, **kwargs)
+    b = source.bounds()
+    bounds = ((b[0], b[2]), (b[1], b[3]))
+    tile_layer = FoliumTileLayer(tiles=url, bounds=bounds, attr=attr, **kwargs)
     if created:
         # HACK: Prevent the client from being garbage collected
         tile_layer.tile_server = source
