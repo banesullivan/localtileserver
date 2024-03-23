@@ -176,7 +176,6 @@ def get_folium_tile_layer(
     # Safely import folium
     try:
         from folium import TileLayer
-        from traitlets import Tuple, Union
     except ImportError as e:  # pragma: no cover
         raise ImportError(f"Please install `folium`: {e}")
 
@@ -197,7 +196,7 @@ def get_folium_tile_layer(
         )
 
     class FoliumTileLayer(TileLayer, LocalTileServerLayerMixin):
-        bounds = Union((Tuple(),), default_value=None, allow_none=True).tag(sync=True, o=True)
+        pass
 
     source, created = get_or_create_tile_client(
         source,
