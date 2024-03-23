@@ -16,3 +16,4 @@ notebooks
 .ipynb_checkpoints
 bin/
 Untitled*.ipynb
+*.aux.xml
