@@ -470,23 +470,42 @@ class TileServerMixin:
 
         return get_leaflet_tile_layer(self)
 
+    def get_leaflet_map(self, add_bounds: bool = False, **kwargs):
+        """Get an ipyleaflet Map centered and zoomed to the dataset bounds.
+
+        Note
+        ----
+        You will need to add the tile layer to the map yourself.
+
+        Parameters
+        ----------
+        kwargs : dict
+            Additional keyword arguments to pass to the ipyleaflet Map.
+
+        """
+        from ipyleaflet import Map, WKTLayer
+
+        m = Map(center=self.center(), zoom=self.default_zoom, **kwargs)
+        if add_bounds:
+            if not shapely:
+                raise ImportError("Please install `shapely` to use this feature.")
+            wlayer = WKTLayer(
+                wkt_string=self.bounds(return_wkt=True),
+                style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
+            )
+            m.add(wlayer)
+        return m
+
     if ipyleaflet:
 
         def _ipython_display_(self):
             from IPython.display import display
-            from ipyleaflet import Map, WKTLayer
 
             from localtileserver.widgets import get_leaflet_tile_layer
 
             t = get_leaflet_tile_layer(self)
-            m = Map(center=self.center(), zoom=self.default_zoom)
+            m = self.get_leaflet_map(add_bounds=shapely)
             m.add(t)
-            if shapely:
-                wlayer = WKTLayer(
-                    wkt_string=self.bounds(return_wkt=True),
-                    style={"dashArray": 9, "fillOpacity": 0, "weight": 1},
-                )
-                m.add(wlayer)
             return display(m)
 
 
