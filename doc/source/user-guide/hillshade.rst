@@ -24,9 +24,9 @@ make the data appear more 3-Dimensional.
   # Example DEM dataset
   client = examples.get_co_elevation()
 
-  tdem = get_leaflet_tile_layer(client, colormap='gist_earth')
+  tdem = get_leaflet_tile_layer(client, colormap='gist_earth', nodata=0)
 
-  m = Map(center=client.center(), zoom=client.default_zoom)
+  m = client.get_leaflet_map()
   m.add(tdem)
   m
 
@@ -58,9 +58,9 @@ function (adopted from EarthPy).
 .. code:: python
 
   # Make an ipyleaflet tile layer of the hillshade
-  hst = get_leaflet_tile_layer(hs)
+  hst = get_leaflet_tile_layer(hs, nodata=0)
 
-  m = Map(center=client.center(), zoom=client.default_zoom)
+  m = client.get_leaflet_map()
   control = SplitMapControl(left_layer=tdem, right_layer=hst)
   m.add_control(control)
   m
@@ -73,9 +73,9 @@ effect:
 
 .. code:: python
 
-  m = Map(center=client.center(), zoom=client.default_zoom)
+  m = client.get_leaflet_map()
   m.add(tdem)
-  m.add(get_leaflet_tile_layer(hs, opacity=0.5))
+  m.add(get_leaflet_tile_layer(hs, opacity=0.5, nodata=0))
   m
 
 
