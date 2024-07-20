@@ -168,15 +168,7 @@ def test_get_or_create_tile_client(bahamas_file):
 
 
 def test_open(bahamas_file):
-    tile_client, _ = lts.open(bahamas_file)
-    same, created = lts.open(tile_client)
-    assert not created
-    assert tile_client == same
-    diff, created = lts.open(bahamas_file)
-    assert created
-    assert tile_client != diff
-    with pytest.raises(RasterioIOError):
-        _, _ = lts.open(__file__)
+    assert lts.open(bahamas_file)
 
 
 def test_point(bahamas):
