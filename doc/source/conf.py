@@ -81,11 +81,6 @@ html_theme_options = {
             "icon": "fa fa-comment fa-fw",
         },
         {
-            "name": "Demo",
-            "url": "https://tileserver.banesullivan.com/",
-            "icon": "fa fa-desktop fa-fw",
-        },
-        {
             "name": "Author",
             "url": "https://banesullivan.com/",
             "icon": "fa fa-user fa-fw",
