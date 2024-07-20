@@ -7,6 +7,7 @@ from rasterio.errors import RasterioIOError
 import requests
 from server_thread import ServerManager
 
+import localtileserver as lts
 from localtileserver.client import TileClient, get_or_create_tile_client
 from localtileserver.helpers import parse_shapely, polygon_to_geojson
 from localtileserver.tiler import get_cache_dir, get_clean_filename
@@ -164,6 +165,18 @@ def test_get_or_create_tile_client(bahamas_file):
     assert tile_client != diff
     with pytest.raises(RasterioIOError):
         _, _ = get_or_create_tile_client(__file__)
+
+
+def test_open(bahamas_file):
+    tile_client, _ = lts.open(bahamas_file)
+    same, created = lts.open(tile_client)
+    assert not created
+    assert tile_client == same
+    diff, created = lts.open(bahamas_file)
+    assert created
+    assert tile_client != diff
+    with pytest.raises(RasterioIOError):
+        _, _ = lts.open(__file__)
 
 
 def test_point(bahamas):
