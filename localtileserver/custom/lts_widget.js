@@ -38,7 +38,7 @@ function render({ model, el, experimental }) {
             tileHandlers[id] = handleTile;
 
             model.send(
-                { id, kind: "anywidget-command", name: "get_tile", msg: {...coords, identifier} },
+                { id, kind: "get_tile", msg: {...coords, identifier} },
                 undefined,
                 [],
             );
