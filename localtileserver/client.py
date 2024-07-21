@@ -500,7 +500,7 @@ class TileServerMixin:
             m.add(wlayer)
         return m
 
-    if ipyleaflet:
+    if False:  # ipyleaflet:
 
         def _ipython_display_(self):
             from IPython.display import display
