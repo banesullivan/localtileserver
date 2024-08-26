@@ -12,16 +12,14 @@ THIS_DIR = pathlib.Path(__file__).parent.absolute()
 THREAD_EXECUTOR = concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count())
 
 
-def handle_anywidget_command(widget, msg: str | list | dict, buffers: list[bytes]) -> None:
-    if not isinstance(msg, dict) or msg.get("kind") != "anywidget-command":
-        return
+def handle_custom_message(widget, msg: dict, buffers: list[bytes]) -> None:
+    assert msg["kind"] == "get_tile", f"unexpected message kind: {msg['kind']}"
 
     def target():
         response, buffers = widget.get_tile(msg["msg"])
         widget.send(
             {
                 "id": msg["id"],
-                "kind": "anywidget-command-response",
                 "response": response,
             },
             buffers,
@@ -36,7 +34,7 @@ class TileLayerWidget(anywidget.AnyWidget):
     """Leaflet Tile Layer Widget.
 
     Args:
-        anywidget (_type_): _description_
+        client (TileClient): A TileClient instance.
     """
 
     _esm = THIS_DIR / "lts_widget.js"
@@ -50,7 +48,7 @@ class TileLayerWidget(anywidget.AnyWidget):
     def __init__(self, client: TileClient, **kwargs):
         super().__init__()
         self.client = client  # TODO: weakref?
-        self.on_msg(handle_anywidget_command)
+        self.on_msg(handle_custom_message)
         self._display_kwargs = kwargs
         self.bounds = self.client.bounds()
         self.identifier = uuid.uuid4().hex
