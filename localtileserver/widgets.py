@@ -1,6 +1,7 @@
 import logging
 import pathlib
 from typing import List, Optional, Union
+from matplotlib.colors import Colormap
 import warnings
 
 import rasterio
@@ -23,7 +24,7 @@ def get_leaflet_tile_layer(
     port: Union[int, str] = "default",
     debug: bool = False,
     indexes: Optional[List[int]] = None,
-    colormap: Optional[str] = None,
+    colormap: Optional[Union[str, Colormap]] = None,
     vmin: Optional[Union[float, List[float]]] = None,
     vmax: Optional[Union[float, List[float]]] = None,
     nodata: Optional[Union[int, float]] = None,

@@ -150,7 +150,21 @@ def _render_image(
     colormap: Optional[str] = None,
     img_format: str = "PNG",
 ):
-    colormap = cmap.get(colormap) if colormap else None
+    import json
+    from matplotlib.colors import LinearSegmentedColormap
+
+    if colormap in cmap.list():
+        colormap = cmap.get(colormap)
+    else:
+        c = json.loads(colormap)  
+        if isinstance(c, list):
+            c = LinearSegmentedColormap.from_list('', c, N=256)
+            colormap = {k:tuple(v) for k,v in enumerate(c(range(256),1,1))}
+        else:
+            colormap = {}
+            for key,value in c.items():
+                colormap[int(key)] = tuple(value)
+
     if (
         not colormap
         and len(indexes) == 1

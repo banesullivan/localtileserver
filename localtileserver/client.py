@@ -2,6 +2,7 @@ from collections.abc import Iterable
 import logging
 import pathlib
 from typing import List, Optional, Union
+from matplotlib.colors import Colormap
 
 import rasterio
 import requests
@@ -416,7 +417,7 @@ class TileServerMixin:
     def get_tile_url(
         self,
         indexes: Optional[List[int]] = None,
-        colormap: Optional[str] = None,
+        colormap: Optional[Union[str, Colormap]] = None,
         vmin: Optional[Union[float, List[float]]] = None,
         vmax: Optional[Union[float, List[float]]] = None,
         nodata: Optional[Union[int, float]] = None,
@@ -441,13 +442,23 @@ class TileServerMixin:
             The value from the band to use to interpret as not valid data.
 
         """
+        import json
         # First handle query parameters to check for errors
         params = {}
         if indexes is not None:
             params["indexes"] = indexes
         if colormap is not None:
-            # make sure palette is valid
-            palette_valid_or_raise(colormap)
+
+            if isinstance(colormap, Colormap):
+                colormap = json.dumps(
+                    {k:tuple(v.tolist()) for k,v in enumerate(colormap(range(256),1,1))}
+                )
+            elif isinstance(colormap, list):
+                colormap = json.dumps(colormap)
+            else:
+                # make sure palette is valid
+                palette_valid_or_raise(colormap)
+
             params["colormap"] = colormap
         if vmin is not None:
             if isinstance(vmin, Iterable) and not isinstance(indexes, Iterable):
