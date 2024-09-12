@@ -417,7 +417,7 @@ class TileServerMixin:
     def get_tile_url(
         self,
         indexes: Optional[List[int]] = None,
-        colormap: Optional[Union[str, Colormap]] = None,
+        colormap: Optional[Union[str, Colormap, List[str]]] = None,
         vmin: Optional[Union[float, List[float]]] = None,
         vmax: Optional[Union[float, List[float]]] = None,
         nodata: Optional[Union[int, float]] = None,

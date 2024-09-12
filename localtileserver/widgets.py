@@ -24,7 +24,7 @@ def get_leaflet_tile_layer(
     port: Union[int, str] = "default",
     debug: bool = False,
     indexes: Optional[List[int]] = None,
-    colormap: Optional[Union[str, Colormap]] = None,
+    colormap: Optional[Union[str, Colormap, List[str]]] = None,
     vmin: Optional[Union[float, List[float]]] = None,
     vmax: Optional[Union[float, List[float]]] = None,
     nodata: Optional[Union[int, float]] = None,
