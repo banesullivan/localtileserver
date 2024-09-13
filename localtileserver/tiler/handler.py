@@ -151,6 +151,7 @@ def _render_image(
     img_format: str = "PNG",
 ):
     import json
+
     from matplotlib.colors import LinearSegmentedColormap
 
     if colormap in cmap.list():
@@ -158,11 +159,11 @@ def _render_image(
     elif colormap:
         c = json.loads(colormap)
         if isinstance(c, list):
-            c = LinearSegmentedColormap.from_list('', c, N=256)
-            colormap = {k:tuple(v) for k,v in enumerate(c(range(256),1,1))}
+            c = LinearSegmentedColormap.from_list("", c, N=256)
+            colormap = {k: tuple(v) for k, v in enumerate(c(range(256), 1, 1))}
         else:
             colormap = {}
-            for key,value in c.items():
+            for key, value in c.items():
                 colormap[int(key)] = tuple(value)
 
     if (

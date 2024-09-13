@@ -1,9 +1,9 @@
 import logging
 import pathlib
 from typing import List, Optional, Union
-from matplotlib.colors import Colormap
 import warnings
 
+from matplotlib.colors import Colormap
 import rasterio
 
 from localtileserver.client import TileClient, get_or_create_tile_client

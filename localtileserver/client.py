@@ -1,9 +1,10 @@
 from collections.abc import Iterable
+import json
 import logging
 import pathlib
 from typing import List, Optional, Union
-from matplotlib.colors import Colormap
 
+from matplotlib.colors import Colormap
 import rasterio
 import requests
 from rio_tiler.io import Reader
@@ -442,16 +443,14 @@ class TileServerMixin:
             The value from the band to use to interpret as not valid data.
 
         """
-        import json
         # First handle query parameters to check for errors
         params = {}
         if indexes is not None:
             params["indexes"] = indexes
         if colormap is not None:
-
             if isinstance(colormap, Colormap):
                 colormap = json.dumps(
-                    {k:tuple(v.tolist()) for k,v in enumerate(colormap(range(256),1,1))}
+                    {k: tuple(v.tolist()) for k, v in enumerate(colormap(range(256), 1, 1))}
                 )
             elif isinstance(colormap, list):
                 colormap = json.dumps(colormap)
