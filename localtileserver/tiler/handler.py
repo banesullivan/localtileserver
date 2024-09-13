@@ -155,8 +155,8 @@ def _render_image(
 
     if colormap in cmap.list():
         colormap = cmap.get(colormap)
-    else:
-        c = json.loads(colormap)  
+    elif colormap:
+        c = json.loads(colormap)
         if isinstance(c, list):
             c = LinearSegmentedColormap.from_list('', c, N=256)
             colormap = {k:tuple(v) for k,v in enumerate(c(range(256),1,1))}
