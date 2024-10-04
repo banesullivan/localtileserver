@@ -4,7 +4,7 @@ import logging
 import pathlib
 from typing import List, Optional, Union
 
-from matplotlib.colors import Colormap
+from matplotlib.colors import Colormap, ListedColormap
 import rasterio
 import requests
 from rio_tiler.io import Reader
@@ -448,7 +448,9 @@ class TileServerMixin:
         if indexes is not None:
             params["indexes"] = indexes
         if colormap is not None:
-            if isinstance(colormap, Colormap):
+            if isinstance(colormap, ListedColormap):
+                colormap = json.dumps([c for c in colormap.colors])
+            elif isinstance(colormap, Colormap):
                 colormap = json.dumps(
                     {k: tuple(v.tolist()) for k, v in enumerate(colormap(range(256), 1, 1))}
                 )
