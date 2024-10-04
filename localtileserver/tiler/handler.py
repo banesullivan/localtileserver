@@ -159,7 +159,7 @@ def _render_image(
         colormap = {k: tuple(v) for k, v in enumerate(c(range(256), 1, 1))}
     elif isinstance(colormap, Colormap):
         colormap = {k: tuple(v) for k, v in enumerate(colormap(range(256), 1, 1))}
-    else:
+    elif colormap:
         c = json.loads(colormap)
         if isinstance(c, list):
             c = LinearSegmentedColormap.from_list("", c, N=256)
