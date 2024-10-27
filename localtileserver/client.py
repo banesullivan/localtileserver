@@ -89,11 +89,17 @@ class TilerInterface:
 
     @property
     def min_zoom(self):
-        return self.info.minzoom
+        if hasattr(self.info, "minzoom"):
+            return self.info.minzoom
+        else:
+            return self.reader.minzoom
 
     @property
     def max_zoom(self):
-        return self.info.maxzoom
+        if hasattr(self.info, "maxzoom"):
+            return self.info.maxzoom
+        else:
+            return self.reader.maxzoom
 
     @property
     def default_zoom(self):
