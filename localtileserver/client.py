@@ -1,8 +1,10 @@
 from collections.abc import Iterable
+import json
 import logging
 import pathlib
 from typing import List, Optional, Union
 
+from matplotlib.colors import Colormap, ListedColormap
 import rasterio
 import requests
 from rio_tiler.io import Reader
@@ -91,11 +93,17 @@ class TilerInterface:
 
     @property
     def min_zoom(self):
-        return self.info.minzoom
+        if hasattr(self.info, "minzoom"):
+            return self.info.minzoom
+        else:
+            return self.reader.minzoom
 
     @property
     def max_zoom(self):
-        return self.info.maxzoom
+        if hasattr(self.info, "maxzoom"):
+            return self.info.maxzoom
+        else:
+            return self.reader.maxzoom
 
     @property
     def default_zoom(self):
@@ -420,7 +428,7 @@ class TileServerMixin:
     def get_tile_url(
         self,
         indexes: Optional[List[int]] = None,
-        colormap: Optional[str] = None,
+        colormap: Optional[Union[str, Colormap, List[str]]] = None,
         vmin: Optional[Union[float, List[float]]] = None,
         vmax: Optional[Union[float, List[float]]] = None,
         nodata: Optional[Union[int, float]] = None,
@@ -450,8 +458,18 @@ class TileServerMixin:
         if indexes is not None:
             params["indexes"] = indexes
         if colormap is not None:
-            # make sure palette is valid
-            palette_valid_or_raise(colormap)
+            if isinstance(colormap, ListedColormap):
+                colormap = json.dumps([c for c in colormap.colors])
+            elif isinstance(colormap, Colormap):
+                colormap = json.dumps(
+                    {k: tuple(v.tolist()) for k, v in enumerate(colormap(range(256), 1, 1))}
+                )
+            elif isinstance(colormap, list):
+                colormap = json.dumps(colormap)
+            else:
+                # make sure palette is valid
+                palette_valid_or_raise(colormap)
+
             params["colormap"] = colormap
         if vmin is not None:
             if isinstance(vmin, Iterable) and not isinstance(indexes, Iterable):

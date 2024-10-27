@@ -3,6 +3,7 @@ import pathlib
 from typing import List, Optional, Union
 import warnings
 
+from matplotlib.colors import Colormap
 import rasterio
 
 from localtileserver.client import TileClient, get_or_create_tile_client
@@ -23,7 +24,7 @@ def get_leaflet_tile_layer(
     port: Union[int, str] = "default",
     debug: bool = False,
     indexes: Optional[List[int]] = None,
-    colormap: Optional[str] = None,
+    colormap: Optional[Union[str, Colormap, List[str]]] = None,
     vmin: Optional[Union[float, List[float]]] = None,
     vmax: Optional[Union[float, List[float]]] = None,
     nodata: Optional[Union[int, float]] = None,
