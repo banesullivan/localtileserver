@@ -89,14 +89,14 @@ class TilerInterface:
 
     @property
     def min_zoom(self):
-        if hasattr(self, "info") and hasattr(self.info, "minzoom"):
+        if hasattr(self.info, "minzoom"):
             return self.info.minzoom
         else:
             return self.reader.minzoom
 
     @property
     def max_zoom(self):
-        if hasattr(self, "info") and hasattr(self.info, "maxzoom"):
+        if hasattr(self.info, "maxzoom"):
             return self.info.maxzoom
         else:
             return self.reader.maxzoom
