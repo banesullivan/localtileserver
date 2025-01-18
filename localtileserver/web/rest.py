@@ -40,7 +40,7 @@ BASE_PARAMS = {
         "description": "The local path or URL to the image to use.",
         "in": "query",
         "type": "str",
-        "example": "https://data.kitware.com/api/v1/file/60747d792fa25629b9a79565/download",
+        "example": "https://localtileserver.s3.us-west-2.amazonaws.com/examples/TC_NG_SFBay_US_Geo.tif",
     },
 }
 STYLE_PARAMS = {
