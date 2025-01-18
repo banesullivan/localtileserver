@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -425,7 +425,7 @@ client-side in the browser, we must make sure the port on which
 <li><p>If using JupyterHub, you may need to alter <code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PREFIX</span></code> such that it includes your users ID. For example, on MyBinder, we are required to do:</p></li>
 </ol>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set host forwarding for MyBinder</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LOCALTILESERVER_CLIENT_PREFIX&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;JUPYTERHUB_SERVICE_PREFIX&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/proxy/</span><span class="se">{{</span><span class="s2">port</span><span class="se">}}</span><span class="s2">&quot;</span>
 </pre></div>
 </div>
@@ -484,7 +484,7 @@ client-side in the browser, we must make sure the port on which
 
   <p class="copyright">
     
-      © Copyright 2021-2024, Bane Sullivan.
+      © Copyright 2021-2025, Bane Sullivan.
       <br/>
     
   </p>

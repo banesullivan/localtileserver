@@ -30,7 +30,7 @@
   <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 <link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../_static/jupyter-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/thebelab.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -413,8 +413,8 @@
 <p>A few example datasets are included with <cite>localtileserver</cite>. A particularly
 useful one has global elevation data which you can use to create high resolution
 Digital Elevation Models (DEMs) of a local region.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
-<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipyleaflet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Map</span>
 
 <span class="c1"># Load example tile layer from publicly available DEM source</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_elevation</span><span class="p">()</span>
@@ -432,8 +432,8 @@ Digital Elevation Models (DEMs) of a local region.</p>
 </div>
 <img alt="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png" src="https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png" />
 <p>Here is another example with the Virtual Earth satellite imagery</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">localtileserver</span> <span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
-<span class="kn">from</span> <span class="nn">ipyleaflet</span> <span class="kn">import</span> <span class="n">Map</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">examples</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ipyleaflet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Map</span>
 
 <span class="c1"># Load example tile layer from publicly available imagery</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_virtual_earth</span><span class="p">()</span>
@@ -498,7 +498,7 @@ Digital Elevation Models (DEMs) of a local region.</p>
 
   <p class="copyright">
     
-      © Copyright 2021-2024, Bane Sullivan.
+      © Copyright 2021-2025, Bane Sullivan.
       <br/>
     
   </p>
