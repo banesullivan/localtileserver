@@ -24,15 +24,15 @@ def get_data_path(name):
 
 
 def get_sf_bay_url():
-    return "s3://localtileserver/examples/TC_NG_SFBay_US_Geo_COG.tif"
+    return "https://localtileserver.s3.us-west-2.amazonaws.com/examples/TC_NG_SFBay_US_Geo_COG.tif"
 
 
 def get_elevation_us_url():
-    return "s3://localtileserver/examples/elevation_cog.tif"
+    return "https://localtileserver.s3.us-west-2.amazonaws.com/examples/elevation_cog.tif"
 
 
 def get_oam2_url():
-    return "s3://localtileserver/examples/oam2.tif"
+    return "https://localtileserver.s3.us-west-2.amazonaws.com/examples/oam2.tif"
 
 
 def convert_dropbox_url(url: str):
@@ -45,4 +45,4 @@ def clean_url(url: str):
 
 
 def get_co_elevation_url():
-    return "s3://localtileserver/examples/co_elevation.tif"
+    return "https://localtileserver.s3.us-west-2.amazonaws.com/examples/co_elevation.tif"
