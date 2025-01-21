@@ -24,17 +24,15 @@ def get_data_path(name):
 
 
 def get_sf_bay_url():
-    # Non-COG: https://data.kitware.com/#item/60747d792fa25629b9a79538
-    # COG: https://data.kitware.com/#item/626854a04acac99f42126a72
-    return "https://data.kitware.com/api/v1/file/626854a14acac99f42126a74/download"
+    return "https://localtileserver.s3.us-west-2.amazonaws.com/examples/TC_NG_SFBay_US_Geo_COG.tif"
 
 
 def get_elevation_us_url():
-    return "https://data.kitware.com/api/v1/file/5dbc4f66e3566bda4b4ed3af/download"
+    return "https://localtileserver.s3.us-west-2.amazonaws.com/examples/elevation_cog.tif"
 
 
 def get_oam2_url():
-    return "https://oin-hotosm.s3.amazonaws.com/59c66c5223c8440011d7b1e4/0/7ad397c0-bba2-4f98-a08a-931ec3a6e943.tif"
+    return "https://localtileserver.s3.us-west-2.amazonaws.com/examples/oam2.tif"
 
 
 def convert_dropbox_url(url: str):
@@ -47,4 +45,4 @@ def clean_url(url: str):
 
 
 def get_co_elevation_url():
-    return "https://data.kitware.com/api/v1/file/62e4408fbddec9d0c4443918/download"
+    return "https://localtileserver.s3.us-west-2.amazonaws.com/examples/co_elevation.tif"
