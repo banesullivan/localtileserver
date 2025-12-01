@@ -1,3 +1,9 @@
+### 🚀 Support This Project
+
+If localtileserver saves you time, powers your work, or you need direct help, please consider supporting the project and my efforts:
+
+[![Sponsor](https://img.shields.io/badge/Sponsor%20Bane%20Sullivan-🚀-green?style=for-the-badge)](https://github.com/sponsors/banesullivan)
+
 ![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/oam-tiles.jpg)
 
 # 🌐 Local Tile Server for Geospatial Rasters
