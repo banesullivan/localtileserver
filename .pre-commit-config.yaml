@@ -1,16 +1,16 @@
 repos:
 - repo: https://github.com/psf/black
-  rev: 23.12.1
+  rev: 25.11.0
   hooks:
   - id: black
 
 - repo: https://github.com/pycqa/isort
-  rev: 5.13.2
+  rev: 7.0.0
   hooks:
   - id: isort
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
+  rev: v6.0.0
   hooks:
   - id: check-merge-conflict
   - id: debug-statements
@@ -23,19 +23,19 @@ repos:
   - id: check-yaml
 
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.27.3
+  rev: 0.35.0
   hooks:
     - id: check-github-workflows
 
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 3.9.2
+  rev: 7.3.0
   hooks:
     - id: flake8
       additional_dependencies: [
-        "flake8-black==0.3.6",
-        "flake8-isort==6.0.0",
-        "flake8-quotes==3.3.2",
+        "flake8-black",
+        "flake8-isort",
+        "flake8-quotes",
       ]
 
 

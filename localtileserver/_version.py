@@ -1,7 +1,7 @@
-from pkg_resources import DistributionNotFound, get_distribution
+from importlib.metadata import PackageNotFoundError, version
 
 try:
-    __version__ = get_distribution("localtileserver").version
-except DistributionNotFound:  # pragma: no cover
+    __version__ = version("localtileserver")
+except PackageNotFoundError:  # pragma: no cover
     # package is not installed
     __version__ = None
