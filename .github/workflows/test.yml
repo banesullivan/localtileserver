@@ -16,9 +16,9 @@ jobs:
       matrix:
         python-version: [3.8, 3.9, "3.10", "3.11"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.1
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6.1.0
         with:
           python-version: ${{ matrix.python-version }}
       # Install everything else
@@ -37,11 +37,11 @@ jobs:
       #   run: |
       #     make doctest
       - name: Stash coverage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: coverage.xml
           path: coverage.xml
-      - uses: codecov/codecov-action@v5
+      - uses: codecov/codecov-action@v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
