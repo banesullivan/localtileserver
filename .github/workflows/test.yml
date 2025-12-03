@@ -36,11 +36,11 @@ jobs:
       # - name: Run Doc Tests
       #   run: |
       #     make doctest
-      - name: Stash coverage
-        uses: actions/upload-artifact@v5.0.0
-        with:
-          name: coverage.xml
-          path: coverage.xml
+      # - name: Stash coverage
+      #   uses: actions/upload-artifact@v5.0.0
+      #   with:
+      #     name: coverage.xml
+      #     path: coverage.xml
       - uses: codecov/codecov-action@v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
