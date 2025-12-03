@@ -1,4 +1,5 @@
 """Methods for working with images."""
+
 import json
 import pathlib
 from typing import Dict, List, Optional, Tuple, Union
