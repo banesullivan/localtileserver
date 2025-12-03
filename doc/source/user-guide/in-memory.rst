@@ -8,7 +8,7 @@
     from localtileserver import TileClient, get_leaflet_tile_layer
 
     # Open a rasterio dataset
-    dataset = rasterio.open('https://open.gishub.org/data/raster/srtm90.tif')
+    dataset = rasterio.open('https://github.com/giswqs/data/raw/main/raster/srtm90.tif')
     data_array = dataset.read(1)
 
 
