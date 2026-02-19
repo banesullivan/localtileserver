@@ -22,7 +22,7 @@ def get_clean_filename_from_request(param_name: str = "filename", strict: bool =
         except KeyError:
             message = "No filename set in app config or URL params. Using sample data."
             if strict:
-                raise OSError(message)
+                raise OSError(message) from None
             # Fallback to sample data
             logger.error(message)
             filename = get_clean_filename(get_sf_bay_url())

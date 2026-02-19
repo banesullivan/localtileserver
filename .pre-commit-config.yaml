@@ -1,52 +1,22 @@
 repos:
-- repo: https://github.com/psf/black
-  rev: 25.11.0
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.15.1
   hooks:
-  - id: black
-
-- repo: https://github.com/pycqa/isort
-  rev: 7.0.0
-  hooks:
-  - id: isort
+  - id: ruff
+    args: [--fix]
+  - id: ruff-format
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
   hooks:
   - id: check-merge-conflict
   - id: debug-statements
-  - id: requirements-txt-fixer
   - id: trailing-whitespace
   - id: check-docstring-first
   - id: end-of-file-fixer
   - id: mixed-line-ending
-  - id: check-toml
-  - id: check-yaml
 
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.35.0
+  rev: 0.36.1
   hooks:
-    - id: check-github-workflows
-
-
-- repo: https://github.com/PyCQA/flake8
-  rev: 7.3.0
-  hooks:
-    - id: flake8
-      additional_dependencies: [
-        "flake8-black",
-        "flake8-isort",
-        "flake8-quotes",
-      ]
-
-
-# - repo: https://github.com/codespell-project/codespell
-#   rev: v2.2.6
-#   hooks:
-#   - id: codespell
-#     args: [
-#       "doc examples examples_trame pyvista tests",
-#       "*.py *.rst *.md",
-#     ]
-#     additional_dependencies: [
-#       "tomli"
-#     ]
+  - id: check-github-workflows

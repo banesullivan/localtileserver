@@ -1,5 +1,3 @@
-from typing import Union
-
 from rio_cogeo import cog_validate
 from rio_tiler.io import Reader
 
@@ -8,7 +6,7 @@ from localtileserver.tiler import get_clean_filename
 
 
 def validate_cog(
-    path: Union[str, Reader, TilerInterface],
+    path: str | Reader | TilerInterface,
     strict: bool = True,
     quiet: bool = False,
 ) -> bool:
