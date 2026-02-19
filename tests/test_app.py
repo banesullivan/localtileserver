@@ -38,8 +38,8 @@ def test_list_palettes(flask_client):
     assert r.status_code == 200
 
 
-def test_cog_validate_endpoint(flask_client, remote_file_url):
-    r = flask_client.get(f"/api/validate?filename={remote_file_url}")
+def test_cog_validate_endpoint(flask_client, bahamas_file):
+    r = flask_client.get(f"/api/validate?filename={bahamas_file}")
     assert r.status_code == 200
 
 
