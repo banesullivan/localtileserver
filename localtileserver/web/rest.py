@@ -43,7 +43,7 @@ BASE_PARAMS = {
         "description": "The local path or URL to the image to use.",
         "in": "query",
         "type": "str",
-        "example": "https://localtileserver.s3.us-west-2.amazonaws.com/examples/TC_NG_SFBay_US_Geo.tif",
+        "example": "https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/TC_NG_SFBay_US_Geo.tif",
     },
 }
 STYLE_PARAMS = {
