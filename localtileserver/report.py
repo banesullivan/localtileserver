@@ -6,21 +6,24 @@ class Report(scooby.Report):
         """Generate a report on the dependencies of localtileserver in this environment."""
 
         # Mandatory packages.
-        core = ["localtileserver"] + sorted(
-            [
-                "rasterio",
-                "rio_tiler",
-                "numpy",
-                "server_thread",
-                "flask",
-                "flask_caching",
-                "flask_cors",
-                "flask_restx",
-                "rio_cogeo",
-                "werkzeug",
-                "click",
-            ]
-        )
+        core = [
+            "localtileserver",
+            *sorted(
+                [
+                    "rasterio",
+                    "rio_tiler",
+                    "numpy",
+                    "server_thread",
+                    "flask",
+                    "flask_caching",
+                    "flask_cors",
+                    "flask_restx",
+                    "rio_cogeo",
+                    "werkzeug",
+                    "click",
+                ]
+            ),
+        ]
 
         # Optional packages.
         optional = sorted(
@@ -33,7 +36,7 @@ class Report(scooby.Report):
                 "shapely",
                 "folium",
                 "matplotlib",
-                "requests" "colorcet",
+                "requestscolorcet",
                 "cmocean",
             ]
         )

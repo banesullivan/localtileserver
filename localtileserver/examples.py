@@ -1,5 +1,4 @@
 from functools import wraps
-from typing import Union
 
 from localtileserver.client import TileClient
 from localtileserver.helpers import parse_shapely
@@ -14,11 +13,11 @@ from localtileserver.tiler.data import DIRECTORY
 
 
 def _get_example_client(
-    port: Union[int, str] = "default",
+    port: int | str = "default",
     debug: bool = False,
-    client_port: int = None,
-    client_host: str = None,
-    client_prefix: str = None,
+    client_port: int | None = None,
+    client_host: str | None = None,
+    client_prefix: str | None = None,
 ):
     raise NotImplementedError  # pragma: no cover
 

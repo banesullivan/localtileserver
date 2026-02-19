@@ -1,6 +1,5 @@
 import logging
 import pathlib
-from typing import List, Optional, Union
 import warnings
 
 from matplotlib.colors import Colormap
@@ -9,7 +8,10 @@ import rasterio
 from localtileserver.client import TileClient, get_or_create_tile_client
 
 logger = logging.getLogger(__name__)
-DEFAULT_ATTRIBUTION = "Raster file served by <a href='https://github.com/banesullivan/localtileserver' target='_blank'>localtileserver</a>."
+DEFAULT_ATTRIBUTION = (
+    "Raster file served by <a href='https://github.com/banesullivan/localtileserver'"
+    " target='_blank'>localtileserver</a>."
+)
 
 
 class LocalTileServerLayerMixin:
@@ -20,15 +22,15 @@ class LocalTileServerLayerMixin:
 
 
 def get_leaflet_tile_layer(
-    source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
-    port: Union[int, str] = "default",
+    source: pathlib.Path | str | TileClient | rasterio.io.DatasetReaderBase,
+    port: int | str = "default",
     debug: bool = False,
-    indexes: Optional[List[int]] = None,
-    colormap: Optional[Union[str, Colormap, List[str]]] = None,
-    vmin: Optional[Union[float, List[float]]] = None,
-    vmax: Optional[Union[float, List[float]]] = None,
-    nodata: Optional[Union[int, float]] = None,
-    attribution: str = None,
+    indexes: list[int] | None = None,
+    colormap: str | Colormap | list[str] | None = None,
+    vmin: float | list[float] | None = None,
+    vmax: float | list[float] | None = None,
+    nodata: int | float | None = None,
+    attribution: str | None = None,
     **kwargs,
 ):
     """Generate an ipyleaflet TileLayer for the given TileClient.
@@ -80,16 +82,19 @@ def get_leaflet_tile_layer(
         indexes = kwargs.pop("band")
         warnings.warn(
             "The `band` keyword argument is deprecated. Please use `indexes` instead.",
+            stacklevel=2,
         )
     elif "bands" in kwargs:
         indexes = kwargs.pop("bands")
         warnings.warn(
             "The `bands` keyword argument is deprecated. Please use `indexes` instead.",
+            stacklevel=2,
         )
     if "cmap" in kwargs:
         colormap = kwargs.pop("cmap")
         warnings.warn(
             "The `cmap` keyword argument is deprecated. Please use `colormap` instead.",
+            stacklevel=2,
         )
 
     class BoundTileLayer(TileLayer, LocalTileServerLayerMixin):
@@ -125,15 +130,15 @@ def get_leaflet_tile_layer(
 
 
 def get_folium_tile_layer(
-    source: Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase],
-    port: Union[int, str] = "default",
+    source: pathlib.Path | str | TileClient | rasterio.io.DatasetReaderBase,
+    port: int | str = "default",
     debug: bool = False,
-    indexes: Optional[List[int]] = None,
-    colormap: Optional[str] = None,
-    vmin: Optional[Union[float, List[float]]] = None,
-    vmax: Optional[Union[float, List[float]]] = None,
-    nodata: Optional[Union[int, float]] = None,
-    attr: str = None,
+    indexes: list[int] | None = None,
+    colormap: str | None = None,
+    vmin: float | list[float] | None = None,
+    vmax: float | list[float] | None = None,
+    nodata: int | float | None = None,
+    attr: str | None = None,
     **kwargs,
 ):
     """Generate a folium TileLayer for the given TileClient.
@@ -178,22 +183,25 @@ def get_folium_tile_layer(
     try:
         from folium import TileLayer
     except ImportError as e:  # pragma: no cover
-        raise ImportError(f"Please install `folium`: {e}")
+        raise ImportError(f"Please install `folium`: {e}") from e
 
     if "band" in kwargs:
         indexes = kwargs.pop("band")
         warnings.warn(
             "The `band` keyword argument is deprecated. Please use `indexes` instead.",
+            stacklevel=2,
         )
     elif "bands" in kwargs:
         indexes = kwargs.pop("bands")
         warnings.warn(
             "The `bands` keyword argument is deprecated. Please use `indexes` instead.",
+            stacklevel=2,
         )
     if "cmap" in kwargs:
         colormap = kwargs.pop("cmap")
         warnings.warn(
             "The `cmap` keyword argument is deprecated. Please use `colormap` instead.",
+            stacklevel=2,
         )
 
     class FoliumTileLayer(TileLayer, LocalTileServerLayerMixin):

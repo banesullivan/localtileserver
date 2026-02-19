@@ -76,9 +76,9 @@ def test_client_force_shutdown(bahamas):
 def test_caching_query_params(bahamas):
     thumb_url_a = bahamas.create_url("api/thumbnail.png")
     thumb_url_b = bahamas.create_url("api/thumbnail.png?indexes=1")
-    assert get_content(thumb_url_a) != get_content(
-        thumb_url_b
-    ), "Binary content should be different"
+    assert get_content(thumb_url_a) != get_content(thumb_url_b), (
+        "Binary content should be different"
+    )
     thumb_url_c = bahamas.create_url("api/thumbnail.png")
     assert get_content(thumb_url_a) == get_content(thumb_url_c), "Binary content should be the same"
 

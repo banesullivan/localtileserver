@@ -2,7 +2,6 @@ import os
 import pathlib
 import shutil
 import tempfile
-from typing import Optional
 from urllib.parse import urlencode, urlparse
 
 from rasterio import CRS
@@ -13,7 +12,7 @@ from localtileserver.tiler.data import clean_url, get_data_path
 class ImageBytes(bytes):
     """Wrapper class to make repr of image bytes better in ipython."""
 
-    def __new__(cls, source: bytes, mimetype: str = None):
+    def __new__(cls, source: bytes, mimetype: str | None = None):
         self = super().__new__(cls, source)
         self._mime_type = mimetype
         return self
@@ -103,7 +102,7 @@ def get_clean_filename(filename: str):
     return filename
 
 
-def format_to_encoding(fmt: Optional[str]) -> str:
+def format_to_encoding(fmt: str | None) -> str:
     """Validate encoding."""
     if not fmt:
         return "png"

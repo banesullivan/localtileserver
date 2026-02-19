@@ -1,7 +1,9 @@
 import os
 
 
-def get_default_client_params(host: str = None, port: int = None, prefix: str = None):
+def get_default_client_params(
+    host: str | None = None, port: int | None = None, prefix: str | None = None
+):
     if (
         host is None
         and "LOCALTILESERVER_CLIENT_HOST" in os.environ
