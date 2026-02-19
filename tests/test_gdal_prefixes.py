@@ -3,6 +3,7 @@ import subprocess
 
 import pytest
 
+from localtileserver import TileClient
 from localtileserver.tiler import get_clean_filename
 from localtileserver.tiler.data import get_data_path
 
@@ -111,8 +112,6 @@ def test_get_clean_filename_gti_extension(gti_index):
 
 @requires_gti
 def test_tileclient_gti_prefix(gti_index):
-    from localtileserver import TileClient
-
     client = TileClient(f"GTI:{gti_index}", debug=True)
     try:
         bounds = client.bounds()
@@ -124,8 +123,6 @@ def test_tileclient_gti_prefix(gti_index):
 
 @requires_gti
 def test_tileclient_gti_extension(gti_index):
-    from localtileserver import TileClient
-
     client = TileClient(gti_index, debug=True)
     try:
         bounds = client.bounds()
@@ -137,8 +134,6 @@ def test_tileclient_gti_extension(gti_index):
 
 @requires_gti
 def test_tileclient_gti_thumbnail(gti_index):
-    from localtileserver import TileClient
-
     client = TileClient(f"GTI:{gti_index}", debug=True)
     try:
         thumb = client.thumbnail()
