@@ -2,7 +2,6 @@
 
 import json
 import pathlib
-from typing import Dict, List, Optional, Tuple, Union
 
 from matplotlib.colors import Colormap, LinearSegmentedColormap, ListedColormap
 import numpy as np
@@ -21,7 +20,7 @@ from .utilities import ImageBytes, get_clean_filename, make_crs
 # - GDAL_HTTP_UNSAFESSL="YES"
 
 
-def get_reader(path: Union[pathlib.Path, str]) -> Reader:
+def get_reader(path: pathlib.Path | str) -> Reader:
     return Reader(get_clean_filename(path))
 
 
@@ -68,7 +67,7 @@ def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decima
     }
 
 
-def _handle_band_indexes(tile_source: Reader, indexes: Optional[List[int]] = None):
+def _handle_band_indexes(tile_source: Reader, indexes: list[int] | None = None):
     band_names = [desc[0] for desc in tile_source.info().band_descriptions]
 
     def _index_lookup(index_or_name: str):
@@ -105,7 +104,7 @@ def _handle_band_indexes(tile_source: Reader, indexes: Optional[List[int]] = Non
     return indexes
 
 
-def _handle_nodata(tile_source: Reader, nodata: Optional[Union[int, float]] = None):
+def _handle_nodata(tile_source: Reader, nodata: int | float | None = None):
     floaty = False
     if any(dtype.startswith("float") for dtype in tile_source.dataset.dtypes):
         floaty = True
@@ -118,10 +117,10 @@ def _handle_nodata(tile_source: Reader, nodata: Optional[Union[int, float]] = No
 
 
 def _handle_vmin_vmax(
-    indexes: List[int],
-    vmin: Optional[Union[float, List[float]]] = None,
-    vmax: Optional[Union[float, List[float]]] = None,
-) -> Tuple[Dict[int, float], Dict[int, float]]:
+    indexes: list[int],
+    vmin: float | list[float] | None = None,
+    vmax: float | list[float] | None = None,
+) -> tuple[dict[int, float], dict[int, float]]:
     # TODO: move these string checks to the rest api
     if isinstance(vmin, (str, int)):
         vmin = float(vmin)
@@ -141,16 +140,16 @@ def _handle_vmin_vmax(
     if len(vmax) != len(indexes):
         raise ValueError("vmax must be same length as indexes")
     # Now map to the band indexes
-    return dict(zip(indexes, vmin)), dict(zip(indexes, vmax))
+    return dict(zip(indexes, vmin, strict=True)), dict(zip(indexes, vmax, strict=True))
 
 
 def _render_image(
     tile_source: Reader,
     img: ImageData,
-    indexes: List[int],
-    vmin: Dict[int, Optional[float]],
-    vmax: Dict[int, Optional[float]],
-    colormap: Optional[str] = None,
+    indexes: list[int],
+    vmin: dict[int, float | None],
+    vmax: dict[int, float | None],
+    colormap: str | None = None,
     img_format: str = "PNG",
 ):
     if colormap in cmap.list():
@@ -207,11 +206,11 @@ def get_tile(
     z: int,
     x: int,
     y: int,
-    indexes: Optional[List[int]] = None,
-    colormap: Optional[str] = None,
-    vmin: Optional[Union[float, List[float]]] = None,
-    vmax: Optional[Union[float, List[float]]] = None,
-    nodata: Optional[Union[int, float]] = None,
+    indexes: list[int] | None = None,
+    colormap: str | None = None,
+    vmin: float | list[float] | None = None,
+    vmax: float | list[float] | None = None,
+    nodata: int | float | None = None,
     img_format: str = "PNG",
 ):
     if colormap is not None and indexes is None:
@@ -242,11 +241,11 @@ def get_point(
 
 def get_preview(
     tile_source: Reader,
-    indexes: Optional[List[int]] = None,
-    colormap: Optional[str] = None,
-    vmin: Optional[Union[float, List[float]]] = None,
-    vmax: Optional[Union[float, List[float]]] = None,
-    nodata: Optional[Union[int, float]] = None,
+    indexes: list[int] | None = None,
+    colormap: str | None = None,
+    vmin: float | list[float] | None = None,
+    vmax: float | list[float] | None = None,
+    nodata: int | float | None = None,
     img_format: str = "PNG",
     max_size: int = 512,
 ):

@@ -14,7 +14,7 @@ def get_extensions_from_driver(driver: str):
     return [k for k, v in d.items() if v == driver]
 
 
-def numpy_to_raster(ras_meta, data, out_path: str = None):
+def numpy_to_raster(ras_meta, data, out_path: str | None = None):
     """Save new raster from a numpy array using the metadata of another raster.
 
     Note
@@ -54,7 +54,7 @@ def numpy_to_raster(ras_meta, data, out_path: str = None):
     return out_path
 
 
-def save_new_raster(src, data, out_path: str = None):
+def save_new_raster(src, data, out_path: str | None = None):
     """Save new raster from a numpy array using the metadata of another raster.
 
     Note
@@ -97,7 +97,7 @@ def polygon_to_geojson(polygon) -> str:
     try:
         from shapely.geometry import mapping
     except ImportError as e:  # pragma: no cover
-        raise ImportError(f"Please install `shapely`: {e}")
+        raise ImportError(f"Please install `shapely`: {e}") from e
 
     features = [{"type": "Feature", "properties": {}, "geometry": mapping(polygon)}]
     return json.dumps(features)
@@ -119,7 +119,7 @@ def parse_shapely(context):
         import shapely.wkb
         import shapely.wkt
     except ImportError as e:  # pragma: no cover
-        raise ImportError(f"Please install `shapely`: {e}")
+        raise ImportError(f"Please install `shapely`: {e}") from e
     if isinstance(context, str):
         # Infer as WKT
         return shapely.wkt.loads(context)
@@ -184,8 +184,8 @@ def hillshade(arr, azimuth=30, altitude=30):
     """
     try:
         x, y = np.gradient(arr)
-    except ValueError:
-        raise ValueError("Input array should be two-dimensional")
+    except ValueError as e:
+        raise ValueError("Input array should be two-dimensional") from e
 
     if azimuth <= 360.0:
         azimuth = 360.0 - azimuth

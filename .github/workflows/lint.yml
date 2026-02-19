@@ -13,10 +13,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6.1.0
         with:
-          python-version: "3.10"
-      - name: Install Style dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pre-commit
+          python-version: "3.13"
+      - name: Install pre-commit
+        run: pip install pre-commit
       - name: Run linting
         run: make lint

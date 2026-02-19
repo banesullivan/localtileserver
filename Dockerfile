@@ -8,10 +8,9 @@ WORKDIR /build-context
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-COPY setup.py /build-context/
-COPY MANIFEST.in /build-context/
+COPY pyproject.toml /build-context/
 COPY localtileserver/ /build-context/localtileserver/
-RUN python setup.py bdist_wheel
+RUN pip install build && python -m build --wheel
 RUN pip install dist/localtileserver*.whl
 
 ENTRYPOINT ["gunicorn", "--bind=0.0.0.0:8000", "localtileserver.web.wsgi:app"]

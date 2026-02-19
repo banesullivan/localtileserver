@@ -31,7 +31,10 @@ api = Api(
     version=__version__,
     default="localtileserver",
     default_label="localtileserver namespace",
-    description="<a href='https://github.com/banesullivan/localtileserver' target='_blank'>Learn more about localtileserver</a>",
+    description=(
+        "<a href='https://github.com/banesullivan/localtileserver'"
+        " target='_blank'>Learn more about localtileserver</a>"
+    ),
     prefix="api",
 )
 
@@ -40,7 +43,7 @@ BASE_PARAMS = {
         "description": "The local path or URL to the image to use.",
         "in": "query",
         "type": "str",
-        "example": "https://localtileserver.s3.us-west-2.amazonaws.com/examples/TC_NG_SFBay_US_Geo.tif",
+        "example": "https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/TC_NG_SFBay_US_Geo.tif",
     },
 }
 STYLE_PARAMS = {
@@ -50,7 +53,10 @@ STYLE_PARAMS = {
         "type": "int",  # TODO: make this a list
     },
     "colormap": {
-        "description": "The color palette to map the band values (named Matplotlib colormaps). `cmap` is a supported alias.",
+        "description": (
+            "The color palette to map the band values"
+            " (named Matplotlib colormaps). `cmap` is a supported alias."
+        ),
         "in": "query",
         "type": "str",
     },
@@ -95,7 +101,7 @@ class BaseImageView(View):
         try:
             return get_reader(filename)
         except RasterioIOError as e:
-            raise BadRequest(f"RasterioIOError: {str(e)}") from e
+            raise BadRequest(f"RasterioIOError: {e!s}") from e
 
     def get_clean_args(self):
         return {

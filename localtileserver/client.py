@@ -2,7 +2,6 @@ from collections.abc import Iterable
 import json
 import logging
 import pathlib
-from typing import List, Optional, Union
 
 from matplotlib.colors import Colormap, ListedColormap
 import rasterio
@@ -54,7 +53,7 @@ class TilerInterface:
 
     def __init__(
         self,
-        source: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase],
+        source: pathlib.Path | str | rasterio.io.DatasetReaderBase,
     ):
         if isinstance(source, rasterio.io.DatasetReaderBase):  # and hasattr(source, "name"):
             self._reader = get_reader(source.name)
@@ -116,7 +115,7 @@ class TilerInterface:
         try:
             from shapely.geometry import Polygon
         except ImportError as e:  # pragma: no cover
-            raise ImportError(f"Please install `shapely`: {e}")
+            raise ImportError(f"Please install `shapely`: {e}") from e
         coords = (
             (bounds["left"], bounds["top"]),
             (bounds["left"], bounds["top"]),
@@ -158,7 +157,7 @@ class TilerInterface:
             try:
                 from shapely.geometry import Point
             except ImportError as e:  # pragma: no cover
-                raise ImportError(f"Please install `shapely`: {e}")
+                raise ImportError(f"Please install `shapely`: {e}") from e
 
             point = Point(point)
             if return_wkt:
@@ -171,12 +170,12 @@ class TilerInterface:
         z: int,
         x: int,
         y: int,
-        indexes: Optional[List[int]] = None,
-        colormap: Optional[str] = None,
-        vmin: Optional[Union[float, List[float]]] = None,
-        vmax: Optional[Union[float, List[float]]] = None,
-        nodata: Optional[Union[int, float]] = None,
-        output_path: pathlib.Path = None,
+        indexes: list[int] | None = None,
+        colormap: str | None = None,
+        vmin: float | list[float] | None = None,
+        vmax: float | list[float] | None = None,
+        nodata: int | float | None = None,
+        output_path: pathlib.Path | None = None,
         encoding: str = "PNG",
     ):
         """Generate a tile from the source raster.
@@ -226,12 +225,12 @@ class TilerInterface:
 
     def thumbnail(
         self,
-        indexes: Optional[List[int]] = None,
-        colormap: Optional[str] = None,
-        vmin: Optional[Union[float, List[float]]] = None,
-        vmax: Optional[Union[float, List[float]]] = None,
-        nodata: Optional[Union[int, float]] = None,
-        output_path: pathlib.Path = None,
+        indexes: list[int] | None = None,
+        colormap: str | None = None,
+        vmin: float | list[float] | None = None,
+        vmax: float | list[float] | None = None,
+        nodata: int | float | None = None,
+        output_path: pathlib.Path | None = None,
         encoding: str = "PNG",
         max_size: int = 512,
     ):
@@ -300,12 +299,12 @@ class TileServerMixin:
 
     def __init__(
         self,
-        port: Union[int, str] = "default",
+        port: int | str = "default",
         debug: bool = False,
         host: str = "127.0.0.1",
-        client_port: int = None,
-        client_host: str = None,
-        client_prefix: str = None,
+        client_port: int | None = None,
+        client_host: str | None = None,
+        client_prefix: str | None = None,
         cors_all: bool = False,
     ):
         app = AppManager.get_or_create_app(cors_all=cors_all)
@@ -423,11 +422,11 @@ class TileServerMixin:
 
     def get_tile_url(
         self,
-        indexes: Optional[List[int]] = None,
-        colormap: Optional[Union[str, Colormap, List[str]]] = None,
-        vmin: Optional[Union[float, List[float]]] = None,
-        vmax: Optional[Union[float, List[float]]] = None,
-        nodata: Optional[Union[int, float]] = None,
+        indexes: list[int] | None = None,
+        colormap: str | Colormap | list[str] | None = None,
+        vmin: float | list[float] | None = None,
+        vmax: float | list[float] | None = None,
+        nodata: int | float | None = None,
         client: bool = False,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
@@ -549,13 +548,13 @@ class TileClient(TilerInterface, TileServerMixin):
 
     def __init__(
         self,
-        source: Union[pathlib.Path, str, rasterio.io.DatasetReaderBase],
-        port: Union[int, str] = "default",
+        source: pathlib.Path | str | rasterio.io.DatasetReaderBase,
+        port: int | str = "default",
         debug: bool = False,
         host: str = "127.0.0.1",
-        client_port: int = None,
-        client_host: str = None,
-        client_prefix: str = None,
+        client_port: int | None = None,
+        client_host: str | None = None,
+        client_prefix: str | None = None,
         cors_all: bool = False,
     ):
         TilerInterface.__init__(self, source=source)
@@ -572,13 +571,8 @@ class TileClient(TilerInterface, TileServerMixin):
 
 
 def get_or_create_tile_client(
-    source: Union[
-        pathlib.Path,
-        str,
-        TileClient,
-        rasterio.io.DatasetReaderBase,
-    ],
-    port: Union[int, str] = "default",
+    source: pathlib.Path | str | TileClient | rasterio.io.DatasetReaderBase,
+    port: int | str = "default",
     debug: bool = False,
 ):
     """A helper to safely get a TileClient from a path on disk.

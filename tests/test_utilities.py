@@ -1,6 +1,6 @@
 import pytest
 
-from localtileserver import Report, TileClient
+from localtileserver import Report
 from localtileserver.tiler.palettes import get_palettes, is_rio_cmap
 from localtileserver.validate import validate_cog
 
@@ -32,11 +32,9 @@ def test_get_palettes():
     assert isinstance(get_palettes(), dict)
 
 
-def test_cog_validate(remote_file_url):
-    assert validate_cog(remote_file_url)
-    client = TileClient(remote_file_url)
-    assert validate_cog(client)
+def test_cog_validate(bahamas_file):
+    assert validate_cog(str(bahamas_file))
 
 
-def test_cog_validate_bahamas(bahamas):
+def test_cog_validate_client(bahamas):
     assert validate_cog(bahamas)
