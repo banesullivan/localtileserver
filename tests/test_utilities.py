@@ -1,6 +1,6 @@
 import pytest
 
-from localtileserver import Report, TileClient
+from localtileserver import Report
 from localtileserver.tiler.palettes import get_palettes, is_rio_cmap
 from localtileserver.validate import validate_cog
 
