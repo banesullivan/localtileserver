@@ -13,10 +13,9 @@ COPY requirements_jupyter.txt /build-context/
 RUN pip install -r requirements_jupyter.txt
 RUN pip install rasterio
 
-COPY setup.py /build-context/
-COPY MANIFEST.in /build-context/
+COPY pyproject.toml /build-context/
 COPY localtileserver/ /build-context/localtileserver/
-RUN python setup.py bdist_wheel
+RUN pip install build && python -m build --wheel
 RUN pip install dist/localtileserver*.whl
 
 WORKDIR $HOME
