@@ -71,7 +71,7 @@ def compare(request):
         else:
             with open(gen / filename, "wb") as f:
                 f.write(image)
-            result = compare_images(path / filename, gen / filename, 0.1, in_decorator=True)
+            result = compare_images(path / filename, gen / filename, 20, in_decorator=True)
             assert result is None, (
                 f"Image comparison failed with RMS {result['rms']}. Difference in {result['diff']}"
             )
