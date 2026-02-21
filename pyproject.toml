@@ -72,6 +72,10 @@ include-package-data = true
 [tool.setuptools.packages.find]
 include = ["localtileserver*"]
 
+[tool.setuptools.package-data]
+"localtileserver.tiler.data" = ["*.tif", "*.xml", "*.wkb"]
+"localtileserver.web" = ["static/**/*", "templates/**/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --tb=short"
