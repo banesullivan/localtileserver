@@ -17,13 +17,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6.1.0
         with:
-          python-version: "3.10"
-      # Install everything else
-      - name: Install other dependencies
-        run: |
-          pip install -r requirements_jupyter.txt -r requirements_doc.txt
-      - name: Install localtileserver
-        run: pip install -e .
+          python-version: "3.12"
+      - name: Install localtileserver with doc dependencies
+        run: pip install -e ".[doc,colormaps,jupyter,xarray,helpers]"
       - name: Scooby Report
         run: python -c "import localtileserver;print(localtileserver.Report())"
       - name: Build Documentation

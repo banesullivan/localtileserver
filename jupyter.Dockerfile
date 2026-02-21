@@ -1,4 +1,4 @@
-FROM jupyter/base-notebook:python-3.11.6
+FROM jupyter/base-notebook:python-3.12
 LABEL maintainer="Bane Sullivan"
 LABEL repo="https://github.com/banesullivan/localtileserver"
 
@@ -8,15 +8,9 @@ WORKDIR /build-context
 
 RUN python -m pip install --upgrade pip
 
-COPY requirements.txt /build-context/
-COPY requirements_jupyter.txt /build-context/
-RUN pip install -r requirements_jupyter.txt
-RUN pip install rasterio
-
-COPY pyproject.toml /build-context/
+COPY pyproject.toml README.md /build-context/
 COPY localtileserver/ /build-context/localtileserver/
-RUN pip install build && python -m build --wheel
-RUN pip install dist/localtileserver*.whl
+RUN pip install "/build-context[all,test]"
 
 WORKDIR $HOME
 

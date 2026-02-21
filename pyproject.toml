@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -51,6 +51,35 @@ xarray = [
 helpers = [
     "shapely",
 ]
+test = [
+    "pytest",
+    "pytest-cov",
+    "matplotlib",
+    "folium",
+    "ipyleaflet",
+    "shapely",
+]
+doc = [
+    "bokeh",
+    "folium",
+    "ipyleaflet",
+    "jupyter-server-proxy",
+    "jupyter-sphinx",
+    "matplotlib",
+    "pydata-sphinx-theme",
+    "shapely",
+    "sphinx",
+    "sphinx-copybutton",
+    "sphinx-notfound-page",
+]
+dev = [
+    "localtileserver[test,doc,colormaps,jupyter,xarray,helpers]",
+    "pre-commit",
+    "ruff",
+]
+all = [
+    "localtileserver[colormaps,jupyter,xarray,helpers]",
+]
 
 [project.urls]
 Documentation = "https://localtileserver.banesullivan.com"
@@ -65,6 +94,25 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 include = ["localtileserver*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["localtileserver"]
+omit = [
+    "localtileserver/web/sentry.py",
+    "localtileserver/web/wsgi.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.",
+    "except ImportError",
+]
 
 [tool.ruff]
 line-length = 100
