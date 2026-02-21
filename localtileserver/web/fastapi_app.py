@@ -16,7 +16,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from localtileserver.tiler import get_clean_filename
+from localtileserver.web.routers.mosaic import router as mosaic_router
+from localtileserver.web.routers.stac import router as stac_router
 from localtileserver.web.routers.tiles import router as tiles_router
+from localtileserver.web.routers.xarray import router as xarray_router
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +59,9 @@ def create_app(
 
     # Include API routers
     app.include_router(tiles_router)
+    app.include_router(stac_router)
+    app.include_router(xarray_router)
+    app.include_router(mosaic_router)
 
     # Set up Jinja2 templates
     templates = Jinja2Templates(directory=str(_TEMPLATE_DIR))

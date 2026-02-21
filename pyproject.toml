@@ -44,6 +44,10 @@ jupyter = [
     "jupyter-server-proxy",
     "ipyleaflet",
 ]
+xarray = [
+    "xarray",
+    "rioxarray",
+]
 helpers = [
     "shapely",
 ]
