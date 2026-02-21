@@ -10,9 +10,12 @@ from localtileserver.web import create_app
 
 @pytest.fixture
 def flask_client():
+    """FastAPI test client (name kept for backwards compatibility with existing tests)."""
+    from fastapi.testclient import TestClient
+
     app = create_app()
-    with app.test_client() as f_client:
-        yield f_client
+    with TestClient(app) as client:
+        yield client
 
 
 @pytest.fixture

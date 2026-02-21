@@ -22,8 +22,7 @@ def add_query_parameters(url: str, params: dict):
         url += "?"
     for k, v in params.items():
         if isinstance(v, (list, tuple)):
-            for i, sub in enumerate(v):
-                url += "&" + urlencode({f"{k}.{i}": sub})
+            url += "&" + urlencode({k: ",".join(str(s) for s in v)})
         else:
             url += "&" + urlencode({k: v})
     return url

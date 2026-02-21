@@ -24,16 +24,14 @@ classifiers = [
 ]
 dependencies = [
     "click",
-    "flask>=2.0.0,<4",
-    "Flask-Caching",
-    "flask-cors",
-    "flask-restx>=1.3.0",
+    "fastapi>=0.100.0",
+    "uvicorn[standard]",
+    "jinja2",
     "rio-tiler",
     "rio-cogeo",
     "requests",
     "server-thread",
     "scooby",
-    "werkzeug",
 ]
 
 [project.optional-dependencies]
