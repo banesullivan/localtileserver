@@ -12,21 +12,21 @@ Python Client
 
 Use the ``statistics()`` method on a ``TileClient`` instance:
 
-.. code:: python
+.. jupyter-execute::
 
-    from localtileserver import TileClient
+  from localtileserver import TileClient, examples
 
-    client = TileClient('path/to/geo.tif')
+  client = examples.get_landsat()
 
-    # Get statistics for all bands
-    stats = client.statistics()
+  # Get statistics for all bands
+  stats = client.statistics()
 
-    for band_name, band_stats in stats.items():
-        print(f"{band_name}:")
-        print(f"  min={band_stats['min']}, max={band_stats['max']}")
-        print(f"  mean={band_stats['mean']}, std={band_stats['std']}")
-        print(f"  percentile_2={band_stats['percentile_2']}")
-        print(f"  percentile_98={band_stats['percentile_98']}")
+  for band_name, band_stats in stats.items():
+      print(f"{band_name}:")
+      print(f"  min={band_stats['min']}, max={band_stats['max']}")
+      print(f"  mean={band_stats['mean']:.2f}, std={band_stats['std']:.2f}")
+      print(f"  percentile_2={band_stats['percentile_2']}")
+      print(f"  percentile_98={band_stats['percentile_98']}")
 
 
 Statistics with Expressions
@@ -34,10 +34,12 @@ Statistics with Expressions
 
 You can also compute statistics on derived bands using expressions:
 
-.. code:: python
+.. jupyter-execute::
 
-    # Statistics for NDVI
-    stats = client.statistics(expression='(b4-b1)/(b4+b1)')
+  # Statistics for NDVI
+  ndvi_stats = client.statistics(expression='(b4-b3)/(b4+b3)')
+  for band_name, band_stats in ndvi_stats.items():
+      print(f"{band_name}: min={band_stats['min']:.3f}, max={band_stats['max']:.3f}")
 
 
 REST API

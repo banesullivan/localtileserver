@@ -16,23 +16,31 @@ Basic Usage
 Use the ``expression`` parameter with :func:`get_leaflet_tile_layer` or the
 ``TileClient`` methods:
 
-.. code:: python
+.. jupyter-execute::
 
-    from localtileserver import TileClient, get_leaflet_tile_layer
-    from ipyleaflet import Map
+  from localtileserver import TileClient, get_leaflet_tile_layer, examples
+  from ipyleaflet import Map
 
-    client = TileClient('path/to/multispectral.tif')
+  client = examples.get_landsat()
 
-    # NDVI: (NIR - Red) / (NIR + Red)
-    # Assuming band 4 = NIR, band 1 = Red
-    t = get_leaflet_tile_layer(client,
-                               expression='(b4-b1)/(b4+b1)',
-                               vmin=-1, vmax=1,
-                               colormap='RdYlGn')
+  # NDVI: (NIR - Red) / (NIR + Red)
+  # Landsat bands: b4 = NIR, b3 = Red
+  t = get_leaflet_tile_layer(client,
+                             expression='(b4-b3)/(b4+b3)',
+                             vmin=-1, vmax=1,
+                             colormap='rdylgn')
 
-    m = Map(center=client.center(), zoom=client.default_zoom)
-    m.add(t)
-    m
+  m = Map(center=client.center(), zoom=client.default_zoom)
+  m.add(t)
+  m
+
+
+We can also view expression results as a thumbnail:
+
+.. jupyter-execute::
+
+  client.thumbnail(expression='(b4-b3)/(b4+b3)', colormap='rdylgn',
+                   vmin=-1, vmax=1)
 
 
 Common Expressions

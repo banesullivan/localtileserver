@@ -41,20 +41,23 @@ Supported Formats
 Usage
 ^^^^^
 
-Change the output format by using the appropriate file extension in tile or
-thumbnail requests:
+Change the output format by using the ``encoding`` parameter on tile or
+thumbnail methods:
 
-.. code:: python
+.. jupyter-execute::
 
-    from localtileserver import TileClient
+  from localtileserver import TileClient, examples
 
-    client = TileClient('path/to/geo.tif')
+  client = examples.get_san_francisco()
 
-    # Get a PNG tile (default)
-    png_tile = client.tile(10, 163, 395, output_format='png')
+  # Get a PNG thumbnail (default)
+  client.thumbnail(encoding='png')
 
-    # Get a JPEG thumbnail
-    jpeg_thumb = client.thumbnail(output_format='jpeg')
+
+.. jupyter-execute::
+
+  # Get a JPEG thumbnail
+  client.thumbnail(encoding='jpeg')
 
 
 REST API

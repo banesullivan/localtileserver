@@ -35,27 +35,6 @@ Available Stretch Modes
        normalization. Useful for data with a very large dynamic range.
 
 
-Usage
-^^^^^
-
-Use the ``stretch`` parameter with ``get_leaflet_tile_layer`` or directly with
-tile/thumbnail endpoints:
-
-.. code:: python
-
-    from localtileserver import TileClient, get_leaflet_tile_layer
-    from ipyleaflet import Map
-
-    client = TileClient('path/to/dem.tif')
-
-    # Linear percentile stretch (2nd to 98th percentile)
-    t = get_leaflet_tile_layer(client, stretch='linear')
-
-    m = Map(center=client.center(), zoom=client.default_zoom)
-    m.add(t)
-    m
-
-
 REST API
 ^^^^^^^^
 
@@ -75,6 +54,6 @@ The ``stretch`` parameter is available on all tile and thumbnail endpoints:
 
 .. note::
 
-    When a ``stretch`` mode is specified, it overrides any ``vmin``/``vmax``
-    values that would otherwise be used. The ``vmin``/``vmax`` parameters
-    are still honored when ``stretch`` is not set.
+    Stretch modes are currently available via the REST API tile and thumbnail
+    endpoints. When a ``stretch`` mode is specified, it overrides any
+    ``vmin``/``vmax`` values that would otherwise be used.
