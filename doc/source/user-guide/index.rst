@@ -8,13 +8,22 @@
 - In a Jupyter notebook with ipyleaflet or folium
 - From the commandline in a web browser
 - With remote Cloud Optimized GeoTiffs
+- With STAC catalogs, xarray DataArrays, and virtual mosaics
 
 .. toctree::
    :hidden:
 
    rgb
+   expressions
+   statistics
+   stretch
+   formats
+   spatial-subsets
    remote-cog
    compare
+   stac
+   xarray
+   mosaic
    example-data
    web-app
    ipyleaflet_deep_zoom
@@ -23,6 +32,7 @@
    bokeh
    hillshade
    in-memory
+   rest-api
 
 
 Here is the "one-liner" to visualize a large geospatial image with
@@ -117,7 +127,9 @@ code as the ``ipyleaflet`` example, just note that :class:`folium.Map` is import
 --------------
 
 - :func:`get_leaflet_tile_layer` accepts either an existing :class:`TileClient` or a path from which to create a :class:`TileClient` under the hood.
-- If matplotlib is installed, any matplotlib colormap name cane be used a palette choice
+- If matplotlib is installed, any matplotlib colormap name can be used as a palette choice
+- Band math expressions, stretch modes, and multiple output formats are supported across all tile endpoints
+- The server runs on FastAPI and provides interactive API docs at ``/swagger/``
 
 
 💭 Feedback

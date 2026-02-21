@@ -22,16 +22,22 @@ Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinde
 
 Documentation: https://localtileserver.banesullivan.com/
 
-Built on [rio-tiler](https://github.com/cogeotiff/rio-tiler)
+Built on [rio-tiler](https://github.com/cogeotiff/rio-tiler) and [FastAPI](https://fastapi.tiangolo.com/)
 
 
 ## 🌟 Highlights
 
 - Launch a tile server for large geospatial images
-- View local or remote* raster files with `ipyleaflet` or `folium` in Jupyter
+- View local or remote raster files with `ipyleaflet` or `folium` in Jupyter
+- Band math expressions for on-the-fly computed imagery (e.g., NDVI)
+- Per-band statistics and multiple image stretch modes
+- Multiple output formats: PNG, JPEG, WebP, GeoTIFF, NPY
+- Spatial subsetting via bounding box crops and GeoJSON masks
+- [STAC](https://stacspec.org/) item support for multi-asset catalogs
+- [Xarray](https://xarray.dev/) DataArray tile serving (NetCDF, Zarr, etc.)
+- Virtual mosaics from multiple raster files
 - View rasters with CesiumJS with the built-in web application
-
-**remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
+- Full REST API powered by FastAPI with auto-generated OpenAPI docs
 
 ## 🚀 Usage
 
@@ -57,9 +63,48 @@ m
 
 ![ipyleaflet](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet.png)
 
+### Band Math Expressions
+
+Compute derived imagery on the fly using band math expressions:
+
+```py
+client = TileClient('path/to/multispectral.tif')
+
+# NDVI: (NIR - Red) / (NIR + Red) where NIR=b4, Red=b1
+t = get_leaflet_tile_layer(client, expression='(b4-b1)/(b4+b1)',
+                           vmin=-1, vmax=1, colormap='RdYlGn')
+```
+
+### STAC Support
+
+Visualize assets from STAC catalogs:
+
+```py
+import requests
+
+# Fetch tiles from a STAC item's assets
+resp = requests.get('http://localhost:PORT/api/stac/tiles/10/512/512.png',
+                    params={'url': 'https://example.com/stac/item.json',
+                            'assets': 'visual'})
+```
+
+### Xarray DataArrays
+
+Serve tiles directly from xarray DataArrays (NetCDF, Zarr, etc.):
+
+```py
+import xarray as xr
+
+ds = xr.open_dataset('temperature.nc')
+da = ds['temperature']
+da = da.rio.write_crs('EPSG:4326')
+
+# Register and serve tiles through the REST API
+```
+
 ## ℹ️ Overview
 
-The `TileClient` class can be used to to launch a tile server in a background
+The `TileClient` class can be used to launch a tile server in a background
 thread which will serve raster imagery to a viewer (usually `ipyleaflet` or
 `folium` in Jupyter notebooks).
 
@@ -70,11 +115,31 @@ raster imagery to your viewer; it helps to have pre-tiled,
 There is an included, standalone web viewer leveraging
 [CesiumJS](https://cesium.com/platform/cesiumjs/).
 
+### REST API
+
+The server exposes a comprehensive REST API built on FastAPI:
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/tiles/{z}/{x}/{y}.{fmt}` | Raster tiles |
+| `GET /api/thumbnail.{fmt}` | Thumbnail preview |
+| `GET /api/metadata` | Raster metadata |
+| `GET /api/bounds` | Geographic bounds |
+| `GET /api/statistics` | Per-band statistics |
+| `GET /api/part.{fmt}` | Bounding box crop |
+| `POST /api/feature.{fmt}` | GeoJSON mask extraction |
+| `GET /api/stac/tiles/{z}/{x}/{y}.{fmt}` | STAC item tiles |
+| `GET /api/xarray/tiles/{z}/{x}/{y}.{fmt}` | Xarray DataArray tiles |
+| `GET /api/mosaic/tiles/{z}/{x}/{y}.{fmt}` | Mosaic tiles |
+| `GET /swagger/` | Interactive API docs |
+
+All tile/thumbnail endpoints support `expression`, `stretch`, `indexes`, `colormap`, `vmin`, `vmax`, and `nodata` query parameters.
+
 
 ## ⬇️ Installation
 
 Get started with `localtileserver` to view rasters in Jupyter or deploy as your
-own Flask application.
+own FastAPI application.
 
 ### 🐍 Installing with `conda`
 
@@ -91,6 +156,26 @@ If you prefer pip, then you can install from PyPI: https://pypi.org/project/loca
 
 ```
 pip install localtileserver
+```
+
+### Optional Dependencies
+
+For xarray/DataArray support:
+
+```
+pip install localtileserver[xarray]
+```
+
+For Jupyter widget integration:
+
+```
+pip install localtileserver[jupyter]
+```
+
+For additional colormaps:
+
+```
+pip install localtileserver[colormaps]
 ```
 
 ## 💭 Feedback
