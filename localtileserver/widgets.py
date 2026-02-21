@@ -8,6 +8,32 @@ import rasterio
 from localtileserver.client import TileClient, get_or_create_tile_client
 
 logger = logging.getLogger(__name__)
+
+
+def _is_colab():
+    """Check if running in Google Colab."""
+    try:
+        import google.colab  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+def _get_colab_proxy_url(port: int) -> str | None:
+    """Get Colab's proxy URL for a given port.
+
+    Returns the proxy URL string, or None if not in Colab or eval_js fails.
+    """
+    try:
+        from google.colab.output import eval_js
+
+        url = eval_js(f"google.colab.kernel.proxyPort({port})")
+        if url:
+            return str(url).rstrip("/")
+    except Exception:
+        pass
+    return None
 DEFAULT_ATTRIBUTION = (
     "Raster file served by <a href='https://github.com/banesullivan/localtileserver'"
     " target='_blank'>localtileserver</a>."
@@ -123,9 +149,8 @@ def get_leaflet_tile_layer(
     b = source.bounds()
     bounds = ((b[0], b[2]), (b[1], b[3]))
     tile_layer = BoundTileLayer(url=url, attribution=attribution, bounds=bounds, **kwargs)
-    if created:
-        # HACK: Prevent the client from being garbage collected
-        tile_layer.tile_server = source
+    # Always store reference to prevent the client from being garbage collected (#239)
+    tile_layer.tile_server = source
     return tile_layer
 
 
@@ -212,6 +237,13 @@ def get_folium_tile_layer(
         port=port,
         debug=debug,
     )
+    # On Colab, folium renders as static HTML so the browser needs a
+    # publicly reachable proxy URL instead of localhost (#242).
+    if _is_colab():
+        proxy_url = _get_colab_proxy_url(source.server_port)
+        if proxy_url:
+            source.client_host = proxy_url
+            source.client_port = None
     url = source.get_tile_url(
         indexes=indexes,
         colormap=colormap,
@@ -225,7 +257,6 @@ def get_folium_tile_layer(
     b = source.bounds()
     bounds = ((b[0], b[2]), (b[1], b[3]))
     tile_layer = FoliumTileLayer(tiles=url, bounds=bounds, attr=attr, **kwargs)
-    if created:
-        # HACK: Prevent the client from being garbage collected
-        tile_layer.tile_server = source
+    # Always store reference to prevent the client from being garbage collected (#239)
+    tile_layer.tile_server = source
     return tile_layer

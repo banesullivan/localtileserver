@@ -31,6 +31,7 @@ from localtileserver.tiler import (
     get_source_bounds,
     get_tile,
     palette_valid_or_raise,
+    register_colormap,
 )
 from localtileserver.utilities import add_query_parameters
 
@@ -233,6 +234,7 @@ class TilerInterface:
         output_path: pathlib.Path | None = None,
         encoding: str = "PNG",
         max_size: int = 512,
+        crs: str | None = None,
     ):
         """Generate a thumbnail preview of the dataset.
 
@@ -251,6 +253,9 @@ class TilerInterface:
             The maximized value to use when colormapping a single band.
         nodata : float
             The value from the band to use to interpret as not valid data.
+        crs : str, optional
+            Target CRS for the thumbnail projection (e.g., ``"EPSG:3857"``).
+            When set, the preview is reprojected to this CRS.
 
         """
         if encoding.lower() not in ["png", "jpeg", "jpg"]:
@@ -265,6 +270,7 @@ class TilerInterface:
             img_format=encoding,
             vmin=vmin,
             vmax=vmax,
+            crs=crs,
         )
 
         if output_path:
@@ -307,6 +313,24 @@ class TileServerMixin:
         client_prefix: str | None = None,
         cors_all: bool = False,
     ):
+        # Capture rasterio/GDAL env from the calling thread so it can be
+        # forwarded to the background tile-server thread (#182).
+        import os
+
+        import rasterio
+
+        rio_env = {}
+        try:
+            rio_env.update(rasterio.env.getenv())
+        except Exception:
+            pass
+        # Also capture GDAL/AWS/CPL env vars from os.environ
+        for key, val in os.environ.items():
+            if key.startswith(("GDAL_", "AWS_", "CPL_")):
+                rio_env.setdefault(key, val)
+        if rio_env:
+            AppManager.set_rasterio_env(rio_env)
+
         app = AppManager.get_or_create_app(cors_all=cors_all)
         self._key = launch_server(app, port=port, debug=debug, host=host)
         # Store actual port just in case
@@ -453,12 +477,19 @@ class TileServerMixin:
         if indexes is not None:
             params["indexes"] = indexes
         if colormap is not None:
-            if isinstance(colormap, ListedColormap):
-                colormap = json.dumps([c for c in colormap.colors])
-            elif isinstance(colormap, Colormap):
-                colormap = json.dumps(
-                    {k: tuple(v.tolist()) for k, v in enumerate(colormap(range(256), 1, 1))}
-                )
+            if isinstance(colormap, (Colormap, ListedColormap)):
+                # Register the colormap server-side to avoid URL overflow (#231)
+                if isinstance(colormap, ListedColormap):
+                    from matplotlib.colors import LinearSegmentedColormap
+
+                    c = LinearSegmentedColormap.from_list("", colormap.colors, N=256)
+                else:
+                    c = colormap
+                cmap_data = {
+                    int(k): tuple(float(x) for x in v)
+                    for k, v in enumerate(c(range(256), 1, 1))
+                }
+                colormap = register_colormap(cmap_data)
             elif isinstance(colormap, list):
                 colormap = json.dumps(colormap)
             else:

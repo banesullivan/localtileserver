@@ -5,7 +5,8 @@ import threading
 import webbrowser
 
 import click
-from flask import Flask
+import rasterio
+from flask import Flask, g
 from flask_cors import CORS
 
 from localtileserver.tiler import get_clean_filename
@@ -32,6 +33,24 @@ def create_app(
         logging.getLogger("werkzeug").setLevel(logging.DEBUG)
         logging.getLogger("rasterio").setLevel(logging.DEBUG)
         logging.getLogger("rio_tiler").setLevel(logging.DEBUG)
+
+    @app.before_request
+    def _apply_rasterio_env():
+        """Apply captured rasterio/GDAL env for each request (#182)."""
+        from localtileserver.manager import AppManager
+
+        rio_env = AppManager.get_rasterio_env()
+        if rio_env:
+            g._rasterio_env = rasterio.Env(**rio_env)
+            g._rasterio_env.__enter__()
+
+    @app.teardown_request
+    def _teardown_rasterio_env(exc):
+        """Clean up rasterio env context after each request."""
+        env = getattr(g, "_rasterio_env", None)
+        if env is not None:
+            env.__exit__(None, None, None)
+
     return app
 
 

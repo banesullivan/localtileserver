@@ -15,7 +15,12 @@ from localtileserver.tiler.handler import (
     get_source_bounds,
     get_tile,
 )
-from localtileserver.tiler.palettes import get_palettes, palette_valid_or_raise
+from localtileserver.tiler.palettes import (
+    get_palettes,
+    get_registered_colormap,
+    palette_valid_or_raise,
+    register_colormap,
+)
 from localtileserver.tiler.utilities import (
     ImageBytes,
     format_to_encoding,

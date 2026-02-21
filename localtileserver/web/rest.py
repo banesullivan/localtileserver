@@ -161,7 +161,10 @@ class ThumbnailView(BaseImageView):
         except ValueError as e:
             raise BadRequest(f"Format {format} is not a valid encoding.") from e
         tile_source = self.get_reader()
-        thumb_data = get_preview(tile_source, img_format=encoding, **self.get_clean_args())
+        crs = request.args.get("crs", None)
+        thumb_data = get_preview(
+            tile_source, img_format=encoding, crs=crs, **self.get_clean_args()
+        )
         thumb_data = io.BytesIO(thumb_data)
         return send_file(
             thumb_data,

@@ -11,6 +11,7 @@ from rio_tiler.colormap import cmap
 from rio_tiler.io import Reader
 from rio_tiler.models import ImageData
 
+from .palettes import get_registered_colormap
 from .utilities import ImageBytes, get_clean_filename, make_crs
 
 # Some GDAL options to consider setting:
@@ -152,7 +153,11 @@ def _render_image(
     colormap: str | None = None,
     img_format: str = "PNG",
 ):
-    if colormap in cmap.list():
+    # Resolve colormap to a dict for rio-tiler rendering
+    registered = get_registered_colormap(colormap) if isinstance(colormap, str) else None
+    if registered is not None:
+        colormap = registered
+    elif colormap in cmap.list():
         colormap = cmap.get(colormap)
     elif isinstance(colormap, ListedColormap):
         c = LinearSegmentedColormap.from_list("", colormap.colors, N=256)
@@ -248,13 +253,28 @@ def get_preview(
     nodata: int | float | None = None,
     img_format: str = "PNG",
     max_size: int = 512,
+    crs: str | None = None,
 ):
     if colormap is not None and indexes is None:
         indexes = [1]
     indexes = _handle_band_indexes(tile_source, indexes)
     nodata = _handle_nodata(tile_source, nodata)
     vmin, vmax = _handle_vmin_vmax(indexes, vmin, vmax)
-    img = tile_source.preview(max_size=max_size, indexes=indexes, nodata=nodata)
+    if crs is not None:
+        # Generate a preview reprojected to the target CRS (#202).
+        # Use reader.part() with the full bounds in the target projection.
+        dst_crs = make_crs(crs)
+        src_bounds = tile_source.dataset.bounds
+        src_crs = tile_source.dataset.crs
+        if src_crs:
+            dst_bounds = rasterio.warp.transform_bounds(src_crs, dst_crs, *src_bounds)
+        else:
+            dst_bounds = src_bounds
+        img = tile_source.part(
+            dst_bounds, dst_crs=dst_crs, max_size=max_size, indexes=indexes, nodata=nodata
+        )
+    else:
+        img = tile_source.preview(max_size=max_size, indexes=indexes, nodata=nodata)
     return _render_image(
         tile_source,
         img,
