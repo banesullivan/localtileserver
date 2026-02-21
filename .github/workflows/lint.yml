@@ -1,12 +1,13 @@
 name: Linting
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
       - main
 
 jobs:
-  style:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6.0.1
