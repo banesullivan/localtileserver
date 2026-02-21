@@ -15,18 +15,20 @@ from localtileserver.tiler import (
 )
 from localtileserver.tiler.handler import get_feature, get_part
 from localtileserver.tiler.palettes import get_palettes
-from localtileserver.web.routers.utils import get_clean_filename_from_params, parse_style_params
+from localtileserver.web.routers.utils import parse_style_params
 
 router = APIRouter(prefix="/api", tags=["tiles"])
 
 
 @router.get("/palettes")
 async def list_palettes():
+    """Return the dictionary of available color palettes."""
     return get_palettes()
 
 
 @router.get("/metadata")
 async def metadata_view(request: Request, filename: str = Query(None)):
+    """Return raster metadata for the given file."""
     filename = _resolve_filename(request, filename)
     reader = _get_reader(filename)
     meta = get_meta_data(reader)
@@ -40,6 +42,7 @@ async def bounds_view(
     filename: str = Query(None),
     crs: str = Query("EPSG:4326"),
 ):
+    """Return the geographic bounds of the raster."""
     filename = _resolve_filename(request, filename)
     reader = _get_reader(filename)
     bounds = get_source_bounds(reader, projection=crs)
@@ -49,6 +52,7 @@ async def bounds_view(
 
 @router.get("/validate")
 async def validate_cog_view(request: Request, filename: str = Query(None)):
+    """Validate whether the raster is a Cloud Optimized GeoTIFF."""
     from localtileserver.validate import validate_cog
 
     filename = _resolve_filename(request, filename)
@@ -66,6 +70,7 @@ async def statistics_view(
     indexes: str | None = Query(None),
     expression: str | None = Query(None),
 ):
+    """Return band statistics for the raster."""
     filename = _resolve_filename(request, filename)
     reader = _get_reader(filename)
     style = parse_style_params(indexes=indexes)
@@ -86,13 +91,18 @@ async def thumbnail_view(
     expression: str | None = Query(None),
     stretch: str | None = Query(None),
 ):
+    """Return a thumbnail preview image of the raster."""
     filename = _resolve_filename(request, filename)
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not a valid encoding.")
+        raise HTTPException(
+            status_code=400, detail=f"Format {format} is not a valid encoding."
+        ) from None
     reader = _get_reader(filename)
-    style = parse_style_params(indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata)
+    style = parse_style_params(
+        indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
+    )
     thumb_data = get_preview(
         reader, img_format=encoding, crs=crs, expression=expression, stretch=stretch, **style
     )
@@ -115,16 +125,19 @@ async def tile_view(
     expression: str | None = Query(None),
     stretch: str | None = Query(None),
 ):
+    """Return a single map tile at the given z/x/y coordinates."""
     filename = _resolve_filename(request, filename)
     reader = _get_reader(filename)
     img_format = format_to_encoding(format)
-    style = parse_style_params(indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata)
+    style = parse_style_params(
+        indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
+    )
     try:
         tile_binary = get_tile(
             reader, z, x, y, img_format=img_format, expression=expression, stretch=stretch, **style
         )
     except TileOutsideBounds:
-        raise HTTPException(status_code=404, detail="Tile outside bounds")
+        raise HTTPException(status_code=404, detail="Tile outside bounds") from None
     return Response(content=bytes(tile_binary), media_type=f"image/{img_format.lower()}")
 
 
@@ -145,23 +158,37 @@ async def part_view(
     dst_crs: str | None = Query(None),
     bounds_crs: str | None = Query(None),
 ):
+    """Return a cropped image of the raster for the given bounding box."""
     filename = _resolve_filename(request, filename)
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not a valid encoding.")
+        raise HTTPException(
+            status_code=400, detail=f"Format {format} is not a valid encoding."
+        ) from None
     try:
         parts = [float(x.strip()) for x in bbox.split(",")]
         if len(parts) != 4:
             raise ValueError
         bbox_tuple = tuple(parts)
     except ValueError:
-        raise HTTPException(status_code=400, detail="bbox must be 4 comma-separated floats: left,bottom,right,top")
+        raise HTTPException(
+            status_code=400, detail="bbox must be 4 comma-separated floats: left,bottom,right,top"
+        ) from None
     reader = _get_reader(filename)
-    style = parse_style_params(indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata)
+    style = parse_style_params(
+        indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
+    )
     result = get_part(
-        reader, bbox_tuple, img_format=encoding, max_size=max_size, dst_crs=dst_crs,
-        bounds_crs=bounds_crs, expression=expression, stretch=stretch, **style,
+        reader,
+        bbox_tuple,
+        img_format=encoding,
+        max_size=max_size,
+        dst_crs=dst_crs,
+        bounds_crs=bounds_crs,
+        expression=expression,
+        stretch=stretch,
+        **style,
     )
     return Response(content=bytes(result), media_type=f"image/{format.lower()}")
 
@@ -181,20 +208,31 @@ async def feature_view(
     max_size: int = Query(1024),
     dst_crs: str | None = Query(None),
 ):
+    """Return a cropped image of the raster clipped to a GeoJSON feature."""
     filename = _resolve_filename(request, filename)
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not a valid encoding.")
+        raise HTTPException(
+            status_code=400, detail=f"Format {format} is not a valid encoding."
+        ) from None
     try:
         geojson = await request.json()
     except Exception:
-        raise HTTPException(status_code=400, detail="Request body must be valid GeoJSON.")
+        raise HTTPException(status_code=400, detail="Request body must be valid GeoJSON.") from None
     reader = _get_reader(filename)
-    style = parse_style_params(indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata)
+    style = parse_style_params(
+        indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
+    )
     result = get_feature(
-        reader, geojson, img_format=encoding, max_size=max_size, dst_crs=dst_crs,
-        expression=expression, stretch=stretch, **style,
+        reader,
+        geojson,
+        img_format=encoding,
+        max_size=max_size,
+        dst_crs=dst_crs,
+        expression=expression,
+        stretch=stretch,
+        **style,
     )
     return Response(content=bytes(result), media_type=f"image/{format.lower()}")
 
@@ -220,8 +258,8 @@ def _get_reader(filename: str):
     try:
         clean = get_clean_filename(filename)
     except OSError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     try:
         return get_reader(clean)
     except RasterioIOError as e:
-        raise HTTPException(status_code=400, detail=f"RasterioIOError: {e!s}")
+        raise HTTPException(status_code=400, detail=f"RasterioIOError: {e!s}") from e

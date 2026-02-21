@@ -1,17 +1,14 @@
 """Tests for Xarray/DataArray support (Phase 3.2)."""
 
-from unittest.mock import MagicMock, patch
-
 import numpy as np
 import pytest
 
 xr = pytest.importorskip("xarray")
 rioxarray = pytest.importorskip("rioxarray")
 
-from rasterio.crs import CRS
-from rio_tiler.io.xarray import XarrayReader
+from rio_tiler.io.xarray import XarrayReader  # noqa: E402
 
-from localtileserver.tiler.xarray_handler import (
+from localtileserver.tiler.xarray_handler import (  # noqa: E402
     _check_xarray,
     get_xarray_info,
     get_xarray_preview,
@@ -98,7 +95,7 @@ class TestGetXarrayStatistics:
         assert isinstance(stats, dict)
         assert len(stats) > 0
         # Each band should have min, max, mean, etc.
-        for key, val in stats.items():
+        for _key, val in stats.items():
             assert "min" in val
             assert "max" in val
             assert "mean" in val

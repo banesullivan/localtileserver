@@ -1,9 +1,17 @@
+"""Environment and dependency reporting for localtileserver."""
+
 import scooby
 
 
 class Report(scooby.Report):
+    """
+    Generate a report on the dependencies of localtileserver.
+    """
+
     def __init__(self, additional=None, ncol=3, text_width=80, sort=False):
-        """Generate a report on the dependencies of localtileserver in this environment."""
+        """
+        Generate a report on the dependencies of localtileserver in this environment.
+        """
 
         # Mandatory packages.
         core = [

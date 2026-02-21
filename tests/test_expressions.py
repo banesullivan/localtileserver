@@ -29,9 +29,7 @@ class TestExpressions:
         assert len(tile) > 0
 
     def test_tile_math_expression(self, reader):
-        tile = get_tile(
-            reader, 8, 72, 110, expression="(b1-b2)/(b1+b2)", colormap="viridis"
-        )
+        tile = get_tile(reader, 8, 72, 110, expression="(b1-b2)/(b1+b2)", colormap="viridis")
         assert len(tile) > 0
 
     def test_preview_with_expression(self, reader):
@@ -43,7 +41,7 @@ class TestExpressions:
 
         client = get_bahamas()
         try:
-            with pytest.raises(ValueError, match="expression.*indexes|indexes.*expression"):
+            with pytest.raises(ValueError, match=r"expression.*indexes|indexes.*expression"):
                 client.tile(8, 72, 110, indexes=[1], expression="b1")
         finally:
             client.shutdown(force=True)
@@ -198,6 +196,7 @@ class TestPartReads:
 class TestFeatureReads:
     def _geo_bounds(self, reader):
         import rasterio.warp
+
         b = reader.dataset.bounds
         return rasterio.warp.transform_bounds(
             reader.dataset.crs, "EPSG:4326", b.left, b.bottom, b.right, b.top

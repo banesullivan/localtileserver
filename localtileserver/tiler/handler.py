@@ -1,4 +1,6 @@
-"""Methods for working with images."""
+"""
+Methods for working with images.
+"""
 
 import json
 import pathlib
@@ -22,10 +24,37 @@ from .utilities import ImageBytes, get_clean_filename, make_crs
 
 
 def get_reader(path: pathlib.Path | str) -> Reader:
+    """
+    Open a raster file and return a rio-tiler Reader.
+
+    Parameters
+    ----------
+    path : pathlib.Path or str
+        Path or URL to the raster file.
+
+    Returns
+    -------
+    Reader
+        A rio-tiler ``Reader`` instance for the given path.
+    """
     return Reader(get_clean_filename(path))
 
 
 def get_meta_data(tile_source: Reader):
+    """
+    Retrieve metadata for a raster dataset.
+
+    Parameters
+    ----------
+    tile_source : Reader
+        An open rio-tiler ``Reader`` for the raster dataset.
+
+    Returns
+    -------
+    dict
+        A dictionary containing dataset metadata including band info,
+        CRS, transform, data type, and geographic bounds.
+    """
     info = tile_source.info()
     if hasattr(info, "model_dump"):
         info = info.model_dump()
@@ -43,6 +72,26 @@ def get_meta_data(tile_source: Reader):
 
 
 def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decimal_places: int = 6):
+    """
+    Get the geographic bounds of the raster reprojected to a target CRS.
+
+    Parameters
+    ----------
+    tile_source : Reader
+        An open rio-tiler ``Reader`` for the raster dataset.
+    projection : str, optional
+        Target CRS string for the output bounds. Defaults to
+        ``"EPSG:4326"``.
+    decimal_places : int, optional
+        Number of decimal places to round the output coordinates.
+        Defaults to ``6``.
+
+    Returns
+    -------
+    dict
+        A dictionary with keys ``"left"``, ``"bottom"``, ``"right"``,
+        and ``"top"`` representing the bounding box in the target CRS.
+    """
     src_crs = tile_source.dataset.crs
     if not src_crs:
         return {
@@ -69,6 +118,9 @@ def get_source_bounds(tile_source: Reader, projection: str = "EPSG:4326", decima
 
 
 def _handle_band_indexes(tile_source: Reader, indexes: list[int] | None = None):
+    """
+    Resolve band indexes, auto-detecting RGB bands when *indexes* is None.
+    """
     band_names = [desc[0] for desc in tile_source.info().band_descriptions]
 
     def _index_lookup(index_or_name: str):
@@ -106,6 +158,9 @@ def _handle_band_indexes(tile_source: Reader, indexes: list[int] | None = None):
 
 
 def _handle_nodata(tile_source: Reader, nodata: int | float | None = None):
+    """
+    Return a normalised nodata value, defaulting to NaN for float dtypes.
+    """
     floaty = False
     if any(dtype.startswith("float") for dtype in tile_source.dataset.dtypes):
         floaty = True
@@ -122,6 +177,9 @@ def _handle_vmin_vmax(
     vmin: float | list[float] | None = None,
     vmax: float | list[float] | None = None,
 ) -> tuple[dict[int, float], dict[int, float]]:
+    """
+    Broadcast scalar vmin/vmax to per-band dicts keyed by band index.
+    """
     # TODO: move these string checks to the rest api
     if isinstance(vmin, (str, int)):
         vmin = float(vmin)
@@ -148,7 +206,29 @@ STRETCH_MODES = {"none", "minmax", "linear", "equalize", "sqrt", "log"}
 
 
 def _apply_stretch(img: ImageData, stretch: str, tile_source: Reader, indexes: list[int]):
-    """Apply a stretch mode to the image data in-place, returning adjusted vmin/vmax dicts."""
+    """
+    Apply a stretch mode to the image data in-place.
+
+    Parameters
+    ----------
+    img : ImageData
+        The rio-tiler image data to stretch. Modified in-place for
+        ``"equalize"``, ``"sqrt"``, and ``"log"`` modes.
+    stretch : str
+        Stretch mode. One of ``"none"``, ``"minmax"``, ``"linear"``,
+        ``"equalize"``, ``"sqrt"``, or ``"log"``.
+    tile_source : Reader
+        An open rio-tiler ``Reader`` used to compute band statistics.
+    indexes : list of int
+        Band indexes to stretch.
+
+    Returns
+    -------
+    vmin : dict
+        Per-band minimum values keyed by band index.
+    vmax : dict
+        Per-band maximum values keyed by band index.
+    """
     if stretch == "none":
         return {i: 0 for i in indexes}, {i: 255 for i in indexes}
     stats = tile_source.statistics(indexes=indexes)
@@ -161,7 +241,7 @@ def _apply_stretch(img: ImageData, stretch: str, tile_source: Reader, indexes: l
         vmax = {i: stats[f"b{i}"].percentile_98 for i in indexes}
     elif stretch == "equalize":
         # Histogram equalization via numpy
-        for band_idx, band_num in enumerate(indexes):
+        for band_idx, _band_num in enumerate(indexes):
             band_data = img.data[band_idx].astype(float)
             mask = img.mask[0] if img.mask.ndim == 3 else img.mask
             valid = band_data[mask > 0] if mask.any() else band_data.ravel()
@@ -207,6 +287,9 @@ def _render_image(
     img_format: str = "PNG",
     stretch: str | None = None,
 ):
+    """
+    Rescale, colormap, and render an ImageData to encoded image bytes.
+    """
     # Resolve colormap to a dict for rio-tiler rendering
     registered = get_registered_colormap(colormap) if isinstance(colormap, str) else None
     if registered is not None:
@@ -277,6 +360,45 @@ def get_tile(
     expression: str | None = None,
     stretch: str | None = None,
 ):
+    """
+    Generate a rendered map tile for the given ZXY index.
+
+    Parameters
+    ----------
+    tile_source : Reader
+        An open rio-tiler ``Reader`` for the raster dataset.
+    z : int
+        Zoom level of the tile.
+    x : int
+        Column index of the tile.
+    y : int
+        Row index of the tile.
+    indexes : list of int, optional
+        Band indexes to render. Auto-detected when not provided.
+    colormap : str, optional
+        Name of a colormap to apply when rendering a single band.
+    vmin : float or list of float, optional
+        Minimum value(s) for rescaling band data.
+    vmax : float or list of float, optional
+        Maximum value(s) for rescaling band data.
+    nodata : int or float, optional
+        Override nodata value for the dataset.
+    img_format : str, optional
+        Output image format (e.g., ``"PNG"``, ``"JPEG"``). Defaults to
+        ``"PNG"``.
+    expression : str, optional
+        Band math expression (e.g., ``"b1/b2"``). When provided,
+        *indexes* is ignored.
+    stretch : str, optional
+        Stretch mode to apply before rendering. One of ``"none"``,
+        ``"minmax"``, ``"linear"``, ``"equalize"``, ``"sqrt"``, or
+        ``"log"``.
+
+    Returns
+    -------
+    ImageBytes
+        Encoded image bytes with an associated MIME type.
+    """
     if expression:
         nodata = _handle_nodata(tile_source, nodata)
         img = tile_source.tile(x, y, z, expression=expression, nodata=nodata)
@@ -316,9 +438,29 @@ def get_statistics(
     expression: str | None = None,
     **kwargs,
 ):
-    """Get per-band statistics (min, max, mean, std, histogram).
+    """
+    Get per-band statistics for the raster dataset.
 
-    Returns a dict keyed by band name (e.g., 'b1', 'b2').
+    Parameters
+    ----------
+    tile_source : Reader
+        An open rio-tiler ``Reader`` for the raster dataset.
+    indexes : list of int, optional
+        Band indexes to compute statistics for. When ``None``, all
+        bands are included.
+    expression : str, optional
+        Band math expression (e.g., ``"b1/b2"``). When provided,
+        *indexes* is ignored.
+    **kwargs
+        Additional keyword arguments passed to
+        ``Reader.statistics``.
+
+    Returns
+    -------
+    dict
+        A dictionary keyed by band name (e.g., ``"b1"``, ``"b2"``)
+        whose values are dictionaries of statistics including min,
+        max, mean, std, and histogram.
     """
     stats_kwargs = dict(kwargs)
     if expression:
@@ -355,16 +497,46 @@ def get_part(
     expression: str | None = None,
     stretch: str | None = None,
 ):
-    """Extract a spatial subset (bounding box crop) from the raster.
+    """
+    Extract a spatial subset (bounding box crop) from the raster.
 
     Parameters
     ----------
-    bbox : tuple
-        Bounding box as (left, bottom, right, top).
+    tile_source : Reader
+        An open rio-tiler ``Reader`` for the raster dataset.
+    bbox : tuple of float
+        Bounding box as ``(left, bottom, right, top)``.
+    indexes : list of int, optional
+        Band indexes to render. Auto-detected when not provided.
+    colormap : str, optional
+        Name of a colormap to apply when rendering a single band.
+    vmin : float or list of float, optional
+        Minimum value(s) for rescaling band data.
+    vmax : float or list of float, optional
+        Maximum value(s) for rescaling band data.
+    nodata : int or float, optional
+        Override nodata value for the dataset.
+    img_format : str, optional
+        Output image format (e.g., ``"PNG"``, ``"JPEG"``). Defaults to
+        ``"PNG"``.
+    max_size : int, optional
+        Maximum dimension of the output image in pixels. Defaults to
+        ``1024``.
     dst_crs : str, optional
         Target CRS for the output image.
     bounds_crs : str, optional
-        CRS of the bbox coordinates. Defaults to the dataset's native CRS.
+        CRS of the *bbox* coordinates. Defaults to the dataset's
+        native CRS.
+    expression : str, optional
+        Band math expression (e.g., ``"b1/b2"``). When provided,
+        *indexes* is ignored.
+    stretch : str, optional
+        Stretch mode to apply before rendering.
+
+    Returns
+    -------
+    ImageBytes
+        Encoded image bytes with an associated MIME type.
     """
     nodata = _handle_nodata(tile_source, nodata)
     crs_obj = make_crs(dst_crs) if dst_crs else None
@@ -377,8 +549,14 @@ def get_part(
         expr_indexes = list(range(1, img.count + 1))
         vmin_d, vmax_d = _handle_vmin_vmax(expr_indexes, vmin, vmax)
         return _render_image(
-            tile_source, img, indexes=expr_indexes, vmin=vmin_d, vmax=vmax_d,
-            colormap=colormap, img_format=img_format, stretch=stretch,
+            tile_source,
+            img,
+            indexes=expr_indexes,
+            vmin=vmin_d,
+            vmax=vmax_d,
+            colormap=colormap,
+            img_format=img_format,
+            stretch=stretch,
         )
     if colormap is not None and indexes is None:
         indexes = [1]
@@ -386,8 +564,14 @@ def get_part(
     vmin_d, vmax_d = _handle_vmin_vmax(indexes, vmin, vmax)
     img = tile_source.part(bbox, indexes=indexes, **part_kwargs)
     return _render_image(
-        tile_source, img, indexes=indexes, vmin=vmin_d, vmax=vmax_d,
-        colormap=colormap, img_format=img_format, stretch=stretch,
+        tile_source,
+        img,
+        indexes=indexes,
+        vmin=vmin_d,
+        vmax=vmax_d,
+        colormap=colormap,
+        img_format=img_format,
+        stretch=stretch,
     )
 
 
@@ -405,12 +589,43 @@ def get_feature(
     expression: str | None = None,
     stretch: str | None = None,
 ):
-    """Extract data masked to a GeoJSON feature.
+    """
+    Extract data masked to a GeoJSON feature.
 
     Parameters
     ----------
+    tile_source : Reader
+        An open rio-tiler ``Reader`` for the raster dataset.
     geojson : dict
-        A GeoJSON Feature or Geometry dict.
+        A GeoJSON Feature or Geometry dictionary.
+    indexes : list of int, optional
+        Band indexes to render. Auto-detected when not provided.
+    colormap : str, optional
+        Name of a colormap to apply when rendering a single band.
+    vmin : float or list of float, optional
+        Minimum value(s) for rescaling band data.
+    vmax : float or list of float, optional
+        Maximum value(s) for rescaling band data.
+    nodata : int or float, optional
+        Override nodata value for the dataset.
+    img_format : str, optional
+        Output image format (e.g., ``"PNG"``, ``"JPEG"``). Defaults to
+        ``"PNG"``.
+    max_size : int, optional
+        Maximum dimension of the output image in pixels. Defaults to
+        ``1024``.
+    dst_crs : str, optional
+        Target CRS for the output image.
+    expression : str, optional
+        Band math expression (e.g., ``"b1/b2"``). When provided,
+        *indexes* is ignored.
+    stretch : str, optional
+        Stretch mode to apply before rendering.
+
+    Returns
+    -------
+    ImageBytes
+        Encoded image bytes with an associated MIME type.
     """
     nodata = _handle_nodata(tile_source, nodata)
     crs_obj = make_crs(dst_crs) if dst_crs else None
@@ -426,8 +641,14 @@ def get_feature(
         expr_indexes = list(range(1, img.count + 1))
         vmin_d, vmax_d = _handle_vmin_vmax(expr_indexes, vmin, vmax)
         return _render_image(
-            tile_source, img, indexes=expr_indexes, vmin=vmin_d, vmax=vmax_d,
-            colormap=colormap, img_format=img_format, stretch=stretch,
+            tile_source,
+            img,
+            indexes=expr_indexes,
+            vmin=vmin_d,
+            vmax=vmax_d,
+            colormap=colormap,
+            img_format=img_format,
+            stretch=stretch,
         )
     if colormap is not None and indexes is None:
         indexes = [1]
@@ -435,8 +656,14 @@ def get_feature(
     vmin_d, vmax_d = _handle_vmin_vmax(indexes, vmin, vmax)
     img = tile_source.feature(indexes=indexes, nodata=nodata, **feature_kwargs)
     return _render_image(
-        tile_source, img, indexes=indexes, vmin=vmin_d, vmax=vmax_d,
-        colormap=colormap, img_format=img_format, stretch=stretch,
+        tile_source,
+        img,
+        indexes=indexes,
+        vmin=vmin_d,
+        vmax=vmax_d,
+        colormap=colormap,
+        img_format=img_format,
+        stretch=stretch,
     )
 
 
@@ -446,6 +673,26 @@ def get_point(
     lat: float,
     **kwargs,
 ):
+    """
+    Query pixel values at a geographic point.
+
+    Parameters
+    ----------
+    tile_source : Reader
+        An open rio-tiler ``Reader`` for the raster dataset.
+    lon : float
+        Longitude of the query point (EPSG:4326).
+    lat : float
+        Latitude of the query point (EPSG:4326).
+    **kwargs
+        Additional keyword arguments passed to ``Reader.point``.
+
+    Returns
+    -------
+    PointData
+        A rio-tiler ``PointData`` object containing the band values
+        at the requested location.
+    """
     return tile_source.point(lon, lat, **kwargs)
 
 
@@ -462,6 +709,45 @@ def get_preview(
     expression: str | None = None,
     stretch: str | None = None,
 ):
+    """
+    Generate a downsampled preview image of the entire raster.
+
+    Parameters
+    ----------
+    tile_source : Reader
+        An open rio-tiler ``Reader`` for the raster dataset.
+    indexes : list of int, optional
+        Band indexes to render. Auto-detected when not provided.
+    colormap : str, optional
+        Name of a colormap to apply when rendering a single band.
+    vmin : float or list of float, optional
+        Minimum value(s) for rescaling band data.
+    vmax : float or list of float, optional
+        Maximum value(s) for rescaling band data.
+    nodata : int or float, optional
+        Override nodata value for the dataset.
+    img_format : str, optional
+        Output image format (e.g., ``"PNG"``, ``"JPEG"``). Defaults to
+        ``"PNG"``.
+    max_size : int, optional
+        Maximum dimension of the output image in pixels. Defaults to
+        ``512``.
+    crs : str, optional
+        Target CRS for the preview. When provided, the image is
+        reprojected via ``Reader.part``.
+    expression : str, optional
+        Band math expression (e.g., ``"b1/b2"``). When provided,
+        *indexes* is ignored.
+    stretch : str, optional
+        Stretch mode to apply before rendering. One of ``"none"``,
+        ``"minmax"``, ``"linear"``, ``"equalize"``, ``"sqrt"``, or
+        ``"log"``.
+
+    Returns
+    -------
+    ImageBytes
+        Encoded image bytes with an associated MIME type.
+    """
     if expression:
         nodata = _handle_nodata(tile_source, nodata)
         if crs is not None:

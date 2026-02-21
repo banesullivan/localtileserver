@@ -30,7 +30,7 @@ def test_env_host():
     """LOCALTILESERVER_CLIENT_HOST env var."""
     os.environ["LOCALTILESERVER_CLIENT_HOST"] = "my-host.example.com"
     try:
-        host, port, prefix = get_default_client_params()
+        host, _port, _prefix = get_default_client_params()
         assert host == "my-host.example.com"
     finally:
         del os.environ["LOCALTILESERVER_CLIENT_HOST"]
@@ -40,7 +40,7 @@ def test_env_port():
     """LOCALTILESERVER_CLIENT_PORT env var."""
     os.environ["LOCALTILESERVER_CLIENT_PORT"] = "9999"
     try:
-        host, port, prefix = get_default_client_params()
+        _host, port, _prefix = get_default_client_params()
         assert port == 9999
     finally:
         del os.environ["LOCALTILESERVER_CLIENT_PORT"]
@@ -50,7 +50,7 @@ def test_env_prefix():
     """LOCALTILESERVER_CLIENT_PREFIX env var."""
     os.environ["LOCALTILESERVER_CLIENT_PREFIX"] = "/proxy/{port}"
     try:
-        host, port, prefix = get_default_client_params()
+        _host, _port, prefix = get_default_client_params()
         assert prefix == "/proxy/{port}"
     finally:
         del os.environ["LOCALTILESERVER_CLIENT_PREFIX"]
@@ -78,7 +78,7 @@ def test_empty_env_vars_ignored():
     """Empty string env vars should be ignored."""
     os.environ["LOCALTILESERVER_CLIENT_HOST"] = ""
     try:
-        host, port, prefix = get_default_client_params()
+        host, _port, _prefix = get_default_client_params()
         assert host is None
     finally:
         del os.environ["LOCALTILESERVER_CLIENT_HOST"]

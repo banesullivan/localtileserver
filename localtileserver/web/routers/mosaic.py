@@ -1,4 +1,6 @@
-"""Mosaic API endpoints for localtileserver."""
+"""
+Mosaic API endpoints for localtileserver.
+"""
 
 from fastapi import APIRouter, HTTPException, Query, Request, Response
 from rio_tiler.errors import TileOutsideBounds
@@ -10,7 +12,9 @@ router = APIRouter(prefix="/api/mosaic", tags=["mosaic"])
 
 
 def _parse_file_list(request: Request, files: str | None) -> list[str]:
-    """Parse comma-separated file list or use app state."""
+    """
+    Parse comma-separated file list or use app state.
+    """
     if files:
         return [f.strip() for f in files.split(",") if f.strip()]
     # Fallback to app state
@@ -19,7 +23,10 @@ def _parse_file_list(request: Request, files: str | None) -> list[str]:
         return list(mosaic_assets)
     raise HTTPException(
         status_code=400,
-        detail="Provide 'files' query parameter (comma-separated paths) or register mosaic_assets in app state.",
+        detail=(
+            "Provide 'files' query parameter (comma-separated paths)"
+            " or register mosaic_assets in app state."
+        ),
     )
 
 
@@ -33,10 +40,13 @@ async def mosaic_tile_view(
     files: str | None = Query(None, description="Comma-separated file paths or URLs"),
     indexes: str | None = Query(None),
 ):
+    """
+    Return a single mosaic tile composited from multiple raster sources.
+    """
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.")
+        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.") from None
     assets = _parse_file_list(request, files)
     idx = None
     if indexes:
@@ -44,9 +54,9 @@ async def mosaic_tile_view(
     try:
         tile_data = get_mosaic_tile(assets, z, x, y, img_format=encoding, indexes=idx)
     except TileOutsideBounds:
-        raise HTTPException(status_code=404, detail="Tile outside bounds")
+        raise HTTPException(status_code=404, detail="Tile outside bounds") from None
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     return Response(content=bytes(tile_data), media_type=f"image/{format.lower()}")
 
 
@@ -58,10 +68,13 @@ async def mosaic_thumbnail_view(
     indexes: str | None = Query(None),
     max_size: int = Query(512),
 ):
+    """
+    Return a thumbnail preview image composited from multiple raster sources.
+    """
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.")
+        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.") from None
     assets = _parse_file_list(request, files)
     idx = None
     if indexes:
@@ -69,5 +82,5 @@ async def mosaic_thumbnail_view(
     try:
         thumb = get_mosaic_preview(assets, img_format=encoding, max_size=max_size, indexes=idx)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     return Response(content=bytes(thumb), media_type=f"image/{format.lower()}")

@@ -45,6 +45,7 @@ async def xarray_info_view(
     request: Request,
     key: str | None = Query(None, description="Registry key for the xarray dataset"),
 ):
+    """Return metadata for a registered xarray dataset."""
     reader = _get_xarray_reader(request, key)
     return get_xarray_info(reader)
 
@@ -55,6 +56,7 @@ async def xarray_statistics_view(
     key: str | None = Query(None, description="Registry key for the xarray dataset"),
     indexes: str | None = Query(None),
 ):
+    """Return band statistics for a registered xarray dataset."""
     reader = _get_xarray_reader(request, key)
     idx = None
     if indexes:
@@ -72,10 +74,11 @@ async def xarray_tile_view(
     key: str | None = Query(None, description="Registry key for the xarray dataset"),
     indexes: str | None = Query(None),
 ):
+    """Return a single map tile for a registered xarray dataset."""
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.")
+        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.") from None
     reader = _get_xarray_reader(request, key)
     idx = None
     if indexes:
@@ -83,7 +86,7 @@ async def xarray_tile_view(
     try:
         tile_data = get_xarray_tile(reader, z, x, y, img_format=encoding, indexes=idx)
     except TileOutsideBounds:
-        raise HTTPException(status_code=404, detail="Tile outside bounds")
+        raise HTTPException(status_code=404, detail="Tile outside bounds") from None
     return Response(content=bytes(tile_data), media_type=f"image/{format.lower()}")
 
 
@@ -95,10 +98,11 @@ async def xarray_thumbnail_view(
     indexes: str | None = Query(None),
     max_size: int = Query(512),
 ):
+    """Return a thumbnail preview image for a registered xarray dataset."""
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.")
+        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.") from None
     reader = _get_xarray_reader(request, key)
     idx = None
     if indexes:

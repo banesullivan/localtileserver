@@ -117,12 +117,13 @@ class TestStacHandler:
         from localtileserver.tiler.stac import get_stac_tile
 
         result = get_stac_tile(
-            reader, z=10, x=512, y=512,
+            reader,
+            z=10,
+            x=512,
+            y=512,
             expression="(B04-B03)/(B04+B03)",
         )
-        reader.tile.assert_called_once_with(
-            512, 512, 10, expression="(B04-B03)/(B04+B03)"
-        )
+        reader.tile.assert_called_once_with(512, 512, 10, expression="(B04-B03)/(B04+B03)")
         assert result.mimetype == "image/png"
 
     def test_get_stac_tile_jpeg(self, mock_stac_reader):
@@ -144,12 +145,8 @@ class TestStacHandler:
         reader, _ = mock_stac_reader
         from localtileserver.tiler.stac import get_stac_preview
 
-        result = get_stac_preview(
-            reader, expression="(B04-B03)/(B04+B03)", max_size=128
-        )
-        reader.preview.assert_called_once_with(
-            max_size=128, expression="(B04-B03)/(B04+B03)"
-        )
+        result = get_stac_preview(reader, expression="(B04-B03)/(B04+B03)", max_size=128)
+        reader.preview.assert_called_once_with(max_size=128, expression="(B04-B03)/(B04+B03)")
         assert result.mimetype == "image/png"
 
 
@@ -157,6 +154,7 @@ class TestStacRouter:
     @pytest.fixture
     def client(self):
         from fastapi.testclient import TestClient
+
         from localtileserver.web import create_app
 
         app = create_app()
@@ -215,9 +213,7 @@ class TestStacRouter:
     @patch("localtileserver.web.routers.stac.get_stac_reader")
     def test_stac_tile_bad_format(self, mock_get_reader, client):
         mock_get_reader.return_value = MagicMock()
-        resp = client.get(
-            "/api/stac/tiles/10/512/512.bmp?url=https://example.com/item.json"
-        )
+        resp = client.get("/api/stac/tiles/10/512/512.bmp?url=https://example.com/item.json")
         assert resp.status_code == 400
 
     @patch("localtileserver.web.routers.stac.get_stac_reader")
@@ -239,26 +235,20 @@ class TestStacRouter:
         reader.preview.return_value = _make_image_data()
         mock_get_reader.return_value = reader
 
-        resp = client.get(
-            "/api/stac/thumbnail.png?url=https://example.com/item.json&assets=visual"
-        )
+        resp = client.get("/api/stac/thumbnail.png?url=https://example.com/item.json&assets=visual")
         assert resp.status_code == 200
         assert resp.headers["content-type"] == "image/png"
 
     @patch("localtileserver.web.routers.stac.get_stac_reader")
     def test_stac_thumbnail_bad_format(self, mock_get_reader, client):
         mock_get_reader.return_value = MagicMock()
-        resp = client.get(
-            "/api/stac/thumbnail.bmp?url=https://example.com/item.json"
-        )
+        resp = client.get("/api/stac/thumbnail.bmp?url=https://example.com/item.json")
         assert resp.status_code == 400
 
     @patch("localtileserver.web.routers.stac.get_stac_reader")
     def test_stac_thumbnail_bad_url(self, mock_get_reader, client):
         mock_get_reader.side_effect = Exception("Failed to fetch")
-        resp = client.get(
-            "/api/stac/thumbnail.png?url=https://bad.example.com/item.json"
-        )
+        resp = client.get("/api/stac/thumbnail.png?url=https://bad.example.com/item.json")
         assert resp.status_code == 400
 
 

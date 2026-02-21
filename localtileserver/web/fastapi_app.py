@@ -1,4 +1,6 @@
-"""FastAPI application factory for localtileserver."""
+"""
+FastAPI application factory for localtileserver.
+"""
 
 import logging
 import os
@@ -8,12 +10,12 @@ import threading
 import webbrowser
 
 import click
-import rasterio
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import rasterio
 
 from localtileserver.tiler import get_clean_filename
 from localtileserver.web.routers.mosaic import router as mosaic_router
@@ -34,7 +36,25 @@ def create_app(
     debug: bool = False,
     cesium_token: str = "",
 ):
-    """Create and configure the FastAPI application."""
+    """
+    Create and configure the FastAPI application.
+
+    Parameters
+    ----------
+    url_prefix : str, optional
+        URL prefix for the application routes. Default is ``"/"``.
+    cors_all : bool, optional
+        If ``True``, enable permissive CORS headers allowing all origins.
+    debug : bool, optional
+        Run the application in debug mode with verbose logging.
+    cesium_token : str, optional
+        Cesium Ion access token for the 3-D globe viewer.
+
+    Returns
+    -------
+    fastapi.FastAPI
+        The configured FastAPI application instance.
+    """
     app = FastAPI(
         title="localtileserver",
         docs_url="/swagger/",
@@ -68,7 +88,9 @@ def create_app(
 
     # Provide a Flask-compatible url_for in templates
     def _template_url_for(name: str, **kwargs) -> str:
-        """Map Flask-style url_for names to FastAPI paths."""
+        """
+        Map Flask-style url_for names to FastAPI paths.
+        """
         _ROUTE_MAP = {
             "tileserver.index": "/",
             "tileserver.split-form": "/split/form/",
@@ -90,6 +112,9 @@ def create_app(
     # rasterio env middleware (#182)
     @app.middleware("http")
     async def rasterio_env_middleware(request: Request, call_next):
+        """
+        Wrap each request in a rasterio environment if configured.
+        """
         from localtileserver.manager import AppManager
 
         rio_env = AppManager.get_rasterio_env()
@@ -103,6 +128,9 @@ def create_app(
     # HTML view routes
     @app.get("/", response_class=HTMLResponse)
     async def cesium_viewer(request: Request, filename: str = ""):
+        """
+        Render the Cesium 3-D globe viewer page.
+        """
         context = _build_template_context(request, app, filename, cesium_token)
         if "bounds" not in context:
             return templates.TemplateResponse(
@@ -112,6 +140,9 @@ def create_app(
 
     @app.get("/split/", response_class=HTMLResponse)
     async def cesium_split_viewer(request: Request, filenameA: str = "", filenameB: str = ""):
+        """
+        Render the Cesium split-view comparison page.
+        """
         context = _build_template_context(request, app, filenameA, cesium_token)
         if "bounds" not in context:
             return templates.TemplateResponse(
@@ -121,6 +152,9 @@ def create_app(
 
     @app.get("/split/form/", response_class=HTMLResponse)
     async def split_form(request: Request):
+        """
+        Render the split-view input form page.
+        """
         context = _build_template_context(request, app, "", cesium_token)
         return templates.TemplateResponse(request, "tileserver/splitForm.html", context)
 
@@ -135,7 +169,9 @@ def create_app(
 def _build_template_context(
     request: Request, app: FastAPI, filename: str, cesium_token: str = ""
 ) -> dict:
-    """Build the template rendering context."""
+    """
+    Build the template rendering context.
+    """
     from localtileserver.tiler import data
     from localtileserver.tiler.data import get_sf_bay_url
     from localtileserver.tiler.handler import get_meta_data, get_reader, get_source_bounds
@@ -184,10 +220,36 @@ def run_app(
     cors_all: bool = False,
     run: bool = True,
 ):
-    """Serve tiles from the raster at ``filename``.
+    """
+    Serve tiles from the raster at ``filename``.
 
     You can also pass the name of one of the example datasets: ``elevation``,
     ``blue_marble``, ``virtual_earth``, ``arcgis`` or ``bahamas``.
+
+    Parameters
+    ----------
+    filename : str or pathlib.Path
+        Path to a raster file or the name of a built-in example dataset.
+    port : int, optional
+        Port to bind the server to. ``0`` (default) picks an available port.
+    debug : bool, optional
+        Run the server with verbose debug logging.
+    browser : bool, optional
+        Open a web browser pointing to the viewer on startup.
+    cesium_token : str, optional
+        Cesium Ion access token for the 3-D globe viewer.
+    host : str, optional
+        Hostname to bind the server to. Default is ``"127.0.0.1"``.
+    cors_all : bool, optional
+        If ``True``, enable permissive CORS headers allowing all origins.
+    run : bool, optional
+        If ``True`` (default), start the uvicorn server. If ``False``, return
+        the app without running it.
+
+    Returns
+    -------
+    fastapi.FastAPI
+        The configured and (optionally running) FastAPI application.
     """
     import uvicorn
 
@@ -220,4 +282,7 @@ def run_app(
 @click.option("-h", "--host", default="127.0.0.1")
 @click.option("-c", "--cors-all", default=False)
 def click_run_app(*args, **kwargs):
+    """
+    CLI entry point for serving tiles from a raster file.
+    """
     return run_app(*args, **kwargs)

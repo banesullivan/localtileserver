@@ -1,3 +1,7 @@
+"""
+Helper functions for raster data and geometry.
+"""
+
 import json
 import uuid
 
@@ -8,6 +12,24 @@ from localtileserver.tiler import get_cache_dir
 
 
 def get_extensions_from_driver(driver: str):
+    """
+    Get file extensions associated with a rasterio driver.
+
+    Parameters
+    ----------
+    driver : str
+        The name of the rasterio driver.
+
+    Returns
+    -------
+    list of str
+        A list of file extensions that correspond to the given driver.
+
+    Raises
+    ------
+    KeyError
+        If the driver is not found in the rasterio driver registry.
+    """
     d = rasterio.drivers.raster_driver_extensions()
     if driver not in d.values():
         raise KeyError(f"Driver {driver} not found.")
@@ -15,22 +37,23 @@ def get_extensions_from_driver(driver: str):
 
 
 def numpy_to_raster(ras_meta, data, out_path: str | None = None):
-    """Save new raster from a numpy array using the metadata of another raster.
-
-    Note
-    ----
-    Requires ``rasterio``
+    """
+    Save new raster from a numpy array using the metadata of another raster.
 
     Parameters
     ----------
     ras_meta : dict
-        Raster metadata
-    data : np.ndarray
-        The bands of data to save to the new raster
-    out_path : Optional[str]
+        Raster metadata.
+    data : numpy.ndarray
+        The bands of data to save to the new raster.
+    out_path : str or None, optional
         The path for which to write the new raster. If ``None``, this will
-        use a temporary file
+        use a temporary file.
 
+    Returns
+    -------
+    str or pathlib.Path
+        The path to the written raster file.
     """
     if data.ndim == 2:
         data = data[np.newaxis, ...]
@@ -55,22 +78,23 @@ def numpy_to_raster(ras_meta, data, out_path: str | None = None):
 
 
 def save_new_raster(src, data, out_path: str | None = None):
-    """Save new raster from a numpy array using the metadata of another raster.
-
-    Note
-    ----
-    Requires ``rasterio``
+    """
+    Save new raster from a numpy array using the metadata of another raster.
 
     Parameters
     ----------
-    src : str, DatasetReader, TilerInterface
-        The source rasterio data whose spatial reference will be copied
-    data : np.ndarray
-        The bands of data to save to the new raster
-    out_path : Optional[str]
+    src : str or rasterio.io.DatasetReaderBase or TilerInterface
+        The source rasterio data whose spatial reference will be copied.
+    data : numpy.ndarray
+        The bands of data to save to the new raster.
+    out_path : str or None, optional
         The path for which to write the new raster. If ``None``, this will
-        use a temporary file
+        use a temporary file.
 
+    Returns
+    -------
+    str or pathlib.Path
+        The path to the written raster file.
     """
     from localtileserver.client import TilerInterface
 
@@ -92,7 +116,19 @@ def save_new_raster(src, data, out_path: str | None = None):
 
 
 def polygon_to_geojson(polygon) -> str:
-    """Dump shapely.Polygon to GeoJSON."""
+    """
+    Dump a shapely Polygon to a GeoJSON string.
+
+    Parameters
+    ----------
+    polygon : shapely.geometry.Polygon
+        The shapely polygon to convert.
+
+    Returns
+    -------
+    str
+        A GeoJSON-formatted string containing the polygon as a Feature.
+    """
     # Safely import shapely
     try:
         from shapely.geometry import mapping
@@ -104,15 +140,22 @@ def polygon_to_geojson(polygon) -> str:
 
 
 def parse_shapely(context):
-    """Convert GeoJSON-like or WKT to shapely object.
+    """
+    Convert GeoJSON-like or WKT to shapely object.
 
     Parameters
     ----------
-    context : str, dict
-        a GeoJSON-like dict, which provides a "type" member describing the type
+    context : str or bytes or dict
+        A GeoJSON-like dict, which provides a "type" member describing the type
         of the geometry and "coordinates" member providing a list of coordinates,
-        or an object which implements __geo_interface__.
+        or an object which implements ``__geo_interface__``.
         If a string, falls back to inferring as Well Known Text (WKT).
+        If bytes, falls back to inferring as Well Known Binary (WKB).
+
+    Returns
+    -------
+    shapely.geometry.BaseGeometry
+        The parsed shapely geometry object.
     """
     try:
         from shapely.geometry import shape
@@ -130,57 +173,25 @@ def parse_shapely(context):
 
 
 def hillshade(arr, azimuth=30, altitude=30):
-    """Create hillshade from a numpy array containing elevation data.
+    """
+    Create hillshade from a numpy array containing elevation data.
 
-    Note
-    ----
-    Originally sourced from earthpy: https://github.com/earthlab/earthpy/blob/9ad455e85002a2b026c78685329f8c5b360fde5a/earthpy/spatial.py#L564
+    Originally sourced from earthpy (BSD 3-Clause, Copyright (c) 2018 Earth Lab).
 
     Parameters
     ----------
-    arr : numpy array of shape (rows, columns)
-        Numpy array with elevation values to be used to created hillshade.
-    azimuth : float (default=30)
-        The desired azimuth for the hillshade.
-    altitude : float (default=30)
-        The desired sun angle altitude for the hillshade.
+    arr : numpy.ndarray
+        Numpy array of shape ``(rows, columns)`` with elevation values to be
+        used to create the hillshade.
+    azimuth : float, optional
+        The desired azimuth for the hillshade. Default is 30.
+    altitude : float, optional
+        The desired sun angle altitude for the hillshade. Default is 30.
+
     Returns
     -------
-    numpy array
+    numpy.ndarray
         A numpy array containing hillshade values.
-
-    License
-    -------
-    BSD 3-Clause License
-
-    Copyright (c) 2018, Earth Lab
-    All rights reserved.
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this
-      list of conditions and the following disclaimer.
-
-    * Redistributions in binary form must reproduce the above copyright notice,
-      this list of conditions and the following disclaimer in the documentation
-      and/or other materials provided with the distribution.
-
-    * Neither the name of the copyright holder nor the names of its
-      contributors may be used to endorse or promote products derived from
-      this software without specific prior written permission.
-
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-    FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-    DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-    SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-    OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
     """
     try:
         x, y = np.gradient(arr)

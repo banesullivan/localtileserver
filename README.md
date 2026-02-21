@@ -12,7 +12,7 @@ If localtileserver saves you time, powers your work, or you need direct help, pl
 [![PyPI](https://img.shields.io/pypi/v/localtileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/localtileserver/)
 [![conda](https://img.shields.io/conda/vn/conda-forge/localtileserver.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/localtileserver)
 
-*Need to visualize a rather large (gigabytes+) raster?* **This is for you.**
+_Need to visualize a rather large (gigabytes+) raster?_ **This is for you.**
 
 A Python package for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
@@ -23,7 +23,6 @@ Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinde
 Documentation: https://localtileserver.banesullivan.com/
 
 Built on [rio-tiler](https://github.com/cogeotiff/rio-tiler) and [FastAPI](https://fastapi.tiangolo.com/)
-
 
 ## 🌟 Highlights
 
@@ -119,22 +118,21 @@ There is an included, standalone web viewer leveraging
 
 The server exposes a comprehensive REST API built on FastAPI:
 
-| Endpoint | Description |
-|---|---|
-| `GET /api/tiles/{z}/{x}/{y}.{fmt}` | Raster tiles |
-| `GET /api/thumbnail.{fmt}` | Thumbnail preview |
-| `GET /api/metadata` | Raster metadata |
-| `GET /api/bounds` | Geographic bounds |
-| `GET /api/statistics` | Per-band statistics |
-| `GET /api/part.{fmt}` | Bounding box crop |
-| `POST /api/feature.{fmt}` | GeoJSON mask extraction |
-| `GET /api/stac/tiles/{z}/{x}/{y}.{fmt}` | STAC item tiles |
-| `GET /api/xarray/tiles/{z}/{x}/{y}.{fmt}` | Xarray DataArray tiles |
-| `GET /api/mosaic/tiles/{z}/{x}/{y}.{fmt}` | Mosaic tiles |
-| `GET /swagger/` | Interactive API docs |
+| Endpoint                                  | Description             |
+| ----------------------------------------- | ----------------------- |
+| `GET /api/tiles/{z}/{x}/{y}.{fmt}`        | Raster tiles            |
+| `GET /api/thumbnail.{fmt}`                | Thumbnail preview       |
+| `GET /api/metadata`                       | Raster metadata         |
+| `GET /api/bounds`                         | Geographic bounds       |
+| `GET /api/statistics`                     | Per-band statistics     |
+| `GET /api/part.{fmt}`                     | Bounding box crop       |
+| `POST /api/feature.{fmt}`                 | GeoJSON mask extraction |
+| `GET /api/stac/tiles/{z}/{x}/{y}.{fmt}`   | STAC item tiles         |
+| `GET /api/xarray/tiles/{z}/{x}/{y}.{fmt}` | Xarray DataArray tiles  |
+| `GET /api/mosaic/tiles/{z}/{x}/{y}.{fmt}` | Mosaic tiles            |
+| `GET /swagger/`                           | Interactive API docs    |
 
 All tile/thumbnail endpoints support `expression`, `stretch`, `indexes`, `colormap`, `vmin`, `vmax`, and `nodata` query parameters.
-
 
 ## ⬇️ Installation
 

@@ -1,3 +1,7 @@
+"""
+Jupyter widget helpers for ipyleaflet and folium tile layers.
+"""
+
 import logging
 import pathlib
 import warnings
@@ -11,7 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 def _is_colab():
-    """Check if running in Google Colab."""
+    """
+    Check if running in Google Colab.
+    """
     try:
         import google.colab  # noqa: F401
 
@@ -21,7 +27,8 @@ def _is_colab():
 
 
 def _get_colab_proxy_url(port: int) -> str | None:
-    """Get Colab's proxy URL for a given port.
+    """
+    Get Colab's proxy URL for a given port.
 
     Returns the proxy URL string, or None if not in Colab or eval_js fails.
     """
@@ -34,6 +41,8 @@ def _get_colab_proxy_url(port: int) -> str | None:
     except Exception:
         pass
     return None
+
+
 DEFAULT_ATTRIBUTION = (
     "Raster file served by <a href='https://github.com/banesullivan/localtileserver'"
     " target='_blank'>localtileserver</a>."
@@ -41,7 +50,9 @@ DEFAULT_ATTRIBUTION = (
 
 
 class LocalTileServerLayerMixin:
-    """Mixin class for tile layers using localtileserver."""
+    """
+    Mixin class for tile layers using localtileserver.
+    """
 
     # Prevent the client from being garbage collected
     tile_server: TileClient
@@ -59,43 +70,44 @@ def get_leaflet_tile_layer(
     attribution: str | None = None,
     **kwargs,
 ):
-    """Generate an ipyleaflet TileLayer for the given TileClient.
+    """
+    Generate an ipyleaflet TileLayer for the given TileClient.
 
     Parameters
     ----------
-    source : Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase]
+    source : pathlib.Path or str or TileClient or rasterio.io.DatasetReaderBase
         The source of the tile layer. This can be a path on disk or an already
-        open ``TileClient``
-    port : int
+        open ``TileClient``.
+    port : int or str, optional
         The port on your host machine to use for the tile server (if creating
-        a tileserver. This is ignored if a file path is given). This defaults
-        to getting an available port.
-    debug : bool
-        Run the tile server in debug mode (if creating a tileserver. This is
-        ignored if a file path is given).
-    indexes : int
-        The band of the source raster to use (default if None is to show RGB if
-        available). Band indexing starts at 1. This can also be a list of
-        integers to set which 3 bands to use for RGB.
-    colormap : str
+        a tileserver). This is ignored if a ``TileClient`` is given. This
+        defaults to getting an available port.
+    debug : bool, optional
+        Run the tile server in debug mode (if creating a tileserver). This is
+        ignored if a ``TileClient`` is given.
+    indexes : list of int, optional
+        The band of the source raster to use (default if ``None`` is to show
+        RGB if available). Band indexing starts at 1. This can also be a list
+        of integers to set which 3 bands to use for RGB.
+    colormap : str or matplotlib.colors.Colormap or list of str, optional
         The name of the matplotlib colormap to use when plotting a single band.
         Default is greyscale.
-    vmin : float
+    vmin : float or list of float, optional
         The minimum value to use when colormapping a single band.
-    vmax : float
-        The maximized value to use when colormapping a single band.
-    nodata : float
+    vmax : float or list of float, optional
+        The maximum value to use when colormapping a single band.
+    nodata : int or float, optional
         The value from the band to use to interpret as not valid data.
-    attribution : str
-        Attribution for the source raster. This
-        defaults to a message about it being a local file.
+    attribution : str, optional
+        Attribution for the source raster. This defaults to a message about
+        it being a local file.
     **kwargs
         All additional keyword arguments are passed to ``ipyleaflet.TileLayer``.
 
-    Return
-    ------
+    Returns
+    -------
     ipyleaflet.TileLayer
-
+        The tile layer that can be added to an ``ipyleaflet.Map``.
     """
     # Safely import ipyleaflet
     try:
@@ -124,11 +136,15 @@ def get_leaflet_tile_layer(
         )
 
     class BoundTileLayer(TileLayer, LocalTileServerLayerMixin):
+        """
+        TileLayer subclass that supports a bounds trait.
+        """
+
         # https://github.com/jupyter-widgets/ipyleaflet/issues/888
         # https://github.com/ipython/traitlets/issues/626#issuecomment-699957829
         bounds = Union((Tuple(),), default_value=None, allow_none=True).tag(sync=True, o=True)
 
-    source, created = get_or_create_tile_client(
+    source, _created = get_or_create_tile_client(
         source,
         port=port,
         debug=debug,
@@ -166,43 +182,44 @@ def get_folium_tile_layer(
     attr: str | None = None,
     **kwargs,
 ):
-    """Generate a folium TileLayer for the given TileClient.
+    """
+    Generate a folium TileLayer for the given TileClient.
 
     Parameters
     ----------
-    source : Union[pathlib.Path, str, TileClient, rasterio.io.DatasetReaderBase]
+    source : pathlib.Path or str or TileClient or rasterio.io.DatasetReaderBase
         The source of the tile layer. This can be a path on disk or an already
-        open ``TileClient``
-    port : int
+        open ``TileClient``.
+    port : int or str, optional
         The port on your host machine to use for the tile server (if creating
-        a tileserver. This is ignored if a file path is given). This defaults
-        to getting an available port.
-    debug : bool
-        Run the tile server in debug mode (if creating a tileserver. This is
-        ignored if a file path is given).
-    indexes : int
-        The band of the source raster to use (default if None is to show RGB if
-        available). Band indexing starts at 1. This can also be a list of
-        integers to set which 3 bands to use for RGB.
-    colormap : str
+        a tileserver). This is ignored if a ``TileClient`` is given. This
+        defaults to getting an available port.
+    debug : bool, optional
+        Run the tile server in debug mode (if creating a tileserver). This is
+        ignored if a ``TileClient`` is given.
+    indexes : list of int, optional
+        The band of the source raster to use (default if ``None`` is to show
+        RGB if available). Band indexing starts at 1. This can also be a list
+        of integers to set which 3 bands to use for RGB.
+    colormap : str, optional
         The name of the matplotlib colormap to use when plotting a single band.
         Default is greyscale.
-    vmin : float
+    vmin : float or list of float, optional
         The minimum value to use when colormapping a single band.
-    vmax : float
-        The maximized value to use when colormapping a single band.
-    nodata : float
+    vmax : float or list of float, optional
+        The maximum value to use when colormapping a single band.
+    nodata : int or float, optional
         The value from the band to use to interpret as not valid data.
-    attr : str
+    attr : str, optional
         Folium requires the custom tile source have an attribution. This
         defaults to a message about it being a local file.
     **kwargs
         All additional keyword arguments are passed to ``folium.TileLayer``.
 
-    Return
-    ------
+    Returns
+    -------
     folium.TileLayer
-
+        The tile layer that can be added to a ``folium.Map``.
     """
     # Safely import folium
     try:
@@ -230,9 +247,11 @@ def get_folium_tile_layer(
         )
 
     class FoliumTileLayer(TileLayer, LocalTileServerLayerMixin):
-        pass
+        """
+        TileLayer subclass that stores a reference to the tile server.
+        """
 
-    source, created = get_or_create_tile_client(
+    source, _created = get_or_create_tile_client(
         source,
         port=port,
         debug=debug,

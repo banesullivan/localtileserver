@@ -1,4 +1,5 @@
-"""ASGI application entry point.
+"""
+ASGI application entry point.
 
 Used by uvicorn (e.g., ``uvicorn localtileserver.web.wsgi:app``).
 """

@@ -77,7 +77,6 @@ class TestSaveNewRaster:
         assert result is not None
 
     def test_3d_validation(self, bahamas_file):
-        import rasterio
 
         data_4d = np.random.rand(2, 3, 10, 10)
         with pytest.raises(AssertionError, match="ndim 3"):

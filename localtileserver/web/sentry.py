@@ -1,3 +1,7 @@
+"""
+Optional Sentry SDK integration for error tracking.
+"""
+
 import os
 
 sentry_dsn = os.environ.get("SENTRY_DSN", "")

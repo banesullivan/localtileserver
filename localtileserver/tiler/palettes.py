@@ -1,3 +1,7 @@
+"""
+Colormap palette registry and validation utilities.
+"""
+
 import hashlib
 import json
 import logging
@@ -14,7 +18,8 @@ _REGISTRY_LOCK = threading.Lock()
 
 
 def register_colormap(colormap_data: dict) -> str:
-    """Register a custom colormap and return its hash key.
+    """
+    Register a custom colormap and return its hash key.
 
     Parameters
     ----------
@@ -25,7 +30,6 @@ def register_colormap(colormap_data: dict) -> str:
     -------
     str
         Hash key for the registered colormap (e.g., ``"custom:abc123def456"``).
-
     """
     serialized = json.dumps(colormap_data, sort_keys=True)
     hash_key = hashlib.md5(serialized.encode()).hexdigest()[:12]
@@ -35,23 +39,59 @@ def register_colormap(colormap_data: dict) -> str:
 
 
 def get_registered_colormap(key: str) -> dict | None:
-    """Look up a registered colormap by its ``custom:<hash>`` key.
+    """
+    Look up a registered colormap by its ``custom:<hash>`` key.
 
-    Returns None if the key is not in the registry.
+    Parameters
+    ----------
+    key : str
+        The full ``custom:<hash>`` key returned by :func:`register_colormap`.
+
+    Returns
+    -------
+    dict or None
+        The colormap dictionary, or ``None`` if the key is not in the
+        registry.
     """
     if not key.startswith("custom:"):
         return None
-    hash_key = key[len("custom:"):]
+    hash_key = key[len("custom:") :]
     with _REGISTRY_LOCK:
         return _COLORMAP_REGISTRY.get(hash_key)
 
 
 def is_rio_cmap(name: str):
-    """Check whether cmap is supported by rio-tiler."""
+    """
+    Check whether a colormap name is supported by rio-tiler.
+
+    Parameters
+    ----------
+    name : str
+        Colormap name to look up.
+
+    Returns
+    -------
+    bool
+        ``True`` if the name is a registered rio-tiler colormap.
+    """
     return name in RIO_CMAPS.data.keys()
 
 
 def palette_valid_or_raise(name: str):
+    """
+    Validate that a palette name is available, raising on failure.
+
+    Parameters
+    ----------
+    name : str
+        Colormap name to validate. May be a ``custom:<hash>`` key or a
+        rio-tiler colormap name.
+
+    Raises
+    ------
+    ValueError
+        If the colormap name is not found in the registry or rio-tiler.
+    """
     if name.startswith("custom:"):
         if get_registered_colormap(name) is None:
             raise ValueError(f"Custom colormap not found in registry: {name}")
@@ -61,5 +101,12 @@ def palette_valid_or_raise(name: str):
 
 
 def get_palettes():
-    """List of available palettes."""
+    """
+    Return the available color palettes.
+
+    Returns
+    -------
+    dict
+        Dictionary mapping palette source names to lists of colormap names.
+    """
     return {"matplotlib": list(RIO_CMAPS.data.keys())}

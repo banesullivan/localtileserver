@@ -1,3 +1,7 @@
+"""
+Package version discovery via importlib.metadata.
+"""
+
 from importlib.metadata import PackageNotFoundError, version
 
 try:

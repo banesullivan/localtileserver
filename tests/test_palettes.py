@@ -4,7 +4,6 @@ import pytest
 
 from localtileserver.tiler.palettes import (
     get_registered_colormap,
-    is_rio_cmap,
     palette_valid_or_raise,
     register_colormap,
 )

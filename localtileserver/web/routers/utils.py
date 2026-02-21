@@ -1,10 +1,25 @@
-"""Shared utilities for FastAPI routers."""
+"""
+Shared utilities for FastAPI routers.
+"""
 
 from localtileserver.tiler.utilities import get_clean_filename
 
 
 def get_clean_filename_from_params(filename: str | None = None) -> str:
-    """Clean and validate a filename from query parameters."""
+    """
+    Clean and validate a filename from query parameters.
+
+    Parameters
+    ----------
+    filename : str, optional
+        Raw filename string from the request. If ``None`` or empty, the
+        default sample dataset URL is used.
+
+    Returns
+    -------
+    str
+        Cleaned and validated filename or path.
+    """
     if not filename:
         from localtileserver.tiler.data import get_sf_bay_url
 
@@ -19,11 +34,32 @@ def parse_style_params(
     vmax: str | None = None,
     nodata: str | None = None,
 ) -> dict:
-    """Parse style query parameters into a dict for handler functions.
+    """
+    Parse style query parameters into a dict for handler functions.
 
-    Handles the conversion from raw query strings (possibly with `.0`, `.1`
+    Handles the conversion from raw query strings (possibly with ``.0``, ``.1``
     suffixes for multi-value params) into the format expected by the tiler
     handler functions.
+
+    Parameters
+    ----------
+    indexes : str, optional
+        Comma-separated band indexes (e.g., ``"1"`` or ``"1,2,3"``).
+    colormap : str, optional
+        Name of the colormap to apply.
+    vmin : str, optional
+        Minimum value(s) for colormap stretching. May be comma-separated
+        for multi-band.
+    vmax : str, optional
+        Maximum value(s) for colormap stretching. May be comma-separated
+        for multi-band.
+    nodata : str, optional
+        Nodata value(s). May be comma-separated for multi-band.
+
+    Returns
+    -------
+    dict
+        Parsed style parameters ready for tiler handler functions.
     """
     out = {}
     if indexes is not None:

@@ -1,7 +1,5 @@
 """Tests for localtileserver.tiler.utilities."""
 
-import pathlib
-
 import pytest
 from rasterio import CRS
 

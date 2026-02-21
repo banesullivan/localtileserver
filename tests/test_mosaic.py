@@ -28,14 +28,12 @@ class TestMosaicHandler:
         assert result.mimetype == "image/jpeg"
 
     def test_mosaic_tile(self, mosaic_assets):
-        import rasterio
         from morecantile import tms
+        import rasterio
 
         # Find a valid tile for the bahamas data
         with rasterio.open(mosaic_assets[0]) as src:
-            bounds = rasterio.warp.transform_bounds(
-                src.crs, "EPSG:4326", *src.bounds
-            )
+            bounds = rasterio.warp.transform_bounds(src.crs, "EPSG:4326", *src.bounds)
         tiles = list(tms.get("WebMercatorQuad").tiles(*bounds, zooms=10))
         assert len(tiles) > 0
         t = tiles[0]
@@ -44,13 +42,11 @@ class TestMosaicHandler:
         assert len(bytes(result)) > 0
 
     def test_mosaic_tile_with_indexes(self, mosaic_assets):
-        import rasterio
         from morecantile import tms
+        import rasterio
 
         with rasterio.open(mosaic_assets[0]) as src:
-            bounds = rasterio.warp.transform_bounds(
-                src.crs, "EPSG:4326", *src.bounds
-            )
+            bounds = rasterio.warp.transform_bounds(src.crs, "EPSG:4326", *src.bounds)
         tiles = list(tms.get("WebMercatorQuad").tiles(*bounds, zooms=10))
         t = tiles[0]
         result = get_mosaic_tile(mosaic_assets, t.z, t.x, t.y, indexes=[1])
@@ -79,13 +75,11 @@ class TestMosaicRouter:
         assert resp.status_code == 200
 
     def test_mosaic_tile_endpoint(self, client, bahamas_path):
-        import rasterio
         from morecantile import tms
+        import rasterio
 
         with rasterio.open(bahamas_path) as src:
-            bounds = rasterio.warp.transform_bounds(
-                src.crs, "EPSG:4326", *src.bounds
-            )
+            bounds = rasterio.warp.transform_bounds(src.crs, "EPSG:4326", *src.bounds)
         tiles = list(tms.get("WebMercatorQuad").tiles(*bounds, zooms=10))
         t = tiles[0]
         resp = client.get(f"/api/mosaic/tiles/{t.z}/{t.x}/{t.y}.png")

@@ -16,6 +16,7 @@ router = APIRouter(prefix="/api/stac", tags=["stac"])
 
 
 def _parse_assets(assets: str | None) -> list[str] | None:
+    """Parse a comma-separated asset string into a list of asset names."""
     if not assets:
         return None
     return [a.strip() for a in assets.split(",")]
@@ -26,10 +27,11 @@ async def stac_info_view(
     url: str = Query(..., description="STAC item URL"),
     assets: str | None = Query(None, description="Comma-separated asset names"),
 ):
+    """Return metadata for a STAC item."""
     try:
         reader = get_stac_reader(url)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to read STAC item: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to read STAC item: {e}") from e
     return get_stac_info(reader, assets=_parse_assets(assets))
 
 
@@ -38,10 +40,11 @@ async def stac_statistics_view(
     url: str = Query(..., description="STAC item URL"),
     assets: str | None = Query(None, description="Comma-separated asset names"),
 ):
+    """Return band statistics for a STAC item."""
     try:
         reader = get_stac_reader(url)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to read STAC item: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to read STAC item: {e}") from e
     return get_stac_statistics(reader, assets=_parse_assets(assets))
 
 
@@ -55,23 +58,27 @@ async def stac_tile_view(
     assets: str | None = Query(None, description="Comma-separated asset names"),
     expression: str | None = Query(None),
 ):
+    """Return a single map tile for a STAC item at the given z/x/y coordinates."""
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.")
+        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.") from None
     try:
         reader = get_stac_reader(url)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to read STAC item: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to read STAC item: {e}") from e
     try:
         tile_data = get_stac_tile(
-            reader, z, x, y,
+            reader,
+            z,
+            x,
+            y,
             assets=_parse_assets(assets),
             expression=expression,
             img_format=encoding,
         )
     except TileOutsideBounds:
-        raise HTTPException(status_code=404, detail="Tile outside bounds")
+        raise HTTPException(status_code=404, detail="Tile outside bounds") from None
     return Response(content=bytes(tile_data), media_type=f"image/{format.lower()}")
 
 
@@ -83,14 +90,15 @@ async def stac_thumbnail_view(
     expression: str | None = Query(None),
     max_size: int = Query(512),
 ):
+    """Return a thumbnail preview image for a STAC item."""
     try:
         encoding = format_to_encoding(format)
     except ValueError:
-        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.")
+        raise HTTPException(status_code=400, detail=f"Format {format} is not valid.") from None
     try:
         reader = get_stac_reader(url)
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to read STAC item: {e}")
+        raise HTTPException(status_code=400, detail=f"Failed to read STAC item: {e}") from e
     thumb = get_stac_preview(
         reader,
         assets=_parse_assets(assets),
