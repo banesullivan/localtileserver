@@ -178,6 +178,7 @@ class TilerInterface:
         nodata: int | float | None = None,
         output_path: pathlib.Path | None = None,
         encoding: str = "PNG",
+        expression: str | None = None,
     ):
         """Generate a tile from the source raster.
 
@@ -202,10 +203,13 @@ class TilerInterface:
             The maximized value to use when colormapping a single band.
         nodata : float
             The value from the band to use to interpret as not valid data.
+        expression : str, optional
+            Band math expression (e.g., ``"(b4-b1)/(b4+b1)"`` for NDVI).
+            Mutually exclusive with ``indexes``.
 
         """
-        if encoding.lower() not in ["png", "jpeg", "jpg"]:
-            raise ValueError(f"Encoding ({encoding}) not supported.")
+        if expression and indexes is not None:
+            raise ValueError("Cannot use both 'expression' and 'indexes'.")
         encoding = format_to_encoding(encoding)
         tile_binary = get_tile(
             self.reader,
@@ -218,11 +222,35 @@ class TilerInterface:
             img_format=encoding,
             vmin=vmin,
             vmax=vmax,
+            expression=expression,
         )
         if output_path:
             with open(output_path, "wb") as f:
                 f.write(tile_binary)
         return tile_binary
+
+    def statistics(
+        self,
+        indexes: list[int] | None = None,
+        expression: str | None = None,
+    ):
+        """Get per-band statistics (min, max, mean, std, histogram).
+
+        Parameters
+        ----------
+        indexes : list of int, optional
+            Band indexes to compute statistics for.
+        expression : str, optional
+            Band math expression to compute statistics on.
+
+        Returns
+        -------
+        dict
+            Per-band statistics keyed by band name.
+        """
+        from localtileserver.tiler.handler import get_statistics
+
+        return get_statistics(self.reader, indexes=indexes, expression=expression)
 
     def thumbnail(
         self,
@@ -235,6 +263,7 @@ class TilerInterface:
         encoding: str = "PNG",
         max_size: int = 512,
         crs: str | None = None,
+        expression: str | None = None,
     ):
         """Generate a thumbnail preview of the dataset.
 
@@ -256,8 +285,13 @@ class TilerInterface:
         crs : str, optional
             Target CRS for the thumbnail projection (e.g., ``"EPSG:3857"``).
             When set, the preview is reprojected to this CRS.
+        expression : str, optional
+            Band math expression (e.g., ``"(b4-b1)/(b4+b1)"``).
+            Mutually exclusive with ``indexes``.
 
         """
+        if expression and indexes is not None:
+            raise ValueError("Cannot use both 'expression' and 'indexes'.")
         if encoding.lower() not in ["png", "jpeg", "jpg"]:
             raise ValueError(f"Encoding ({encoding}) not supported.")
         encoding = format_to_encoding(encoding)
@@ -271,6 +305,7 @@ class TilerInterface:
             vmin=vmin,
             vmax=vmax,
             crs=crs,
+            expression=expression,
         )
 
         if output_path:
@@ -452,6 +487,7 @@ class TileServerMixin:
         vmax: float | list[float] | None = None,
         nodata: int | float | None = None,
         client: bool = False,
+        expression: str | None = None,
     ):
         """Get slippy maps tile URL (e.g., `/zoom/x/y.png`).
 
@@ -470,8 +506,13 @@ class TileServerMixin:
             The maximized value to use when colormapping a single band.
         nodata : float
             The value from the band to use to interpret as not valid data.
+        expression : str, optional
+            Band math expression (e.g., ``"(b4-b1)/(b4+b1)"``).
+            Mutually exclusive with ``indexes``.
 
         """
+        if expression and indexes is not None:
+            raise ValueError("Cannot use both 'expression' and 'indexes'.")
         # First handle query parameters to check for errors
         params = {}
         if indexes is not None:
@@ -509,6 +550,8 @@ class TileServerMixin:
             if isinstance(nodata, Iterable) and not isinstance(indexes, Iterable):
                 raise ValueError("`indexes` must be explicitly set if `nodata` is an iterable.")
             params["nodata"] = nodata
+        if expression is not None:
+            params["expression"] = expression
         return add_query_parameters(
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
         )

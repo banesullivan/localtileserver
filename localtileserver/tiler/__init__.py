@@ -13,6 +13,7 @@ from localtileserver.tiler.handler import (
     get_preview,
     get_reader,
     get_source_bounds,
+    get_statistics,
     get_tile,
 )
 from localtileserver.tiler.palettes import (

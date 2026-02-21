@@ -10,8 +10,10 @@ from localtileserver.tiler import (
     get_preview,
     get_reader,
     get_source_bounds,
+    get_statistics,
     get_tile,
 )
+from localtileserver.tiler.handler import get_feature, get_part
 from localtileserver.tiler.palettes import get_palettes
 from localtileserver.web.routers.utils import get_clean_filename_from_params, parse_style_params
 
@@ -57,6 +59,19 @@ async def validate_cog_view(request: Request, filename: str = Query(None)):
     return "Valid Cloud Optimized GeoTiff."
 
 
+@router.get("/statistics")
+async def statistics_view(
+    request: Request,
+    filename: str = Query(None),
+    indexes: str | None = Query(None),
+    expression: str | None = Query(None),
+):
+    filename = _resolve_filename(request, filename)
+    reader = _get_reader(filename)
+    style = parse_style_params(indexes=indexes)
+    return get_statistics(reader, expression=expression, **style)
+
+
 @router.get("/thumbnail.{format}")
 async def thumbnail_view(
     request: Request,
@@ -68,6 +83,8 @@ async def thumbnail_view(
     vmax: str | None = Query(None),
     nodata: str | None = Query(None),
     crs: str | None = Query(None),
+    expression: str | None = Query(None),
+    stretch: str | None = Query(None),
 ):
     filename = _resolve_filename(request, filename)
     try:
@@ -76,7 +93,9 @@ async def thumbnail_view(
         raise HTTPException(status_code=400, detail=f"Format {format} is not a valid encoding.")
     reader = _get_reader(filename)
     style = parse_style_params(indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata)
-    thumb_data = get_preview(reader, img_format=encoding, crs=crs, **style)
+    thumb_data = get_preview(
+        reader, img_format=encoding, crs=crs, expression=expression, stretch=stretch, **style
+    )
     return Response(content=bytes(thumb_data), media_type=f"image/{format.lower()}")
 
 
@@ -93,16 +112,91 @@ async def tile_view(
     vmin: str | None = Query(None),
     vmax: str | None = Query(None),
     nodata: str | None = Query(None),
+    expression: str | None = Query(None),
+    stretch: str | None = Query(None),
 ):
     filename = _resolve_filename(request, filename)
     reader = _get_reader(filename)
     img_format = format_to_encoding(format)
     style = parse_style_params(indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata)
     try:
-        tile_binary = get_tile(reader, z, x, y, img_format=img_format, **style)
+        tile_binary = get_tile(
+            reader, z, x, y, img_format=img_format, expression=expression, stretch=stretch, **style
+        )
     except TileOutsideBounds:
         raise HTTPException(status_code=404, detail="Tile outside bounds")
     return Response(content=bytes(tile_binary), media_type=f"image/{img_format.lower()}")
+
+
+@router.get("/part.{format}")
+async def part_view(
+    request: Request,
+    format: str,
+    bbox: str = Query(..., description="Bounding box as left,bottom,right,top"),
+    filename: str = Query(None),
+    indexes: str | None = Query(None),
+    colormap: str | None = Query(None),
+    vmin: str | None = Query(None),
+    vmax: str | None = Query(None),
+    nodata: str | None = Query(None),
+    expression: str | None = Query(None),
+    stretch: str | None = Query(None),
+    max_size: int = Query(1024),
+    dst_crs: str | None = Query(None),
+    bounds_crs: str | None = Query(None),
+):
+    filename = _resolve_filename(request, filename)
+    try:
+        encoding = format_to_encoding(format)
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Format {format} is not a valid encoding.")
+    try:
+        parts = [float(x.strip()) for x in bbox.split(",")]
+        if len(parts) != 4:
+            raise ValueError
+        bbox_tuple = tuple(parts)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="bbox must be 4 comma-separated floats: left,bottom,right,top")
+    reader = _get_reader(filename)
+    style = parse_style_params(indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata)
+    result = get_part(
+        reader, bbox_tuple, img_format=encoding, max_size=max_size, dst_crs=dst_crs,
+        bounds_crs=bounds_crs, expression=expression, stretch=stretch, **style,
+    )
+    return Response(content=bytes(result), media_type=f"image/{format.lower()}")
+
+
+@router.post("/feature.{format}")
+async def feature_view(
+    request: Request,
+    format: str,
+    filename: str = Query(None),
+    indexes: str | None = Query(None),
+    colormap: str | None = Query(None),
+    vmin: str | None = Query(None),
+    vmax: str | None = Query(None),
+    nodata: str | None = Query(None),
+    expression: str | None = Query(None),
+    stretch: str | None = Query(None),
+    max_size: int = Query(1024),
+    dst_crs: str | None = Query(None),
+):
+    filename = _resolve_filename(request, filename)
+    try:
+        encoding = format_to_encoding(format)
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Format {format} is not a valid encoding.")
+    try:
+        geojson = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Request body must be valid GeoJSON.")
+    reader = _get_reader(filename)
+    style = parse_style_params(indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata)
+    result = get_feature(
+        reader, geojson, img_format=encoding, max_size=max_size, dst_crs=dst_crs,
+        expression=expression, stretch=stretch, **style,
+    )
+    return Response(content=bytes(result), media_type=f"image/{format.lower()}")
 
 
 def _resolve_filename(request: Request, filename: str | None) -> str:

@@ -102,15 +102,30 @@ def get_clean_filename(filename: str):
     return filename
 
 
+_FORMAT_MAP = {
+    "png": "PNG",
+    "jpeg": "JPEG",
+    "jpg": "JPEG",
+    "webp": "WEBP",
+    "tif": "GTiff",
+    "tiff": "GTiff",
+    "geotiff": "GTiff",
+    "npy": "NPY",
+}
+
+
 def format_to_encoding(fmt: str | None) -> str:
-    """Validate encoding."""
+    """Validate encoding and return the canonical format string.
+
+    Supported formats: png, jpeg/jpg, webp, tif/tiff/geotiff, npy.
+    """
     if not fmt:
         return "png"
-    if fmt.lower() not in ["png", "jpeg", "jpg"]:
-        raise ValueError(f"Format {fmt!r} is not valid. Try `png` or `jpeg`")
-    if fmt.lower() == "jpg":
-        fmt = "jpeg"
-    return fmt.upper()  # PNG, JPEG
+    encoding = _FORMAT_MAP.get(fmt.lower())
+    if encoding is None:
+        valid = ", ".join(sorted(set(_FORMAT_MAP.values())))
+        raise ValueError(f"Format {fmt!r} is not valid. Supported formats: {valid}")
+    return encoding
 
 
 def make_crs(projection):

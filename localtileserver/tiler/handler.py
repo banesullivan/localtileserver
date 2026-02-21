@@ -144,6 +144,59 @@ def _handle_vmin_vmax(
     return dict(zip(indexes, vmin, strict=True)), dict(zip(indexes, vmax, strict=True))
 
 
+STRETCH_MODES = {"none", "minmax", "linear", "equalize", "sqrt", "log"}
+
+
+def _apply_stretch(img: ImageData, stretch: str, tile_source: Reader, indexes: list[int]):
+    """Apply a stretch mode to the image data in-place, returning adjusted vmin/vmax dicts."""
+    if stretch == "none":
+        return {i: 0 for i in indexes}, {i: 255 for i in indexes}
+    stats = tile_source.statistics(indexes=indexes)
+    if stretch == "minmax":
+        vmin = {i: stats[f"b{i}"].min for i in indexes}
+        vmax = {i: stats[f"b{i}"].max for i in indexes}
+    elif stretch == "linear":
+        # 2nd to 98th percentile stretch
+        vmin = {i: stats[f"b{i}"].percentile_2 for i in indexes}
+        vmax = {i: stats[f"b{i}"].percentile_98 for i in indexes}
+    elif stretch == "equalize":
+        # Histogram equalization via numpy
+        for band_idx, band_num in enumerate(indexes):
+            band_data = img.data[band_idx].astype(float)
+            mask = img.mask[0] if img.mask.ndim == 3 else img.mask
+            valid = band_data[mask > 0] if mask.any() else band_data.ravel()
+            if valid.size > 0:
+                sorted_vals = np.sort(valid)
+                cdf = np.searchsorted(sorted_vals, band_data) / max(len(sorted_vals), 1)
+                img.data[band_idx] = (cdf * 255).astype(img.data.dtype)
+        return {i: 0 for i in indexes}, {i: 255 for i in indexes}
+    elif stretch == "sqrt":
+        vmin = {i: stats[f"b{i}"].min for i in indexes}
+        vmax = {i: stats[f"b{i}"].max for i in indexes}
+        for band_idx, band_num in enumerate(indexes):
+            band_data = img.data[band_idx].astype(float)
+            lo, hi = vmin[band_num], vmax[band_num]
+            if hi > lo:
+                normalized = np.clip((band_data - lo) / (hi - lo), 0, 1)
+                img.data[band_idx] = (np.sqrt(normalized) * 255).astype(img.data.dtype)
+        return {i: 0 for i in indexes}, {i: 255 for i in indexes}
+    elif stretch == "log":
+        vmin = {i: stats[f"b{i}"].min for i in indexes}
+        vmax = {i: stats[f"b{i}"].max for i in indexes}
+        for band_idx, band_num in enumerate(indexes):
+            band_data = img.data[band_idx].astype(float)
+            lo, hi = vmin[band_num], vmax[band_num]
+            if hi > lo:
+                normalized = np.clip((band_data - lo) / (hi - lo), 0, 1)
+                img.data[band_idx] = (np.log1p(normalized * 254) / np.log(255) * 255).astype(
+                    img.data.dtype
+                )
+        return {i: 0 for i in indexes}, {i: 255 for i in indexes}
+    else:
+        raise ValueError(f"Invalid stretch mode: {stretch!r}. Must be one of {STRETCH_MODES}.")
+    return vmin, vmax
+
+
 def _render_image(
     tile_source: Reader,
     img: ImageData,
@@ -152,6 +205,7 @@ def _render_image(
     vmax: dict[int, float | None],
     colormap: str | None = None,
     img_format: str = "PNG",
+    stretch: str | None = None,
 ):
     # Resolve colormap to a dict for rio-tiler rendering
     registered = get_registered_colormap(colormap) if isinstance(colormap, str) else None
@@ -174,6 +228,10 @@ def _render_image(
             for key, value in c.items():
                 colormap[int(key)] = tuple(value)
 
+    # Apply stretch mode if specified (overrides vmin/vmax)
+    if stretch and stretch != "none":
+        vmin, vmax = _apply_stretch(img, stretch, tile_source, indexes)
+
     if (
         not colormap
         and len(indexes) == 1
@@ -181,11 +239,10 @@ def _render_image(
     ):
         # NOTE: vmin/vmax are not used for palette images
         colormap = tile_source.dataset.colormap(indexes[0])
-    # TODO: change these to any checks for none in vmin/vmax
     elif (
         img.data.dtype != np.dtype("uint8")
-        or any(v is not None for v in vmin)
-        or any(v is not None for v in vmax)
+        or any(v is not None for v in vmin.values())
+        or any(v is not None for v in vmax.values())
     ):
         stats = tile_source.statistics(indexes=indexes)
         in_range = []
@@ -217,7 +274,24 @@ def get_tile(
     vmax: float | list[float] | None = None,
     nodata: int | float | None = None,
     img_format: str = "PNG",
+    expression: str | None = None,
+    stretch: str | None = None,
 ):
+    if expression:
+        nodata = _handle_nodata(tile_source, nodata)
+        img = tile_source.tile(x, y, z, expression=expression, nodata=nodata)
+        expr_indexes = list(range(1, img.count + 1))
+        vmin, vmax = _handle_vmin_vmax(expr_indexes, vmin, vmax)
+        return _render_image(
+            tile_source,
+            img,
+            indexes=expr_indexes,
+            vmin=vmin,
+            vmax=vmax,
+            colormap=colormap,
+            img_format=img_format,
+            stretch=stretch,
+        )
     if colormap is not None and indexes is None:
         indexes = [1]
     indexes = _handle_band_indexes(tile_source, indexes)
@@ -232,6 +306,137 @@ def get_tile(
         vmax=vmax,
         colormap=colormap,
         img_format=img_format,
+        stretch=stretch,
+    )
+
+
+def get_statistics(
+    tile_source: Reader,
+    indexes: list[int] | None = None,
+    expression: str | None = None,
+    **kwargs,
+):
+    """Get per-band statistics (min, max, mean, std, histogram).
+
+    Returns a dict keyed by band name (e.g., 'b1', 'b2').
+    """
+    stats_kwargs = dict(kwargs)
+    if expression:
+        stats = tile_source.statistics(expression=expression, **stats_kwargs)
+    else:
+        if indexes is not None:
+            if isinstance(indexes, (str, int)):
+                indexes = [int(indexes)]
+            else:
+                indexes = [int(i) for i in indexes]
+            stats_kwargs["indexes"] = indexes
+        stats = tile_source.statistics(**stats_kwargs)
+    result = {}
+    for band_name, band_stats in stats.items():
+        if hasattr(band_stats, "model_dump"):
+            result[band_name] = band_stats.model_dump()
+        else:
+            result[band_name] = band_stats.dict()
+    return result
+
+
+def get_part(
+    tile_source: Reader,
+    bbox: tuple[float, float, float, float],
+    indexes: list[int] | None = None,
+    colormap: str | None = None,
+    vmin: float | list[float] | None = None,
+    vmax: float | list[float] | None = None,
+    nodata: int | float | None = None,
+    img_format: str = "PNG",
+    max_size: int = 1024,
+    dst_crs: str | None = None,
+    bounds_crs: str | None = None,
+    expression: str | None = None,
+    stretch: str | None = None,
+):
+    """Extract a spatial subset (bounding box crop) from the raster.
+
+    Parameters
+    ----------
+    bbox : tuple
+        Bounding box as (left, bottom, right, top).
+    dst_crs : str, optional
+        Target CRS for the output image.
+    bounds_crs : str, optional
+        CRS of the bbox coordinates. Defaults to the dataset's native CRS.
+    """
+    nodata = _handle_nodata(tile_source, nodata)
+    crs_obj = make_crs(dst_crs) if dst_crs else None
+    bounds_crs_obj = make_crs(bounds_crs) if bounds_crs else tile_source.dataset.crs
+    part_kwargs = {"max_size": max_size, "nodata": nodata, "bounds_crs": bounds_crs_obj}
+    if crs_obj:
+        part_kwargs["dst_crs"] = crs_obj
+    if expression:
+        img = tile_source.part(bbox, expression=expression, **part_kwargs)
+        expr_indexes = list(range(1, img.count + 1))
+        vmin_d, vmax_d = _handle_vmin_vmax(expr_indexes, vmin, vmax)
+        return _render_image(
+            tile_source, img, indexes=expr_indexes, vmin=vmin_d, vmax=vmax_d,
+            colormap=colormap, img_format=img_format, stretch=stretch,
+        )
+    if colormap is not None and indexes is None:
+        indexes = [1]
+    indexes = _handle_band_indexes(tile_source, indexes)
+    vmin_d, vmax_d = _handle_vmin_vmax(indexes, vmin, vmax)
+    img = tile_source.part(bbox, indexes=indexes, **part_kwargs)
+    return _render_image(
+        tile_source, img, indexes=indexes, vmin=vmin_d, vmax=vmax_d,
+        colormap=colormap, img_format=img_format, stretch=stretch,
+    )
+
+
+def get_feature(
+    tile_source: Reader,
+    geojson: dict,
+    indexes: list[int] | None = None,
+    colormap: str | None = None,
+    vmin: float | list[float] | None = None,
+    vmax: float | list[float] | None = None,
+    nodata: int | float | None = None,
+    img_format: str = "PNG",
+    max_size: int = 1024,
+    dst_crs: str | None = None,
+    expression: str | None = None,
+    stretch: str | None = None,
+):
+    """Extract data masked to a GeoJSON feature.
+
+    Parameters
+    ----------
+    geojson : dict
+        A GeoJSON Feature or Geometry dict.
+    """
+    nodata = _handle_nodata(tile_source, nodata)
+    crs_obj = make_crs(dst_crs) if dst_crs else None
+    # Normalize to a Feature if given a bare geometry
+    if "type" in geojson and geojson["type"] != "Feature":
+        geojson = {"type": "Feature", "geometry": geojson, "properties": {}}
+    feature_kwargs = {"shape": geojson}
+    if crs_obj:
+        feature_kwargs["dst_crs"] = crs_obj
+    feature_kwargs["max_size"] = max_size
+    if expression:
+        img = tile_source.feature(expression=expression, nodata=nodata, **feature_kwargs)
+        expr_indexes = list(range(1, img.count + 1))
+        vmin_d, vmax_d = _handle_vmin_vmax(expr_indexes, vmin, vmax)
+        return _render_image(
+            tile_source, img, indexes=expr_indexes, vmin=vmin_d, vmax=vmax_d,
+            colormap=colormap, img_format=img_format, stretch=stretch,
+        )
+    if colormap is not None and indexes is None:
+        indexes = [1]
+    indexes = _handle_band_indexes(tile_source, indexes)
+    vmin_d, vmax_d = _handle_vmin_vmax(indexes, vmin, vmax)
+    img = tile_source.feature(indexes=indexes, nodata=nodata, **feature_kwargs)
+    return _render_image(
+        tile_source, img, indexes=indexes, vmin=vmin_d, vmax=vmax_d,
+        colormap=colormap, img_format=img_format, stretch=stretch,
     )
 
 
@@ -254,15 +459,42 @@ def get_preview(
     img_format: str = "PNG",
     max_size: int = 512,
     crs: str | None = None,
+    expression: str | None = None,
+    stretch: str | None = None,
 ):
+    if expression:
+        nodata = _handle_nodata(tile_source, nodata)
+        if crs is not None:
+            dst_crs = make_crs(crs)
+            src_bounds = tile_source.dataset.bounds
+            src_crs = tile_source.dataset.crs
+            if src_crs:
+                dst_bounds = rasterio.warp.transform_bounds(src_crs, dst_crs, *src_bounds)
+            else:
+                dst_bounds = src_bounds
+            img = tile_source.part(
+                dst_bounds, dst_crs=dst_crs, max_size=max_size, expression=expression, nodata=nodata
+            )
+        else:
+            img = tile_source.preview(max_size=max_size, expression=expression, nodata=nodata)
+        expr_indexes = list(range(1, img.count + 1))
+        vmin, vmax = _handle_vmin_vmax(expr_indexes, vmin, vmax)
+        return _render_image(
+            tile_source,
+            img,
+            indexes=expr_indexes,
+            vmin=vmin,
+            vmax=vmax,
+            colormap=colormap,
+            img_format=img_format,
+            stretch=stretch,
+        )
     if colormap is not None and indexes is None:
         indexes = [1]
     indexes = _handle_band_indexes(tile_source, indexes)
     nodata = _handle_nodata(tile_source, nodata)
     vmin, vmax = _handle_vmin_vmax(indexes, vmin, vmax)
     if crs is not None:
-        # Generate a preview reprojected to the target CRS (#202).
-        # Use reader.part() with the full bounds in the target projection.
         dst_crs = make_crs(crs)
         src_bounds = tile_source.dataset.bounds
         src_crs = tile_source.dataset.crs
@@ -283,4 +515,5 @@ def get_preview(
         vmax=vmax,
         colormap=colormap,
         img_format=img_format,
+        stretch=stretch,
     )
