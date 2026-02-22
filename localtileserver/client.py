@@ -1144,6 +1144,315 @@ class TileClient(TilerInterface, TileServerMixin):
         )
 
 
+class STACClient(TileServerMixin):
+    """
+    Tile client for STAC (SpatioTemporal Asset Catalog) items.
+
+    This is a separate class from ``TileClient`` rather than a unified
+    client because the two are backed by fundamentally different rio-tiler
+    reader types with incompatible APIs:
+
+    - ``TileClient`` wraps ``rio_tiler.io.Reader`` and addresses data by
+      **band index** (``indexes=[1, 2, 3]``).  The full rendering pipeline
+      (colormap, vmin/vmax, stretch, nodata) is available.
+    - ``STACClient`` wraps ``rio_tiler.io.STACReader`` and addresses data
+      by **asset name** (``assets=["B04", "B03", "B02"]``).  The STAC
+      tile endpoints currently pass rendering through to rio-tiler
+      defaults without colormap/stretch support.
+
+    All of ``TilerInterface``'s methods call handler functions (e.g.
+    ``get_tile``, ``get_preview``) that expect a ``Reader``.  The STAC
+    handler functions (``get_stac_tile``, ``get_stac_preview``) accept
+    different arguments, so the two cannot share an implementation today.
+
+    **Future improvement:** A unified ``TileClient`` could accept either
+    source type and dispatch to the correct handler, exposing both
+    ``indexes`` and ``assets`` parameters where appropriate.  This would
+    also be the place to wire colormap/stretch/vmin/vmax support into the
+    STAC rendering path (currently unsupported at the endpoint level).
+
+    Parameters
+    ----------
+    url : str
+        URL to a STAC item JSON document.
+    assets : list of str, optional
+        Default asset names to use for tiles and thumbnails.
+    expression : str, optional
+        Default band math expression for cross-asset computations.
+    port : int or str, optional
+        Port for the tile server. Defaults to an available port.
+    debug : bool, optional
+        Run the tile server in debug mode.
+    host : str, optional
+        Host address to bind the tile server to.
+    client_port : int, optional
+        Port used by the client browser.
+    client_host : str, optional
+        Host used by the client browser.
+    client_prefix : str, optional
+        URL prefix for proxied access.
+    cors_all : bool, optional
+        If ``True``, enable CORS for all origins.
+    """
+
+    def __init__(
+        self,
+        url: str,
+        assets: list[str] | None = None,
+        expression: str | None = None,
+        port: int | str = "default",
+        debug: bool = False,
+        host: str = "127.0.0.1",
+        client_port: int | None = None,
+        client_host: str | None = None,
+        client_prefix: str | None = None,
+        cors_all: bool = False,
+    ):
+        from localtileserver.tiler.stac import get_stac_reader
+
+        self.stac_url = url
+        self._assets = assets
+        self._expression = expression
+        self._stac_reader = get_stac_reader(url)
+        TileServerMixin.__init__(
+            self,
+            port=port,
+            debug=debug,
+            host=host,
+            client_port=client_port,
+            client_host=client_host,
+            client_prefix=client_prefix,
+            cors_all=cors_all,
+        )
+
+    @property
+    def filename(self):
+        """
+        Return the STAC item URL.
+
+        Returns
+        -------
+        str
+            The STAC item URL.
+        """
+        return self.stac_url
+
+    def _produce_url(self, base: str):
+        return add_query_parameters(base, {"url": self.stac_url})
+
+    def bounds(self):
+        """
+        Get the geographic bounds of the STAC item.
+
+        Returns
+        -------
+        tuple of float
+            A tuple of ``(south, north, west, east)`` in EPSG:4326.
+        """
+        gb = self._stac_reader.geographic_bounds
+        return (gb[1], gb[3], gb[0], gb[2])
+
+    def center(self):
+        """
+        Get the center of the STAC item in ``(lat, lon)`` form.
+
+        Returns
+        -------
+        tuple of float
+            A tuple of ``(latitude, longitude)``.
+        """
+        b = self.bounds()
+        return (
+            (b[1] - b[0]) / 2 + b[0],
+            (b[3] - b[2]) / 2 + b[2],
+        )
+
+    @property
+    def default_zoom(self):
+        """
+        Return the default zoom level for the STAC item.
+
+        Returns
+        -------
+        int
+            The minimum zoom level.
+        """
+        try:
+            return self._stac_reader.minzoom
+        except Exception:
+            return 1
+
+    def tile(
+        self,
+        z: int,
+        x: int,
+        y: int,
+        assets: list[str] | None = None,
+        expression: str | None = None,
+        encoding: str = "PNG",
+    ):
+        """
+        Generate a tile from the STAC item.
+
+        Parameters
+        ----------
+        z : int
+            Tile zoom level.
+        x : int
+            Tile column index.
+        y : int
+            Tile row index.
+        assets : list of str, optional
+            Asset names to read. Falls back to the default assets.
+        expression : str, optional
+            Band math expression. Falls back to the default expression.
+        encoding : str, optional
+            Output image format. Defaults to ``"PNG"``.
+
+        Returns
+        -------
+        bytes
+            The tile image as binary data.
+        """
+        from localtileserver.tiler.stac import get_stac_tile
+
+        encoding = format_to_encoding(encoding)
+        return get_stac_tile(
+            self._stac_reader,
+            z,
+            x,
+            y,
+            assets=assets or self._assets,
+            expression=expression or self._expression,
+            img_format=encoding,
+        )
+
+    def thumbnail(
+        self,
+        assets: list[str] | None = None,
+        expression: str | None = None,
+        encoding: str = "PNG",
+        max_size: int = 512,
+        output_path: pathlib.Path | None = None,
+    ):
+        """
+        Generate a thumbnail preview of the STAC item.
+
+        Parameters
+        ----------
+        assets : list of str, optional
+            Asset names to read. Falls back to the default assets.
+        expression : str, optional
+            Band math expression. Falls back to the default expression.
+        encoding : str, optional
+            Output image format. Defaults to ``"PNG"``.
+        max_size : int, optional
+            Maximum dimension of the thumbnail. Defaults to 512.
+        output_path : pathlib.Path, optional
+            If provided, write the image to this file path.
+
+        Returns
+        -------
+        bytes
+            The thumbnail image as binary data.
+        """
+        from localtileserver.tiler.stac import get_stac_preview
+
+        encoding = format_to_encoding(encoding)
+        result = get_stac_preview(
+            self._stac_reader,
+            assets=assets or self._assets,
+            expression=expression or self._expression,
+            img_format=encoding,
+            max_size=max_size,
+        )
+        if output_path:
+            with open(output_path, "wb") as f:
+                f.write(result)
+        return result
+
+    def stac_info(self, assets: list[str] | None = None):
+        """
+        Get STAC item metadata.
+
+        Parameters
+        ----------
+        assets : list of str, optional
+            Asset names to query. Falls back to the default assets.
+
+        Returns
+        -------
+        dict
+            Dictionary mapping asset names to their metadata.
+        """
+        from localtileserver.tiler.stac import get_stac_info
+
+        return get_stac_info(self._stac_reader, assets=assets or self._assets)
+
+    def statistics(self, assets: list[str] | None = None, **kwargs):
+        """
+        Get per-asset/band statistics.
+
+        Parameters
+        ----------
+        assets : list of str, optional
+            Asset names to compute statistics for. Falls back to the
+            default assets.
+        **kwargs
+            Additional keyword arguments passed to the underlying
+            statistics function.
+
+        Returns
+        -------
+        dict
+            Per-asset/band statistics.
+        """
+        from localtileserver.tiler.stac import get_stac_statistics
+
+        return get_stac_statistics(self._stac_reader, assets=assets or self._assets, **kwargs)
+
+    def get_tile_url(
+        self,
+        assets: list[str] | None = None,
+        expression: str | None = None,
+        client: bool = False,
+        **kwargs,
+    ):
+        """
+        Get slippy maps tile URL for the STAC item.
+
+        Parameters
+        ----------
+        assets : list of str, optional
+            Asset names to include. Falls back to the default assets.
+        expression : str, optional
+            Band math expression. Falls back to the default expression.
+        client : bool, optional
+            If ``True``, build the URL using the client-facing host/port.
+        **kwargs
+            Accepted for compatibility with widget helpers; ignored.
+
+        Returns
+        -------
+        str
+            The tile URL template with ``{z}/{x}/{y}`` placeholders.
+        """
+        params = {}
+        assets = assets or self._assets
+        expression = expression or self._expression
+        if assets is not None:
+            params["assets"] = ",".join(assets) if isinstance(assets, list) else assets
+        if expression is not None:
+            params["expression"] = expression
+        return add_query_parameters(
+            self.create_url("api/stac/tiles/{z}/{x}/{y}.png", client=client), params
+        )
+
+    def _repr_png_(self):
+        """Return a PNG thumbnail for IPython/Jupyter rich display."""
+        return self.thumbnail(encoding="png")
+
+
 def get_or_create_tile_client(
     source: pathlib.Path | str | TileClient | rasterio.io.DatasetReaderBase,
     port: int | str = "default",
@@ -1178,6 +1487,9 @@ def get_or_create_tile_client(
     is for all TileClients to share a single server.
     """
     _internally_created = False
+    # STACClient is already a running client; pass it through directly
+    if isinstance(source, STACClient):
+        return source, False
     # Launch tile server if file path is given
     if not isinstance(source, TileClient):
         source = TileClient(source, port=port, debug=debug)

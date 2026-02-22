@@ -307,3 +307,149 @@ def test_parse_assets_with_spaces():
     from localtileserver.web.routers.stac import _parse_assets
 
     assert _parse_assets("B04, B03, B02") == ["B04", "B03", "B02"]
+
+
+# --- STACClient ---
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_bounds(MockReader):
+    reader = MagicMock()
+    reader.geographic_bounds = (-180, -90, 180, 90)
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient
+
+    client = STACClient("https://example.com/stac/item.json")
+    try:
+        b = client.bounds()
+        assert b == (-90, 90, -180, 180)
+    finally:
+        client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_center(MockReader):
+    reader = MagicMock()
+    reader.geographic_bounds = (-180, -90, 180, 90)
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient
+
+    client = STACClient("https://example.com/stac/item.json")
+    try:
+        c = client.center()
+        assert c == (0.0, 0.0)
+    finally:
+        client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_tile(MockReader):
+    reader = MagicMock()
+    reader.tile.return_value = _make_image_data()
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient
+
+    client = STACClient("https://example.com/stac/item.json", assets=["visual"])
+    try:
+        result = client.tile(10, 512, 512)
+        assert len(bytes(result)) > 0
+    finally:
+        client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_thumbnail(MockReader):
+    reader = MagicMock()
+    reader.preview.return_value = _make_image_data()
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient
+
+    client = STACClient("https://example.com/stac/item.json", assets=["visual"])
+    try:
+        result = client.thumbnail()
+        assert len(bytes(result)) > 0
+    finally:
+        client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_statistics(MockReader):
+    reader = MagicMock()
+    reader.statistics.return_value = {"visual_b1": _make_band_stats()}
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient
+
+    client = STACClient("https://example.com/stac/item.json", assets=["visual"])
+    try:
+        result = client.statistics()
+        assert "visual_b1" in result
+    finally:
+        client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_info(MockReader):
+    reader = MagicMock()
+    reader.info.return_value = {"visual": _make_info()}
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient
+
+    client = STACClient("https://example.com/stac/item.json", assets=["visual"])
+    try:
+        result = client.stac_info()
+        assert "visual" in result
+    finally:
+        client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_get_tile_url(MockReader):
+    reader = MagicMock()
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient
+
+    client = STACClient("https://example.com/stac/item.json", assets=["visual"])
+    try:
+        url = client.get_tile_url()
+        assert "api/stac/tiles" in url
+        assert "assets=visual" in url
+    finally:
+        client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_get_tile_url_expression(MockReader):
+    reader = MagicMock()
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient
+
+    client = STACClient("https://example.com/stac/item.json", expression="B04/B03")
+    try:
+        url = client.get_tile_url()
+        assert "expression=B04" in url
+    finally:
+        client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_stac_client_get_or_create_passthrough(MockReader):
+    reader = MagicMock()
+    MockReader.return_value = reader
+
+    from localtileserver.client import STACClient, get_or_create_tile_client
+
+    client = STACClient("https://example.com/stac/item.json")
+    try:
+        result, created = get_or_create_tile_client(client)
+        assert result is client
+        assert created is False
+    finally:
+        client.shutdown(force=True)

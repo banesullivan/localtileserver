@@ -275,6 +275,45 @@ def test_part_endpoint(flask_client, bahamas_file):
     assert len(r.content) > 0
 
 
+def test_client_part():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        b = client.bounds()
+        bbox = (b[2], b[0], b[3], b[1])
+        result = client.part(bbox)
+        assert len(result) > 0
+    finally:
+        client.shutdown(force=True)
+
+
+def test_client_part_with_colormap():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        b = client.bounds()
+        bbox = (b[2], b[0], b[3], b[1])
+        result = client.part(bbox, indexes=[1], colormap="viridis")
+        assert len(result) > 0
+    finally:
+        client.shutdown(force=True)
+
+
+def test_client_part_with_stretch():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        b = client.bounds()
+        bbox = (b[2], b[0], b[3], b[1])
+        result = client.part(bbox, indexes=[1], colormap="viridis", stretch="linear")
+        assert len(result) > 0
+    finally:
+        client.shutdown(force=True)
+
+
 # --- Feature reads ---
 
 

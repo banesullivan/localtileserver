@@ -10,41 +10,73 @@ This feature uses `rio-tiler's STACReader <https://cogeotiff.github.io/rio-tiler
 under the hood.
 
 
-REST API Endpoints
-^^^^^^^^^^^^^^^^^^
+Python API
+^^^^^^^^^^
 
-All STAC endpoints are prefixed with ``/api/stac/`` and require a ``url``
-query parameter pointing to a STAC Item JSON document.
+The ``STACClient`` class provides the same workflow as ``TileClient`` but for
+remote STAC items:
 
-**Get STAC item info:**
+.. jupyter-execute::
+
+  from localtileserver import STACClient
+  from IPython.display import Image, display
+
+  stac_url = (
+      "https://earth-search.aws.element84.com/v1/"
+      "collections/sentinel-2-l2a/items/S2A_T10SEG_20230101T190201_L2A"
+  )
+
+  client = STACClient(stac_url, assets=["visual"])
+
+  # Geographic extent
+  print("Bounds:", client.bounds())
+  print("Center:", client.center())
+
+.. jupyter-execute::
+
+  # Available assets
+  info = client.stac_info()
+  print("Assets:", list(info.keys()))
+
+.. jupyter-execute::
+
+  # Thumbnail preview
+  display(Image(data=client.thumbnail(max_size=256)))
+
+``STACClient`` also works with ``get_leaflet_tile_layer`` for interactive
+maps in Jupyter:
+
+.. code:: python
+
+    from localtileserver import get_leaflet_tile_layer
+    from ipyleaflet import Map, ScaleControl, FullScreenControl
+
+    layer = get_leaflet_tile_layer(client)
+    m = Map(center=client.center(), zoom=client.default_zoom)
+    m.add(layer)
+    m.add_control(ScaleControl(position='bottomleft'))
+    m.add_control(FullScreenControl())
+    m
+
+
+REST API
+^^^^^^^^
+
+All STAC endpoints are also available via the REST API, prefixed with
+``/api/stac/``:
 
 .. code:: bash
 
+    # Get STAC item info
     GET /api/stac/info?url=https://example.com/stac/item.json
 
-    # Filter to specific assets
-    GET /api/stac/info?url=https://example.com/stac/item.json&assets=B04,B03,B02
-
-**Get statistics:**
-
-.. code:: bash
-
+    # Get statistics
     GET /api/stac/statistics?url=https://example.com/stac/item.json&assets=B04
 
-**Get tiles:**
-
-.. code:: bash
-
-    # Tile from specific assets
+    # Get a tile
     GET /api/stac/tiles/{z}/{x}/{y}.png?url=https://example.com/stac/item.json&assets=visual
 
-    # Tile with band math expression across assets
-    GET /api/stac/tiles/{z}/{x}/{y}.png?url=https://example.com/stac/item.json&expression=(B04_b1-B03_b1)/(B04_b1+B03_b1)
-
-**Get thumbnail:**
-
-.. code:: bash
-
+    # Get a thumbnail
     GET /api/stac/thumbnail.png?url=https://example.com/stac/item.json&assets=visual&max_size=512
 
 
@@ -60,61 +92,8 @@ Parameters
    * - ``url``
      - URL to a STAC Item JSON document (required)
    * - ``assets``
-     - Comma-separated list of asset names to use (e.g., ``visual``,
-       ``B04,B03,B02``)
+     - Asset names to use (e.g., ``["visual"]`` or ``["B04", "B03", "B02"]``)
    * - ``expression``
      - Band math expression for cross-asset computations
    * - ``max_size``
      - Maximum thumbnail dimension (default: 512)
-
-Example with ``requests``:
-
-.. code:: python
-
-    import requests
-    from IPython.display import Image, display
-
-    stac_url = "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a/items/S2A_T10SEG_20230101T190201_L2A"
-
-    # Get item info
-    resp = requests.get('http://localhost:8000/api/stac/info',
-                        params={'url': stac_url})
-    info = resp.json()
-    print("Available assets:", list(info.keys()))
-
-    # Get a thumbnail from the visual asset
-    resp = requests.get('http://localhost:8000/api/stac/thumbnail.png',
-                        params={'url': stac_url, 'assets': 'visual'})
-    display(Image(data=resp.content))
-
-
-Python Handler Functions
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-For programmatic use without the REST API, you can use the handler functions
-directly:
-
-.. code:: python
-
-    from localtileserver.tiler.stac import (
-        get_stac_reader,
-        get_stac_info,
-        get_stac_statistics,
-        get_stac_tile,
-        get_stac_preview,
-    )
-
-    # Create a reader from a STAC item URL
-    reader = get_stac_reader('https://example.com/stac/item.json')
-
-    # Get available assets and metadata
-    info = get_stac_info(reader, assets=['visual'])
-
-    # Get per-asset/band statistics
-    stats = get_stac_statistics(reader, assets=['B04'])
-
-    # Get a tile
-    tile = get_stac_tile(reader, z=10, x=512, y=512, assets=['visual'])
-
-    # Get a thumbnail
-    thumb = get_stac_preview(reader, assets=['visual'], max_size=256)
