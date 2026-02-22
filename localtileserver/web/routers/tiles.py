@@ -1,12 +1,14 @@
-"""Tile and image-related API endpoints.
+"""Tile and image-related API endpoints."""
 
-All endpoints that perform blocking GDAL/rasterio I/O are defined as
-regular ``def`` (not ``async def``) so that FastAPI runs them in a
-thread pool.  This keeps the event loop responsive and avoids broken
-request handling with Starlette's ``BaseHTTPMiddleware``.
-"""
+# All endpoints that perform blocking GDAL/rasterio I/O are defined as
+# regular ``def`` (not ``async def``) so that FastAPI runs them in a
+# thread pool.  This keeps the event loop responsive and avoids broken
+# request handling with Starlette's ``BaseHTTPMiddleware``.
+
+from __future__ import annotations
 
 import logging
+from typing import Annotated
 
 from fastapi import APIRouter, Body, HTTPException, Query, Request, Response
 from rasterio import RasterioIOError
@@ -227,7 +229,7 @@ def part_view(
 def feature_view(
     request: Request,
     format: str,
-    geojson: dict = Body(...),
+    geojson: Annotated[dict, Body()],
     filename: str = Query(None),
     indexes: str | None = Query(None),
     colormap: str | None = Query(None),

@@ -9,8 +9,6 @@ import concurrent.futures
 
 import requests
 
-from localtileserver.examples import get_bahamas, get_landsat7
-
 # Valid tiles for bahamas_rgb.tif at zoom 7 (matches the user-reported errors)
 BAHAMAS_TILES_Z7 = [
     (7, 35, 54),
@@ -50,7 +48,7 @@ def test_concurrent_tile_requests_bahamas(bahamas):
     failures = [(url, status) for url, status, _ in results if status != 200]
     assert not failures, f"Tile requests failed: {failures}"
     # Verify all returned actual image data
-    for url, status, length in results:
+    for url, _status, length in results:
         assert length > 0, f"Empty tile response from {url}"
 
 
