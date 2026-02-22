@@ -10,7 +10,9 @@ from localtileserver.tiler.data import (
     str_to_bool,
 )
 from localtileserver.tiler.handler import (
+    get_feature,
     get_meta_data,
+    get_part,
     get_point,
     get_preview,
     get_reader,

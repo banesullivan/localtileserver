@@ -278,9 +278,17 @@ def test_part_endpoint(flask_client, bahamas_file):
 # --- Feature reads ---
 
 
-def test_basic_feature(reader, compare):
-    left, bottom, right, top = _geo_bounds(reader)
-    geojson = {
+def _client_geo_bounds(client):
+    """Get geographic bounds from a TileClient.
+
+    (south, west, north, east -> left, bottom, right, top).
+    """
+    b = client.bounds()
+    return b[2], b[0], b[3], b[1]
+
+
+def _make_bbox_geojson(left, bottom, right, top):
+    return {
         "type": "Polygon",
         "coordinates": [
             [
@@ -292,6 +300,11 @@ def test_basic_feature(reader, compare):
             ]
         ],
     }
+
+
+def test_basic_feature(reader, compare):
+    left, bottom, right, top = _geo_bounds(reader)
+    geojson = _make_bbox_geojson(left, bottom, right, top)
     result = get_feature(reader, geojson)
     assert len(result) > 0
     compare(result)
@@ -300,18 +313,7 @@ def test_basic_feature(reader, compare):
 def test_feature_endpoint(flask_client, bahamas_file):
     rdr = get_reader(bahamas_file)
     left, bottom, right, top = _geo_bounds(rdr)
-    geojson = {
-        "type": "Polygon",
-        "coordinates": [
-            [
-                [left, bottom],
-                [right, bottom],
-                [right, top],
-                [left, top],
-                [left, bottom],
-            ]
-        ],
-    }
+    geojson = _make_bbox_geojson(left, bottom, right, top)
     r = flask_client.post(
         f"/api/feature.png?filename={bahamas_file}",
         content=json.dumps(geojson),
@@ -319,3 +321,42 @@ def test_feature_endpoint(flask_client, bahamas_file):
     )
     assert r.status_code == 200
     assert len(r.content) > 0
+
+
+def test_client_feature():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        left, bottom, right, top = _client_geo_bounds(client)
+        geojson = _make_bbox_geojson(left, bottom, right, top)
+        result = client.feature(geojson)
+        assert len(result) > 0
+    finally:
+        client.shutdown(force=True)
+
+
+def test_client_feature_with_colormap():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        left, bottom, right, top = _client_geo_bounds(client)
+        geojson = _make_bbox_geojson(left, bottom, right, top)
+        result = client.feature(geojson, indexes=[1], colormap="viridis")
+        assert len(result) > 0
+    finally:
+        client.shutdown(force=True)
+
+
+def test_client_feature_with_stretch():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        left, bottom, right, top = _client_geo_bounds(client)
+        geojson = _make_bbox_geojson(left, bottom, right, top)
+        result = client.feature(geojson, indexes=[1], colormap="viridis", stretch="linear")
+        assert len(result) > 0
+    finally:
+        client.shutdown(force=True)

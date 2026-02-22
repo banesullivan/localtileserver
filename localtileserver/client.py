@@ -28,7 +28,9 @@ from localtileserver.manager import AppManager
 from localtileserver.tiler import (
     format_to_encoding,
     get_building_docs,
+    get_feature,
     get_meta_data,
+    get_part,
     get_point,
     get_preview,
     get_reader,
@@ -482,6 +484,170 @@ class TilerInterface:
             Per-band pixel values at the queried location.
         """
         return get_point(self.reader, lon, lat, **kwargs)
+
+    def part(
+        self,
+        bbox: tuple[float, float, float, float],
+        indexes: list[int] | None = None,
+        colormap: str | None = None,
+        vmin: float | list[float] | None = None,
+        vmax: float | list[float] | None = None,
+        nodata: int | float | None = None,
+        output_path: pathlib.Path | None = None,
+        encoding: str = "PNG",
+        max_size: int = 1024,
+        dst_crs: str | None = None,
+        bounds_crs: str | None = None,
+        expression: str | None = None,
+        stretch: str | None = None,
+    ):
+        """
+        Extract a spatial subset by bounding box.
+
+        Parameters
+        ----------
+        bbox : tuple of float
+            Bounding box as ``(left, bottom, right, top)``.
+        indexes : list of int, optional
+            The band(s) of the source raster to use (default if ``None`` is to
+            show RGB if available). Band indexing starts at 1.
+        colormap : str, optional
+            The name of the matplotlib colormap to use when plotting a single
+            band. Default is greyscale.
+        vmin : float or list of float, optional
+            The minimum value to use when colormapping a single band.
+        vmax : float or list of float, optional
+            The maximum value to use when colormapping a single band.
+        nodata : int or float, optional
+            The value from the band to use to interpret as not valid data.
+        output_path : pathlib.Path, optional
+            If provided, write the image to this file path.
+        encoding : str, optional
+            The image encoding format (e.g., ``"PNG"``, ``"JPEG"``).
+            Defaults to ``"PNG"``.
+        max_size : int, optional
+            Maximum dimension of the output image in pixels. Defaults to
+            1024.
+        dst_crs : str, optional
+            Target CRS for the output image (e.g., ``"EPSG:3857"``).
+        bounds_crs : str, optional
+            CRS of the *bbox* coordinates. Defaults to the dataset's
+            native CRS.
+        expression : str, optional
+            Band math expression (e.g., ``"(b4-b1)/(b4+b1)"``).
+            Mutually exclusive with ``indexes``.
+        stretch : str, optional
+            Image stretch mode. One of ``"none"``, ``"minmax"``,
+            ``"linear"``, ``"equalize"``, ``"sqrt"``, or ``"log"``.
+            When set, overrides ``vmin``/``vmax``.
+
+        Returns
+        -------
+        bytes
+            The cropped image as binary data in the specified encoding.
+        """
+        if expression and indexes is not None:
+            raise ValueError("Cannot use both 'expression' and 'indexes'.")
+        encoding = format_to_encoding(encoding)
+        result = get_part(
+            self.reader,
+            bbox,
+            colormap=colormap,
+            indexes=indexes,
+            nodata=nodata,
+            img_format=encoding,
+            vmin=vmin,
+            vmax=vmax,
+            max_size=max_size,
+            dst_crs=dst_crs,
+            bounds_crs=bounds_crs,
+            expression=expression,
+            stretch=stretch,
+        )
+        if output_path:
+            with open(output_path, "wb") as f:
+                f.write(result)
+        return result
+
+    def feature(
+        self,
+        geojson: dict,
+        indexes: list[int] | None = None,
+        colormap: str | None = None,
+        vmin: float | list[float] | None = None,
+        vmax: float | list[float] | None = None,
+        nodata: int | float | None = None,
+        output_path: pathlib.Path | None = None,
+        encoding: str = "PNG",
+        max_size: int = 1024,
+        dst_crs: str | None = None,
+        expression: str | None = None,
+        stretch: str | None = None,
+    ):
+        """
+        Extract data masked to a GeoJSON feature.
+
+        Parameters
+        ----------
+        geojson : dict
+            A GeoJSON Feature or Geometry dictionary. If a bare Geometry
+            is provided, it is automatically wrapped in a Feature.
+        indexes : list of int, optional
+            The band(s) of the source raster to use (default if ``None`` is to
+            show RGB if available). Band indexing starts at 1.
+        colormap : str, optional
+            The name of the matplotlib colormap to use when plotting a single
+            band. Default is greyscale.
+        vmin : float or list of float, optional
+            The minimum value to use when colormapping a single band.
+        vmax : float or list of float, optional
+            The maximum value to use when colormapping a single band.
+        nodata : int or float, optional
+            The value from the band to use to interpret as not valid data.
+        output_path : pathlib.Path, optional
+            If provided, write the image to this file path.
+        encoding : str, optional
+            The image encoding format (e.g., ``"PNG"``, ``"JPEG"``).
+            Defaults to ``"PNG"``.
+        max_size : int, optional
+            Maximum dimension of the output image in pixels. Defaults to
+            1024.
+        dst_crs : str, optional
+            Target CRS for the output image (e.g., ``"EPSG:3857"``).
+        expression : str, optional
+            Band math expression (e.g., ``"(b4-b1)/(b4+b1)"``).
+            Mutually exclusive with ``indexes``.
+        stretch : str, optional
+            Image stretch mode. One of ``"none"``, ``"minmax"``,
+            ``"linear"``, ``"equalize"``, ``"sqrt"``, or ``"log"``.
+            When set, overrides ``vmin``/``vmax``.
+
+        Returns
+        -------
+        bytes
+            The masked image as binary data in the specified encoding.
+        """
+        if expression and indexes is not None:
+            raise ValueError("Cannot use both 'expression' and 'indexes'.")
+        encoding = format_to_encoding(encoding)
+        result = get_feature(
+            self.reader,
+            geojson,
+            colormap=colormap,
+            indexes=indexes,
+            nodata=nodata,
+            img_format=encoding,
+            vmin=vmin,
+            vmax=vmax,
+            max_size=max_size,
+            dst_crs=dst_crs,
+            expression=expression,
+            stretch=stretch,
+        )
+        if output_path:
+            with open(output_path, "wb") as f:
+                f.write(result)
+        return result
 
     def _repr_png_(self):
         """
