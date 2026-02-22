@@ -9,8 +9,6 @@ import concurrent.futures
 
 import requests
 
-from localtileserver.examples import get_bahamas, get_landsat7
-
 # Valid tiles for bahamas_rgb.tif at zoom 7 (matches the user-reported errors)
 BAHAMAS_TILES_Z7 = [
     (7, 35, 54),
