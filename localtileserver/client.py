@@ -293,6 +293,7 @@ class TilerInterface:
         output_path: pathlib.Path | None = None,
         encoding: str = "PNG",
         expression: str | None = None,
+        stretch: str | None = None,
     ):
         """
         Generate a tile from the source raster.
@@ -326,6 +327,10 @@ class TilerInterface:
         expression : str, optional
             Band math expression (e.g., ``"(b4-b1)/(b4+b1)"`` for NDVI).
             Mutually exclusive with ``indexes``.
+        stretch : str, optional
+            Image stretch mode. One of ``"none"``, ``"minmax"``,
+            ``"linear"``, ``"equalize"``, ``"sqrt"``, or ``"log"``.
+            When set, overrides ``vmin``/``vmax``.
 
         Returns
         -------
@@ -347,6 +352,7 @@ class TilerInterface:
             vmin=vmin,
             vmax=vmax,
             expression=expression,
+            stretch=stretch,
         )
         if output_path:
             with open(output_path, "wb") as f:
@@ -389,6 +395,7 @@ class TilerInterface:
         max_size: int = 512,
         crs: str | None = None,
         expression: str | None = None,
+        stretch: str | None = None,
     ):
         """
         Generate a thumbnail preview of the dataset.
@@ -421,6 +428,10 @@ class TilerInterface:
         expression : str, optional
             Band math expression (e.g., ``"(b4-b1)/(b4+b1)"``).
             Mutually exclusive with ``indexes``.
+        stretch : str, optional
+            Image stretch mode. One of ``"none"``, ``"minmax"``,
+            ``"linear"``, ``"equalize"``, ``"sqrt"``, or ``"log"``.
+            When set, overrides ``vmin``/``vmax``.
 
         Returns
         -------
@@ -443,6 +454,7 @@ class TilerInterface:
             vmax=vmax,
             crs=crs,
             expression=expression,
+            stretch=stretch,
         )
 
         if output_path:
@@ -777,6 +789,7 @@ class TileServerMixin:
         nodata: int | float | None = None,
         client: bool = False,
         expression: str | None = None,
+        stretch: str | None = None,
     ):
         """
         Get slippy maps tile URL (e.g., ``/zoom/x/y.png``).
@@ -803,6 +816,10 @@ class TileServerMixin:
         expression : str, optional
             Band math expression (e.g., ``"(b4-b1)/(b4+b1)"``).
             Mutually exclusive with ``indexes``.
+        stretch : str, optional
+            Image stretch mode. One of ``"none"``, ``"minmax"``,
+            ``"linear"``, ``"equalize"``, ``"sqrt"``, or ``"log"``.
+            When set, overrides ``vmin``/``vmax``.
 
         Returns
         -------
@@ -849,6 +866,8 @@ class TileServerMixin:
             params["nodata"] = nodata
         if expression is not None:
             params["expression"] = expression
+        if stretch is not None:
+            params["stretch"] = stretch
         return add_query_parameters(
             self.create_url("api/tiles/{z}/{x}/{y}.png", client=client), params
         )

@@ -49,7 +49,7 @@ def blue_marble(port="default", debug=True):
 
 @pytest.fixture
 def remote_file_url():
-    return "https://github.com/giswqs/data/raw/main/raster/landsat7.tif"
+    return "https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/landsat7.tif"
 
 
 @pytest.fixture

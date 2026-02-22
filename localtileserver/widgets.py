@@ -68,6 +68,8 @@ def get_leaflet_tile_layer(
     vmax: float | list[float] | None = None,
     nodata: int | float | None = None,
     attribution: str | None = None,
+    stretch: str | None = None,
+    expression: str | None = None,
     **kwargs,
 ):
     """
@@ -101,6 +103,13 @@ def get_leaflet_tile_layer(
     attribution : str, optional
         Attribution for the source raster. This defaults to a message about
         it being a local file.
+    stretch : str, optional
+        Image stretch mode. One of ``"none"``, ``"minmax"``,
+        ``"linear"``, ``"equalize"``, ``"sqrt"``, or ``"log"``.
+        When set, overrides ``vmin``/``vmax``.
+    expression : str, optional
+        Band math expression (e.g., ``"(b4-b1)/(b4+b1)"`` for NDVI).
+        Mutually exclusive with ``indexes``.
     **kwargs
         All additional keyword arguments are passed to ``ipyleaflet.TileLayer``.
 
@@ -156,6 +165,8 @@ def get_leaflet_tile_layer(
         vmax=vmax,
         nodata=nodata,
         client=True,
+        stretch=stretch,
+        expression=expression,
     )
     if attribution is None:
         attribution = DEFAULT_ATTRIBUTION
@@ -180,6 +191,8 @@ def get_folium_tile_layer(
     vmax: float | list[float] | None = None,
     nodata: int | float | None = None,
     attr: str | None = None,
+    stretch: str | None = None,
+    expression: str | None = None,
     **kwargs,
 ):
     """
@@ -213,6 +226,13 @@ def get_folium_tile_layer(
     attr : str, optional
         Folium requires the custom tile source have an attribution. This
         defaults to a message about it being a local file.
+    stretch : str, optional
+        Image stretch mode. One of ``"none"``, ``"minmax"``,
+        ``"linear"``, ``"equalize"``, ``"sqrt"``, or ``"log"``.
+        When set, overrides ``vmin``/``vmax``.
+    expression : str, optional
+        Band math expression (e.g., ``"(b4-b1)/(b4+b1)"`` for NDVI).
+        Mutually exclusive with ``indexes``.
     **kwargs
         All additional keyword arguments are passed to ``folium.TileLayer``.
 
@@ -270,6 +290,8 @@ def get_folium_tile_layer(
         vmax=vmax,
         nodata=nodata,
         client=True,
+        stretch=stretch,
+        expression=expression,
     )
     if attr is None:
         attr = DEFAULT_ATTRIBUTION

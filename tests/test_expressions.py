@@ -44,7 +44,9 @@ def test_tile_multi_band_expression(reader, compare):
 
 
 def test_tile_math_expression(reader, compare):
-    tile = get_tile(reader, 8, 72, 110, expression="(b1-b2)/(b1+b2)", colormap="viridis")
+    tile = get_tile(
+        reader, 8, 72, 110, expression="(b3-b1)/(b3+b1)", colormap="viridis", vmin=-0.5, vmax=0.5
+    )
     assert len(tile) > 0
     compare(tile)
 
@@ -210,6 +212,39 @@ def test_stretch_endpoint(flask_client, bahamas_file):
         f"/api/thumbnail.png?filename={bahamas_file}&indexes=1&colormap=viridis&stretch=linear"
     )
     assert r.status_code == 200
+
+
+def test_client_stretch_tile():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        tile = client.tile(8, 72, 110, indexes=[1], colormap="viridis", stretch="linear")
+        assert len(tile) > 0
+    finally:
+        client.shutdown(force=True)
+
+
+def test_client_stretch_thumbnail():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        thumb = client.thumbnail(indexes=[1], colormap="viridis", stretch="minmax")
+        assert len(thumb) > 0
+    finally:
+        client.shutdown(force=True)
+
+
+def test_client_stretch_tile_url():
+    from localtileserver.examples import get_bahamas
+
+    client = get_bahamas()
+    try:
+        url = client.get_tile_url(stretch="linear")
+        assert "stretch=linear" in url
+    finally:
+        client.shutdown(force=True)
 
 
 # --- Part reads ---

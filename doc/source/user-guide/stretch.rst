@@ -35,10 +35,38 @@ Available Stretch Modes
        normalization. Useful for data with a very large dynamic range.
 
 
+Python API
+^^^^^^^^^^
+
+The ``stretch`` parameter is available on ``TileClient.tile()``,
+``TileClient.thumbnail()``, ``get_leaflet_tile_layer()``, and
+``get_folium_tile_layer()``.
+
+.. jupyter-execute::
+
+  from localtileserver import TileClient, get_leaflet_tile_layer
+  from localtileserver.tiler.data import get_co_elevation_url
+  from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
+
+  client = TileClient(get_co_elevation_url())
+
+  # Compare linear (2nd-98th percentile) vs. histogram equalization
+  l = get_leaflet_tile_layer(client, colormap='terrain', stretch='linear')
+  r = get_leaflet_tile_layer(client, colormap='terrain', stretch='equalize')
+
+  m = Map(center=client.center(), zoom=client.default_zoom)
+  control = SplitMapControl(left_layer=l, right_layer=r)
+  m.add_control(control)
+  m.add_control(ScaleControl(position='bottomleft'))
+  m.add_control(FullScreenControl())
+  m
+
+
 REST API
 ^^^^^^^^
 
-The ``stretch`` parameter is available on all tile and thumbnail endpoints:
+The ``stretch`` parameter is also available on all tile and thumbnail
+endpoints:
 
 .. code:: bash
 
@@ -54,6 +82,5 @@ The ``stretch`` parameter is available on all tile and thumbnail endpoints:
 
 .. note::
 
-    Stretch modes are currently available via the REST API tile and thumbnail
-    endpoints. When a ``stretch`` mode is specified, it overrides any
-    ``vmin``/``vmax`` values that would otherwise be used.
+    When a ``stretch`` mode is specified, it overrides any ``vmin``/``vmax``
+    values that would otherwise be used.

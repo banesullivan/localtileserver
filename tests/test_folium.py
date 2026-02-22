@@ -27,3 +27,11 @@ def test_folium_tile_layer_from_path(bahamas_file):
     layer = get_folium_tile_layer(bahamas_file)
     assert isinstance(layer, TileLayer)
     assert isinstance(layer, LocalTileServerLayerMixin)
+
+
+@pytest.mark.skipif(skip_folium, reason="folium not installed")
+@pytest.mark.parametrize("stretch", ["linear", "minmax", "equalize"])
+def test_folium_tile_layer_stretch(bahamas, stretch):
+    layer = get_folium_tile_layer(bahamas, indexes=1, colormap="viridis", stretch=stretch)
+    assert isinstance(layer, TileLayer)
+    assert f"stretch={stretch}" in layer.tiles

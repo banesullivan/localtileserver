@@ -33,3 +33,11 @@ def test_leaflet_tile_layer_from_path(bahamas_file):
     layer = get_leaflet_tile_layer(bahamas_file)
     assert isinstance(layer, TileLayer)
     assert isinstance(layer, LocalTileServerLayerMixin)
+
+
+@pytest.mark.skipif(skip_leaflet, reason="ipyleaflet not installed")
+@pytest.mark.parametrize("stretch", ["linear", "minmax", "equalize"])
+def test_leaflet_tile_layer_stretch(bahamas, stretch):
+    layer = get_leaflet_tile_layer(bahamas, indexes=1, colormap="viridis", stretch=stretch)
+    assert isinstance(layer, TileLayer)
+    assert f"stretch={stretch}" in layer.url
