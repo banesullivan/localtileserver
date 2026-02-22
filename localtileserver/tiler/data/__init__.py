@@ -162,3 +162,27 @@ def get_co_elevation_url():
         URL to a Cloud-Optimized GeoTIFF of Colorado elevation data.
     """
     return "https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/co_elevation_roi.tif"
+
+
+def get_landsat_vegas_b30_url():
+    """
+    Return the URL for the Landsat Vegas Band 30 sample raster.
+
+    Returns
+    -------
+    str
+        URL to a Landsat 5 Band 30 GeoTIFF over Las Vegas.
+    """
+    return "https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/landsat_vegas/L5039035_03520060512_B30.TIF"
+
+
+def get_landsat_vegas_b70_url():
+    """
+    Return the URL for the Landsat Vegas Band 70 sample raster.
+
+    Returns
+    -------
+    str
+        URL to a Landsat 5 Band 70 GeoTIFF over Las Vegas.
+    """
+    return "https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/landsat_vegas/L5039035_03520060512_B70.TIF"
