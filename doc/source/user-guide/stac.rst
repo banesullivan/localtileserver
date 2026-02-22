@@ -23,7 +23,7 @@ remote STAC items:
 
   stac_url = (
       "https://earth-search.aws.element84.com/v1/"
-      "collections/sentinel-2-l2a/items/S2A_T10SEG_20230101T190201_L2A"
+      "collections/sentinel-2-l2a/items/S2A_10SEG_20240930_0_L2A"
   )
 
   client = STACClient(stac_url, assets=["visual"])

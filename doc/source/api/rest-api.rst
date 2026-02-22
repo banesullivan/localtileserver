@@ -1,5 +1,5 @@
-🌐 REST API Reference
----------------------
+REST API Reference
+==================
 
 ``localtileserver`` exposes a comprehensive REST API built on
 `FastAPI <https://fastapi.tiangolo.com/>`_. Interactive API documentation
@@ -7,10 +7,10 @@ is available at ``/swagger/`` when the server is running.
 
 
 Core Tile Endpoints
-^^^^^^^^^^^^^^^^^^^
+-------------------
 
 These endpoints serve tiles and metadata for raster files specified via the
-``filename`` query parameter. If no filename is provided, the server falls
+``filename`` query parameter. If no ``filename`` is provided the server falls
 back to the file configured at startup (via ``app.state.filename``) or the
 built-in San Francisco Bay example data.
 
@@ -51,9 +51,9 @@ built-in San Francisco Bay example data.
 
 
 Common Query Parameters
-^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------
 
-Most tile and thumbnail endpoints accept these parameters:
+Most tile, thumbnail, and statistics endpoints accept these parameters:
 
 .. list-table::
    :header-rows: 1
@@ -66,7 +66,8 @@ Most tile and thumbnail endpoints accept these parameters:
    * - ``indexes``
      - Comma-separated band indexes (e.g., ``1,2,3``).
    * - ``colormap``
-     - Colormap name (e.g., ``terrain``, ``viridis``), or a JSON color definition.
+     - Colormap name (e.g., ``terrain``, ``viridis``), or a JSON color
+       definition.
    * - ``vmin``
      - Minimum value for rescaling (comma-separated for per-band values).
    * - ``vmax``
@@ -81,8 +82,76 @@ Most tile and thumbnail endpoints accept these parameters:
        ``log``.
 
 
+Endpoint-Specific Parameters
+-----------------------------
+
+``/api/bounds``
+^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Parameter
+     - Description
+   * - ``crs``
+     - Output coordinate reference system (default: ``EPSG:4326``).
+
+
+``/api/thumbnail.{fmt}``
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Parameter
+     - Description
+   * - ``max_size``
+     - Maximum pixel dimension of the thumbnail (default: ``512``).
+   * - ``crs``
+     - Reproject the thumbnail to this CRS before returning.
+
+
+``/api/part.{fmt}``
+^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Parameter
+     - Description
+   * - ``bbox``
+     - **Required.** Bounding box as ``left,bottom,right,top``
+       (comma-separated floats).
+   * - ``max_size``
+     - Maximum pixel dimension of the output image (default: ``1024``).
+   * - ``bounds_crs``
+     - CRS of the ``bbox`` coordinates (default: ``EPSG:4326``).
+   * - ``dst_crs``
+     - CRS to reproject the output image into.
+
+
+``/api/feature.{fmt}``
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Parameter
+     - Description
+   * - ``max_size``
+     - Maximum pixel dimension of the output image (default: ``1024``).
+   * - ``dst_crs``
+     - CRS to reproject the output image into.
+
+The POST body must be a GeoJSON feature object used to clip the raster.
+
+
 Output Formats
-^^^^^^^^^^^^^^
+--------------
 
 The ``{fmt}`` path parameter controls the output format:
 
@@ -94,10 +163,9 @@ The ``{fmt}`` path parameter controls the output format:
 
 
 STAC Endpoints
-^^^^^^^^^^^^^^
+--------------
 
-Endpoints for visualizing STAC catalog items. All require a ``url`` parameter
-pointing to a STAC Item JSON.
+Endpoints for visualizing `STAC <https://stacspec.org/>`_ catalog items.
 
 .. list-table::
    :header-rows: 1
@@ -119,15 +187,29 @@ pointing to a STAC Item JSON.
      - GET
      - Serve a thumbnail from a STAC item.
 
-Additional parameters: ``url`` (required), ``assets`` (comma-separated),
-``expression``, ``max_size``.
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Parameter
+     - Description
+   * - ``url``
+     - **Required.** URL pointing to the STAC Item JSON.
+   * - ``assets``
+     - Comma-separated asset names to include (e.g., ``B04,B03,B02``).
+   * - ``expression``
+     - Band math expression over asset names (e.g., ``(B04-B03)/(B04+B03)``).
+       Applies to tiles and thumbnails.
+   * - ``max_size``
+     - Maximum pixel dimension of the thumbnail (default: ``512``).
+       Applies to ``/api/stac/thumbnail.{fmt}`` only.
 
 
 Xarray Endpoints
-^^^^^^^^^^^^^^^^
+----------------
 
 Endpoints for serving tiles from in-memory xarray DataArrays. DataArrays must
-be pre-registered in the server's ``xarray_registry``.
+be pre-registered in the server's ``xarray_registry`` before use.
 
 .. list-table::
    :header-rows: 1
@@ -144,18 +226,31 @@ be pre-registered in the server's ``xarray_registry``.
      - Get per-band statistics.
    * - ``/api/xarray/tiles/{z}/{x}/{y}.{fmt}``
      - GET
-     - Serve tiles from a DataArray.
+     - Serve tiles from a registered DataArray.
    * - ``/api/xarray/thumbnail.{fmt}``
      - GET
-     - Serve a thumbnail from a DataArray.
+     - Serve a thumbnail from a registered DataArray.
 
-Additional parameters: ``key`` (registry key), ``indexes``, ``max_size``.
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Parameter
+     - Description
+   * - ``key``
+     - Registry key identifying the DataArray. If only one DataArray is
+       registered the key may be omitted.
+   * - ``indexes``
+     - Comma-separated band indexes to include.
+   * - ``max_size``
+     - Maximum pixel dimension of the thumbnail (default: ``512``).
+       Applies to ``/api/xarray/thumbnail.{fmt}`` only.
 
 
 Mosaic Endpoints
-^^^^^^^^^^^^^^^^
+----------------
 
-Endpoints for creating virtual mosaics from multiple raster files.
+Endpoints for creating virtual mosaics composited from multiple raster files.
 
 .. list-table::
    :header-rows: 1
@@ -166,17 +261,29 @@ Endpoints for creating virtual mosaics from multiple raster files.
      - Description
    * - ``/api/mosaic/tiles/{z}/{x}/{y}.{fmt}``
      - GET
-     - Serve mosaic tiles from multiple raster files.
+     - Serve mosaic tiles composited from multiple raster files.
    * - ``/api/mosaic/thumbnail.{fmt}``
      - GET
      - Serve a mosaic thumbnail.
 
-Additional parameters: ``files`` (comma-separated paths/URLs), ``indexes``,
-``max_size``.
+.. list-table::
+   :header-rows: 1
+   :widths: 20 80
+
+   * - Parameter
+     - Description
+   * - ``files``
+     - Comma-separated file paths or URLs to mosaic. If omitted the server
+       falls back to ``app.state.mosaic_assets``.
+   * - ``indexes``
+     - Comma-separated band indexes to include.
+   * - ``max_size``
+     - Maximum pixel dimension of the thumbnail (default: ``512``).
+       Applies to ``/api/mosaic/thumbnail.{fmt}`` only.
 
 
 Interactive Documentation
-^^^^^^^^^^^^^^^^^^^^^^^^^
+-------------------------
 
 When the server is running, visit ``/swagger/`` for the full interactive
 OpenAPI documentation. This is auto-generated by FastAPI and allows you to
