@@ -1249,8 +1249,9 @@ class STACClient(TileServerMixin):
         tuple of float
             A tuple of ``(south, north, west, east)`` in EPSG:4326.
         """
-        gb = self._stac_reader.geographic_bounds
-        return (gb[1], gb[3], gb[0], gb[2])
+        # STACReader.bounds is (left, bottom, right, top) in EPSG:4326
+        b = self._stac_reader.bounds
+        return (b[1], b[3], b[0], b[2])
 
     def center(self):
         """

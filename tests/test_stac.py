@@ -315,7 +315,7 @@ def test_parse_assets_with_spaces():
 @patch("localtileserver.tiler.stac.STACReader")
 def test_stac_client_bounds(MockReader):
     reader = MagicMock()
-    reader.geographic_bounds = (-180, -90, 180, 90)
+    reader.bounds = (-180, -90, 180, 90)
     MockReader.return_value = reader
 
     from localtileserver.client import STACClient
@@ -331,7 +331,7 @@ def test_stac_client_bounds(MockReader):
 @patch("localtileserver.tiler.stac.STACReader")
 def test_stac_client_center(MockReader):
     reader = MagicMock()
-    reader.geographic_bounds = (-180, -90, 180, 90)
+    reader.bounds = (-180, -90, 180, 90)
     MockReader.return_value = reader
 
     from localtileserver.client import STACClient
