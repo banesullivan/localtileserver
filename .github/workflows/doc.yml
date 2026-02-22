@@ -23,8 +23,7 @@ jobs:
       - name: Scooby Report
         run: python -c "import localtileserver;print(localtileserver.Report())"
       - name: Build Documentation
-        working-directory: doc
-        run: make html
+        run: sphinx-build -M html doc/source doc/build
       - name: Stash build
         uses: actions/upload-artifact@v6.0.0
         with:

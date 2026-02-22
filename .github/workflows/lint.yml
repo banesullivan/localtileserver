@@ -18,4 +18,4 @@ jobs:
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run linting
-        run: make lint
+        run: pre-commit run --all-files
