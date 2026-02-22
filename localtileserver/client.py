@@ -512,8 +512,10 @@ class TileServerMixin:
         client_prefix: str | None = None,
         cors_all: bool = False,
     ):
-        # Capture rasterio/GDAL env from the calling thread so it can be
-        # forwarded to the background tile-server thread (#182).
+        # Forward rasterio/GDAL env from the calling context so it is
+        # available to the background tile-server thread (#182).
+        # set_rasterio_env writes each option to os.environ so that GDAL
+        # picks them up from any thread without per-request wrapping.
         import os
 
         import rasterio

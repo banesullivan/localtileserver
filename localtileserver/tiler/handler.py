@@ -16,12 +16,6 @@ from rio_tiler.models import ImageData
 from .palettes import get_registered_colormap
 from .utilities import ImageBytes, get_clean_filename, make_crs
 
-# Some GDAL options to consider setting:
-# - GDAL_ENABLE_WMS_CACHE="YES"
-# - GDAL_DEFAULT_WMS_CACHE_PATH=str(get_cache_dir() / "gdalwmscache"))
-# - GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR"
-# - GDAL_HTTP_UNSAFESSL="YES"
-
 
 def get_reader(path: pathlib.Path | str) -> Reader:
     """

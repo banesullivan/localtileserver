@@ -15,7 +15,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import rasterio
 
 from localtileserver.tiler import get_clean_filename
 from localtileserver.web.routers.mosaic import router as mosaic_router
@@ -109,25 +108,31 @@ def create_app(
 
     templates.env.globals["url_for"] = _template_url_for
 
-    # rasterio env middleware (#182)
-    @app.middleware("http")
-    async def rasterio_env_middleware(request: Request, call_next):
-        """
-        Wrap each request in a rasterio environment if configured.
-        """
-        from localtileserver.manager import AppManager
+    # GDAL/rasterio environment setup (#182).
+    #
+    # IMPORTANT: We intentionally do NOT use a per-request rasterio.Env()
+    # middleware here.  rasterio.Env uses a thread-local stack, and with
+    # async middleware the __enter__/__exit__ calls from concurrent
+    # requests interleave on the same thread, causing the stack to be
+    # popped in the wrong order:
+    #
+    #   Request A enters Env → stack [A]
+    #   Request B enters Env → stack [A, B]
+    #   Request A exits  Env → pops B (wrong!)
+    #   Request B exits  Env → "No GDAL environment exists" → 500
+    #
+    # Instead, GDAL options are set once as process-level env vars.
+    # User-provided options (e.g. AWS credentials forwarded from a
+    # notebook) are also written to os.environ by
+    # AppManager.set_rasterio_env() so GDAL picks them up from any
+    # thread automatically.
+    os.environ.setdefault("GDAL_DISABLE_READDIR_ON_OPEN", "EMPTY_DIR")
+    os.environ.setdefault("GDAL_NUM_THREADS", "ALL_CPUS")
 
-        rio_env = AppManager.get_rasterio_env()
-        if rio_env:
-            with rasterio.Env(**rio_env):
-                response = await call_next(request)
-        else:
-            response = await call_next(request)
-        return response
-
-    # HTML view routes
+    # HTML view routes — use sync ``def`` because _build_template_context
+    # does blocking rasterio I/O.
     @app.get("/", response_class=HTMLResponse)
-    async def cesium_viewer(request: Request, filename: str = ""):
+    def cesium_viewer(request: Request, filename: str = ""):
         """
         Render the Cesium 3-D globe viewer page.
         """
@@ -139,7 +144,7 @@ def create_app(
         return templates.TemplateResponse(request, "tileserver/cesiumViewer.html", context)
 
     @app.get("/split/", response_class=HTMLResponse)
-    async def cesium_split_viewer(request: Request, filenameA: str = "", filenameB: str = ""):
+    def cesium_split_viewer(request: Request, filenameA: str = "", filenameB: str = ""):
         """
         Render the Cesium split-view comparison page.
         """
@@ -151,7 +156,7 @@ def create_app(
         return templates.TemplateResponse(request, "tileserver/cesiumSplitViewer.html", context)
 
     @app.get("/split/form/", response_class=HTMLResponse)
-    async def split_form(request: Request):
+    def split_form(request: Request):
         """
         Render the split-view input form page.
         """

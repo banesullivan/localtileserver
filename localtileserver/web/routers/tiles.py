@@ -1,6 +1,14 @@
-"""Tile and image-related API endpoints."""
+"""Tile and image-related API endpoints.
 
-from fastapi import APIRouter, HTTPException, Query, Request, Response
+All endpoints that perform blocking GDAL/rasterio I/O are defined as
+regular ``def`` (not ``async def``) so that FastAPI runs them in a
+thread pool.  This keeps the event loop responsive and avoids broken
+request handling with Starlette's ``BaseHTTPMiddleware``.
+"""
+
+import logging
+
+from fastapi import APIRouter, Body, HTTPException, Query, Request, Response
 from rasterio import RasterioIOError
 from rio_tiler.errors import TileOutsideBounds
 
@@ -17,6 +25,8 @@ from localtileserver.tiler.handler import get_feature, get_part
 from localtileserver.tiler.palettes import get_palettes
 from localtileserver.web.routers.utils import parse_style_params
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/api", tags=["tiles"])
 
 
@@ -27,7 +37,7 @@ async def list_palettes():
 
 
 @router.get("/metadata")
-async def metadata_view(request: Request, filename: str = Query(None)):
+def metadata_view(request: Request, filename: str = Query(None)):
     """Return raster metadata for the given file."""
     filename = _resolve_filename(request, filename)
     reader = _get_reader(filename)
@@ -37,7 +47,7 @@ async def metadata_view(request: Request, filename: str = Query(None)):
 
 
 @router.get("/bounds")
-async def bounds_view(
+def bounds_view(
     request: Request,
     filename: str = Query(None),
     crs: str = Query("EPSG:4326"),
@@ -51,7 +61,7 @@ async def bounds_view(
 
 
 @router.get("/validate")
-async def validate_cog_view(request: Request, filename: str = Query(None)):
+def validate_cog_view(request: Request, filename: str = Query(None)):
     """Validate whether the raster is a Cloud Optimized GeoTIFF."""
     from localtileserver.validate import validate_cog
 
@@ -64,7 +74,7 @@ async def validate_cog_view(request: Request, filename: str = Query(None)):
 
 
 @router.get("/statistics")
-async def statistics_view(
+def statistics_view(
     request: Request,
     filename: str = Query(None),
     indexes: str | None = Query(None),
@@ -78,7 +88,7 @@ async def statistics_view(
 
 
 @router.get("/thumbnail.{format}")
-async def thumbnail_view(
+def thumbnail_view(
     request: Request,
     format: str,
     filename: str = Query(None),
@@ -99,18 +109,25 @@ async def thumbnail_view(
         raise HTTPException(
             status_code=400, detail=f"Format {format} is not a valid encoding."
         ) from None
-    reader = _get_reader(filename)
-    style = parse_style_params(
-        indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
-    )
-    thumb_data = get_preview(
-        reader, img_format=encoding, crs=crs, expression=expression, stretch=stretch, **style
-    )
+    try:
+        reader = _get_reader(filename)
+        style = parse_style_params(
+            indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
+        )
+        thumb_data = get_preview(
+            reader, img_format=encoding, crs=crs, expression=expression, stretch=stretch, **style
+        )
+    except RasterioIOError as e:
+        logger.error("RasterioIOError rendering thumbnail: %s", e)
+        raise HTTPException(status_code=500, detail=f"Rasterio error: {e}") from None
+    except Exception as e:
+        logger.error("Unexpected error rendering thumbnail: %s", e)
+        raise HTTPException(status_code=500, detail=f"Thumbnail rendering error: {e}") from None
     return Response(content=bytes(thumb_data), media_type=f"image/{format.lower()}")
 
 
 @router.get("/tiles/{z}/{x}/{y}.{format}")
-async def tile_view(
+def tile_view(
     request: Request,
     z: int,
     x: int,
@@ -127,22 +144,28 @@ async def tile_view(
 ):
     """Return a single map tile at the given z/x/y coordinates."""
     filename = _resolve_filename(request, filename)
-    reader = _get_reader(filename)
-    img_format = format_to_encoding(format)
-    style = parse_style_params(
-        indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
-    )
     try:
+        reader = _get_reader(filename)
+        img_format = format_to_encoding(format)
+        style = parse_style_params(
+            indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
+        )
         tile_binary = get_tile(
             reader, z, x, y, img_format=img_format, expression=expression, stretch=stretch, **style
         )
     except TileOutsideBounds:
         raise HTTPException(status_code=404, detail="Tile outside bounds") from None
+    except RasterioIOError as e:
+        logger.error("RasterioIOError rendering tile z=%s x=%s y=%s: %s", z, x, y, e)
+        raise HTTPException(status_code=500, detail=f"Rasterio error: {e}") from None
+    except Exception as e:
+        logger.error("Unexpected error rendering tile z=%s x=%s y=%s: %s", z, x, y, e)
+        raise HTTPException(status_code=500, detail=f"Tile rendering error: {e}") from None
     return Response(content=bytes(tile_binary), media_type=f"image/{img_format.lower()}")
 
 
 @router.get("/part.{format}")
-async def part_view(
+def part_view(
     request: Request,
     format: str,
     bbox: str = Query(..., description="Bounding box as left,bottom,right,top"),
@@ -175,28 +198,36 @@ async def part_view(
         raise HTTPException(
             status_code=400, detail="bbox must be 4 comma-separated floats: left,bottom,right,top"
         ) from None
-    reader = _get_reader(filename)
-    style = parse_style_params(
-        indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
-    )
-    result = get_part(
-        reader,
-        bbox_tuple,
-        img_format=encoding,
-        max_size=max_size,
-        dst_crs=dst_crs,
-        bounds_crs=bounds_crs,
-        expression=expression,
-        stretch=stretch,
-        **style,
-    )
+    try:
+        reader = _get_reader(filename)
+        style = parse_style_params(
+            indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
+        )
+        result = get_part(
+            reader,
+            bbox_tuple,
+            img_format=encoding,
+            max_size=max_size,
+            dst_crs=dst_crs,
+            bounds_crs=bounds_crs,
+            expression=expression,
+            stretch=stretch,
+            **style,
+        )
+    except RasterioIOError as e:
+        logger.error("RasterioIOError rendering part: %s", e)
+        raise HTTPException(status_code=500, detail=f"Rasterio error: {e}") from None
+    except Exception as e:
+        logger.error("Unexpected error rendering part: %s", e)
+        raise HTTPException(status_code=500, detail=f"Part rendering error: {e}") from None
     return Response(content=bytes(result), media_type=f"image/{format.lower()}")
 
 
 @router.post("/feature.{format}")
-async def feature_view(
+def feature_view(
     request: Request,
     format: str,
+    geojson: dict = Body(...),
     filename: str = Query(None),
     indexes: str | None = Query(None),
     colormap: str | None = Query(None),
@@ -217,23 +248,26 @@ async def feature_view(
             status_code=400, detail=f"Format {format} is not a valid encoding."
         ) from None
     try:
-        geojson = await request.json()
-    except Exception:
-        raise HTTPException(status_code=400, detail="Request body must be valid GeoJSON.") from None
-    reader = _get_reader(filename)
-    style = parse_style_params(
-        indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
-    )
-    result = get_feature(
-        reader,
-        geojson,
-        img_format=encoding,
-        max_size=max_size,
-        dst_crs=dst_crs,
-        expression=expression,
-        stretch=stretch,
-        **style,
-    )
+        reader = _get_reader(filename)
+        style = parse_style_params(
+            indexes=indexes, colormap=colormap, vmin=vmin, vmax=vmax, nodata=nodata
+        )
+        result = get_feature(
+            reader,
+            geojson,
+            img_format=encoding,
+            max_size=max_size,
+            dst_crs=dst_crs,
+            expression=expression,
+            stretch=stretch,
+            **style,
+        )
+    except RasterioIOError as e:
+        logger.error("RasterioIOError rendering feature: %s", e)
+        raise HTTPException(status_code=500, detail=f"Rasterio error: {e}") from None
+    except Exception as e:
+        logger.error("Unexpected error rendering feature: %s", e)
+        raise HTTPException(status_code=500, detail=f"Feature rendering error: {e}") from None
     return Response(content=bytes(result), media_type=f"image/{format.lower()}")
 
 

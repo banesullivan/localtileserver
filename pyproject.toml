@@ -130,7 +130,6 @@ exclude = [
   '\.click_run_app$',                                                                                                                                                              # click CLI wrapper
   '\.Report$',                                                                                                                                                                     # scooby Report subclass
   '\.list_palettes$',                                                                                                                                                              # simple endpoint wrapper
-  '\.rasterio_env_middleware$',                                                                                                                                                    # internal middleware
   '\.(cesium_viewer|cesium_split_viewer|split_form)$',                                                                                                                             # nested template views
   'examples\.get_',                                                                                                                                                                # @wraps-decorated example loaders
   'examples\.load_',                                                                                                                                                               # example data loaders

@@ -23,7 +23,7 @@ def _parse_assets(assets: str | None) -> list[str] | None:
 
 
 @router.get("/info")
-async def stac_info_view(
+def stac_info_view(
     url: str = Query(..., description="STAC item URL"),
     assets: str | None = Query(None, description="Comma-separated asset names"),
 ):
@@ -36,7 +36,7 @@ async def stac_info_view(
 
 
 @router.get("/statistics")
-async def stac_statistics_view(
+def stac_statistics_view(
     url: str = Query(..., description="STAC item URL"),
     assets: str | None = Query(None, description="Comma-separated asset names"),
 ):
@@ -49,7 +49,7 @@ async def stac_statistics_view(
 
 
 @router.get("/tiles/{z}/{x}/{y}.{format}")
-async def stac_tile_view(
+def stac_tile_view(
     z: int,
     x: int,
     y: int,
@@ -83,7 +83,7 @@ async def stac_tile_view(
 
 
 @router.get("/thumbnail.{format}")
-async def stac_thumbnail_view(
+def stac_thumbnail_view(
     format: str,
     url: str = Query(..., description="STAC item URL"),
     assets: str | None = Query(None, description="Comma-separated asset names"),

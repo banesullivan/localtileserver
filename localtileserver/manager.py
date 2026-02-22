@@ -4,6 +4,7 @@ Singleton application manager for the shared FastAPI tile server.
 
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING, ClassVar
 
 if TYPE_CHECKING:
@@ -18,7 +19,6 @@ class AppManager:
     """
 
     _APP: ClassVar[FastAPI | None] = None
-    _RASTERIO_ENV: ClassVar[dict] = {}
 
     def __init__(self):
         raise NotImplementedError(
@@ -47,23 +47,16 @@ class AppManager:
     @staticmethod
     def set_rasterio_env(env_dict: dict):
         """
-        Store rasterio/GDAL environment options to forward to tile server threads.
+        Forward rasterio/GDAL environment options to the tile server.
+
+        Sets each option as a process-level environment variable so that
+        GDAL picks them up from any thread (including the background
+        tile-server thread).
 
         Parameters
         ----------
         env_dict : dict
             Dictionary of rasterio/GDAL environment options.
         """
-        AppManager._RASTERIO_ENV = dict(env_dict)
-
-    @staticmethod
-    def get_rasterio_env() -> dict:
-        """
-        Get stored rasterio/GDAL environment options.
-
-        Returns
-        -------
-        dict
-            Copy of the stored rasterio/GDAL environment options.
-        """
-        return dict(AppManager._RASTERIO_ENV)
+        for key, value in env_dict.items():
+            os.environ[str(key)] = str(value)

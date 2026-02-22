@@ -41,7 +41,7 @@ def _get_xarray_reader(request: Request, key: str | None = None):
 
 
 @router.get("/info")
-async def xarray_info_view(
+def xarray_info_view(
     request: Request,
     key: str | None = Query(None, description="Registry key for the xarray dataset"),
 ):
@@ -51,7 +51,7 @@ async def xarray_info_view(
 
 
 @router.get("/statistics")
-async def xarray_statistics_view(
+def xarray_statistics_view(
     request: Request,
     key: str | None = Query(None, description="Registry key for the xarray dataset"),
     indexes: str | None = Query(None),
@@ -65,7 +65,7 @@ async def xarray_statistics_view(
 
 
 @router.get("/tiles/{z}/{x}/{y}.{format}")
-async def xarray_tile_view(
+def xarray_tile_view(
     request: Request,
     z: int,
     x: int,
@@ -91,7 +91,7 @@ async def xarray_tile_view(
 
 
 @router.get("/thumbnail.{format}")
-async def xarray_thumbnail_view(
+def xarray_thumbnail_view(
     request: Request,
     format: str,
     key: str | None = Query(None, description="Registry key for the xarray dataset"),

@@ -36,7 +36,7 @@ FROM base AS slim
 RUN pip install --no-cache-dir "/build-context[colormaps]"
 
 EXPOSE 8000
-ENTRYPOINT ["uvicorn", "localtileserver.web.wsgi:app", "--host=0.0.0.0", "--port=8000"]
+ENTRYPOINT ["uvicorn", "localtileserver.web.wsgi:app", "--host=0.0.0.0", "--port=8000", "--workers=4"]
 
 # ---- jupyter: full JupyterLab image ----
 FROM base AS jupyter

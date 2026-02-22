@@ -31,7 +31,7 @@ def _parse_file_list(request: Request, files: str | None) -> list[str]:
 
 
 @router.get("/tiles/{z}/{x}/{y}.{format}")
-async def mosaic_tile_view(
+def mosaic_tile_view(
     request: Request,
     z: int,
     x: int,
@@ -61,7 +61,7 @@ async def mosaic_tile_view(
 
 
 @router.get("/thumbnail.{format}")
-async def mosaic_thumbnail_view(
+def mosaic_thumbnail_view(
     request: Request,
     format: str,
     files: str | None = Query(None, description="Comma-separated file paths or URLs"),
