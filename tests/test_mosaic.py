@@ -1,9 +1,12 @@
 """Tests for Mosaic support."""
 
+from unittest.mock import patch
+
 from morecantile import tms
 import pytest
 import rasterio
 import rasterio.warp
+from rio_tiler.errors import TileOutsideBounds
 
 from localtileserver.examples import get_data_path
 from localtileserver.tiler.mosaic import get_mosaic_preview, get_mosaic_tile
@@ -106,3 +109,41 @@ def test_mosaic_no_files():
     with TestClient(app) as c:
         resp = c.get("/api/mosaic/thumbnail.png")
         assert resp.status_code == 400
+
+
+def test_mosaic_tile_endpoint_with_indexes(mosaic_client, bahamas_path):
+    t = _get_tile_for_file(bahamas_path)
+    resp = mosaic_client.get(f"/api/mosaic/tiles/{t.z}/{t.x}/{t.y}.png?indexes=1")
+    assert resp.status_code == 200
+
+
+def test_mosaic_tile_endpoint_exception(mosaic_client):
+    with patch(
+        "localtileserver.web.routers.mosaic.get_mosaic_tile",
+        side_effect=RuntimeError("test error"),
+    ):
+        resp = mosaic_client.get("/api/mosaic/tiles/10/0/0.png")
+    assert resp.status_code == 400
+
+
+def test_mosaic_tile_outside_bounds(mosaic_client):
+    with patch(
+        "localtileserver.web.routers.mosaic.get_mosaic_tile",
+        side_effect=TileOutsideBounds("out"),
+    ):
+        resp = mosaic_client.get("/api/mosaic/tiles/1/0/0.png")
+    assert resp.status_code == 404
+
+
+def test_mosaic_thumbnail_with_indexes(mosaic_client):
+    resp = mosaic_client.get("/api/mosaic/thumbnail.png?indexes=1&max_size=64")
+    assert resp.status_code == 200
+
+
+def test_mosaic_thumbnail_exception(mosaic_client):
+    with patch(
+        "localtileserver.web.routers.mosaic.get_mosaic_preview",
+        side_effect=RuntimeError("preview error"),
+    ):
+        resp = mosaic_client.get("/api/mosaic/thumbnail.png?max_size=64")
+    assert resp.status_code == 400
