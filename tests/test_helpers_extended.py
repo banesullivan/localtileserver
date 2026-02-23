@@ -2,6 +2,7 @@
 
 import numpy as np
 import pytest
+import rasterio
 
 from localtileserver.helpers import hillshade, numpy_to_raster, save_new_raster
 
@@ -70,8 +71,6 @@ def test_numpy_to_raster_3d(tmp_path):
 
 
 def test_save_new_raster_from_path(bahamas_file):
-    import rasterio
-
     with rasterio.open(bahamas_file) as src:
         data = src.read()
     result = save_new_raster(str(bahamas_file), data[:1])
@@ -79,8 +78,6 @@ def test_save_new_raster_from_path(bahamas_file):
 
 
 def test_save_new_raster_from_dataset(bahamas_file):
-    import rasterio
-
     with rasterio.open(bahamas_file) as src:
         data = src.read()
         result = save_new_raster(src, data[:1])

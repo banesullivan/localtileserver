@@ -2,6 +2,7 @@
 Shared utilities for FastAPI routers.
 """
 
+from localtileserver.tiler.data import get_sf_bay_url
 from localtileserver.tiler.utilities import get_clean_filename
 
 
@@ -21,8 +22,6 @@ def get_clean_filename_from_params(filename: str | None = None) -> str:
         Cleaned and validated filename or path.
     """
     if not filename:
-        from localtileserver.tiler.data import get_sf_bay_url
-
         return get_clean_filename(get_sf_bay_url())
     return get_clean_filename(filename)
 

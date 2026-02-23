@@ -1,3 +1,4 @@
+from fastapi.testclient import TestClient
 import requests
 
 from localtileserver.web import create_app
@@ -35,8 +36,6 @@ def test_cog_validate_endpoint(flask_client, bahamas_file):
 
 
 def test_run_app():
-    from fastapi.testclient import TestClient
-
     app = run_app("bahamas", browser=False, run=False)
     with TestClient(app) as client:
         r = client.get("/api/palettes")
@@ -44,8 +43,6 @@ def test_run_app():
 
 
 def test_cors_all_enabled():
-    from fastapi.testclient import TestClient
-
     app = create_app(cors_all=True)
     with TestClient(app) as client:
         r = client.get("/api/palettes", headers={"Origin": "http://example.com"})

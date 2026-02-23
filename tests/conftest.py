@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from fastapi.testclient import TestClient
 from matplotlib.testing.compare import compare_images
 import pytest
 import rasterio
@@ -11,8 +12,6 @@ from localtileserver.web import create_app
 @pytest.fixture
 def flask_client():
     """FastAPI test client (name kept for backwards compatibility with existing tests)."""
-    from fastapi.testclient import TestClient
-
     app = create_app()
     with TestClient(app) as client:
         yield client

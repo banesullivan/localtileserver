@@ -5,6 +5,8 @@ import json
 import pytest
 import rasterio.warp
 
+from localtileserver.examples import get_bahamas
+from localtileserver.tiler import format_to_encoding
 from localtileserver.tiler.handler import (
     get_feature,
     get_part,
@@ -58,8 +60,6 @@ def test_preview_with_expression(reader, compare):
 
 
 def test_expression_indexes_mutual_exclusion():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         with pytest.raises(ValueError, match=r"expression.*indexes|indexes.*expression"):
@@ -69,8 +69,6 @@ def test_expression_indexes_mutual_exclusion():
 
 
 def test_tile_url_with_expression():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         url = client.get_tile_url(expression="b1")
@@ -101,8 +99,6 @@ def test_statistics_with_expression(reader):
 
 
 def test_client_statistics():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         stats = client.statistics()
@@ -112,8 +108,6 @@ def test_client_statistics():
 
 
 def test_client_statistics_single_band():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         stats = client.statistics(indexes=[1])
@@ -164,8 +158,6 @@ def test_webp_thumbnail(reader):
 
 
 def test_format_to_encoding_new_formats():
-    from localtileserver.tiler.utilities import format_to_encoding
-
     assert format_to_encoding("webp") == "WEBP"
     assert format_to_encoding("tif") == "GTiff"
     assert format_to_encoding("tiff") == "GTiff"
@@ -215,8 +207,6 @@ def test_stretch_endpoint(flask_client, bahamas_file):
 
 
 def test_client_stretch_tile():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         tile = client.tile(8, 72, 110, indexes=[1], colormap="viridis", stretch="linear")
@@ -226,8 +216,6 @@ def test_client_stretch_tile():
 
 
 def test_client_stretch_thumbnail():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         thumb = client.thumbnail(indexes=[1], colormap="viridis", stretch="minmax")
@@ -237,8 +225,6 @@ def test_client_stretch_thumbnail():
 
 
 def test_client_stretch_tile_url():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         url = client.get_tile_url(stretch="linear")
@@ -276,8 +262,6 @@ def test_part_endpoint(flask_client, bahamas_file):
 
 
 def test_client_part():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         b = client.bounds()
@@ -289,8 +273,6 @@ def test_client_part():
 
 
 def test_client_part_with_colormap():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         b = client.bounds()
@@ -302,8 +284,6 @@ def test_client_part_with_colormap():
 
 
 def test_client_part_with_stretch():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         b = client.bounds()
@@ -363,8 +343,6 @@ def test_feature_endpoint(flask_client, bahamas_file):
 
 
 def test_client_feature():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         left, bottom, right, top = _client_geo_bounds(client)
@@ -376,8 +354,6 @@ def test_client_feature():
 
 
 def test_client_feature_with_colormap():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         left, bottom, right, top = _client_geo_bounds(client)
@@ -389,8 +365,6 @@ def test_client_feature_with_colormap():
 
 
 def test_client_feature_with_stretch():
-    from localtileserver.examples import get_bahamas
-
     client = get_bahamas()
     try:
         left, bottom, right, top = _client_geo_bounds(client)

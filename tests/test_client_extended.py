@@ -1,7 +1,9 @@
 """Extended tests for localtileserver.client - targeting coverage gaps."""
 
+from matplotlib.colors import LinearSegmentedColormap
 import pytest
 import rasterio
+from rio_tiler.io import Reader
 
 from localtileserver.client import TileClient, TilerInterface, get_or_create_tile_client
 from localtileserver.examples import get_data_path
@@ -30,8 +32,6 @@ def test_tiler_from_rasterio_dataset(bahamas_path):
 
 
 def test_tiler_from_reader(bahamas_path):
-    from rio_tiler.io import Reader
-
     reader = Reader(bahamas_path)
     ti = TilerInterface.__new__(TilerInterface)
     ti._reader = reader
@@ -176,8 +176,6 @@ def test_get_tile_url_with_colormap(tile_client):
 
 
 def test_get_tile_url_custom_colormap(tile_client):
-    from matplotlib.colors import LinearSegmentedColormap
-
     cmap = LinearSegmentedColormap.from_list("test", ["red", "blue"], N=256)
     url = tile_client.get_tile_url(colormap=cmap)
     # Should use custom:hash instead of bloated JSON

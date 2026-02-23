@@ -2,6 +2,7 @@
 
 from unittest.mock import patch
 
+from fastapi.testclient import TestClient
 from morecantile import tms
 import pytest
 import rasterio
@@ -65,8 +66,6 @@ def test_mosaic_tile_with_indexes(mosaic_assets):
 
 @pytest.fixture
 def mosaic_client(bahamas_path):
-    from fastapi.testclient import TestClient
-
     app = create_app()
     app.state.mosaic_assets = [bahamas_path, bahamas_path]
     with TestClient(app) as c:
@@ -103,8 +102,6 @@ def test_mosaic_thumbnail_bad_format(mosaic_client):
 
 def test_mosaic_no_files():
     """No files and no app state should return 400."""
-    from fastapi.testclient import TestClient
-
     app = create_app()
     with TestClient(app) as c:
         resp = c.get("/api/mosaic/thumbnail.png")

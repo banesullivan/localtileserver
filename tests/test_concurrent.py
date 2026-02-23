@@ -7,6 +7,7 @@ handles this correctly without returning 500 errors.
 
 import concurrent.futures
 
+from morecantile import tms
 import requests
 
 # Valid tiles for bahamas_rgb.tif at zoom 7 (matches the user-reported errors)
@@ -72,8 +73,6 @@ def test_concurrent_tile_requests_landsat(landsat7):
     z = landsat7.default_zoom
     # bounds() returns (south, north, west, east)
     south, north, west, east = landsat7.bounds()
-
-    from morecantile import tms
 
     grid = tms.get("WebMercatorQuad")
     tiles = list(grid.tiles(west, south, east, north, zooms=z))

@@ -8,6 +8,7 @@ import uuid
 import numpy as np
 import rasterio
 
+from localtileserver.client import TilerInterface
 from localtileserver.tiler import get_cache_dir
 
 
@@ -96,8 +97,6 @@ def save_new_raster(src, data, out_path: str | None = None):
     str or pathlib.Path
         The path to the written raster file.
     """
-    from localtileserver.client import TilerInterface
-
     if data.ndim == 2:
         data = data.reshape((1, *data.shape))
     if data.ndim != 3:

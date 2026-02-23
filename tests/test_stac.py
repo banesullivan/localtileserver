@@ -2,11 +2,22 @@
 
 from unittest.mock import MagicMock, patch
 
+from fastapi.testclient import TestClient
 import numpy as np
 import pytest
+from rio_tiler.errors import TileOutsideBounds
 from rio_tiler.models import BandStatistics, ImageData, Info
 
+from localtileserver.client import STACClient, get_or_create_tile_client
+from localtileserver.tiler.stac import (
+    get_stac_info,
+    get_stac_preview,
+    get_stac_reader,
+    get_stac_statistics,
+    get_stac_tile,
+)
 from localtileserver.web import create_app
+from localtileserver.web.routers.stac import _parse_assets
 
 
 def _make_image_data(count=3, height=256, width=256):
@@ -74,8 +85,6 @@ def mock_stac_reader():
 
 @pytest.fixture
 def stac_client():
-    from fastapi.testclient import TestClient
-
     app = create_app()
     with TestClient(app) as c:
         yield c
@@ -86,8 +95,6 @@ def stac_client():
 
 def test_get_stac_reader(mock_stac_reader):
     reader, MockReader = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_reader
-
     result = get_stac_reader("https://example.com/stac/item.json")
     MockReader.assert_called_once_with("https://example.com/stac/item.json")
     assert result is reader
@@ -95,8 +102,6 @@ def test_get_stac_reader(mock_stac_reader):
 
 def test_get_stac_info(mock_stac_reader):
     reader, _ = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_info
-
     result = get_stac_info(reader, assets=["visual"])
     reader.info.assert_called_once_with(assets=["visual"])
     assert "visual" in result
@@ -104,8 +109,6 @@ def test_get_stac_info(mock_stac_reader):
 
 def test_get_stac_info_no_assets(mock_stac_reader):
     reader, _ = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_info
-
     result = get_stac_info(reader)
     reader.info.assert_called_once_with()
     assert isinstance(result, dict)
@@ -113,8 +116,6 @@ def test_get_stac_info_no_assets(mock_stac_reader):
 
 def test_get_stac_statistics(mock_stac_reader):
     reader, _ = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_statistics
-
     result = get_stac_statistics(reader, assets=["visual"])
     reader.statistics.assert_called_once_with(assets=["visual"])
     assert "visual_b1" in result
@@ -122,8 +123,6 @@ def test_get_stac_statistics(mock_stac_reader):
 
 def test_get_stac_tile(mock_stac_reader):
     reader, _ = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_tile
-
     result = get_stac_tile(reader, z=10, x=512, y=512, assets=["visual"])
     reader.tile.assert_called_once_with(512, 512, 10, assets=["visual"])
     assert result.mimetype == "image/png"
@@ -132,8 +131,6 @@ def test_get_stac_tile(mock_stac_reader):
 
 def test_get_stac_tile_with_expression(mock_stac_reader):
     reader, _ = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_tile
-
     result = get_stac_tile(
         reader,
         z=10,
@@ -147,16 +144,12 @@ def test_get_stac_tile_with_expression(mock_stac_reader):
 
 def test_get_stac_tile_jpeg(mock_stac_reader):
     reader, _ = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_tile
-
     result = get_stac_tile(reader, z=10, x=512, y=512, img_format="JPEG")
     assert result.mimetype == "image/jpeg"
 
 
 def test_get_stac_preview(mock_stac_reader):
     reader, _ = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_preview
-
     result = get_stac_preview(reader, assets=["visual"], max_size=256)
     reader.preview.assert_called_once_with(max_size=256, assets=["visual"])
     assert result.mimetype == "image/png"
@@ -164,8 +157,6 @@ def test_get_stac_preview(mock_stac_reader):
 
 def test_get_stac_preview_with_expression(mock_stac_reader):
     reader, _ = mock_stac_reader
-    from localtileserver.tiler.stac import get_stac_preview
-
     result = get_stac_preview(reader, expression="(B04-B03)/(B04+B03)", max_size=128)
     reader.preview.assert_called_once_with(max_size=128, expression="(B04-B03)/(B04+B03)")
     assert result.mimetype == "image/png"
@@ -237,8 +228,6 @@ def test_stac_tile_bad_format(mock_get_reader, stac_client):
 
 @patch("localtileserver.web.routers.stac.get_stac_reader")
 def test_stac_tile_outside_bounds(mock_get_reader, stac_client):
-    from rio_tiler.errors import TileOutsideBounds
-
     reader = MagicMock()
     reader.tile.side_effect = TileOutsideBounds("outside")
     mock_get_reader.return_value = reader
@@ -280,32 +269,22 @@ def test_stac_thumbnail_bad_url(mock_get_reader, stac_client):
 
 
 def test_parse_assets_none():
-    from localtileserver.web.routers.stac import _parse_assets
-
     assert _parse_assets(None) is None
 
 
 def test_parse_assets_empty():
-    from localtileserver.web.routers.stac import _parse_assets
-
     assert _parse_assets("") is None
 
 
 def test_parse_assets_single():
-    from localtileserver.web.routers.stac import _parse_assets
-
     assert _parse_assets("visual") == ["visual"]
 
 
 def test_parse_assets_multiple():
-    from localtileserver.web.routers.stac import _parse_assets
-
     assert _parse_assets("B04,B03,B02") == ["B04", "B03", "B02"]
 
 
 def test_parse_assets_with_spaces():
-    from localtileserver.web.routers.stac import _parse_assets
-
     assert _parse_assets("B04, B03, B02") == ["B04", "B03", "B02"]
 
 
@@ -317,8 +296,6 @@ def test_stac_client_bounds(MockReader):
     reader = MagicMock()
     reader.bounds = (-180, -90, 180, 90)
     MockReader.return_value = reader
-
-    from localtileserver.client import STACClient
 
     client = STACClient("https://example.com/stac/item.json")
     try:
@@ -334,8 +311,6 @@ def test_stac_client_center(MockReader):
     reader.bounds = (-180, -90, 180, 90)
     MockReader.return_value = reader
 
-    from localtileserver.client import STACClient
-
     client = STACClient("https://example.com/stac/item.json")
     try:
         c = client.center()
@@ -349,8 +324,6 @@ def test_stac_client_tile(MockReader):
     reader = MagicMock()
     reader.tile.return_value = _make_image_data()
     MockReader.return_value = reader
-
-    from localtileserver.client import STACClient
 
     client = STACClient("https://example.com/stac/item.json", assets=["visual"])
     try:
@@ -366,8 +339,6 @@ def test_stac_client_thumbnail(MockReader):
     reader.preview.return_value = _make_image_data()
     MockReader.return_value = reader
 
-    from localtileserver.client import STACClient
-
     client = STACClient("https://example.com/stac/item.json", assets=["visual"])
     try:
         result = client.thumbnail()
@@ -381,8 +352,6 @@ def test_stac_client_statistics(MockReader):
     reader = MagicMock()
     reader.statistics.return_value = {"visual_b1": _make_band_stats()}
     MockReader.return_value = reader
-
-    from localtileserver.client import STACClient
 
     client = STACClient("https://example.com/stac/item.json", assets=["visual"])
     try:
@@ -398,8 +367,6 @@ def test_stac_client_info(MockReader):
     reader.info.return_value = {"visual": _make_info()}
     MockReader.return_value = reader
 
-    from localtileserver.client import STACClient
-
     client = STACClient("https://example.com/stac/item.json", assets=["visual"])
     try:
         result = client.stac_info()
@@ -412,8 +379,6 @@ def test_stac_client_info(MockReader):
 def test_stac_client_get_tile_url(MockReader):
     reader = MagicMock()
     MockReader.return_value = reader
-
-    from localtileserver.client import STACClient
 
     client = STACClient("https://example.com/stac/item.json", assets=["visual"])
     try:
@@ -429,8 +394,6 @@ def test_stac_client_get_tile_url_expression(MockReader):
     reader = MagicMock()
     MockReader.return_value = reader
 
-    from localtileserver.client import STACClient
-
     client = STACClient("https://example.com/stac/item.json", expression="B04/B03")
     try:
         url = client.get_tile_url()
@@ -443,8 +406,6 @@ def test_stac_client_get_tile_url_expression(MockReader):
 def test_stac_client_get_or_create_passthrough(MockReader):
     reader = MagicMock()
     MockReader.return_value = reader
-
-    from localtileserver.client import STACClient, get_or_create_tile_client
 
     client = STACClient("https://example.com/stac/item.json")
     try:

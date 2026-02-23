@@ -5,15 +5,18 @@ Tile client for serving and interacting with geospatial rasters.
 from collections.abc import Iterable
 import json
 import logging
+import os
 import pathlib
 
-from matplotlib.colors import Colormap, ListedColormap
+from matplotlib.colors import Colormap, LinearSegmentedColormap, ListedColormap
 import rasterio
 import requests
 from rio_tiler.io import Reader
 
 try:
     import ipyleaflet
+    from ipyleaflet import Map, WKTLayer
+    from IPython.display import display as _ipython_display_fn
 except ImportError:  # pragma: no cover
     ipyleaflet = None
 try:
@@ -38,6 +41,14 @@ from localtileserver.tiler import (
     get_tile,
     palette_valid_or_raise,
     register_colormap,
+)
+from localtileserver.tiler.handler import get_statistics
+from localtileserver.tiler.stac import (
+    get_stac_info,
+    get_stac_preview,
+    get_stac_reader,
+    get_stac_statistics,
+    get_stac_tile,
 )
 from localtileserver.utilities import add_query_parameters
 
@@ -381,8 +392,6 @@ class TilerInterface:
         dict
             Per-band statistics keyed by band name.
         """
-        from localtileserver.tiler.handler import get_statistics
-
         return get_statistics(self.reader, indexes=indexes, expression=expression)
 
     def thumbnail(
@@ -694,10 +703,6 @@ class TileServerMixin:
         # available to the background tile-server thread (#182).
         # set_rasterio_env writes each option to os.environ so that GDAL
         # picks them up from any thread without per-request wrapping.
-        import os
-
-        import rasterio
-
         rio_env = {}
         try:
             rio_env.update(rasterio.env.getenv())
@@ -1002,8 +1007,6 @@ class TileServerMixin:
             if isinstance(colormap, (Colormap, ListedColormap)):
                 # Register the colormap server-side to avoid URL overflow (#231)
                 if isinstance(colormap, ListedColormap):
-                    from matplotlib.colors import LinearSegmentedColormap
-
                     c = LinearSegmentedColormap.from_list("", colormap.colors, N=256)
                 else:
                     c = colormap
@@ -1068,8 +1071,6 @@ class TileServerMixin:
         ipyleaflet.Map
             A map widget centered on the dataset with the default zoom level.
         """
-        from ipyleaflet import Map, WKTLayer
-
         m = Map(center=self.center(), zoom=self.default_zoom, **kwargs)
         if add_bounds:
             if not shapely:
@@ -1084,14 +1085,13 @@ class TileServerMixin:
     if ipyleaflet:
 
         def _ipython_display_(self):
-            from IPython.display import display
-
+            # Deferred import: widgets.py imports from client.py (circular).
             from localtileserver.widgets import get_leaflet_tile_layer
 
             t = get_leaflet_tile_layer(self)
             m = self.get_leaflet_map(add_bounds=shapely)
             m.add(t)
-            return display(m)
+            return _ipython_display_fn(m)
 
 
 class TileClient(TilerInterface, TileServerMixin):
@@ -1208,8 +1208,6 @@ class STACClient(TileServerMixin):
         client_prefix: str | None = None,
         cors_all: bool = False,
     ):
-        from localtileserver.tiler.stac import get_stac_reader
-
         self.stac_url = url
         self._assets = assets
         self._expression = expression
@@ -1315,8 +1313,6 @@ class STACClient(TileServerMixin):
         bytes
             The tile image as binary data.
         """
-        from localtileserver.tiler.stac import get_stac_tile
-
         encoding = format_to_encoding(encoding)
         return get_stac_tile(
             self._stac_reader,
@@ -1357,8 +1353,6 @@ class STACClient(TileServerMixin):
         bytes
             The thumbnail image as binary data.
         """
-        from localtileserver.tiler.stac import get_stac_preview
-
         encoding = format_to_encoding(encoding)
         result = get_stac_preview(
             self._stac_reader,
@@ -1386,8 +1380,6 @@ class STACClient(TileServerMixin):
         dict
             Dictionary mapping asset names to their metadata.
         """
-        from localtileserver.tiler.stac import get_stac_info
-
         return get_stac_info(self._stac_reader, assets=assets or self._assets)
 
     def statistics(self, assets: list[str] | None = None, **kwargs):
@@ -1408,8 +1400,6 @@ class STACClient(TileServerMixin):
         dict
             Per-asset/band statistics.
         """
-        from localtileserver.tiler.stac import get_stac_statistics
-
         return get_stac_statistics(self._stac_reader, assets=assets or self._assets, **kwargs)
 
     def get_tile_url(

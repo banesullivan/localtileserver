@@ -23,8 +23,10 @@ from localtileserver.tiler import (
     get_statistics,
     get_tile,
 )
+from localtileserver.tiler.data import get_sf_bay_url
 from localtileserver.tiler.handler import get_feature, get_part
 from localtileserver.tiler.palettes import get_palettes
+from localtileserver.tiler.utilities import get_clean_filename
 from localtileserver.web.routers.utils import parse_style_params
 
 logger = logging.getLogger(__name__)
@@ -65,6 +67,7 @@ def bounds_view(
 @router.get("/validate")
 def validate_cog_view(request: Request, filename: str = Query(None)):
     """Validate whether the raster is a Cloud Optimized GeoTIFF."""
+    # Deferred import: validate → client → manager → web → tiles (circular).
     from localtileserver.validate import validate_cog
 
     filename = _resolve_filename(request, filename)
@@ -282,15 +285,11 @@ def _resolve_filename(request: Request, filename: str | None) -> str:
     if app_filename:
         return app_filename
     # Final fallback to sample data
-    from localtileserver.tiler.data import get_sf_bay_url
-
     return get_sf_bay_url()
 
 
 def _get_reader(filename: str):
     """Resolve filename and return a rio-tiler Reader."""
-    from localtileserver.tiler.utilities import get_clean_filename
-
     try:
         clean = get_clean_filename(filename)
     except OSError as e:

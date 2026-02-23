@@ -6,6 +6,7 @@ import pytest
 xr = pytest.importorskip("xarray")
 rioxarray = pytest.importorskip("rioxarray")
 
+from fastapi.testclient import TestClient  # noqa: E402
 from morecantile import tms  # noqa: E402
 from rio_tiler.io.xarray import XarrayReader  # noqa: E402
 
@@ -63,8 +64,6 @@ def single_band_data_array():
 
 @pytest.fixture
 def xarray_client(sample_data_array):
-    from fastapi.testclient import TestClient
-
     app = create_app()
     reader = XarrayReader(sample_data_array)
     if not hasattr(app.state, "xarray_registry"):
@@ -238,8 +237,6 @@ def test_xarray_tile_endpoint(xarray_client, sample_data_array):
 
 
 def test_xarray_no_registry():
-    from fastapi.testclient import TestClient
-
     app = create_app()
     with TestClient(app) as c:
         resp = c.get("/api/xarray/info")
@@ -263,8 +260,6 @@ def test_xarray_thumbnail_bad_format(xarray_client):
 
 def test_xarray_single_dataset_no_key(sample_data_array):
     """When only one dataset is registered, key can be omitted."""
-    from fastapi.testclient import TestClient
-
     app = create_app()
     reader = XarrayReader(sample_data_array)
     app.state.xarray_registry = {"only_one": reader}

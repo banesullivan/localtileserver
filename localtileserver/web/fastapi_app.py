@@ -15,8 +15,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import uvicorn
 
-from localtileserver.tiler import get_clean_filename
+from localtileserver.tiler import data as tiler_data, get_clean_filename
+from localtileserver.tiler.data import get_sf_bay_url
+from localtileserver.tiler.handler import get_meta_data, get_reader, get_source_bounds
 from localtileserver.web.routers.mosaic import router as mosaic_router
 from localtileserver.web.routers.stac import router as stac_router
 from localtileserver.web.routers.tiles import router as tiles_router
@@ -177,10 +180,6 @@ def _build_template_context(
     """
     Build the template rendering context.
     """
-    from localtileserver.tiler import data
-    from localtileserver.tiler.data import get_sf_bay_url
-    from localtileserver.tiler.handler import get_meta_data, get_reader, get_source_bounds
-
     # Resolve filename: query param -> app.state.filename -> sf_bay fallback
     if not filename:
         filename = str(getattr(app.state, "filename", ""))
@@ -199,12 +198,12 @@ def _build_template_context(
         pass
 
     # Sample data context
-    context["filename_dem"] = data.get_data_path("aws_elevation_tiles_prod.xml")
-    context["filename_bluemarble"] = data.get_data_path("frmt_wms_bluemarble_s3_tms.xml")
-    context["filename_virtualearth"] = data.get_data_path("frmt_wms_virtualearth.xml")
-    context["filename_sf_bay"] = data.get_sf_bay_url()
-    context["filename_landsat_salt_lake"] = data.get_data_path("landsat.tif")
-    context["filename_oam2"] = data.get_oam2_url()
+    context["filename_dem"] = tiler_data.get_data_path("aws_elevation_tiles_prod.xml")
+    context["filename_bluemarble"] = tiler_data.get_data_path("frmt_wms_bluemarble_s3_tms.xml")
+    context["filename_virtualearth"] = tiler_data.get_data_path("frmt_wms_virtualearth.xml")
+    context["filename_sf_bay"] = tiler_data.get_sf_bay_url()
+    context["filename_landsat_salt_lake"] = tiler_data.get_data_path("landsat.tif")
+    context["filename_oam2"] = tiler_data.get_oam2_url()
     context["cesium_token"] = cesium_token
 
     # Google Analytics
@@ -256,8 +255,6 @@ def run_app(
     fastapi.FastAPI
         The configured and (optionally running) FastAPI application.
     """
-    import uvicorn
-
     filename = get_clean_filename(filename)
     if not str(filename).startswith("/vsi") and not filename.exists():
         raise OSError(f"File does not exist: {filename}")
