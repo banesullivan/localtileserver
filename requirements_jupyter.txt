@@ -1,5 +1,0 @@
--r requirements.txt
-folium
-ipyleaflet
-jupyter-server-proxy
-shapely

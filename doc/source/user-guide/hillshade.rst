@@ -14,15 +14,15 @@ make the data appear more 3-Dimensional.
   This example was adopted from `EarthPy <https://earthpy.readthedocs.io/en/latest/gallery_vignettes/plot_dem_hillshade.html>`_
 
 
-.. code:: python
+.. jupyter-execute::
 
   from localtileserver import TileClient, get_leaflet_tile_layer
   from localtileserver import examples, helpers
   from ipyleaflet import Map, SplitMapControl
   import rasterio
 
-  # Example DEM dataset
-  client = examples.get_co_elevation()
+  # Example DEM dataset (local ROI for faster loading)
+  client = examples.get_co_elevation(local_roi=True)
 
   tdem = get_leaflet_tile_layer(client, colormap='gist_earth', nodata=0)
 
@@ -33,7 +33,7 @@ make the data appear more 3-Dimensional.
 
 Read the DEM data as a NumPy array using rasterio:
 
-.. code:: python
+.. jupyter-execute::
 
   dem = client.dataset.read()[0, :, :]
   dem.shape
@@ -42,11 +42,7 @@ Read the DEM data as a NumPy array using rasterio:
 Compute the hillshade of the DEM using the :func:`localtileserver.helpers.hillshade`
 function (adopted from EarthPy).
 
-.. code:: python
-
-  help(helpers.hillshade)
-
-.. code:: python
+.. jupyter-execute::
 
   # Compute hillshade
   hs_arr = helpers.hillshade(dem)
@@ -55,7 +51,7 @@ function (adopted from EarthPy).
   hs = rasterio.open(helpers.save_new_raster(client, hs_arr))
 
 
-.. code:: python
+.. jupyter-execute::
 
   # Make an ipyleaflet tile layer of the hillshade
   hst = get_leaflet_tile_layer(hs, nodata=0)
@@ -65,18 +61,13 @@ function (adopted from EarthPy).
   m.add_control(control)
   m
 
-.. image:: https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/hillshade_compare.png
-
 
 We can also overlay the hillshade on the original DEM so that it gives it a 3D
 effect:
 
-.. code:: python
+.. jupyter-execute::
 
   m = client.get_leaflet_map()
   m.add(tdem)
   m.add(get_leaflet_tile_layer(hs, opacity=0.5, nodata=0))
   m
-
-
-.. image:: https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/hillshade.png

@@ -4,11 +4,12 @@
 .. jupyter-execute::
 
   from localtileserver import TileClient, get_leaflet_tile_layer
+  from localtileserver.tiler.data import get_landsat_vegas_b30_url, get_landsat_vegas_b70_url
   from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
   # Create tile servers from two raster files
-  l_client = TileClient('https://www.dropbox.com/s/ffdmncjaj82hf6f/L5039035_03520060512_B30.TIF?dl=0')
-  r_client = TileClient('https://www.dropbox.com/s/ysxscp059rtrw0d/L5039035_03520060512_B70.TIF?dl=0')
+  l_client = TileClient(get_landsat_vegas_b30_url())
+  r_client = TileClient(get_landsat_vegas_b70_url())
 
   # Shared display parameters
   display = dict(vmin=50, vmax=150, colormap='coolwarm')
