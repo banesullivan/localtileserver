@@ -17,7 +17,7 @@ from .utilities import ImageBytes
 def _check_xarray():
     if xr is None:
         raise ImportError(
-            "xarray and rioxarray are required for XarrayTileClient. "
+            "xarray and rioxarray are required for xarray tile serving. "
             "Install with: pip install localtileserver[xarray]"
         )
 
