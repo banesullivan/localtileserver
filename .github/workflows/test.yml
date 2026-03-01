@@ -41,7 +41,7 @@ jobs:
       #   with:
       #     name: coverage.xml
       #     path: coverage.xml
-      - uses: codecov/codecov-action@v5.5.1
+      - uses: codecov/codecov-action@v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
