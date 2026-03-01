@@ -13,7 +13,7 @@ jobs:
   build-doc:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Set up Python
         uses: actions/setup-python@v6.1.0
         with:
@@ -41,7 +41,7 @@ jobs:
     needs: build-doc
     if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v6.0.2
       - uses: actions/download-artifact@v6.0.0
         with:
           name: doc-build
