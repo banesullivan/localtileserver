@@ -9,6 +9,10 @@ import requests
 from rio_tiler.io import Reader
 
 try:
+    import anywidget
+except ImportError:  # pragma: no cover
+    anywidget = None
+try:
     import ipyleaflet
 except ImportError:  # pragma: no cover
     ipyleaflet = None
@@ -513,7 +517,7 @@ class TileServerMixin:
             m.add(wlayer)
         return m
 
-    if ipyleaflet:
+    if False:  # ipyleaflet:
 
         def _ipython_display_(self):
             from IPython.display import display
@@ -524,6 +528,16 @@ class TileServerMixin:
             m = self.get_leaflet_map(add_bounds=shapely)
             m.add(t)
             return display(m)
+
+    elif anywidget:
+
+        def _ipython_display_(self):
+            from IPython.display import display
+
+            from localtileserver.custom.widgets import TileLayerWidget
+
+            w = TileLayerWidget(self)
+            return display(w)
 
 
 class TileClient(TilerInterface, TileServerMixin):
