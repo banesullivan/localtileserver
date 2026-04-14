@@ -27,8 +27,8 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=7f76b32a3354e82990f2" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="_static/jupyter-sphinx.css" />
@@ -38,22 +38,23 @@
     <link rel="stylesheet" type="text/css" href="_static/fontawesome/css/all.css?v=efc38b36" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=7f76b32a3354e82990f2"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src="_static/documentation_options.js?v=49efb58e"></script>
-    <script src="_static/doctools.js?v=9a2dae69"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/documentation_options.js?v=608bb401"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/thebelab-helper.js"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=49e1bf35"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
 
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -61,14 +62,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
@@ -100,7 +105,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -152,7 +157,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="api/index.html">
-    📖 API
+    📖 API Reference
   </a>
 </li>
 
@@ -279,7 +284,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="api/index.html">
-    📖 API
+    📖 API Reference
   </a>
 </li>
 
@@ -393,32 +398,45 @@
 </div>
 <div class="cell_output docutils container">
 <script type="application/vnd.jupyter.widget-view+json">
-{"version_major": 2, "version_minor": 0, "model_id": "50b570bb6bfb49ddbf4439cf0491b79e"}
+{"version_major": 2, "version_minor": 0, "model_id": "e20cfd52f7e14adf8dad70f61e0115ce"}
 </script></div>
 </div>
 <br/><p>A Python package for serving tiles from large raster files in
 the <a class="reference external" href="https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames">Slippy Maps standard</a>
 (i.e., <cite>/zoom/x/y.png</cite>) for visualization in Jupyter with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code> or <code class="docutils literal notranslate"><span class="pre">folium</span></code>.</p>
 <p>Launch a <a class="reference external" href="https://github.com/banesullivan/localtileserver-demo">demo</a> on MyBinder <a class="reference external" href="https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD"><img alt="MyBinder" src="https://mybinder.org/badge_logo.svg" /></a></p>
-<p>Built on <a class="reference external" href="https://github.com/cogeotiff/rio-tiler">rio-tiler</a>.</p>
+<p>Built on <a class="reference external" href="https://github.com/cogeotiff/rio-tiler">rio-tiler</a> and
+<a class="reference external" href="https://fastapi.tiangolo.com/">FastAPI</a>.</p>
 </section>
 <section id="highlights">
 <h1>🌟 Highlights<a class="headerlink" href="#highlights" title="Link to this heading">#</a></h1>
 <ul class="simple">
 <li><p>Launch a tile server for large geospatial images</p></li>
-<li><p>View local or remote* raster files with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code> or <code class="docutils literal notranslate"><span class="pre">folium</span></code> in Jupyter</p></li>
+<li><p>View local or remote raster files with <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code> or <code class="docutils literal notranslate"><span class="pre">folium</span></code> in Jupyter</p></li>
+<li><p><strong>Band math expressions</strong> for on-the-fly computed imagery (e.g., NDVI)</p></li>
+<li><p><strong>Per-band statistics</strong> and <strong>multiple image stretch modes</strong></p></li>
+<li><p><strong>Multiple output formats</strong>: PNG, JPEG, WebP, GeoTIFF, NPY</p></li>
+<li><p><strong>Spatial subsetting</strong> via bounding box crops and GeoJSON masks</p></li>
+<li><p><a class="reference external" href="https://stacspec.org/">STAC</a> item support for multi-asset catalogs</p></li>
+<li><p><a class="reference external" href="https://xarray.dev/">Xarray</a> DataArray tile serving (NetCDF, Zarr, etc.)</p></li>
+<li><p><strong>Virtual mosaics</strong> from multiple raster files</p></li>
 <li><p>View rasters with CesiumJS with the built-in web application</p></li>
+<li><p>Full REST API powered by FastAPI with auto-generated OpenAPI docs</p></li>
 </ul>
-<p><em>remote raster files should be pre-tiled Cloud Optimized GeoTiffs</em></p>
 </section>
 <section id="i-overview">
 <h1>ℹ️ Overview<a class="headerlink" href="#i-overview" title="Link to this heading">#</a></h1>
-<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">TileClient</span></code> class can be used to to launch a tile server in a background
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">TileClient</span></code> class can be used to launch a tile server in a background
 thread which will serve raster imagery to a viewer (see <code class="docutils literal notranslate"><span class="pre">ipyleaflet</span></code> and
 <code class="docutils literal notranslate"><span class="pre">folium</span></code> examples in <a class="reference internal" href="user-guide/index.html#user-guide"><span class="std std-ref">🚀 User Guide</span></a>).</p>
 <p>This tile server can efficiently deliver varying resolutions of your
 raster imagery to your viewer; it helps to have pre-tiled,
 <a class="reference external" href="https://www.cogeo.org/">Cloud Optimized GeoTIFFs (COG)</a>.</p>
+<p>The server exposes a comprehensive REST API built on
+<a class="reference external" href="https://fastapi.tiangolo.com/">FastAPI</a>, including support for
+band math expressions, per-band statistics, multiple image stretch modes,
+spatial subsetting, STAC catalogs, xarray DataArrays, and virtual mosaics.
+Interactive API docs are available at <code class="docutils literal notranslate"><span class="pre">/swagger/</span></code>.</p>
 <p>There is an included, standalone web viewer leveraging
 <a class="reference external" href="https://cesium.com/platform/cesiumjs/">CesiumJS</a>.</p>
 </section>
@@ -427,7 +445,7 @@ raster imagery to your viewer; it helps to have pre-tiled,
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/giswqs/leafmap">leafmap</a> and <a class="reference external" href="https://github.com/giswqs/geemap">geemap</a>: use localtileserver for visualizing large raster images in a Jupyter-based geospatial mapping application</p></li>
 <li><p><a class="reference external" href="https://github.com/giswqs/streamlit-geospatial">streamlit-geospatial</a>: uses localtileserver’s remote tile server for viewing image tiles</p></li>
-<li><p><a class="reference external" href="https://github.com/banesullivan/remotetileserver">remotetileserver</a>: uses the core flask application to spin up a production ready tile server</p></li>
+<li><p><a class="reference external" href="https://github.com/banesullivan/remotetileserver">remotetileserver</a>: uses the core FastAPI application to spin up a production ready tile server</p></li>
 <li><p><a class="reference external" href="https://kaustavmukherjee-66179.medium.com/visualize-raster-tiles-locally-using-localtileserver-0-4-1-and-jupyter-notebook-cccd59e6420a">Kaustav Mukherjee’s blog post</a>: a user-created demonstration on how to get started with localtileserver</p></li>
 <li><p><a class="reference external" href="https://medium.com/geodesic/serving-up-spacenet-imagery-for-bokeh-e85b8fffe05">Serving up SpaceNet Imagery for Bokeh</a>: Adam Van Etten’s blog post using localtileserver to view imagery with Bokeh</p></li>
 </ul>
@@ -435,7 +453,7 @@ raster imagery to your viewer; it helps to have pre-tiled,
 
 
 <script type="application/vnd.jupyter.widget-state+json">
-{"state": {"cad9c1218b5c4154a3d05c78f74e4bb3": {"model_name": "LeafletTileLayerModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletTileLayerModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletTileLayerView", "attribution": "Raster file served by <a href='https://github.com/banesullivan/localtileserver' target='_blank'>localtileserver</a>.", "base": false, "bottom": true, "bounds": [[37.452199, -122.718792], [38.052231, -122.11876]], "detect_retina": false, "loading": false, "max_native_zoom": 30, "max_zoom": 30, "min_native_zoom": null, "min_zoom": 0, "name": "", "no_wrap": false, "opacity": 1.0, "options": ["attribution", "bounds", "detect_retina", "max_native_zoom", "max_zoom", "min_native_zoom", "min_zoom", "no_wrap", "pm_ignore", "tile_size", "tms", "zoom_offset"], "pane": "", "pm_ignore": true, "popup": null, "popup_max_height": null, "popup_max_width": 300, "popup_min_width": 50, "show_loading": true, "snap_ignore": true, "subitems": [], "tile_size": 256, "tms": false, "url": "https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fpub-5ec9af56ea924492b07db6cf4015bba0.r2.dev%252Fexamples%252FTC_NG_SFBay_US_Geo_COG.tif%26use_head%3Dno%26list_dir%3Dno", "visible": true, "zoom_offset": 0}}, "adc2963f99fb4437bf1c9f2cf63410fd": {"model_name": "LeafletMapStyleModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletMapStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "cursor": "grab"}}, "3a8f24adccbb4b1d9d248a11f4882f72": {"model_name": "LeafletMapStyleModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletMapStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "cursor": "move"}}, "7df9791ece1843b4a7482d6d5e2771e2": {"model_name": "LeafletTileLayerModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletTileLayerModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletTileLayerView", "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors", "base": true, "bottom": true, "bounds": null, "detect_retina": false, "loading": false, "max_native_zoom": null, "max_zoom": 19, "min_native_zoom": null, "min_zoom": 1, "name": "OpenStreetMap.Mapnik", "no_wrap": false, "opacity": 1.0, "options": ["attribution", "bounds", "detect_retina", "max_native_zoom", "max_zoom", "min_native_zoom", "min_zoom", "no_wrap", "pm_ignore", "tile_size", "tms", "zoom_offset"], "pane": "", "pm_ignore": true, "popup": null, "popup_max_height": null, "popup_max_width": 300, "popup_min_width": 50, "show_loading": false, "snap_ignore": true, "subitems": [], "tile_size": 256, "tms": false, "url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png", "visible": true, "zoom_offset": 0}}, "a5fcab40e9bb48288f08884260015d8a": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "9db54bb468c44b19aae021c04a5e5b0e": {"model_name": "LeafletMapStyleModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletMapStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "cursor": "grab"}}, "50b570bb6bfb49ddbf4439cf0491b79e": {"model_name": "LeafletMapModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_dom_classes": [], "_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletMapModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletMapView", "bottom": 0.0, "bounce_at_zoom_limits": true, "box_zoom": true, "center": [37.752215, -122.418776], "close_popup_on_click": true, "controls": ["IPY_MODEL_591be51fa942424eba473f98c5346039", "IPY_MODEL_b42b4d49ac3d4df691251fca6ddf3671"], "crs": {"name": "EPSG3857", "custom": false}, "default_style": "IPY_MODEL_adc2963f99fb4437bf1c9f2cf63410fd", "double_click_zoom": true, "dragging": true, "dragging_style": "IPY_MODEL_3a8f24adccbb4b1d9d248a11f4882f72", "east": 0.0, "fullscreen": false, "inertia": true, "inertia_deceleration": 3000, "inertia_max_speed": 1500, "interpolation": "bilinear", "keyboard": true, "keyboard_pan_offset": 80, "keyboard_zoom_offset": 1, "layers": ["IPY_MODEL_7df9791ece1843b4a7482d6d5e2771e2", "IPY_MODEL_cad9c1218b5c4154a3d05c78f74e4bb3"], "layout": "IPY_MODEL_a5fcab40e9bb48288f08884260015d8a", "left": 9007199254740991.0, "max_zoom": null, "min_zoom": null, "modisdate": "2026-02-18", "north": 0.0, "options": ["bounce_at_zoom_limits", "box_zoom", "center", "close_popup_on_click", "double_click_zoom", "dragging", "fullscreen", "inertia", "inertia_deceleration", "inertia_max_speed", "interpolation", "keyboard", "keyboard_pan_offset", "keyboard_zoom_offset", "max_zoom", "min_zoom", "prefer_canvas", "scroll_wheel_zoom", "tap", "tap_tolerance", "touch_zoom", "world_copy_jump", "zoom", "zoom_animation_threshold", "zoom_delta", "zoom_snap"], "panes": {}, "prefer_canvas": false, "right": 0.0, "scroll_wheel_zoom": false, "south": 0.0, "style": "IPY_MODEL_9db54bb468c44b19aae021c04a5e5b0e", "tabbable": null, "tap": true, "tap_tolerance": 15, "tooltip": null, "top": 9007199254740991.0, "touch_zoom": true, "west": 0.0, "window_url": "", "world_copy_jump": false, "zoom": 9.0, "zoom_animation_threshold": 4, "zoom_delta": 1.0, "zoom_snap": 1.0}}, "591be51fa942424eba473f98c5346039": {"model_name": "LeafletZoomControlModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletZoomControlModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletZoomControlView", "options": ["position", "zoom_in_text", "zoom_in_title", "zoom_out_text", "zoom_out_title"], "position": "topleft", "zoom_in_text": "+", "zoom_in_title": "Zoom in", "zoom_out_text": "-", "zoom_out_title": "Zoom out"}}, "b42b4d49ac3d4df691251fca6ddf3671": {"model_name": "LeafletAttributionControlModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletAttributionControlModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletAttributionControlView", "options": ["position", "prefix"], "position": "bottomright", "prefix": "ipyleaflet"}}}, "version_major": 2, "version_minor": 0}
+{"state": {"534e87c9ff8341c2922f48ef48433ccd": {"model_name": "LeafletTileLayerModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletTileLayerModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletTileLayerView", "attribution": "Raster file served by <a href='https://github.com/banesullivan/localtileserver' target='_blank'>localtileserver</a>.", "base": false, "bottom": true, "bounds": [[37.452199, -122.718792], [38.052231, -122.11876]], "detect_retina": false, "loading": false, "max_native_zoom": 30, "max_zoom": 30, "min_native_zoom": null, "min_zoom": 0, "name": "", "no_wrap": false, "opacity": 1.0, "options": ["attribution", "bounds", "detect_retina", "max_native_zoom", "max_zoom", "min_native_zoom", "min_zoom", "no_wrap", "pm_ignore", "tile_size", "tms", "zoom_offset"], "pane": "", "pm_ignore": true, "popup": null, "popup_max_height": null, "popup_max_width": 300, "popup_min_width": 50, "show_loading": true, "snap_ignore": true, "subitems": [], "tile_size": 256, "tms": false, "url": "https://tileserver.banesullivan.com//api/tiles/{z}/{x}/{y}.png?&filename=%2Fvsicurl%3Furl%3Dhttps%253A%252F%252Fpub-5ec9af56ea924492b07db6cf4015bba0.r2.dev%252Fexamples%252FTC_NG_SFBay_US_Geo_COG.tif%26use_head%3Dno%26list_dir%3Dno", "visible": true, "zoom_offset": 0}}, "7b6bd9f3ce0a423cb61aa300ada0b5bd": {"model_name": "LeafletMapStyleModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletMapStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "cursor": "grab"}}, "0660558ba7664d4aad6433d19a52b35c": {"model_name": "LeafletMapStyleModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletMapStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "cursor": "move"}}, "0ec17bcb26e94c45af7197bbff03581b": {"model_name": "LeafletTileLayerModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletTileLayerModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletTileLayerView", "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors", "base": true, "bottom": true, "bounds": null, "detect_retina": false, "loading": false, "max_native_zoom": null, "max_zoom": 19, "min_native_zoom": null, "min_zoom": 1, "name": "OpenStreetMap.Mapnik", "no_wrap": false, "opacity": 1.0, "options": ["attribution", "bounds", "detect_retina", "max_native_zoom", "max_zoom", "min_native_zoom", "min_zoom", "no_wrap", "pm_ignore", "tile_size", "tms", "zoom_offset"], "pane": "", "pm_ignore": true, "popup": null, "popup_max_height": null, "popup_max_width": 300, "popup_min_width": 50, "show_loading": false, "snap_ignore": true, "subitems": [], "tile_size": 256, "tms": false, "url": "https://tile.openstreetmap.org/{z}/{x}/{y}.png", "visible": true, "zoom_offset": 0}}, "59473297d05948d791ad07bede67679d": {"model_name": "LayoutModel", "model_module": "@jupyter-widgets/base", "model_module_version": "2.0.0", "state": {"_model_module": "@jupyter-widgets/base", "_model_module_version": "2.0.0", "_model_name": "LayoutModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "LayoutView", "align_content": null, "align_items": null, "align_self": null, "border_bottom": null, "border_left": null, "border_right": null, "border_top": null, "bottom": null, "display": null, "flex": null, "flex_flow": null, "grid_area": null, "grid_auto_columns": null, "grid_auto_flow": null, "grid_auto_rows": null, "grid_column": null, "grid_gap": null, "grid_row": null, "grid_template_areas": null, "grid_template_columns": null, "grid_template_rows": null, "height": null, "justify_content": null, "justify_items": null, "left": null, "margin": null, "max_height": null, "max_width": null, "min_height": null, "min_width": null, "object_fit": null, "object_position": null, "order": null, "overflow": null, "padding": null, "right": null, "top": null, "visibility": null, "width": null}}, "bcbbec65c1e84bbe8ef00bef32e68fb2": {"model_name": "LeafletMapStyleModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletMapStyleModel", "_view_count": null, "_view_module": "@jupyter-widgets/base", "_view_module_version": "2.0.0", "_view_name": "StyleView", "cursor": "grab"}}, "e20cfd52f7e14adf8dad70f61e0115ce": {"model_name": "LeafletMapModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_dom_classes": [], "_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletMapModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletMapView", "bottom": 0.0, "bounce_at_zoom_limits": true, "box_zoom": true, "center": [37.752215, -122.418776], "close_popup_on_click": true, "controls": ["IPY_MODEL_25a1ae4c88314b28897618fe88097b4e", "IPY_MODEL_b75021787f4a4cdd905f67ad6491e96c"], "crs": {"name": "EPSG3857", "custom": false}, "default_style": "IPY_MODEL_7b6bd9f3ce0a423cb61aa300ada0b5bd", "double_click_zoom": true, "dragging": true, "dragging_style": "IPY_MODEL_0660558ba7664d4aad6433d19a52b35c", "east": 0.0, "fullscreen": false, "inertia": true, "inertia_deceleration": 3000, "inertia_max_speed": 1500, "interpolation": "bilinear", "keyboard": true, "keyboard_pan_offset": 80, "keyboard_zoom_offset": 1, "layers": ["IPY_MODEL_0ec17bcb26e94c45af7197bbff03581b", "IPY_MODEL_534e87c9ff8341c2922f48ef48433ccd"], "layout": "IPY_MODEL_59473297d05948d791ad07bede67679d", "left": 9007199254740991.0, "max_zoom": null, "min_zoom": null, "modisdate": "2026-04-13", "north": 0.0, "options": ["bounce_at_zoom_limits", "box_zoom", "center", "close_popup_on_click", "double_click_zoom", "dragging", "fullscreen", "inertia", "inertia_deceleration", "inertia_max_speed", "interpolation", "keyboard", "keyboard_pan_offset", "keyboard_zoom_offset", "max_zoom", "min_zoom", "prefer_canvas", "scroll_wheel_zoom", "tap", "tap_tolerance", "touch_zoom", "world_copy_jump", "zoom", "zoom_animation_threshold", "zoom_delta", "zoom_snap"], "panes": {}, "prefer_canvas": false, "right": 0.0, "scroll_wheel_zoom": false, "south": 0.0, "style": "IPY_MODEL_bcbbec65c1e84bbe8ef00bef32e68fb2", "tabbable": null, "tap": true, "tap_tolerance": 15, "tooltip": null, "top": 9007199254740991.0, "touch_zoom": true, "west": 0.0, "window_url": "", "world_copy_jump": false, "zoom": 9.0, "zoom_animation_threshold": 4, "zoom_delta": 1.0, "zoom_snap": 1.0}}, "25a1ae4c88314b28897618fe88097b4e": {"model_name": "LeafletZoomControlModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletZoomControlModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletZoomControlView", "options": ["position", "zoom_in_text", "zoom_in_title", "zoom_out_text", "zoom_out_title"], "position": "topleft", "zoom_in_text": "+", "zoom_in_title": "Zoom in", "zoom_out_text": "-", "zoom_out_title": "Zoom out"}}, "b75021787f4a4cdd905f67ad6491e96c": {"model_name": "LeafletAttributionControlModel", "model_module": "jupyter-leaflet", "model_module_version": "^0.20", "state": {"_model_module": "jupyter-leaflet", "_model_module_version": "^0.20", "_model_name": "LeafletAttributionControlModel", "_view_count": null, "_view_module": "jupyter-leaflet", "_view_module_version": "^0.20", "_view_name": "LeafletAttributionControlView", "options": ["position", "prefix"], "position": "bottomright", "prefix": "ipyleaflet"}}}, "version_major": 2, "version_minor": 0}
 </script>
 
 
@@ -460,8 +478,8 @@ raster imagery to your viewer; it helps to have pre-tiled,
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">🌐 localtileserver</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#highlights">🌟 Highlights</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#i-overview">ℹ️ Overview</a></li>
@@ -471,13 +489,13 @@ raster imagery to your viewer; it helps to have pre-tiled,
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -492,8 +510,8 @@ raster imagery to your viewer; it helps to have pre-tiled,
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=7f76b32a3354e82990f2"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=7f76b32a3354e82990f2"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -513,7 +531,7 @@ raster imagery to your viewer; it helps to have pre-tiled,
         <div class="footer-item">
 
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
     <br/>
   </p>
 </div>
@@ -527,7 +545,7 @@ raster imagery to your viewer; it helps to have pre-tiled,
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.17.0.
 </p></div>
       
     </div>
