@@ -1,5 +1,15 @@
 dist/
 build/
-*.egg-info
-.pytest_cache
+*.egg-info/
+.pytest_cache/
+__pycache__/
 *.pyc
+.git/
+.github/
+doc/
+tests/
+notebooks/
+.venv/
+.coverage
+htmlcov/
+*.aux.xml

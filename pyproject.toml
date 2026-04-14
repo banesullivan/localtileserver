@@ -1,54 +1,62 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "localtileserver"
-version = "0.11.0"
+version = "1.0.0.dev0"
 description = "Locally serve geospatial raster tiles in the Slippy Map standard."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
-authors = [
-    {name = "Bane Sullivan", email = "hello@banesullivan.com"},
-]
+authors = [{ name = "Bane Sullivan", email = "hello@banesullivan.com" }]
 classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Science/Research",
-    "Topic :: Scientific/Engineering :: Information Analysis",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
 dependencies = [
-    "click",
-    "flask>=2.0.0,<4",
-    "Flask-Caching",
-    "flask-cors",
-    "flask-restx>=1.3.0",
-    "rio-tiler",
-    "rio-cogeo",
-    "requests",
-    "server-thread",
-    "scooby",
-    "werkzeug",
+  "click",
+  "fastapi>=0.100.0",
+  "uvicorn[standard]",
+  "jinja2",
+  "rio-tiler",
+  "rio-cogeo",
+  "requests",
+  "server-thread",
+  "scooby",
 ]
 
 [project.optional-dependencies]
-colormaps = [
-    "matplotlib",
-    "cmocean",
-    "colorcet",
+colormaps = ["matplotlib", "cmocean", "colorcet"]
+jupyter = ["jupyter-server-proxy", "ipyleaflet"]
+xarray = ["xarray", "rioxarray"]
+helpers = ["shapely"]
+test = ["pytest", "pytest-cov", "matplotlib", "folium", "ipyleaflet", "shapely"]
+doc = [
+  "bokeh",
+  "folium",
+  "ipyleaflet",
+  "jupyter-server-proxy",
+  "jupyter-sphinx",
+  "matplotlib",
+  "pydata-sphinx-theme",
+  "shapely",
+  "sphinx",
+  "sphinx-copybutton",
+  "sphinx-notfound-page",
 ]
-jupyter = [
-    "jupyter-server-proxy",
-    "ipyleaflet",
+dev = [
+  "localtileserver[test,doc,colormaps,jupyter,xarray,helpers]",
+  "pre-commit",
+  "ruff",
 ]
-helpers = [
-    "shapely",
-]
+all = ["localtileserver[colormaps,jupyter,xarray,helpers]"]
 
 [project.urls]
 Documentation = "https://localtileserver.banesullivan.com"
@@ -64,17 +72,38 @@ include-package-data = true
 [tool.setuptools.packages.find]
 include = ["localtileserver*"]
 
+[tool.setuptools.package-data]
+"localtileserver.tiler.data" = ["*.tif", "*.xml", "*.wkb"]
+"localtileserver.web" = ["static/**/*", "templates/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.coverage.run]
+source = ["localtileserver"]
+omit = ["localtileserver/web/sentry.py", "localtileserver/web/wsgi.py"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+  "pragma: no cover",
+  "if __name__ == .__main__.",
+  "except ImportError",
+]
+
 [tool.ruff]
 line-length = 100
 
 [tool.ruff.lint]
 select = [
-    "F",      # pyflakes
-    "E", "W", # pycodestyle
-    "I",      # isort
-    "UP",     # pyupgrade
-    "B",      # flake8-bugbear
-    "RUF",    # ruff-specific rules
+  "F",   # pyflakes
+  "E",
+  "W",   # pycodestyle
+  "I",   # isort
+  "UP",  # pyupgrade
+  "B",   # flake8-bugbear
+  "RUF", # ruff-specific rules
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -85,3 +114,23 @@ select = [
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
 combine-as-imports = true
+
+[tool.numpydoc_validation]
+checks = [
+  "all",  # report on all checks
+  "ES01", # but don't require an extended summary
+  "EX01", # or examples
+  "SA01", # or a see also section
+  "SS06", # or a summary that fits on one line
+]
+exclude = [
+  '\._',
+  '\.__(init|new|repr|str|del|hash|eq|ne|lt|le|gt|ge|call|iter|next|getattr|setattr|delattr|getitem|setitem|delitem|contains|len|bool|enter|exit|format|reduce|copy|deepcopy)__$',
+  '_view$',                                                                                                                                                                        # FastAPI endpoint view functions
+  '\.click_run_app$',                                                                                                                                                              # click CLI wrapper
+  '\.Report$',                                                                                                                                                                     # scooby Report subclass
+  '\.list_palettes$',                                                                                                                                                              # simple endpoint wrapper
+  '\.(cesium_viewer|cesium_split_viewer|split_form)$',                                                                                                                             # nested template views
+  'examples\.get_',                                                                                                                                                                # @wraps-decorated example loaders
+  'examples\.load_',                                                                                                                                                               # example data loaders
+]

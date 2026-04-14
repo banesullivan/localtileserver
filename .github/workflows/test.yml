@@ -21,27 +21,15 @@ jobs:
         uses: actions/setup-python@v6.1.0
         with:
           python-version: ${{ matrix.python-version }}
-      # Install everything else
-      - name: Install other dependencies
-        run: |
-          pip install -r requirements_jupyter.txt
-      - name: Install localtileserver
-        run: pip install -e .
+      - name: Install localtileserver with test dependencies
+        run: pip install -e ".[test,colormaps,jupyter,xarray,helpers]"
       - name: Scooby Report
         run: python -c "import localtileserver;print(localtileserver.Report())"
       - name: Run Tests
         run: |
-          pytest -v --cov=localtileserver
+          pytest --cov=localtileserver
           coverage xml -o coverage.xml
-      # - name: Run Doc Tests
-      #   run: |
-      #     make doctest
-      # - name: Stash coverage
-      #   uses: actions/upload-artifact@v5.0.0
-      #   with:
-      #     name: coverage.xml
-      #     path: coverage.xml
-      - uses: codecov/codecov-action@v5.5.1
+      - uses: codecov/codecov-action@v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml

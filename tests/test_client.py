@@ -16,7 +16,7 @@ from .utilities import get_content
 
 skip_shapely = False
 try:
-    from shapely.geometry import Polygon
+    from shapely.geometry import Point, Polygon
 except ImportError:
     skip_shapely = True
 
@@ -216,8 +216,6 @@ def test_bounds_geojson(bahamas):
 
 @pytest.mark.skipif(skip_shapely, reason="shapely not installed")
 def test_center_shapely(bahamas):
-    from shapely.geometry import Point
-
     pt = bahamas.center(return_point=True)
     assert isinstance(pt, Point)
     wkt = bahamas.center(return_wkt=True)

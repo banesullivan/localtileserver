@@ -1,26 +1,34 @@
+"""Environment and dependency reporting for localtileserver."""
+
 import scooby
 
 
 class Report(scooby.Report):
+    """
+    Generate a report on the dependencies of localtileserver.
+    """
+
     def __init__(self, additional=None, ncol=3, text_width=80, sort=False):
-        """Generate a report on the dependencies of localtileserver in this environment."""
+        """
+        Generate a report on the dependencies of localtileserver in this environment.
+        """
 
         # Mandatory packages.
         core = [
             "localtileserver",
             *sorted(
                 [
-                    "rasterio",
-                    "rio_tiler",
-                    "numpy",
-                    "server_thread",
-                    "flask",
-                    "flask_caching",
-                    "flask_cors",
-                    "flask_restx",
-                    "rio_cogeo",
-                    "werkzeug",
                     "click",
+                    "fastapi",
+                    "jinja2",
+                    "numpy",
+                    "rasterio",
+                    "requests",
+                    "rio_cogeo",
+                    "rio_tiler",
+                    "scooby",
+                    "server_thread",
+                    "uvicorn",
                 ]
             ),
         ]
@@ -28,16 +36,15 @@ class Report(scooby.Report):
         # Optional packages.
         optional = sorted(
             [
-                "gunicorn",
-                "ipyleaflet",
-                "jupyterlab",
-                "jupyter_server_proxy",
-                "traitlets",
-                "shapely",
-                "folium",
-                "matplotlib",
-                "requestscolorcet",
                 "cmocean",
+                "colorcet",
+                "folium",
+                "ipyleaflet",
+                "jupyter_server_proxy",
+                "matplotlib",
+                "rioxarray",
+                "shapely",
+                "xarray",
             ]
         )
 
