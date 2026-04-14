@@ -64,6 +64,7 @@ def _make_band_stats():
         valid_pixels=65536,
         percentile_2=5.0,
         percentile_98=250.0,
+        description="band statistics",
     )
 
 
