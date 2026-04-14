@@ -25,7 +25,7 @@ jobs:
       - name: Build Documentation
         run: sphinx-build -M html doc/source doc/build
       - name: Stash build
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: doc-build
           path: doc/build
