@@ -2,12 +2,17 @@
 Jupyter widget helpers for ipyleaflet and folium tile layers.
 """
 
+from __future__ import annotations
+
 import logging
 import pathlib
+from typing import TYPE_CHECKING
 import warnings
 
-from matplotlib.colors import Colormap
 import rasterio
+
+if TYPE_CHECKING:
+    from matplotlib.colors import Colormap
 
 from localtileserver.client import TileClient, get_or_create_tile_client
 

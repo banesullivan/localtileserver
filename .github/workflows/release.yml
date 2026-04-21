@@ -55,7 +55,8 @@ jobs:
         run: twine check --strict dist/*
       - name: Smoke test wheel
         run: |
-          pip install dist/localtileserver*.whl
+          wheel=$(ls dist/localtileserver-*.whl)
+          pip install "${wheel}[colormaps]"
           python -c "import localtileserver; print(localtileserver.__version__)"
       - uses: actions/upload-artifact@v7
         with:

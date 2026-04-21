@@ -2,10 +2,11 @@
 Methods for working with images.
 """
 
+from __future__ import annotations
+
 import json
 import pathlib
 
-from matplotlib.colors import Colormap, LinearSegmentedColormap, ListedColormap
 import numpy as np
 import rasterio
 from rasterio.enums import ColorInterp
@@ -15,6 +16,15 @@ from rio_tiler.models import ImageData
 
 from .palettes import get_registered_colormap
 from .utilities import ImageBytes, get_clean_filename, make_crs
+
+try:
+    from matplotlib.colors import (
+        Colormap as _MPLColormap,
+        LinearSegmentedColormap as _MPLLinearSegmentedColormap,
+        ListedColormap as _MPLListedColormap,
+    )
+except ImportError:
+    _MPLColormap = _MPLLinearSegmentedColormap = _MPLListedColormap = None
 
 
 def get_reader(path: pathlib.Path | str) -> Reader:
@@ -290,15 +300,20 @@ def _render_image(
         colormap = registered
     elif colormap in cmap.list():
         colormap = cmap.get(colormap)
-    elif isinstance(colormap, ListedColormap):
-        c = LinearSegmentedColormap.from_list("", colormap.colors, N=256)
+    elif _MPLListedColormap is not None and isinstance(colormap, _MPLListedColormap):
+        c = _MPLLinearSegmentedColormap.from_list("", colormap.colors, N=256)
         colormap = {k: tuple(v) for k, v in enumerate(c(range(256), 1, 1))}
-    elif isinstance(colormap, Colormap):
+    elif _MPLColormap is not None and isinstance(colormap, _MPLColormap):
         colormap = {k: tuple(v) for k, v in enumerate(colormap(range(256), 1, 1))}
     elif colormap:
         c = json.loads(colormap)
         if isinstance(c, list):
-            c = LinearSegmentedColormap.from_list("", c, N=256)
+            if _MPLLinearSegmentedColormap is None:
+                raise ImportError(
+                    "matplotlib is required for list-based colormaps. "
+                    "Install with 'pip install localtileserver[colormaps]'."
+                )
+            c = _MPLLinearSegmentedColormap.from_list("", c, N=256)
             colormap = {k: tuple(v) for k, v in enumerate(c(range(256), 1, 1))}
         else:
             colormap = {}

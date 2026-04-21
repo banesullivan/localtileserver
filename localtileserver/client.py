@@ -2,14 +2,28 @@
 Tile client for serving and interacting with geospatial rasters.
 """
 
+from __future__ import annotations
+
 from collections.abc import Iterable
 import json
 import logging
 import os
 import pathlib
+from typing import TYPE_CHECKING
 
-from matplotlib.colors import Colormap, LinearSegmentedColormap, ListedColormap
 import rasterio
+
+if TYPE_CHECKING:
+    from matplotlib.colors import Colormap
+
+try:
+    from matplotlib.colors import (
+        Colormap as _MPLColormap,
+        LinearSegmentedColormap as _MPLLinearSegmentedColormap,
+        ListedColormap as _MPLListedColormap,
+    )
+except ImportError:
+    _MPLColormap = _MPLLinearSegmentedColormap = _MPLListedColormap = None
 import requests
 from rio_tiler.io import Reader
 
@@ -1013,10 +1027,10 @@ class TileServerMixin:
         if indexes is not None:
             params["indexes"] = indexes
         if colormap is not None:
-            if isinstance(colormap, (Colormap, ListedColormap)):
+            if _MPLColormap is not None and isinstance(colormap, _MPLColormap):
                 # Register the colormap server-side to avoid URL overflow (#231)
-                if isinstance(colormap, ListedColormap):
-                    c = LinearSegmentedColormap.from_list("", colormap.colors, N=256)
+                if isinstance(colormap, _MPLListedColormap):
+                    c = _MPLLinearSegmentedColormap.from_list("", colormap.colors, N=256)
                 else:
                     c = colormap
                 cmap_data = {
