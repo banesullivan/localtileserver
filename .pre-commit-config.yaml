@@ -42,3 +42,11 @@ repos:
     rev: 0.36.1
     hooks:
       - id: check-github-workflows
+
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.1
+    hooks:
+      - id: nbstripout
+        # Strip outputs + execution counts from every .ipynb so committed
+        # notebooks stay small and diffable. Binder regenerates outputs
+        # on first run anyway.
