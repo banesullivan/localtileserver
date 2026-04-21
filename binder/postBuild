@@ -1,0 +1,13 @@
+#!/bin/bash
+# Non-editable install of the repo with the extras the demo notebooks
+# exercise.
+#
+# Why not ``binder/requirements.txt`` with ``-e .[...]``: pip's editable
+# install (PEP 660) does NOT deploy ``[tool.setuptools.data-files]``
+# entries. That means ``jupyter-config/jupyter_server_config.d/localtileserver.json``
+# never lands in ``$PREFIX/etc/jupyter/jupyter_server_config.d/`` and
+# the jupyter-server extension never auto-loads, so every tile 404s
+# through the proxy route.
+set -euo pipefail
+
+pip install '.[jupyter,colormaps,helpers]'

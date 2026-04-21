@@ -1,3 +1,0 @@
-# MyBinder install. Editable install of the repo with the extras the
-# demo notebooks exercise (ipyleaflet + colormaps + shapely helpers).
--e .[jupyter,colormaps,helpers]
