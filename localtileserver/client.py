@@ -1105,16 +1105,26 @@ class TileServerMixin:
             m.add(wlayer)
         return m
 
-    if ipyleaflet:
+    def _ipython_display_(self):
+        """
+        Rich display for IPython / Jupyter frontends.
 
-        def _ipython_display_(self):
-            # Deferred import: widgets.py imports from client.py (circular).
+        If ``ipyleaflet`` is available, render an ``ipyleaflet.Map``
+        with a tile layer whose URL routes through the loopback proxy
+        (``jupyter-loopback`` autodetect handles Lab, Hub, Binder).
+        Otherwise fall back to a PNG thumbnail via :meth:`_repr_png_`.
+        """
+        if ipyleaflet is not None:
+            # Deferred: widgets.py imports from client.py (circular).
             from localtileserver.widgets import get_leaflet_tile_layer
 
             t = get_leaflet_tile_layer(self)
             m = self.get_leaflet_map(add_bounds=shapely)
             m.add(t)
             return _ipython_display_fn(m)
+        # No frontend library available — let IPython fall back to
+        # ``_repr_png_`` which renders a thumbnail.
+        return None
 
 
 class TileClient(TilerInterface, TileServerMixin):

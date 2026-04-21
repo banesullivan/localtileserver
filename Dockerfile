@@ -6,7 +6,6 @@
 #
 # Usage:
 #   docker build -t localtileserver .                        # slim (default)
-#   docker build -t localtileserver --target slim .          # slim (explicit)
 #   docker build -t localtileserver-jupyter --target jupyter .
 #
 #   docker run --rm -it -p 8000:8000 localtileserver
@@ -35,6 +34,10 @@ ENV SETUPTOOLS_SCM_PRETEND_VERSION_FOR_LOCALTILESERVER=${SETUPTOOLS_SCM_PRETEND_
 
 COPY pyproject.toml README.md /build-context/
 COPY localtileserver/ /build-context/localtileserver/
+# ``jupyter-config/`` is referenced by ``[tool.setuptools.data-files]``
+# in pyproject.toml; the jupyter-server auto-enable JSON lands at
+# /etc/jupyter/jupyter_server_config.d/ on install.
+COPY jupyter-config/ /build-context/jupyter-config/
 
 # ---- slim: server-only image (default) ----
 FROM base AS slim
@@ -49,8 +52,6 @@ FROM base AS jupyter
 
 RUN pip install --no-cache-dir "/build-context[all,test]" jupyterlab
 
-ARG LOCALTILESERVER_CLIENT_PREFIX='proxy/{port}'
-ENV LOCALTILESERVER_CLIENT_PREFIX=$LOCALTILESERVER_CLIENT_PREFIX
 ENV JUPYTER_ENABLE_LAB=yes
 
 WORKDIR /home

@@ -62,7 +62,10 @@ xarray DataArrays.
 
    pip install localtileserver[jupyter]
 
-This installs ``jupyter-server-proxy`` and ``ipyleaflet``.
+This installs ``ipyleaflet``. ``jupyter-loopback`` (the core
+dependency) ships the ``jupyter-server`` extension that proxies tile
+requests through your notebook server, so no ``jupyter-server-proxy``
+configuration is required. See :doc:`remote-jupyter` for details.
 
 **Additional colormaps:**
 
