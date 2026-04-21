@@ -2,7 +2,11 @@
 Local tile server for serving geospatial raster tiles in Jupyter.
 """
 
-from localtileserver._version import __version__
+try:
+    from localtileserver._version import version as __version__
+except ImportError:  # Only happens if not properly installed.
+    __version__ = "unknown"
+
 from localtileserver.client import STACClient, TileClient, get_or_create_tile_client
 from localtileserver.helpers import hillshade, parse_shapely, polygon_to_geojson, save_new_raster
 from localtileserver.report import Report

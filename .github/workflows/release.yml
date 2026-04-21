@@ -1,29 +1,82 @@
-name: Package Release
+name: Build
+
 on:
+  release:
+    types: [published]
   push:
+    branches:
+      - main
     tags:
       - "*"
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
 
 jobs:
-  publish:
+  package:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v6.0.2
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v6.2.0
+        uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Install dependencies
+      - name: Install build tooling
         run: |
           python -m pip install --upgrade pip
-          pip install build twine
-      - name: Build and Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+          pip install --upgrade build setuptools_scm twine
+      - name: Show resolved version
         run: |
-          python -m build
-          twine upload --skip-existing dist/*
+          echo "git describe: $(git describe --tags --always --dirty)"
+          echo "setuptools_scm: $(python -m setuptools_scm)"
+      - name: Build package
+        run: python -m build
+      - name: Verify wheel version matches tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME#v}"
+          wheel_version="$(python -m setuptools_scm)"
+          echo "tag (normalized): $tag"
+          echo "wheel version:    $wheel_version"
+          if [ "$tag" != "$wheel_version" ]; then
+            echo "::error::Wheel version '$wheel_version' does not match tag '$tag'"
+            exit 1
+          fi
+      - name: Check package
+        run: twine check --strict dist/*
+      - name: Smoke test wheel
+        run: |
+          pip install dist/localtileserver*.whl
+          python -c "import localtileserver; print(localtileserver.__version__)"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist
+
+  pypi:
+    needs: package
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'release' ||
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+    environment:
+      name: pypi
+      url: https://pypi.org/p/localtileserver
+    permissions:
+      id-token: write # OIDC for trusted publishing
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

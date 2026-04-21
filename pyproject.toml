@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=64"]
+requires = ["setuptools>=64", "setuptools_scm[toml]>=8"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "localtileserver"
-version = "1.0.0rc0"
+dynamic = ["version"]
 description = "Locally serve geospatial raster tiles in the Slippy Map standard."
 readme = "README.md"
 license = "MIT"
@@ -75,6 +75,10 @@ include = ["localtileserver*"]
 [tool.setuptools.package-data]
 "localtileserver.tiler.data" = ["*.tif", "*.xml", "*.wkb"]
 "localtileserver.web" = ["static/**/*", "templates/**/*"]
+
+[tool.setuptools_scm]
+version_file = "localtileserver/_version.py"
+version_scheme = "release-branch-semver"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

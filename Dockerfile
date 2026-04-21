@@ -27,6 +27,12 @@ WORKDIR /build-context
 
 RUN python -m pip install --upgrade --no-cache-dir pip
 
+# Version is computed by setuptools_scm from git, which isn't available inside
+# the build context. Pass it in as a build arg (the CI workflow derives it from
+# the checked-out repo); the default is a safe placeholder for ad-hoc builds.
+ARG SETUPTOOLS_SCM_PRETEND_VERSION_FOR_LOCALTILESERVER=0.0.0+docker
+ENV SETUPTOOLS_SCM_PRETEND_VERSION_FOR_LOCALTILESERVER=${SETUPTOOLS_SCM_PRETEND_VERSION_FOR_LOCALTILESERVER}
+
 COPY pyproject.toml README.md /build-context/
 COPY localtileserver/ /build-context/localtileserver/
 
