@@ -13,9 +13,9 @@ jobs:
   build-doc:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Set up Python
-        uses: actions/setup-python@v6.1.0
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: "3.13"
       - name: Install localtileserver with doc dependencies
@@ -25,7 +25,7 @@ jobs:
       - name: Build Documentation
         run: sphinx-build -M html doc/source doc/build
       - name: Stash build
-        uses: actions/upload-artifact@v6.0.0
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: doc-build
           path: doc/build
@@ -38,8 +38,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6.0.1
-      - uses: actions/download-artifact@v6.0.0
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/download-artifact@v8.0.1
         with:
           name: doc-build
           path: doc/build

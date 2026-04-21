@@ -16,9 +16,9 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v6.0.1
+      - uses: actions/checkout@v6.0.2
       - name: Set up Python
-        uses: actions/setup-python@v6.1.0
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install localtileserver with test dependencies
@@ -29,7 +29,7 @@ jobs:
         run: |
           pytest --cov=localtileserver
           coverage xml -o coverage.xml
-      - uses: codecov/codecov-action@v5.5.2
+      - uses: codecov/codecov-action@v6.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
