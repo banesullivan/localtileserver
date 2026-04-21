@@ -12,6 +12,6 @@ if sentry_dsn:
     sentry_sdk.init(
         dsn=sentry_dsn,
         # Errors only — no performance transactions. Raise traces_sample_rate
-        # (0.0–1.0) to sample transactions if you want performance data back.
+        # (0.0 - 1.0) to sample transactions if you want performance data back.
         traces_sample_rate=0.0,
     )
