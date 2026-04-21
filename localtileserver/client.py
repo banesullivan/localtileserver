@@ -904,21 +904,23 @@ class TileServerMixin:
         str
             The client-facing base URL.
         """
-        scheme = (
-            "http://"
-            if self.client_host is not None and not self.client_host.startswith("http")
-            else ""
-        )
-        if self.client_port is not None and self.client_host is not None:
-            base = f"{scheme}{self.client_host}:{self.client_port}"
-        elif self.client_port is None and self.client_host is not None:
-            base = f"{scheme}{self.client_host}"
-        elif self.client_port is not None and self.client_host is None:
+        host = self.client_host.rstrip("/") if self.client_host is not None else None
+        scheme = "http://" if host is not None and not host.startswith("http") else ""
+        if self.client_port is not None and host is not None:
+            base = f"{scheme}{host}:{self.client_port}"
+        elif self.client_port is None and host is not None:
+            base = f"{scheme}{host}"
+        elif self.client_port is not None and host is None:
             base = f"http://{self.server_host}:{self.client_port}"
         else:
             base = "/"  # Use relative path
-        if self.client_prefix is not None:
-            base = f"{base}{self.client_prefix}"
+        if self.client_prefix:
+            prefix = self.client_prefix
+            if base.endswith("/"):
+                prefix = prefix.lstrip("/")
+            elif not prefix.startswith("/"):
+                prefix = f"/{prefix}"
+            base = f"{base}{prefix}"
         if base.startswith("/"):
             base = f"/{base.lstrip('/')}"
         return base
@@ -948,8 +950,15 @@ class TileServerMixin:
             or self.client_host is not None
             or self.client_prefix is not None
         ):
-            return self._produce_url(f"{self.client_base_url}/{path.lstrip('/')}")
-        return self._produce_url(f"{self.server_base_url}/{path.lstrip('/')}")
+            base = self.client_base_url
+        else:
+            base = self.server_base_url
+        # Normalize the join so the result never contains "//" between host
+        # and path. Starlette does not collapse "//" in request paths (unlike
+        # Werkzeug), so a trailing slash on ``client_host`` or ``client_prefix``
+        # would otherwise produce tile URLs that 404.
+        sep = "" if base.endswith("/") else "/"
+        return self._produce_url(f"{base}{sep}{path.lstrip('/')}")
 
     def get_tile_url(
         self,

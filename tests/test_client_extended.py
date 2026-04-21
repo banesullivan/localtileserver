@@ -216,6 +216,31 @@ def test_client_with_http_host(tile_client):
     assert not url.startswith("http://https://")
 
 
+def test_client_host_trailing_slash_does_not_produce_double_slash(tile_client):
+    tile_client.client_host = "https://tileserver.example.com/"
+    tile_client.client_port = None
+    tile_client.client_prefix = None
+    url = tile_client.create_url("api/tiles/{z}/{x}/{y}.png", client=True)
+    assert "//api/tiles" not in url
+    assert "https://tileserver.example.com/api/tiles/" in url
+
+
+def test_client_prefix_trailing_slash_host_single_slash_between(tile_client):
+    tile_client.client_host = "https://proxy.example.com/"
+    tile_client.client_port = None
+    tile_client.client_prefix = "/foo/bar"
+    url = tile_client.create_url("api/tiles/1/2/3.png", client=True)
+    assert "//" not in url.split("://", 1)[1]
+
+
+def test_client_prefix_without_leading_slash(tile_client):
+    tile_client.client_host = "example.com"
+    tile_client.client_port = None
+    tile_client.client_prefix = "proxy/svc"
+    url = tile_client.client_base_url
+    assert url == "http://example.com/proxy/svc"
+
+
 # --- get_or_create_tile_client ---
 
 

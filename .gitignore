@@ -46,3 +46,5 @@ gdalwmscache/
 bin/
 electron/
 notebooks/
+
+uv.lock
