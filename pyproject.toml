@@ -79,6 +79,11 @@ include = ["localtileserver*"]
 [tool.setuptools_scm]
 version_file = "localtileserver/_version.py"
 version_scheme = "release-branch-semver"
+# Heroku's Python buildpack strips .git from the build context, so
+# setuptools-scm can't infer a version from tags there. Fall back to a
+# placeholder so the install step doesn't abort; real releases (PyPI, CI)
+# always have .git present and use the inferred version.
+fallback_version = "0.0.0+unknown"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
