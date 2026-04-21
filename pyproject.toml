@@ -160,4 +160,3 @@ exclude = [
   'examples\.get_',                                                                                                                                                                # @wraps-decorated example loaders
   'examples\.load_',                                                                                                                                                               # example data loaders
 ]
-
