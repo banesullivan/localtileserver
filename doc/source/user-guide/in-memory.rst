@@ -34,5 +34,5 @@
 
 .. jupyter-execute::
 
-    client = lts.TileClient(raster_dataset)
+    client = lts.open(raster_dataset)
     client.thumbnail(colormap="terrain")

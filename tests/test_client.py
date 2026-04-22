@@ -168,7 +168,31 @@ def test_get_or_create_tile_client(bahamas_file):
 
 
 def test_open(bahamas_file):
-    assert lts.open(bahamas_file)
+    client = lts.open(bahamas_file)
+    assert isinstance(client, TileClient)
+    assert str(client.filename) == str(get_clean_filename(bahamas_file))
+
+
+def test_open_rasterio_dataset(bahamas_file):
+    with rasterio.open(bahamas_file) as src:
+        client = lts.open(src)
+    assert isinstance(client, TileClient)
+
+
+def test_open_passthrough_tile_client(bahamas_file):
+    original = TileClient(bahamas_file)
+    passed = lts.open(original)
+    assert passed is original
+
+
+def test_open_forwards_kwargs(bahamas_file):
+    client = lts.open(bahamas_file, debug=True, cors_all=True)
+    assert isinstance(client, TileClient)
+
+
+def test_open_invalid_source():
+    with pytest.raises(RasterioIOError):
+        lts.open(__file__)
 
 
 def test_point(bahamas):

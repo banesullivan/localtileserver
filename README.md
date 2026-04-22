@@ -67,11 +67,11 @@ m
 Compute derived imagery on the fly using band math expressions:
 
 ```py
-client = TileClient('path/to/multispectral.tif')
+client = lts.open('path/to/multispectral.tif')
 
 # NDVI: (NIR - Red) / (NIR + Red) where NIR=b4, Red=b1
-t = get_leaflet_tile_layer(client, expression='(b4-b1)/(b4+b1)',
-                           vmin=-1, vmax=1, colormap='RdYlGn')
+t = lts.get_leaflet_tile_layer(client, expression='(b4-b1)/(b4+b1)',
+                               vmin=-1, vmax=1, colormap='RdYlGn')
 ```
 
 ### STAC Support
@@ -121,7 +121,7 @@ If you use a `TileClient` outside those helpers (e.g. embedding raw tile
 URLs in a custom HTML output), call the method explicitly:
 
 ```py
-client = TileClient('path/to/geo.tif')
+client = lts.open('path/to/geo.tif')
 client.enable_jupyter_loopback()
 ```
 
