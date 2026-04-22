@@ -1,5 +1,17 @@
 """
-Local tile server for serving geospatial raster tiles in Jupyter.
+``localtileserver`` — serve geospatial raster tiles from Python.
+
+A background tile server (FastAPI + rio-tiler) that streams Slippy-map
+tiles to ``ipyleaflet`` / ``folium`` / CesiumJS / any HTTP client, from:
+
+- local raster files and remote Cloud Optimized GeoTIFFs
+- STAC items (via :class:`STACClient`)
+- xarray DataArrays (NetCDF, Zarr, ...)
+- virtual mosaics of many rasters
+
+The usual entrypoint is :func:`open`, which returns a
+:class:`TileClient` ready for use with :func:`get_leaflet_tile_layer`,
+:func:`get_folium_tile_layer`, and the other helpers.
 """
 
 try:

@@ -18,17 +18,18 @@ Use the ``expression`` parameter with :func:`get_leaflet_tile_layer` or the
 
 .. jupyter-execute::
 
-  from localtileserver import TileClient, get_leaflet_tile_layer, examples
+  import localtileserver as lts
+  from localtileserver import examples
   from ipyleaflet import Map
 
   client = examples.get_landsat()
 
   # NDVI: (NIR - Red) / (NIR + Red)
   # Landsat bands: b4 = NIR, b3 = Red
-  t = get_leaflet_tile_layer(client,
-                             expression='(b4-b3)/(b4+b3)',
-                             vmin=-0.5, vmax=0.5,
-                             colormap='rdylgn')
+  t = lts.get_leaflet_tile_layer(client,
+                                 expression='(b4-b3)/(b4+b3)',
+                                 vmin=-0.5, vmax=0.5,
+                                 colormap='rdylgn')
 
   m = Map(center=client.center(), zoom=client.default_zoom)
   m.add(t)

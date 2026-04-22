@@ -44,15 +44,15 @@ The ``stretch`` parameter is available on ``TileClient.tile()``,
 
 .. jupyter-execute::
 
-  from localtileserver import TileClient, get_leaflet_tile_layer
+  import localtileserver as lts
   from localtileserver.tiler.data import get_co_elevation_url
   from ipyleaflet import Map, ScaleControl, FullScreenControl, SplitMapControl
 
-  client = TileClient(get_co_elevation_url())
+  client = lts.open(get_co_elevation_url())
 
   # Compare linear (2nd-98th percentile) vs. histogram equalization
-  l = get_leaflet_tile_layer(client, colormap='terrain', stretch='linear')
-  r = get_leaflet_tile_layer(client, colormap='terrain', stretch='equalize')
+  l = lts.get_leaflet_tile_layer(client, colormap='terrain', stretch='linear')
+  r = lts.get_leaflet_tile_layer(client, colormap='terrain', stretch='equalize')
 
   m = Map(center=client.center(), zoom=client.default_zoom)
   control = SplitMapControl(left_layer=l, right_layer=r)
