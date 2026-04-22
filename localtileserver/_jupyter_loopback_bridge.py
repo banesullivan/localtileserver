@@ -37,12 +37,13 @@ logger = logging.getLogger(__name__)
 # in this kernel. Deduplicating at this layer keeps tile-layer
 # construction idempotent from the user's point of view -- repeated
 # calls don't spam the cell output with redundant ``<script>`` tags.
-_INTERCEPTED: set[int] = set()
+# Each entry is ``(port, path_prefix_or_None)`` so switching the
+# prefix for a previously-registered port still propagates.
+_INTERCEPTED: set[tuple[int, str | None]] = set()
 
 # One-shot warning flags so users see a single actionable log line
-# instead of either silence or a flood when their jupyter-loopback
-# install is too old or missing its ``[comm]`` extra.
-_warned_old_version = False
+# instead of either silence or a flood when the ``jupyter-loopback``
+# install is broken.
 _warned_missing_extra = False
 
 
@@ -54,13 +55,13 @@ def _is_disabled() -> bool:
     return value.lower() not in ("", "0", "false", "no", "off")
 
 
-def enable_for_port(port: int | None) -> None:
+def enable_for_port(port: int | None, *, path_prefix: str | None = None) -> None:
     """
     Install the jupyter-loopback interceptor for a single loopback port.
 
-    Safe to call many times for the same port; only the first call
-    actually emits the bridge widget and the interceptor ``<script>``.
-    Silently no-ops when the user has set
+    Safe to call many times for the same ``(port, path_prefix)`` pair;
+    only the first call actually emits the bridge widget and the
+    interceptor ``<script>``. Silently no-ops when the user has set
     ``LOCALTILESERVER_DISABLE_JUPYTER_LOOPBACK`` or when ``port`` is
     ``None``.
 
@@ -69,33 +70,30 @@ def enable_for_port(port: int | None) -> None:
     port : int or None
         The loopback port of the tile server, typically
         :attr:`TileClient.server_port`.
+    path_prefix : str or None, keyword-only, optional
+        Absolute URL path (with ``{port}`` already substituted) that
+        also routes to this loopback port through
+        :func:`jupyter_loopback.setup_proxy_handler`'s HTTP proxy. When
+        supplied, jupyter-loopback probes the prefix once to decide
+        whether to route through the HTTP proxy (when the extension is
+        loaded on the single-user server) or through the comm bridge
+        (when it isn't, as in JupyterHub deployments whose single-user
+        env differs from the kernel env). Passing the prefix here is
+        what makes tile layers work end-to-end in those Hub setups.
     """
-    global _warned_old_version, _warned_missing_extra
+    global _warned_missing_extra
 
     if port is None or _is_disabled():
         return
     port_int = int(port)
-    if port_int in _INTERCEPTED:
-        return
-    # ``intercept_localhost`` landed in jupyter-loopback 0.2 -- the bit
-    # of the library that makes webview frontends actually work. If an
-    # older install is present, log a single informative warning the
-    # first time we notice so the user isn't left hunting silent
-    # no-ops, then bail out.
-    if not hasattr(jupyter_loopback, "intercept_localhost"):
-        if not _warned_old_version:
-            logger.warning(
-                "localtileserver: jupyter-loopback %s lacks intercept_localhost; "
-                "tile URLs won't be rerouted in VS Code / Colab / other webview "
-                "frontends. Upgrade with `pip install -U jupyter-loopback[comm]`.",
-                getattr(jupyter_loopback, "__version__", "unknown"),
-            )
-            _warned_old_version = True
+    prefix_clean = (path_prefix or "").rstrip("/") or None
+    key = (port_int, prefix_clean)
+    if key in _INTERCEPTED:
         return
     try:
         if not jupyter_loopback.is_comm_bridge_enabled():
             jupyter_loopback.enable_comm_bridge()
-        jupyter_loopback.intercept_localhost(port_int)
+        jupyter_loopback.intercept_localhost(port_int, path_prefix=prefix_clean)
     except ImportError as exc:
         # Almost always means the ``[comm]`` extra (``anywidget``) is
         # missing. Surface it once, clearly, instead of letting the bridge
@@ -117,16 +115,21 @@ def enable_for_port(port: int | None) -> None:
         # degrades to "tiles still fail" rather than "import explodes".
         logger.debug("localtileserver: jupyter-loopback setup failed: %s", exc)
         return
-    _INTERCEPTED.add(port_int)
+    _INTERCEPTED.add(key)
 
 
-def enable_jupyter_loopback(port: int | None = None) -> None:
+def enable_jupyter_loopback(
+    port: int | None = None,
+    *,
+    path_prefix: str | None = None,
+) -> None:
     """
     Ensure the jupyter-loopback comm bridge is active for a tile server port.
 
     Most users will never need to call this directly:
     :func:`get_leaflet_tile_layer` and :func:`get_folium_tile_layer`
-    do it automatically for the port of the client they wrap, and
+    do it automatically for the port (and autodetected proxy prefix)
+    of the client they wrap, and
     :meth:`TileClient.enable_jupyter_loopback` exposes it as a method
     on the client itself.
 
@@ -141,6 +144,11 @@ def enable_jupyter_loopback(port: int | None = None) -> None:
         The loopback port to intercept. If omitted, this function is a
         no-op (pass an explicit ``None`` in programmatic code to make
         the intent clear).
+    path_prefix : str or None, keyword-only, optional
+        The absolute URL path prefix that routes to this port via the
+        HTTP proxy. Supply this on JupyterHub so the comm bridge can
+        take over when the single-user server lacks the localtileserver
+        extension.
 
     See Also
     --------
@@ -153,4 +161,4 @@ def enable_jupyter_loopback(port: int | None = None) -> None:
     ``LOCALTILESERVER_DISABLE_JUPYTER_LOOPBACK=1`` in your environment
     before importing ``localtileserver``.
     """
-    enable_for_port(port)
+    enable_for_port(port, path_prefix=path_prefix)

@@ -932,7 +932,7 @@ class TileServerMixin:
         ``LOCALTILESERVER_DISABLE_JUPYTER_LOOPBACK=1`` before importing
         ``localtileserver``.
         """
-        _enable_for_port(self.server_port)
+        _enable_for_port(self.server_port, path_prefix=self.client_prefix)
 
     @property
     def client_base_url(self):

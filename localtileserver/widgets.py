@@ -187,7 +187,11 @@ def get_leaflet_tile_layer(
     # Route the tile URLs through jupyter-loopback's comm bridge so the
     # browser can reach them in webview frontends (VS Code, Colab, etc.)
     # where root-relative paths don't resolve to the jupyter-server.
-    enable_for_port(source.server_port)
+    # Passing ``client_prefix`` -- already substituted with the server
+    # port -- lets the bridge probe it and fall back to comm on
+    # JupyterHub deployments where the single-user server doesn't have
+    # the localtileserver extension loaded.
+    enable_for_port(source.server_port, path_prefix=source.client_prefix)
     return tile_layer
 
 
@@ -313,5 +317,9 @@ def get_folium_tile_layer(
     # Route the tile URLs through jupyter-loopback's comm bridge so the
     # browser can reach them in webview frontends (VS Code, Colab, etc.)
     # where root-relative paths don't resolve to the jupyter-server.
-    enable_for_port(source.server_port)
+    # Passing ``client_prefix`` -- already substituted with the server
+    # port -- lets the bridge probe it and fall back to comm on
+    # JupyterHub deployments where the single-user server doesn't have
+    # the localtileserver extension loaded.
+    enable_for_port(source.server_port, path_prefix=source.client_prefix)
     return tile_layer
