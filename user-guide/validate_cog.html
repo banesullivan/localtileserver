@@ -45,7 +45,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src="../_static/documentation_options.js?v=81e89935"></script>
+    <script src="../_static/documentation_options.js?v=ecf33969"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -446,13 +446,13 @@ GeoTIFF.</p>
 <p>You can use the script by:</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_cog</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lts</span>
 
 <span class="c1"># Path to raster (URL or local path)</span>
 <span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/landsat7.tif&#39;</span>
 
 <span class="c1"># If invalid, returns False</span>
-<span class="n">validate_cog</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="n">lts</span><span class="o">.</span><span class="n">validate_cog</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -465,12 +465,13 @@ GeoTIFF.</p>
 <p>This can also be used with an existing <a class="reference internal" href="../api/python-client.html#localtileserver.TileClient" title="localtileserver.TileClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">localtileserver.TileClient</span></code></a>:</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span><span class="p">,</span> <span class="n">validate_cog</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lts</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
 
 <span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_san_francisco</span><span class="p">()</span>
 
 <span class="c1"># If invalid, returns False</span>
-<span class="n">validate_cog</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+<span class="n">lts</span><span class="o">.</span><span class="n">validate_cog</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

@@ -45,7 +45,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src="../_static/documentation_options.js?v=81e89935"></script>
+    <script src="../_static/documentation_options.js?v=ecf33969"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -448,6 +448,50 @@ useful when running in Docker and performing port forwarding.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="localtileserver.open">
+<span class="sig-prename descclassname"><span class="pre">localtileserver.</span></span><span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#localtileserver.TileClient" title="localtileserver.client.TileClient"><span class="pre">TileClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#localtileserver.STACClient" title="localtileserver.client.STACClient"><span class="pre">STACClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">DatasetReaderBase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'default'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'127.0.0.1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cors_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#localtileserver.TileClient" title="localtileserver.client.TileClient"><span class="pre">TileClient</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#localtileserver.STACClient" title="localtileserver.client.STACClient"><span class="pre">STACClient</span></a></span></span><a class="headerlink" href="#localtileserver.open" title="Link to this definition">#</a></dt>
+<dd><p>Open a raster source as a <a class="reference internal" href="#localtileserver.TileClient" title="localtileserver.TileClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">TileClient</span></code></a>.</p>
+<p>Convenience entrypoint modeled after <code class="docutils literal notranslate"><span class="pre">rasterio.open</span></code> /
+<code class="docutils literal notranslate"><span class="pre">xarray.open_dataset</span></code>. Launches a background tile server for the
+given source and returns a client ready for use with
+<a class="reference internal" href="#localtileserver.get_leaflet_tile_layer" title="localtileserver.get_leaflet_tile_layer"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_leaflet_tile_layer()</span></code></a>,
+<a class="reference internal" href="#localtileserver.get_folium_tile_layer" title="localtileserver.get_folium_tile_layer"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_folium_tile_layer()</span></code></a>, and the other
+visualization helpers.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">source</span></code> is already a <a class="reference internal" href="#localtileserver.TileClient" title="localtileserver.TileClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">TileClient</span></code></a> or
+<a class="reference internal" href="#localtileserver.STACClient" title="localtileserver.STACClient"><code class="xref py py-class docutils literal notranslate"><span class="pre">STACClient</span></code></a>, it is validated and returned
+unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>pathlib.Path</em><em>, </em><em>str</em><em>, </em><a class="reference internal" href="#localtileserver.TileClient" title="localtileserver.TileClient"><em>TileClient</em></a><em>, </em><a class="reference internal" href="#localtileserver.STACClient" title="localtileserver.STACClient"><em>STACClient</em></a><em>, or </em><em>rasterio.io.DatasetReaderBase</em>) – The raster source. A local path, a URL to a remote COG, a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">rasterio.io.DatasetReader</span></code>, or an already-running client.</p></li>
+<li><p><strong>port</strong> (<em>int</em><em> or </em><em>str</em><em>, </em><em>optional</em>) – Port on the host machine for the tile server. Defaults to
+<code class="docutils literal notranslate"><span class="pre">&quot;default&quot;</span></code>, which picks an available port.</p></li>
+<li><p><strong>debug</strong> (<em>bool</em><em>, </em><em>optional</em>) – Run the tile server in debug mode.</p></li>
+<li><p><strong>host</strong> (<em>str</em><em>, </em><em>optional</em>) – Host address to bind the tile server to.</p></li>
+<li><p><strong>client_port</strong> (<em>int</em><em>, </em><em>optional</em>) – Port the client browser should use when fetching tiles. Useful
+when running in Docker with port forwarding.</p></li>
+<li><p><strong>client_host</strong> (<em>str</em><em>, </em><em>optional</em>) – Host the client browser should use when fetching tiles.</p></li>
+<li><p><strong>client_prefix</strong> (<em>str</em><em>, </em><em>optional</em>) – URL prefix for proxied access to the tile server.</p></li>
+<li><p><strong>cors_all</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, enable CORS for all origins on the tile server.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A running tile client for <code class="docutils literal notranslate"><span class="pre">source</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#localtileserver.TileClient" title="localtileserver.TileClient">TileClient</a> or <a class="reference internal" href="#localtileserver.STACClient" title="localtileserver.STACClient">STACClient</a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lts</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">lts</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;path/to/raster.tif&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">default_zoom</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
@@ -1462,6 +1506,7 @@ Mutually exclusive with <code class="docutils literal notranslate"><span class="
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tileclient">TileClient</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.TileClient"><code class="docutils literal notranslate"><span class="pre">TileClient</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.open"><code class="docutils literal notranslate"><span class="pre">open()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.get_or_create_tile_client"><code class="docutils literal notranslate"><span class="pre">get_or_create_tile_client()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TilerInterface"><code class="docutils literal notranslate"><span class="pre">TilerInterface</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TilerInterface.band_names"><code class="docutils literal notranslate"><span class="pre">TilerInterface.band_names</span></code></a></li>

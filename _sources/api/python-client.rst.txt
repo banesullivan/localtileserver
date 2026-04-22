@@ -13,6 +13,8 @@ TileClient
    :undoc-members:
    :show-inheritance:
 
+.. autofunction:: localtileserver.open
+
 .. autofunction:: localtileserver.get_or_create_tile_client
 
 .. autoclass:: localtileserver.client.TilerInterface
