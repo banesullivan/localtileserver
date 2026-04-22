@@ -28,7 +28,7 @@ dependencies = [
   # ``[comm]`` pulls in ``anywidget`` so the jupyter-loopback bridge
   # works out of the box in VS Code / Colab / Shiny / Solara / marimo.
   # Without it, tile URLs silently fail in those frontends.
-  "jupyter-loopback[comm]>=0.3.1",
+  "jupyter-loopback[comm]>=0.3.2",
   "rio-tiler",
   "rio-cogeo",
   "requests",
