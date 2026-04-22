@@ -734,14 +734,21 @@ class TileServerMixin:
         self._key = launch_server(app, port=port, debug=debug, host=host)
         # Store actual port just in case
         self._port = ServerManager.get_server(self._key).srv.port
+        # During a docs build, point at the hosted demo server *before*
+        # autodetection runs. nbsphinx / myst-nb execute notebooks inside
+        # a Jupyter kernel, so autodetect_prefix would otherwise stamp a
+        # /localtileserver-proxy/<port>/ prefix onto every tile URL — and
+        # those URLs end up rendered into HTML served from a different
+        # origin (tileserver.banesullivan.com) that doesn't host that
+        # proxy route, producing 404s.
+        if BUILDING_DOCS and not client_host:
+            client_host = DEMO_REMOTE_TILE_SERVER
         client_host, client_port, client_prefix = get_default_client_params(
             client_host, client_port, client_prefix
         )
         self.client_host = client_host
         self.client_port = client_port
         self.client_prefix = client_prefix
-        if BUILDING_DOCS and not client_host:
-            self._client_host = DEMO_REMOTE_TILE_SERVER
 
         if not debug:
             logging.getLogger("rasterio").setLevel(logging.ERROR)
