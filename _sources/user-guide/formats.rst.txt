@@ -46,7 +46,7 @@ thumbnail methods:
 
 .. jupyter-execute::
 
-  from localtileserver import TileClient, examples
+  from localtileserver import examples
 
   client = examples.get_san_francisco()
 

@@ -45,7 +45,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src="../_static/documentation_options.js?v=ecf33969"></script>
+    <script src="../_static/documentation_options.js?v=ed4fbead"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -447,10 +447,10 @@ downloading specific regions of interest from large rasters.</p>
 <div class="jupyter_cell jupyter_container docutils container">
 <div class="cell_input code_cell docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">TileClient</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lts</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver.tiler.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_data_path</span>
 
-<span class="n">client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="n">get_data_path</span><span class="p">(</span><span class="s1">&#39;bahamas_rgb.tif&#39;</span><span class="p">))</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">lts</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">get_data_path</span><span class="p">(</span><span class="s1">&#39;bahamas_rgb.tif&#39;</span><span class="p">))</span>
 
 <span class="c1"># Get the dataset bounds (south, west, north, east)</span>
 <span class="n">b</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>

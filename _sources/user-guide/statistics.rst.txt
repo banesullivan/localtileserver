@@ -14,7 +14,7 @@ Use the ``statistics()`` method on a ``TileClient`` instance:
 
 .. jupyter-execute::
 
-  from localtileserver import TileClient, examples
+  from localtileserver import examples
 
   client = examples.get_landsat()
 

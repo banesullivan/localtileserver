@@ -14,10 +14,10 @@ Use ``TileClient.part()`` to extract a rectangular region by bounding box:
 .. jupyter-execute::
 
   from IPython.display import Image, display
-  from localtileserver import TileClient
+  import localtileserver as lts
   from localtileserver.tiler.data import get_data_path
 
-  client = TileClient(get_data_path('bahamas_rgb.tif'))
+  client = lts.open(get_data_path('bahamas_rgb.tif'))
 
   # Get the dataset bounds (south, west, north, east)
   b = client.bounds()

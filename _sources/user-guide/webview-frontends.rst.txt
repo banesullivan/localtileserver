@@ -32,10 +32,10 @@ workflow requires nothing beyond what you're already doing:
 
 .. code-block:: python
 
-   from localtileserver import get_leaflet_tile_layer, TileClient
+   import localtileserver as lts
 
-   client = TileClient('path/to/geo.tif')
-   t = get_leaflet_tile_layer(client)
+   client = lts.open('path/to/geo.tif')
+   t = lts.get_leaflet_tile_layer(client)
 
 :func:`get_leaflet_tile_layer` and :func:`get_folium_tile_layer` both
 automatically enable the comm bridge and register the client's port for
@@ -50,7 +50,7 @@ auto-activation path doesn't fire. Enable it yourself:
 
 .. code-block:: python
 
-   client = TileClient('path/to/geo.tif')
+   client = lts.open('path/to/geo.tif')
    client.enable_jupyter_loopback()
 
 Or at the package level, which is handy when the port is known but the

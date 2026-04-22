@@ -45,7 +45,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src="../_static/documentation_options.js?v=ecf33969"></script>
+    <script src="../_static/documentation_options.js?v=ed4fbead"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -460,10 +460,10 @@ of the network. Leaflet’s <code class="docutils literal notranslate"><span cla
 <p>This is included in the core install – <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">localtileserver</span></code>
 pulls in <code class="docutils literal notranslate"><span class="pre">jupyter-loopback[comm]</span></code> automatically, so the typical
 workflow requires nothing beyond what you’re already doing:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">TileClient</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lts</span>
 
-<span class="n">client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="s1">&#39;path/to/geo.tif&#39;</span><span class="p">)</span>
-<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">lts</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;path/to/geo.tif&#39;</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">lts</span><span class="o">.</span><span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="xref py py-func docutils literal notranslate"><span class="pre">get_leaflet_tile_layer()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">get_folium_tile_layer()</span></code> both
@@ -475,7 +475,7 @@ URL interception. No notebook changes required.</p>
 <p>If you’re embedding raw tile URLs into custom HTML outputs (or using
 anything other than the bundled <code class="docutils literal notranslate"><span class="pre">get_*_tile_layer</span></code> helpers), the
 auto-activation path doesn’t fire. Enable it yourself:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="s1">&#39;path/to/geo.tif&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">lts</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;path/to/geo.tif&#39;</span><span class="p">)</span>
 <span class="n">client</span><span class="o">.</span><span class="n">enable_jupyter_loopback</span><span class="p">()</span>
 </pre></div>
 </div>
