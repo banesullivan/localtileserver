@@ -32,6 +32,7 @@
    bokeh
    hillshade
    in-memory
+   webview-frontends
 
 
 Here is the "one-liner" to visualize a large geospatial image with
@@ -129,6 +130,11 @@ code as the ``ipyleaflet`` example, just note that :class:`folium.Map` is import
 - If matplotlib is installed, any matplotlib colormap name can be used as a palette choice
 - Band math expressions, stretch modes, and multiple output formats are supported across all tile endpoints
 - The server runs on FastAPI and provides interactive API docs at ``/swagger/``
+- Tiles work in JupyterLab, Hub, Binder, and Notebook 7 out of the box.
+  In VS Code Jupyter (incl. Remote-SSH), Google Colab, Shiny, Solara, and
+  marimo, tiles are routed through a kernel comm channel via
+  `jupyter-loopback <https://github.com/banesullivan/jupyter-loopback>`_
+  (:ref:`details <webview-frontends>`).
 
 
 💭 Feedback

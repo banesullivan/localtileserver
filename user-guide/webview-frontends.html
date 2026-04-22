@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>📊 Statistics API &#8212; 🌐 localtileserver</title>
+    <title>🪟 VS Code, Colab, and other webview notebooks &#8212; 🌐 localtileserver</title>
   
   
   
@@ -53,13 +53,13 @@
     <script src="../_static/copybutton.js?v=49e1bf35"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@^1.0.1/dist/embed-amd.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'user-guide/statistics';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user-guide/webview-frontends';</script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
 
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="🔧 Image Stretch Modes" href="stretch.html" />
-    <link rel="prev" title="🧮 Band Math Expressions" href="expressions.html" />
+    <link rel="next" title="📖 API Reference" href="../api/index.html" />
+    <link rel="prev" title="🧠 In-Memory Rasters" href="in-memory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="" />
@@ -358,7 +358,7 @@
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="rgb.html">🧮 Controlling the RGB Bands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="expressions.html">🧮 Band Math Expressions</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">📊 Statistics API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">📊 Statistics API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stretch.html">🔧 Image Stretch Modes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="formats.html">🖼️ Output Formats</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spatial-subsets.html">🗺️ Spatial Subsets</a></li>
@@ -375,7 +375,7 @@
 <li class="toctree-l1"><a class="reference internal" href="bokeh.html">🎨 Plotting with Bokeh</a></li>
 <li class="toctree-l1"><a class="reference internal" href="hillshade.html">⛰️ DEM Hillshade</a></li>
 <li class="toctree-l1"><a class="reference internal" href="in-memory.html">🧠 In-Memory Rasters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="webview-frontends.html">🪟 VS Code, Colab, and other webview notebooks</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">🪟 VS Code, Colab, and other webview notebooks</a></li>
 </ul>
 </div>
 </nav></div>
@@ -419,7 +419,7 @@
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">🚀 User Guide</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">📊 Statistics API</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">🪟 VS Code, Colab, and other webview notebooks</span></li>
   </ul>
 </nav>
 </div>
@@ -436,170 +436,95 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="statistics-api">
-<h1>📊 Statistics API<a class="headerlink" href="#statistics-api" title="Link to this heading">#</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> provides a per-band statistics endpoint that returns
-comprehensive information about the data distribution in your raster file.
-This is useful for understanding data ranges, choosing appropriate <code class="docutils literal notranslate"><span class="pre">vmin</span></code>/<code class="docutils literal notranslate"><span class="pre">vmax</span></code>
-values, and quality-checking your data.</p>
-<section id="python-client">
-<h2>Python Client<a class="headerlink" href="#python-client" title="Link to this heading">#</a></h2>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">statistics()</span></code> method on a <code class="docutils literal notranslate"><span class="pre">TileClient</span></code> instance:</p>
-<div class="jupyter_cell jupyter_container docutils container">
-<div class="cell_input code_cell docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">TileClient</span><span class="p">,</span> <span class="n">examples</span>
+  <section id="vs-code-colab-and-other-webview-notebooks">
+<span id="webview-frontends"></span><h1>🪟 VS Code, Colab, and other webview notebooks<a class="headerlink" href="#vs-code-colab-and-other-webview-notebooks" title="Link to this heading">#</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> works out of the box in JupyterLab, Notebook 7,
+JupyterHub, and Binder because those frontends let the notebook browser
+reach the jupyter-server origin directly. Root-relative tile URLs like
+<code class="docutils literal notranslate"><span class="pre">/localtileserver-proxy/&lt;port&gt;/…</span></code> resolve against the jupyter-server,
+which routes them to the in-kernel tile server.</p>
+<p>A handful of popular frontends do <strong>not</strong> share that origin with the
+jupyter-server: VS Code Jupyter (including Remote-SSH), Google Colab,
+Shiny for Python, Solara, and marimo all render notebook outputs in a
+sandboxed webview. Root-relative URLs resolve to the webview’s own
+origin, so the proxy is invisible and the browser falls back to
+<code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;/…</span></code> – which doesn’t reach the kernel either.</p>
+<section id="how-localtileserver-fixes-this">
+<h2>How <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> fixes this<a class="headerlink" href="#how-localtileserver-fixes-this" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> integrates with
+<a class="reference external" href="https://github.com/banesullivan/jupyter-loopback">jupyter-loopback</a>
+to open a second path: the notebook’s own kernel comm channel. A small
+DOM shim rewrites matching <code class="docutils literal notranslate"><span class="pre">&lt;img</span> <span class="pre">src&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">fetch</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">XMLHttpRequest</span></code> calls so they travel over that comm channel instead
+of the network. Leaflet’s <code class="docutils literal notranslate"><span class="pre">createTile</span></code> doesn’t know anything changed.</p>
+<p>This is included in the core install – <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">localtileserver</span></code>
+pulls in <code class="docutils literal notranslate"><span class="pre">jupyter-loopback[comm]</span></code> automatically, so the typical
+workflow requires nothing beyond what you’re already doing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">localtileserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_leaflet_tile_layer</span><span class="p">,</span> <span class="n">TileClient</span>
 
-<span class="n">client</span> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">get_landsat</span><span class="p">()</span>
-
-<span class="c1"># Get statistics for all bands</span>
-<span class="n">stats</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">statistics</span><span class="p">()</span>
-
-<span class="k">for</span> <span class="n">band_name</span><span class="p">,</span> <span class="n">band_stats</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">band_name</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  min=</span><span class="si">{</span><span class="n">band_stats</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, max=</span><span class="si">{</span><span class="n">band_stats</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  mean=</span><span class="si">{</span><span class="n">band_stats</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">, std=</span><span class="si">{</span><span class="n">band_stats</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  percentile_2=</span><span class="si">{</span><span class="n">band_stats</span><span class="p">[</span><span class="s1">&#39;percentile_2&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  percentile_98=</span><span class="si">{</span><span class="n">band_stats</span><span class="p">[</span><span class="s1">&#39;percentile_98&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="s1">&#39;path/to/geo.tif&#39;</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">get_leaflet_tile_layer</span><span class="p">(</span><span class="n">client</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>b1:
-  min=18.0, max=138.0
-  mean=46.71, std=16.29
-  percentile_2=24.0
-  percentile_98=86.0
-b2:
-  min=13.0, max=155.0
-  mean=49.53, std=19.54
-  percentile_2=20.0
-  percentile_98=97.0
-b3:
-  min=9.0, max=143.0
-  mean=51.79, std=21.83
-  percentile_2=10.0
-  percentile_98=94.0
-b4:
-  min=4.0, max=200.0
-  mean=56.82, std=28.00
-  percentile_2=5.0
-  percentile_98=106.0
-b5:
-  min=1.0, max=147.0
-  mean=58.12, std=35.74
-  percentile_2=1.0
-  percentile_98=108.0
-b6:
-  min=167.0, max=222.0
-  mean=207.12, std=9.61
-  percentile_2=192.0
-  percentile_98=220.0
-b7:
-  min=0.0, max=117.0
-  mean=42.15, std=27.23
-  percentile_2=1.0
-  percentile_98=86.0
-</pre></div>
-</div>
-</div>
-</div>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">get_leaflet_tile_layer()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">get_folium_tile_layer()</span></code> both
+automatically enable the comm bridge and register the client’s port for
+URL interception. No notebook changes required.</p>
 </section>
-<section id="statistics-with-expressions">
-<h2>Statistics with Expressions<a class="headerlink" href="#statistics-with-expressions" title="Link to this heading">#</a></h2>
-<p>You can also compute statistics on derived bands using expressions:</p>
-<div class="jupyter_cell jupyter_container docutils container">
-<div class="cell_input code_cell docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Statistics for NDVI</span>
-<span class="n">ndvi_stats</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">statistics</span><span class="p">(</span><span class="n">expression</span><span class="o">=</span><span class="s1">&#39;(b4-b3)/(b4+b3)&#39;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">band_name</span><span class="p">,</span> <span class="n">band_stats</span> <span class="ow">in</span> <span class="n">ndvi_stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">band_name</span><span class="si">}</span><span class="s2">: min=</span><span class="si">{</span><span class="n">band_stats</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">, max=</span><span class="si">{</span><span class="n">band_stats</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<section id="using-a-tileclient-without-a-widget-helper">
+<h2>Using a <code class="docutils literal notranslate"><span class="pre">TileClient</span></code> without a widget helper<a class="headerlink" href="#using-a-tileclient-without-a-widget-helper" title="Link to this heading">#</a></h2>
+<p>If you’re embedding raw tile URLs into custom HTML outputs (or using
+anything other than the bundled <code class="docutils literal notranslate"><span class="pre">get_*_tile_layer</span></code> helpers), the
+auto-activation path doesn’t fire. Enable it yourself:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">TileClient</span><span class="p">(</span><span class="s1">&#39;path/to/geo.tif&#39;</span><span class="p">)</span>
+<span class="n">client</span><span class="o">.</span><span class="n">enable_jupyter_loopback</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-none notranslate"><div class="highlight"><pre><span></span>b1: min=-0.711, max=0.733
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="rest-api">
-<h2>REST API<a class="headerlink" href="#rest-api" title="Link to this heading">#</a></h2>
-<p>Statistics are available via the REST endpoint:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Per-band statistics</span>
-GET<span class="w"> </span>/api/statistics?filename<span class="o">=</span>geo.tif
+<p>Or at the package level, which is handy when the port is known but the
+client object isn’t nearby:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">localtileserver</span>
 
-<span class="c1"># Statistics for specific bands</span>
-GET<span class="w"> </span>/api/statistics?filename<span class="o">=</span>geo.tif<span class="p">&amp;</span><span class="nv">indexes</span><span class="o">=</span><span class="m">1</span>,2
-
-<span class="c1"># Statistics for an expression</span>
-GET<span class="w"> </span>/api/statistics?filename<span class="o">=</span>geo.tif<span class="p">&amp;</span><span class="nv">expression</span><span class="o">=(</span>b4-b1<span class="o">)</span>/<span class="o">(</span>b4+b1<span class="o">)</span>
+<span class="n">localtileserver</span><span class="o">.</span><span class="n">enable_jupyter_loopback</span><span class="p">(</span><span class="n">port</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Both calls are idempotent – registering the same port multiple times
+is a no-op, so dropping <code class="xref py py-meth docutils literal notranslate"><span class="pre">TileClient.enable_jupyter_loopback()</span></code> into
+a template or helper function is safe.</p>
 </section>
-<section id="response-format">
-<h2>Response Format<a class="headerlink" href="#response-format" title="Link to this heading">#</a></h2>
-<p>The statistics response is a JSON dictionary keyed by band name (e.g., <code class="docutils literal notranslate"><span class="pre">b1</span></code>,
-<code class="docutils literal notranslate"><span class="pre">b2</span></code>). Each band contains:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<colgroup>
-<col style="width: 25.0%" />
-<col style="width: 75.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Field</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min</span></code></p></td>
-<td><p>Minimum pixel value</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max</span></code></p></td>
-<td><p>Maximum pixel value</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
-<td><p>Mean pixel value</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std</span></code></p></td>
-<td><p>Standard deviation</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">median</span></code></p></td>
-<td><p>Median pixel value</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">count</span></code></p></td>
-<td><p>Total number of pixels (including masked)</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">valid_pixels</span></code></p></td>
-<td><p>Number of valid (unmasked) pixels</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">masked_pixels</span></code></p></td>
-<td><p>Number of masked pixels</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">valid_percent</span></code></p></td>
-<td><p>Percentage of valid pixels</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">percentile_2</span></code></p></td>
-<td><p>2nd percentile value</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">percentile_98</span></code></p></td>
-<td><p>98th percentile value</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">histogram</span></code></p></td>
-<td><p>Histogram as <code class="docutils literal notranslate"><span class="pre">[counts,</span> <span class="pre">bin_edges]</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">majority</span></code></p></td>
-<td><p>Most common pixel value</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">minority</span></code></p></td>
-<td><p>Least common pixel value</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unique</span></code></p></td>
-<td><p>Number of unique pixel values</p></td>
-</tr>
-</tbody>
-</table>
+<section id="opting-out">
+<h2>Opting out<a class="headerlink" href="#opting-out" title="Link to this heading">#</a></h2>
+<p>In JupyterLab / Hub / Binder / Notebook 7, the comm bridge is extra
+machinery you don’t need; it’s cheap but not free (one anywidget
+renders at the top of the cell where the tile layer is created). To
+disable the auto-activation globally, set an environment variable
+before importing <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">LOCALTILESERVER_DISABLE_JUPYTER_LOOPBACK</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
 </div>
+<p>Accepted truthy values are anything other than <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">false</span></code>,
+<code class="docutils literal notranslate"><span class="pre">no</span></code>, or <code class="docutils literal notranslate"><span class="pre">off</span></code> (case-insensitive).</p>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">#</a></h2>
+<p>Tiles still failing to load in VS Code Jupyter? Open the webview
+devtools (<code class="docutils literal notranslate"><span class="pre">Developer:</span> <span class="pre">Open</span> <span class="pre">Webview</span> <span class="pre">Developer</span> <span class="pre">Tools</span></code> in the command
+palette) and check the console:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">window.__jupyter_loopback__</span></code> should be defined. If not, the
+anywidget half of the bridge hasn’t booted. In VS Code this is often
+because the extension’s ipywidgets machinery can’t reach
+<code class="docutils literal notranslate"><span class="pre">unpkg.com</span></code> for widget scripts; set <code class="docutils literal notranslate"><span class="pre">jupyter.widgetScriptSources</span></code>
+in VS Code settings, or install <code class="docutils literal notranslate"><span class="pre">ipywidgets</span></code> into the kernel
+environment so VS Code uses the local copy.</p></li>
+<li><p>Look for <code class="docutils literal notranslate"><span class="pre">jupyter_loopback.interceptLocalhost:</span> <span class="pre">image</span> <span class="pre">fetch</span> <span class="pre">failed</span></code>
+error lines – they indicate a specific tile couldn’t be fetched
+through the comm bridge. The cause is usually a tile-server crash
+upstream, not the bridge itself.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http://127.0.0.1:&lt;port&gt;/…</span></code> requests with <code class="docutils literal notranslate"><span class="pre">net::ERR_FAILED</span></code>
+responses mean the interceptor wasn’t installed for that port. Call
+<code class="xref py py-func docutils literal notranslate"><span class="pre">localtileserver.enable_jupyter_loopback()</span></code> with the port or
+invoke <code class="xref py py-meth docutils literal notranslate"><span class="pre">TileClient.enable_jupyter_loopback()</span></code> on the owning
+client.</p></li>
+</ul>
 </section>
 </section>
 
@@ -626,17 +551,17 @@ GET<span class="w"> </span>/api/statistics?filename<span class="o">=</span>geo.t
   </div>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-client">Python Client</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#statistics-with-expressions">Statistics with Expressions</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rest-api">REST API</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#response-format">Response Format</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-localtileserver-fixes-this">How <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> fixes this</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#using-a-tileclient-without-a-widget-helper">Using a <code class="docutils literal notranslate"><span class="pre">TileClient</span></code> without a widget helper</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opting-out">Opting out</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#troubleshooting">Troubleshooting</a></li>
 </ul>
   </nav></div>
 
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../_sources/user-guide/statistics.rst.txt">
+    <a href="../_sources/user-guide/webview-frontends.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

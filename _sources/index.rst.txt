@@ -43,10 +43,10 @@ the `Slippy Maps standard <https://wiki.openstreetmap.org/wiki/Slippy_map_tilena
 
 
 .. |binder| image:: https://mybinder.org/badge_logo.svg
-   :target: https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD
+   :target: https://mybinder.org/v2/gh/banesullivan/localtileserver/HEAD?labpath=examples/example.ipynb
    :alt: MyBinder
 
-Launch a `demo <https://github.com/banesullivan/localtileserver-demo>`_ on MyBinder |binder|
+Try it live on MyBinder |binder| (more demos in ``examples/``).
 
 
 Built on `rio-tiler <https://github.com/cogeotiff/rio-tiler>`_ and

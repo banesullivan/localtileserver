@@ -45,7 +45,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src="../_static/documentation_options.js?v=c747b340"></script>
+    <script src="../_static/documentation_options.js?v=15c42df1"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -987,6 +987,25 @@ to the server port so that tiles are accessible within Colab.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="localtileserver.client.TileServerMixin.enable_jupyter_loopback">
+<span class="sig-name descname"><span class="pre">enable_jupyter_loopback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.TileServerMixin.enable_jupyter_loopback" title="Link to this definition">#</a></dt>
+<dd><p>Route this server’s tile URLs through the jupyter-loopback comm bridge.</p>
+<p>Use this in webview-based Jupyter frontends (VS Code Jupyter
+including Remote-SSH, Google Colab, Shiny for Python, Solara,
+marimo) where the notebook output pane can’t reach the
+jupyter-server origin directly. In JupyterLab, JupyterHub,
+Binder, and Notebook 7 this is unnecessary but harmless.</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">get_leaflet_tile_layer()</span></code> and <code class="xref py py-func docutils literal notranslate"><span class="pre">get_folium_tile_layer()</span></code>
+call this automatically, so the typical workflow never needs
+to invoke it explicitly. Reach for it when you’re using this
+client outside those helpers – e.g. embedding raw tile URLs
+in a custom HTML output.</p>
+<p>Opt out globally by setting
+<code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_DISABLE_JUPYTER_LOOPBACK=1</span></code> before importing
+<code class="docutils literal notranslate"><span class="pre">localtileserver</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="localtileserver.client.TileServerMixin.get_leaflet_map">
 <span class="sig-name descname"><span class="pre">get_leaflet_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">add_bounds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.client.TileServerMixin.get_leaflet_map" title="Link to this definition">#</a></dt>
 <dd><p>Get an ipyleaflet Map centered and zoomed to the dataset bounds.</p>
@@ -1472,6 +1491,7 @@ Mutually exclusive with <code class="docutils literal notranslate"><span class="
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TileServerMixin.client_prefix"><code class="docutils literal notranslate"><span class="pre">TileServerMixin.client_prefix</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TileServerMixin.create_url"><code class="docutils literal notranslate"><span class="pre">TileServerMixin.create_url()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TileServerMixin.enable_colab"><code class="docutils literal notranslate"><span class="pre">TileServerMixin.enable_colab()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TileServerMixin.enable_jupyter_loopback"><code class="docutils literal notranslate"><span class="pre">TileServerMixin.enable_jupyter_loopback()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TileServerMixin.get_leaflet_map"><code class="docutils literal notranslate"><span class="pre">TileServerMixin.get_leaflet_map()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TileServerMixin.get_tile_url"><code class="docutils literal notranslate"><span class="pre">TileServerMixin.get_tile_url()</span></code></a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#localtileserver.client.TileServerMixin.server"><code class="docutils literal notranslate"><span class="pre">TileServerMixin.server</span></code></a></li>

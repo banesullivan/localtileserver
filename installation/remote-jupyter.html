@@ -45,7 +45,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src="../_static/documentation_options.js?v=c747b340"></script>
+    <script src="../_static/documentation_options.js?v=15c42df1"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -420,38 +420,40 @@
                   
   <section id="remote-jupyter">
 <h1>📡 Remote Jupyter<a class="headerlink" href="#remote-jupyter" title="Link to this heading">#</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> is usable in remote Jupyter environments such JupyterHub
-on services like MyBinder. Further, you may be running Jupyter in a Docker
-container or other host and accessing through a browser on an arbitrary client.
-In order to retrieve tiles into the ipyleaflet or folium Jupyter widgets
-client-side in the browser, we must make sure the port on which
-<code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> is serving tiles is accessible to your browser.</p>
-<p>To make this easy, we can levarage <a class="reference external" href="https://github.com/jupyterhub/jupyter-server-proxy">jupyter-server-proxy</a> to expose the port on the Jupyter server through a proxy URL.</p>
-<p>Steps to use <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> in remote Jupyter environments:</p>
-<ol class="arabic simple">
-<li><p>Install <code class="docutils literal notranslate"><span class="pre">jupyter-server-proxy</span></code> for JupyterLab &gt;= 3</p></li>
-</ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">jupyter</span><span class="o">-</span><span class="n">server</span><span class="o">-</span><span class="n">proxy</span>
+<p><code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> works in remote Jupyter environments (JupyterHub,
+MyBinder, JupyterLab behind HTTPS) with zero user configuration.
+Installing <code class="docutils literal notranslate"><span class="pre">localtileserver[jupyter]</span></code> pulls in
+<a class="reference external" href="https://github.com/banesullivan/jupyter-loopback">jupyter-loopback</a>,
+which ships a tiny <code class="docutils literal notranslate"><span class="pre">jupyter-server</span></code> extension that proxies
+<code class="docutils literal notranslate"><span class="pre">&lt;base_url&gt;/localtileserver-proxy/&lt;port&gt;/...</span></code> to the in-kernel tile
+server, plus a kernel-side autodetect that routes URLs through that
+prefix automatically.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>localtileserver<span class="o">[</span>jupyter<span class="o">]</span>
 </pre></div>
 </div>
-<ol class="arabic simple" start="2">
-<li><p>Set <code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PREFIX</span></code> in your environment to <code class="docutils literal notranslate"><span class="pre">'proxy/{port}'</span></code> (stop here in most cases, continue to 3. if using JupyterHub):</p></li>
-</ol>
+<p>Create <code class="docutils literal notranslate"><span class="pre">TileClient</span></code> instances the same way you would locally.
+<code class="docutils literal notranslate"><span class="pre">get_leaflet_tile_layer</span></code> and <code class="docutils literal notranslate"><span class="pre">get_folium_tile_layer</span></code> produce URLs
+that resolve through the proxy on Lab, Hub, and Binder alike. The Hub
+per-user prefix (<code class="docutils literal notranslate"><span class="pre">/user/&lt;name&gt;/</span></code>) is handled automatically.</p>
+<section id="manual-prefix-override">
+<h2>Manual prefix override<a class="headerlink" href="#manual-prefix-override" title="Link to this heading">#</a></h2>
+<p>If you’re routing through something other than the bundled extension
+(for example an existing <code class="docutils literal notranslate"><span class="pre">jupyter-server-proxy</span></code> setup), set
+<code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PREFIX</span></code> and the autodetect stays out of the
+way:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">LOCALTILESERVER_CLIENT_PREFIX</span><span class="o">=</span><span class="s1">&#39;proxy/</span><span class="si">{port}</span><span class="s1">&#39;</span>
 </pre></div>
 </div>
-<ol class="arabic simple" start="3">
-<li><p>If using JupyterHub, you may need to alter <code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PREFIX</span></code> such that it includes your users ID. For example, on MyBinder, we are required to do:</p></li>
-</ol>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set host forwarding for MyBinder</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;LOCALTILESERVER_CLIENT_PREFIX&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;JUPYTERHUB_SERVICE_PREFIX&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">/proxy/</span><span class="se">{{</span><span class="s2">port</span><span class="se">}}</span><span class="s2">&quot;</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For more context, check out <a class="reference internal" href="docker.html#jupyter-docker"><span class="std std-ref">📓 Jupyter in Docker</span></a></p>
-</div>
+</section>
+<section id="frontends-without-a-jupyter-server">
+<h2>Frontends without a Jupyter server<a class="headerlink" href="#frontends-without-a-jupyter-server" title="Link to this heading">#</a></h2>
+<p>VS Code Remote notebooks, Google Colab, Shiny for Python, Solara, and
+marimo don’t run a <code class="docutils literal notranslate"><span class="pre">jupyter-server</span></code>, so the HTTP proxy above isn’t
+available. <code class="docutils literal notranslate"><span class="pre">jupyter-loopback</span></code> ships a <code class="docutils literal notranslate"><span class="pre">anywidget</span></code> comm bridge for
+these cases; it’s not wired into <code class="docutils literal notranslate"><span class="pre">localtileserver</span></code> yet. Watch for
+follow-up work or use the manual override above to point at whatever
+proxy your environment provides.</p>
+</section>
 </section>
 
 
@@ -468,6 +470,19 @@ client-side in the browser, we must make sure the port on which
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manual-prefix-override">Manual prefix override</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#frontends-without-a-jupyter-server">Frontends without a Jupyter server</a></li>
+</ul>
+  </nav></div>
 
   <div class="sidebar-secondary-item">
 

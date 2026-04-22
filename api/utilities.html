@@ -45,7 +45,7 @@
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src="../_static/documentation_options.js?v=c747b340"></script>
+    <script src="../_static/documentation_options.js?v=15c42df1"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../_static/thebelab-helper.js"></script>
@@ -747,12 +747,14 @@ prefixes, or an absolute <code class="docutils literal notranslate"><span class=
 <h2>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="localtileserver.configure.get_default_client_params">
-<span class="sig-prename descclassname"><span class="pre">localtileserver.configure.</span></span><span class="sig-name descname"><span class="pre">get_default_client_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#localtileserver.configure.get_default_client_params" title="Link to this definition">#</a></dt>
-<dd><p>Get default client connection parameters from environment variables.</p>
-<p>Each parameter is resolved from the corresponding environment variable
-(<code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_HOST</span></code>, <code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PORT</span></code>,
-<code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PREFIX</span></code>) when the caller does not provide an
-explicit value.</p>
+<span class="sig-prename descclassname"><span class="pre">localtileserver.configure.</span></span><span class="sig-name descname"><span class="pre">get_default_client_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#localtileserver.configure.get_default_client_params" title="Link to this definition">#</a></dt>
+<dd><p>Get default client connection parameters from environment and Jupyter context.</p>
+<p>Resolution order for each parameter:</p>
+<ol class="arabic simple">
+<li><p>Explicit argument passed to this function</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_{HOST,PORT,PREFIX}</span></code> environment variable</p></li>
+<li><p>Autodetection of the bundled Jupyter Server extension (prefix only)</p></li>
+</ol>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -761,7 +763,8 @@ explicit value.</p>
 <li><p><strong>port</strong> (<em>int</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The client port. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, falls back to the
 <code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PORT</span></code> environment variable.</p></li>
 <li><p><strong>prefix</strong> (<em>str</em><em> or </em><em>None</em><em>, </em><em>optional</em>) – The client URL prefix. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, falls back to the
-<code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PREFIX</span></code> environment variable.</p></li>
+<code class="docutils literal notranslate"><span class="pre">LOCALTILESERVER_CLIENT_PREFIX</span></code> environment variable, then to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">jupyter_loopback.autodetect_prefix()</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
