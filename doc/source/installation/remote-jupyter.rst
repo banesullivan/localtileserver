@@ -1,38 +1,44 @@
 📡 Remote Jupyter
 -----------------
 
-``localtileserver`` is usable in remote Jupyter environments such JupyterHub
-on services like MyBinder. Further, you may be running Jupyter in a Docker
-container or other host and accessing through a browser on an arbitrary client.
-In order to retrieve tiles into the ipyleaflet or folium Jupyter widgets
-client-side in the browser, we must make sure the port on which
-``localtileserver`` is serving tiles is accessible to your browser.
+``localtileserver`` works in remote Jupyter environments (JupyterHub,
+MyBinder, JupyterLab behind HTTPS) with zero user configuration.
+Installing ``localtileserver[jupyter]`` pulls in
+`jupyter-loopback <https://github.com/banesullivan/jupyter-loopback>`_,
+which ships a tiny ``jupyter-server`` extension that proxies
+``<base_url>/localtileserver-proxy/<port>/...`` to the in-kernel tile
+server, plus a kernel-side autodetect that routes URLs through that
+prefix automatically.
 
-To make this easy, we can levarage `jupyter-server-proxy <https://github.com/jupyterhub/jupyter-server-proxy>`_ to expose the port on the Jupyter server through a proxy URL.
+.. code:: bash
 
-Steps to use ``localtileserver`` in remote Jupyter environments:
+    pip install localtileserver[jupyter]
 
-1. Install ``jupyter-server-proxy`` for JupyterLab >= 3
+Create ``TileClient`` instances the same way you would locally.
+``get_leaflet_tile_layer`` and ``get_folium_tile_layer`` produce URLs
+that resolve through the proxy on Lab, Hub, and Binder alike. The Hub
+per-user prefix (``/user/<name>/``) is handled automatically.
+
+
+Manual prefix override
+~~~~~~~~~~~~~~~~~~~~~~
+
+If you're routing through something other than the bundled extension
+(for example an existing ``jupyter-server-proxy`` setup), set
+``LOCALTILESERVER_CLIENT_PREFIX`` and the autodetect stays out of the
+way:
 
 .. code::
 
-   pip install jupyter-server-proxy
-
-2. Set ``LOCALTILESERVER_CLIENT_PREFIX`` in your environment to ``'proxy/{port}'`` (stop here in most cases, continue to 3. if using JupyterHub):
-
-.. code::
-
-  export LOCALTILESERVER_CLIENT_PREFIX='proxy/{port}'
-
-3. If using JupyterHub, you may need to alter ``LOCALTILESERVER_CLIENT_PREFIX`` such that it includes your users ID. For example, on MyBinder, we are required to do:
-
-.. code:: python
-
-  # Set host forwarding for MyBinder
-  import os
-  os.environ['LOCALTILESERVER_CLIENT_PREFIX'] = f"{os.environ['JUPYTERHUB_SERVICE_PREFIX']}/proxy/{{port}}"
+   export LOCALTILESERVER_CLIENT_PREFIX='proxy/{port}'
 
 
-.. note::
+Frontends without a Jupyter server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  For more context, check out :ref:`jupyter-docker`
+VS Code Remote notebooks, Google Colab, Shiny for Python, Solara, and
+marimo don't run a ``jupyter-server``, so the HTTP proxy above isn't
+available. ``jupyter-loopback`` ships a ``anywidget`` comm bridge for
+these cases; it's not wired into ``localtileserver`` yet. Watch for
+follow-up work or use the manual override above to point at whatever
+proxy your environment provides.

@@ -25,6 +25,10 @@ dependencies = [
   "fastapi>=0.100.0",
   "uvicorn[standard]",
   "jinja2",
+  # ``[comm]`` pulls in ``anywidget`` so the jupyter-loopback bridge
+  # works out of the box in VS Code / Colab / Shiny / Solara / marimo.
+  # Without it, tile URLs silently fail in those frontends.
+  "jupyter-loopback[comm]>=0.2.0",
   "rio-tiler",
   "rio-cogeo",
   "requests",
@@ -34,15 +38,22 @@ dependencies = [
 
 [project.optional-dependencies]
 colormaps = ["matplotlib", "cmocean", "colorcet"]
-jupyter = ["jupyter-server-proxy", "ipyleaflet"]
+jupyter = ["ipyleaflet"]
 xarray = ["xarray", "rioxarray"]
 helpers = ["shapely"]
-test = ["pytest", "pytest-cov", "matplotlib", "folium", "ipyleaflet", "shapely"]
+test = [
+  "pytest",
+  "pytest-cov",
+  "pytest-asyncio",
+  "matplotlib",
+  "folium",
+  "ipyleaflet",
+  "shapely",
+]
 doc = [
   "bokeh",
   "folium",
   "ipyleaflet",
-  "jupyter-server-proxy",
   "jupyter-sphinx",
   "matplotlib",
   "pydata-sphinx-theme",
@@ -76,6 +87,11 @@ include = ["localtileserver*"]
 "localtileserver.tiler.data" = ["*.tif", "*.xml", "*.wkb"]
 "localtileserver.web" = ["static/**/*", "templates/**/*"]
 
+[tool.setuptools.data-files]
+"etc/jupyter/jupyter_server_config.d" = [
+  "jupyter-config/jupyter_server_config.d/localtileserver.json",
+]
+
 [tool.setuptools_scm]
 version_file = "localtileserver/_version.py"
 version_scheme = "release-branch-semver"
@@ -103,6 +119,10 @@ exclude_lines = [
 
 [tool.ruff]
 line-length = 100
+# ``_version.py`` is emitted by setuptools-scm at build time; its exact
+# formatting (e.g. ``__all__`` ordering) varies between generator
+# versions and isn't maintained by hand.
+extend-exclude = ["localtileserver/_version.py"]
 
 [tool.ruff.lint]
 select = [
@@ -143,3 +163,6 @@ exclude = [
   'examples\.get_',                                                                                                                                                                # @wraps-decorated example loaders
   'examples\.load_',                                                                                                                                                               # example data loaders
 ]
+
+[tool.uv.sources]
+jupyter-loopback = { path = "../jupyter-loopback", editable = true }

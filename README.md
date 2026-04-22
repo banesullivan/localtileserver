@@ -18,7 +18,7 @@ A Python package for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`) for visualization in Jupyter with `ipyleaflet` or `folium`.
 
-Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinder [![MyBinder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD)
+Try it live on MyBinder: [![MyBinder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/localtileserver/HEAD?labpath=examples/example.ipynb) (more demos in [`examples/`](examples/))
 
 Documentation: https://localtileserver.banesullivan.com/
 
@@ -100,6 +100,40 @@ da = da.rio.write_crs('EPSG:4326')
 
 # Register and serve tiles through the REST API
 ```
+
+### VS Code, Colab, and other webview notebooks
+
+`localtileserver` works out of the box in JupyterLab, Notebook 7, JupyterHub,
+and Binder because those frontends let the browser reach the jupyter-server
+origin directly. VS Code Jupyter (including Remote-SSH), Google Colab, Shiny
+for Python, Solara, and marimo render notebook outputs in a sandboxed webview
+whose origin is **not** the jupyter-server — so root-relative tile URLs never
+reach the proxy, and `http://127.0.0.1:<port>/…` fails to resolve.
+
+To cover those frontends, `localtileserver` integrates with
+[`jupyter-loopback`](https://github.com/banesullivan/jupyter-loopback). When
+you call `get_leaflet_tile_layer(...)` or `get_folium_tile_layer(...)`, the
+helper automatically routes that client's tile URLs through the comm bridge.
+No install step or notebook changes required — `jupyter-loopback[comm]` is
+pulled in by the core `pip install localtileserver`.
+
+If you use a `TileClient` outside those helpers (e.g. embedding raw tile
+URLs in a custom HTML output), call the method explicitly:
+
+```py
+client = TileClient('path/to/geo.tif')
+client.enable_jupyter_loopback()
+```
+
+Or, for a specific port you're managing yourself:
+
+```py
+import localtileserver
+localtileserver.enable_jupyter_loopback(port)
+```
+
+Opt out globally by setting `LOCALTILESERVER_DISABLE_JUPYTER_LOOPBACK=1` in
+your environment before importing `localtileserver`.
 
 ## ℹ️ Overview
 

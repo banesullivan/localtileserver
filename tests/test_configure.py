@@ -7,11 +7,17 @@ from localtileserver.configure import get_default_client_params
 
 def test_defaults_no_env():
     """Default values when no env vars are set."""
-    # Remove any existing env vars
     env_keys = [
         "LOCALTILESERVER_CLIENT_HOST",
         "LOCALTILESERVER_CLIENT_PORT",
         "LOCALTILESERVER_CLIENT_PREFIX",
+        # Clear Jupyter env vars too so the new autodetect path doesn't
+        # trigger when a developer is running tests from within a Jupyter
+        # session (e.g., from a notebook).
+        "JPY_SESSION_NAME",
+        "JPY_PARENT_PID",
+        "JUPYTERHUB_SERVICE_PREFIX",
+        "JPY_BASE_URL",
     ]
     saved = {}
     for k in env_keys:
