@@ -40,6 +40,7 @@ except ImportError:  # pragma: no cover
 
 from server_thread import ServerManager, launch_server
 
+from localtileserver._jupyter_loopback_bridge import enable_for_port as _enable_for_port
 from localtileserver.configure import get_default_client_params
 from localtileserver.manager import AppManager
 from localtileserver.tiler import (
@@ -903,6 +904,28 @@ class TileServerMixin:
         """
         self.client_host = "localhost"
         self.client_port = True
+
+    def enable_jupyter_loopback(self):
+        """
+        Route this server's tile URLs through the jupyter-loopback comm bridge.
+
+        Use this in webview-based Jupyter frontends (VS Code Jupyter
+        including Remote-SSH, Google Colab, Shiny for Python, Solara,
+        marimo) where the notebook output pane can't reach the
+        jupyter-server origin directly. In JupyterLab, JupyterHub,
+        Binder, and Notebook 7 this is unnecessary but harmless.
+
+        :func:`get_leaflet_tile_layer` and :func:`get_folium_tile_layer`
+        call this automatically, so the typical workflow never needs
+        to invoke it explicitly. Reach for it when you're using this
+        client outside those helpers -- e.g. embedding raw tile URLs
+        in a custom HTML output.
+
+        Opt out globally by setting
+        ``LOCALTILESERVER_DISABLE_JUPYTER_LOOPBACK=1`` before importing
+        ``localtileserver``.
+        """
+        _enable_for_port(self.server_port)
 
     @property
     def client_base_url(self):

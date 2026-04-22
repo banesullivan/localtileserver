@@ -1,4 +1,10 @@
 # justfile for localtileserver
+#
+# All Python-touching recipes go through ``uv run`` so the tool
+# versions come from the locked venv (see ``uv.lock``) instead of
+# whatever ``pyenv``/system Python happens to be first on PATH. This
+# keeps lint / typecheck / test results reproducible for contributors.
+
 set dotenv-load := false
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
@@ -13,42 +19,45 @@ port             := env("PORT", "8000")
 
 # --- Development ---
 
-# Install dev dependencies and pre-commit hooks
-install:
-    pip install -e ".[dev]"
-    pre-commit install
+# Sync UV env with all dev/test/doc dependencies
+sync:
+    uv sync --all-extras
+
+# Sync deps and install pre-commit hooks (first-time setup)
+install: sync
+    uv run pre-commit install
 
 # Run all pre-commit hooks
 lint:
-    pre-commit run --all-files
+    uv run pre-commit run --all-files
 
 # Auto-format and fix code
 format:
-    ruff format localtileserver tests
-    ruff check --fix localtileserver tests
+    uv run ruff format localtileserver tests
+    uv run ruff check --fix localtileserver tests
 
 # Run tests with coverage
 test:
-    pytest --cov=localtileserver
+    uv run pytest --cov=localtileserver
 
 # Run module doctests
 doctest:
-    pytest -v --doctest-modules localtileserver
+    uv run pytest -v --doctest-modules localtileserver
 
 # Run tests and generate HTML coverage report
 coverage:
-    pytest --cov=localtileserver --cov-report=html
+    uv run pytest --cov=localtileserver --cov-report=html
     @echo "Coverage report: htmlcov/index.html"
 
 # Print scooby system report
 report:
-    python -c "import localtileserver; print(localtileserver.Report())"
+    uv run python -c "import localtileserver; print(localtileserver.Report())"
 
 # --- Documentation ---
 
 # Build Sphinx HTML documentation
 docs:
-    LOCALTILESERVER_BUILDING_DOCS=true sphinx-build -M html doc/source doc/build
+    LOCALTILESERVER_BUILDING_DOCS=true uv run sphinx-build -M html doc/source doc/build
 
 # Build docs with live tile server and serve locally
 docs-serve tile_port="58998" doc_port="58999":
@@ -56,14 +65,14 @@ docs-serve tile_port="58998" doc_port="58999":
     set -euo pipefail
     rm -rf doc/build
     echo "Starting localtileserver on port {{ tile_port }} ..."
-    LOCALTILESERVER_CORS_ALL=1 python -m uvicorn localtileserver.web.wsgi:app \
+    LOCALTILESERVER_CORS_ALL=1 uv run python -m uvicorn localtileserver.web.wsgi:app \
         --host 0.0.0.0 --port {{ tile_port }} --log-level warning &
     TILE_PID=$!
     sleep 2
     echo "Tile server ready (PID $TILE_PID) at http://localhost:{{ tile_port }}"
     LOCALTILESERVER_BUILDING_DOCS=true \
     LOCALTILESERVER_CLIENT_HOST=http://localhost:{{ tile_port }} \
-    sphinx-build -M html doc/source doc/build
+    uv run sphinx-build -M html doc/source doc/build
     BUILD_STATUS=$?
     if [ $BUILD_STATUS -ne 0 ]; then
         echo "Sphinx build failed (exit $BUILD_STATUS). Stopping tile server ..."
@@ -78,7 +87,7 @@ docs-serve tile_port="58998" doc_port="58999":
     echo "============================================================"
     echo ""
     trap "kill $TILE_PID 2>/dev/null; exit 0" INT TERM
-    python -m http.server -d doc/build/html {{ doc_port }}
+    uv run python -m http.server -d doc/build/html {{ doc_port }}
     kill $TILE_PID 2>/dev/null || true
 
 # --- Docker ---
@@ -106,7 +115,7 @@ jupyter:
 
 # Run local dev server with hot reload
 serve:
-    uvicorn localtileserver.web.wsgi:app --host 0.0.0.0 --port {{ port }} --reload
+    uv run uvicorn localtileserver.web.wsgi:app --host 0.0.0.0 --port {{ port }} --reload
 
 # --- Cleanup ---
 

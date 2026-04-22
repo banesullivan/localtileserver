@@ -14,6 +14,7 @@ import rasterio
 if TYPE_CHECKING:
     from matplotlib.colors import Colormap
 
+from localtileserver._jupyter_loopback_bridge import enable_for_port
 from localtileserver.client import TileClient, get_or_create_tile_client
 
 logger = logging.getLogger(__name__)
@@ -183,6 +184,10 @@ def get_leaflet_tile_layer(
     tile_layer = BoundTileLayer(url=url, attribution=attribution, bounds=bounds, **kwargs)
     # Always store reference to prevent the client from being garbage collected (#239)
     tile_layer.tile_server = source
+    # Route the tile URLs through jupyter-loopback's comm bridge so the
+    # browser can reach them in webview frontends (VS Code, Colab, etc.)
+    # where root-relative paths don't resolve to the jupyter-server.
+    enable_for_port(source.server_port)
     return tile_layer
 
 
@@ -305,4 +310,8 @@ def get_folium_tile_layer(
     tile_layer = FoliumTileLayer(tiles=url, bounds=bounds, attr=attr, **kwargs)
     # Always store reference to prevent the client from being garbage collected (#239)
     tile_layer.tile_server = source
+    # Route the tile URLs through jupyter-loopback's comm bridge so the
+    # browser can reach them in webview frontends (VS Code, Colab, etc.)
+    # where root-relative paths don't resolve to the jupyter-server.
+    enable_for_port(source.server_port)
     return tile_layer

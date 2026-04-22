@@ -25,7 +25,10 @@ dependencies = [
   "fastapi>=0.100.0",
   "uvicorn[standard]",
   "jinja2",
-  "jupyter-loopback>=0.1.0",
+  # ``[comm]`` pulls in ``anywidget`` so the jupyter-loopback bridge
+  # works out of the box in VS Code / Colab / Shiny / Solara / marimo.
+  # Without it, tile URLs silently fail in those frontends.
+  "jupyter-loopback[comm]>=0.2.0",
   "rio-tiler",
   "rio-cogeo",
   "requests",
@@ -160,3 +163,6 @@ exclude = [
   'examples\.get_',                                                                                                                                                                # @wraps-decorated example loaders
   'examples\.load_',                                                                                                                                                               # example data loaders
 ]
+
+[tool.uv.sources]
+jupyter-loopback = { path = "../jupyter-loopback", editable = true }

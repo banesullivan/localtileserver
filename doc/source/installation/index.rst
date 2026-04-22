@@ -62,10 +62,11 @@ xarray DataArrays.
 
    pip install localtileserver[jupyter]
 
-This installs ``ipyleaflet``. ``jupyter-loopback`` (the core
-dependency) ships the ``jupyter-server`` extension that proxies tile
-requests through your notebook server, so no ``jupyter-server-proxy``
-configuration is required. See :doc:`remote-jupyter` for details.
+This installs ``ipyleaflet`` for inline map rendering. The underlying
+``jupyter-loopback`` proxy and comm bridge are already pulled in by the
+core install, so tiles work out of the box in JupyterLab / Hub / Binder
+as well as VS Code Jupyter, Google Colab, Shiny, Solara, and marimo.
+See :doc:`remote-jupyter` and :ref:`webview-frontends` for details.
 
 **Additional colormaps:**
 
