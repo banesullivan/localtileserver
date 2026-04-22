@@ -1,19 +1,52 @@
-.vscode/
-**/node_modules/
+# Python
+__pycache__/
 *.pyc
-*.egg-info
+*.pyo
+*.egg-info/
 dist/
 build/
-**/.DS_Store
-.coverage
-.coverage*
-gdalwmscache
-htmlcov
+*.egg
 
-electron
-notebooks
-.pytest_cache
-.ipynb_checkpoints
-bin/
+# setuptools_scm
+localtileserver/_version.py
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+**/.DS_Store
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Testing
+.pytest_cache/
+tests/generated/
+
+# Jupyter
+.ipynb_checkpoints/
 Untitled*.ipynb
+
+# Node
+**/node_modules/
+
+# GDAL
+gdalwmscache/
 *.aux.xml
+
+# Misc
+bin/
+electron/
+notebooks/
+
+uv.lock
+
+.env

@@ -1,6 +1,0 @@
-bokeh
-jupyter-sphinx
-pydata-sphinx-theme==0.15.4
-sphinx==7.3.7
-sphinx-copybutton
-sphinx-notfound-page

@@ -1,3 +1,4 @@
+from matplotlib.colors import ListedColormap
 import pytest
 
 from .utilities import get_content
@@ -46,6 +47,24 @@ def test_tile_indexes(bahamas, compare, indexes):
     "colormap,indexes", [(None, None), ("viridis", None), ("viridis", 1), ("inferno", 1)]
 )
 def test_tile_colormap(bahamas, compare, colormap, indexes):
+    # Get a tile over the REST API
+    tile_url = bahamas.get_tile_url(colormap=colormap, indexes=indexes).format(z=8, x=72, y=110)
+    rest_content = get_content(tile_url)
+    # Get tile directly
+    direct_content = bahamas.tile(z=8, x=72, y=110, colormap=colormap, indexes=indexes)
+    # Make sure they are the same
+    assert rest_content == direct_content
+    compare(direct_content)
+
+
+@pytest.mark.parametrize(
+    "colormap,indexes",
+    [
+        (ListedColormap(["red", "blue"]), None),
+        (ListedColormap(["blue", "green"]), 2),
+    ],
+)
+def test_custom_colormap(bahamas, compare, colormap, indexes):
     # Get a tile over the REST API
     tile_url = bahamas.get_tile_url(colormap=colormap, indexes=indexes).format(z=8, x=72, y=110)
     rest_content = get_content(tile_url)

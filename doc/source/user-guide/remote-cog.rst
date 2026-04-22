@@ -16,7 +16,7 @@ we can view tiles of the remote file very efficiently in a Jupyter notebook.
   import localtileserver as lts
   import folium, ipyleaflet
 
-  url = 'https://github.com/giswqs/data/raw/main/raster/landsat7.tif'
+  url = 'https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/landsat7.tif'
 
   # First, create a tile server from the URL raster file
   client = lts.open(url)

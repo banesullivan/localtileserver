@@ -5,44 +5,44 @@ on:
   push:
     branches:
       - main
+    tags:
+      - "*"
   schedule:
     - cron: "0 0 * * *"
+
+permissions:
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # OIDC auth to codecov
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.9, "3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: ${{ matrix.python-version }}
-      # Install everything else
-      - name: Install other dependencies
-        run: |
-          pip install -r requirements_jupyter.txt
-      - name: Install localtileserver
-        run: pip install -e .
+      - name: Install localtileserver with test dependencies
+        run: pip install -e ".[test,colormaps,jupyter,xarray,helpers]"
       - name: Scooby Report
         run: python -c "import localtileserver;print(localtileserver.Report())"
       - name: Run Tests
         run: |
-          pytest -v --cov=localtileserver
+          pytest --cov=localtileserver
           coverage xml -o coverage.xml
-      # - name: Run Doc Tests
-      #   run: |
-      #     make doctest
-      - name: Stash coverage
-        uses: actions/upload-artifact@v3
+      - uses: codecov/codecov-action@v6.0.0
         with:
-          name: coverage.xml
-          path: coverage.xml
-      - uses: codecov/codecov-action@v4
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
           files: coverage.xml
           verbose: true

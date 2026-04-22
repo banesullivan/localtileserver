@@ -1,43 +1,112 @@
-import logging
+"""
+Colormap palette registry and validation utilities.
+"""
 
-try:
-    import cmocean  # noqa
-except ImportError:
-    pass
-try:
-    import colorcet  # noqa
-except ImportError:
-    pass
+import hashlib
+import json
+import logging
+import threading
+
+from rio_tiler.colormap import cmap as RIO_CMAPS
 
 logger = logging.getLogger(__name__)
 
+# Thread-safe server-side colormap registry for custom colormaps (#231).
+# Keyed by content hash so that identical colormaps share the same entry.
+_COLORMAP_REGISTRY: dict[str, dict] = {}
+_REGISTRY_LOCK = threading.Lock()
 
-def is_mpl_cmap(name: str):
-    """This will silently fail if matplotlib is not installed."""
-    try:
-        import matplotlib
 
-        matplotlib.colormaps.get_cmap(name)
-        return True
-    except ImportError:  # pragma: no cover
-        logger.error("Install matplotlib for additional colormap choices.")
-    except ValueError:
-        pass
-    return False
+def register_colormap(colormap_data: dict) -> str:
+    """
+    Register a custom colormap and return its hash key.
+
+    Parameters
+    ----------
+    colormap_data : dict
+        Colormap as {int: (r, g, b, a)} dict.
+
+    Returns
+    -------
+    str
+        Hash key for the registered colormap (e.g., ``"custom:abc123def456"``).
+    """
+    serialized = json.dumps(colormap_data, sort_keys=True)
+    hash_key = hashlib.md5(serialized.encode()).hexdigest()[:12]
+    with _REGISTRY_LOCK:
+        _COLORMAP_REGISTRY[hash_key] = colormap_data
+    return f"custom:{hash_key}"
+
+
+def get_registered_colormap(key: str) -> dict | None:
+    """
+    Look up a registered colormap by its ``custom:<hash>`` key.
+
+    Parameters
+    ----------
+    key : str
+        The full ``custom:<hash>`` key returned by :func:`register_colormap`.
+
+    Returns
+    -------
+    dict or None
+        The colormap dictionary, or ``None`` if the key is not in the
+        registry.
+    """
+    if not key.startswith("custom:"):
+        return None
+    hash_key = key[len("custom:") :]
+    with _REGISTRY_LOCK:
+        return _COLORMAP_REGISTRY.get(hash_key)
+
+
+def is_rio_cmap(name: str):
+    """
+    Check whether a colormap name is supported by rio-tiler.
+
+    Parameters
+    ----------
+    name : str
+        Colormap name to look up.
+
+    Returns
+    -------
+    bool
+        ``True`` if the name is a registered rio-tiler colormap.
+    """
+    return name in RIO_CMAPS.data.keys()
 
 
 def palette_valid_or_raise(name: str):
-    if not is_mpl_cmap(name):
-        raise ValueError(f"Please use a valid matplotlib colormap name. Invalid: {name}")
+    """
+    Validate that a palette name is available, raising on failure.
+
+    Parameters
+    ----------
+    name : str
+        Colormap name to validate. May be a ``custom:<hash>`` key or a
+        rio-tiler colormap name.
+
+    Raises
+    ------
+    ValueError
+        If the colormap name is not found in the registry or rio-tiler.
+    """
+    if name.startswith("custom:"):
+        if get_registered_colormap(name) is None:
+            raise ValueError(f"Custom colormap not found in registry: {name}")
+        return
+    if not is_rio_cmap(name):
+        raise ValueError(f"Please use a valid rio-tiler registered colormap name. Invalid: {name}")
 
 
 def get_palettes():
-    """List of available palettes."""
-    cmaps = {}
-    try:
-        import matplotlib.pyplot
+    """
+    Return the available color palettes.
 
-        cmaps["matplotlib"] = list(matplotlib.pyplot.colormaps())
-    except ImportError:  # pragma: no cover
-        logger.error("Install matplotlib for additional colormap choices.")
-    return cmaps
+    Returns
+    -------
+    dict
+        Dictionary mapping palette source names to lists of colormap names.
+    """
+    return {"matplotlib": list(RIO_CMAPS.data.keys())}

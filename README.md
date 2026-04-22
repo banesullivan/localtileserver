@@ -1,3 +1,9 @@
+### 🚀 Support This Project
+
+If localtileserver saves you time, powers your work, or you need direct help, please consider supporting the project and my efforts:
+
+[![Sponsor](https://img.shields.io/badge/Sponsor%20Bane%20Sullivan-🚀-green?style=for-the-badge)](https://github.com/sponsors/banesullivan)
+
 ![tile-diagram](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/oam-tiles.jpg)
 
 # 🌐 Local Tile Server for Geospatial Rasters
@@ -6,26 +12,31 @@
 [![PyPI](https://img.shields.io/pypi/v/localtileserver.svg?logo=python&logoColor=white)](https://pypi.org/project/localtileserver/)
 [![conda](https://img.shields.io/conda/vn/conda-forge/localtileserver.svg?logo=conda-forge&logoColor=white)](https://anaconda.org/conda-forge/localtileserver)
 
-*Need to visualize a rather large (gigabytes+) raster?* **This is for you.**
+_Need to visualize a rather large (gigabytes+) raster?_ **This is for you.**
 
 A Python package for serving tiles from large raster files in
 the [Slippy Maps standard](https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
 (i.e., `/zoom/x/y.png`) for visualization in Jupyter with `ipyleaflet` or `folium`.
 
-Launch a [demo](https://github.com/banesullivan/localtileserver-demo) on MyBinder [![MyBinder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/localtileserver-demo/HEAD)
+Try it live on MyBinder: [![MyBinder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/banesullivan/localtileserver/HEAD?labpath=examples/example.ipynb) (more demos in [`examples/`](examples/))
 
 Documentation: https://localtileserver.banesullivan.com/
 
-Built on [rio-tiler](https://github.com/cogeotiff/rio-tiler)
-
+Built on [rio-tiler](https://github.com/cogeotiff/rio-tiler) and [FastAPI](https://fastapi.tiangolo.com/)
 
 ## 🌟 Highlights
 
 - Launch a tile server for large geospatial images
-- View local or remote* raster files with `ipyleaflet` or `folium` in Jupyter
+- View local or remote raster files with `ipyleaflet` or `folium` in Jupyter
+- Band math expressions for on-the-fly computed imagery (e.g., NDVI)
+- Per-band statistics and multiple image stretch modes
+- Multiple output formats: PNG, JPEG, WebP, GeoTIFF, NPY
+- Spatial subsetting via bounding box crops and GeoJSON masks
+- [STAC](https://stacspec.org/) item support for multi-asset catalogs
+- [Xarray](https://xarray.dev/) DataArray tile serving (NetCDF, Zarr, etc.)
+- Virtual mosaics from multiple raster files
 - View rasters with CesiumJS with the built-in web application
-
-**remote raster files should be pre-tiled Cloud Optimized GeoTiffs*
+- Full REST API powered by FastAPI with auto-generated OpenAPI docs
 
 ## 🚀 Usage
 
@@ -51,9 +62,82 @@ m
 
 ![ipyleaflet](https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/ipyleaflet.png)
 
+### Band Math Expressions
+
+Compute derived imagery on the fly using band math expressions:
+
+```py
+client = TileClient('path/to/multispectral.tif')
+
+# NDVI: (NIR - Red) / (NIR + Red) where NIR=b4, Red=b1
+t = get_leaflet_tile_layer(client, expression='(b4-b1)/(b4+b1)',
+                           vmin=-1, vmax=1, colormap='RdYlGn')
+```
+
+### STAC Support
+
+Visualize assets from STAC catalogs:
+
+```py
+import requests
+
+# Fetch tiles from a STAC item's assets
+resp = requests.get('http://localhost:PORT/api/stac/tiles/10/512/512.png',
+                    params={'url': 'https://example.com/stac/item.json',
+                            'assets': 'visual'})
+```
+
+### Xarray DataArrays
+
+Serve tiles directly from xarray DataArrays (NetCDF, Zarr, etc.):
+
+```py
+import xarray as xr
+
+ds = xr.open_dataset('temperature.nc')
+da = ds['temperature']
+da = da.rio.write_crs('EPSG:4326')
+
+# Register and serve tiles through the REST API
+```
+
+### VS Code, Colab, and other webview notebooks
+
+`localtileserver` works out of the box in JupyterLab, Notebook 7, JupyterHub,
+and Binder because those frontends let the browser reach the jupyter-server
+origin directly. VS Code Jupyter (including Remote-SSH), Google Colab, Shiny
+for Python, Solara, and marimo render notebook outputs in a sandboxed webview
+whose origin is **not** the jupyter-server — so root-relative tile URLs never
+reach the proxy, and `http://127.0.0.1:<port>/…` fails to resolve.
+
+To cover those frontends, `localtileserver` integrates with
+[`jupyter-loopback`](https://github.com/banesullivan/jupyter-loopback). When
+you call `get_leaflet_tile_layer(...)` or `get_folium_tile_layer(...)`, the
+helper automatically routes that client's tile URLs through the comm bridge.
+No install step or notebook changes required — `jupyter-loopback[comm]` is
+pulled in by the core `pip install localtileserver`.
+
+If you use a `TileClient` outside those helpers (e.g. embedding raw tile
+URLs in a custom HTML output), call the method explicitly:
+
+```py
+client = TileClient('path/to/geo.tif')
+client.enable_jupyter_loopback()
+```
+
+Or, for a specific port you're managing yourself:
+
+```py
+import localtileserver
+localtileserver.enable_jupyter_loopback(port)
+```
+
+Opt out globally by setting `LOCALTILESERVER_DISABLE_JUPYTER_LOOPBACK=1` in
+your environment before importing `localtileserver`.
+
 ## ℹ️ Overview
 
-The `TileClient` class can be used to to launch a tile server in a background
+The `TileClient` class can be used to launch a tile server in a background
 thread which will serve raster imagery to a viewer (usually `ipyleaflet` or
 `folium` in Jupyter notebooks).
 
@@ -64,11 +148,30 @@ raster imagery to your viewer; it helps to have pre-tiled,
 There is an included, standalone web viewer leveraging
 [CesiumJS](https://cesium.com/platform/cesiumjs/).
 
+### REST API
+
+The server exposes a comprehensive REST API built on FastAPI:
+
+| Endpoint                                  | Description             |
+| ----------------------------------------- | ----------------------- |
+| `GET /api/tiles/{z}/{x}/{y}.{fmt}`        | Raster tiles            |
+| `GET /api/thumbnail.{fmt}`                | Thumbnail preview       |
+| `GET /api/metadata`                       | Raster metadata         |
+| `GET /api/bounds`                         | Geographic bounds       |
+| `GET /api/statistics`                     | Per-band statistics     |
+| `GET /api/part.{fmt}`                     | Bounding box crop       |
+| `POST /api/feature.{fmt}`                 | GeoJSON mask extraction |
+| `GET /api/stac/tiles/{z}/{x}/{y}.{fmt}`   | STAC item tiles         |
+| `GET /api/xarray/tiles/{z}/{x}/{y}.{fmt}` | Xarray DataArray tiles  |
+| `GET /api/mosaic/tiles/{z}/{x}/{y}.{fmt}` | Mosaic tiles            |
+| `GET /swagger/`                           | Interactive API docs    |
+
+All tile/thumbnail endpoints support `expression`, `stretch`, `indexes`, `colormap`, `vmin`, `vmax`, and `nodata` query parameters.
 
 ## ⬇️ Installation
 
 Get started with `localtileserver` to view rasters in Jupyter or deploy as your
-own Flask application.
+own FastAPI application.
 
 ### 🐍 Installing with `conda`
 
@@ -85,6 +188,26 @@ If you prefer pip, then you can install from PyPI: https://pypi.org/project/loca
 
 ```
 pip install localtileserver
+```
+
+### Optional Dependencies
+
+For xarray/DataArray support:
+
+```
+pip install localtileserver[xarray]
+```
+
+For Jupyter widget integration:
+
+```
+pip install localtileserver[jupyter]
+```
+
+For additional colormaps:
+
+```
+pip install localtileserver[colormaps]
 ```
 
 ## 💭 Feedback

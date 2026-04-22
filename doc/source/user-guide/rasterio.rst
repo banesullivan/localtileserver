@@ -6,32 +6,32 @@ so that you can easily visualize your data when working with rasterio.
 This will only work when opening a raster in read-mode.
 
 
-.. code-block:: python
+.. jupyter-execute::
 
-    import rasterio
-    import localtileserver as lts
-    from ipyleaflet import Map
+  import rasterio
+  import localtileserver as lts
+  from ipyleaflet import Map
 
-    src = rasterio.open('path/to/geo.tif')
+  src = rasterio.open('https://github.com/giswqs/data/raw/main/raster/srtm90.tif')
 
-    client = lts.TileClient(src)
+  client = lts.open(src)
 
-    t = lts.get_leaflet_tile_layer(client)
+  t = lts.get_leaflet_tile_layer(client)
 
-    m = Map(center=client.center(), zoom=client.default_zoom)
-    m.add(t)
-    m
+  m = Map(center=client.center(), zoom=client.default_zoom)
+  m.add(t)
+  m
 
 
 ``localtileserver`` actually uses ``rasterio`` under the hood for everything
 and keeps a reference to a ``rasterio.DatasetReader`` for all clients.
 
 
-.. code-block:: python
+.. jupyter-execute::
 
-    from localtileserver import examples
+  from localtileserver import examples
 
-    # Load example tile layer from publicly available DEM source
-    client = examples.get_elevation()
+  # Load example tile layer from publicly available DEM source
+  client = examples.get_elevation()
 
-    client.dataset
+  client.dataset

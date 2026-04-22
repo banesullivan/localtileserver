@@ -1,42 +1,32 @@
-📖 API
-======
+📖 API Reference
+================
+
+.. toctree::
+   :hidden:
+
+   python-client
+   examples
+   handlers
+   utilities
+   rest-api
 
 
-Python Client
--------------
+:doc:`python-client`
+    Core :class:`~localtileserver.TileClient`, mixin classes, and Jupyter widget helpers
+    (:func:`~localtileserver.get_leaflet_tile_layer`, :func:`~localtileserver.get_folium_tile_layer`).
 
-.. autofunction:: localtileserver.open
+:doc:`examples`
+    Factory functions that return a pre-loaded :class:`~localtileserver.TileClient`
+    for quick experimentation with publicly available sample data.
 
-.. autofunction:: localtileserver.get_or_create_tile_client
+:doc:`handlers`
+    Low-level tile generation, statistics, and image manipulation functions for
+    raster files, STAC catalogs, xarray DataArrays, and virtual mosaics.
 
+:doc:`utilities`
+    Colormap and palette registration, raster helpers, configuration,
+    application factory, and diagnostics.
 
-.. autoclass:: localtileserver.client.TilerInterface
-   :members:
-   :undoc-members:
-
-
-.. autoclass:: localtileserver.TileClient
-   :members:
-   :undoc-members:
-
-
-Jupyter Widget Helpers
-----------------------
-
-.. autofunction:: localtileserver.get_leaflet_tile_layer
-
-
-.. autofunction:: localtileserver.get_folium_tile_layer
-
-
-
-Other Helpers
--------------
-
-.. autofunction:: localtileserver.helpers.save_new_raster
-
-.. autofunction:: localtileserver.make_vsi
-
-.. autofunction:: localtileserver.validate.validate_cog
-
-.. autofunction:: localtileserver.helpers.polygon_to_geojson
+:doc:`rest-api`
+    Complete HTTP endpoint reference for the FastAPI-powered REST API,
+    including STAC, xarray, and mosaic endpoints.

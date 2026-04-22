@@ -1,12 +1,12 @@
 🗺️ Example Datasets
 -------------------
 
-A few example datasets are included with `localtileserver`. A particularly
+A few example datasets are included with ``localtileserver``. A particularly
 useful one has global elevation data which you can use to create high resolution
 Digital Elevation Models (DEMs) of a local region.
 
 
-.. code:: python
+.. jupyter-execute::
 
   import localtileserver as lts
   from localtileserver import examples
@@ -26,12 +26,9 @@ Digital Elevation Models (DEMs) of a local region.
   m
 
 
-.. image:: https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/elevation.png
+Here is another example with the Virtual Earth satellite imagery:
 
-
-Here is another example with the Virtual Earth satellite imagery
-
-.. code:: python
+.. jupyter-execute::
 
   import localtileserver as lts
   from localtileserver import examples
@@ -46,6 +43,3 @@ Here is another example with the Virtual Earth satellite imagery
   m = Map(center=(39.751343612695145, -105.22181306125279), zoom=18)
   m.add(t)
   m
-
-
-.. image:: https://raw.githubusercontent.com/banesullivan/localtileserver/main/imgs/kafadar.png

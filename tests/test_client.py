@@ -17,7 +17,7 @@ from .utilities import get_content
 
 skip_shapely = False
 try:
-    from shapely.geometry import Polygon
+    from shapely.geometry import Point, Polygon
 except ImportError:
     skip_shapely = True
 
@@ -77,9 +77,9 @@ def test_client_force_shutdown(bahamas):
 def test_caching_query_params(bahamas):
     thumb_url_a = bahamas.create_url("api/thumbnail.png")
     thumb_url_b = bahamas.create_url("api/thumbnail.png?indexes=1")
-    assert get_content(thumb_url_a) != get_content(
-        thumb_url_b
-    ), "Binary content should be different"
+    assert get_content(thumb_url_a) != get_content(thumb_url_b), (
+        "Binary content should be different"
+    )
     thumb_url_c = bahamas.create_url("api/thumbnail.png")
     assert get_content(thumb_url_a) == get_content(thumb_url_c), "Binary content should be the same"
 
@@ -221,8 +221,6 @@ def test_bounds_geojson(bahamas):
 
 @pytest.mark.skipif(skip_shapely, reason="shapely not installed")
 def test_center_shapely(bahamas):
-    from shapely.geometry import Point
-
     pt = bahamas.center(return_point=True)
     assert isinstance(pt, Point)
     wkt = bahamas.center(return_wkt=True)

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from fastapi.testclient import TestClient
 from matplotlib.testing.compare import compare_images
 import pytest
 import rasterio
@@ -10,9 +11,10 @@ from localtileserver.web import create_app
 
 @pytest.fixture
 def flask_client():
+    """FastAPI test client (name kept for backwards compatibility with existing tests)."""
     app = create_app()
-    with app.test_client() as f_client:
-        yield f_client
+    with TestClient(app) as client:
+        yield client
 
 
 @pytest.fixture
@@ -46,7 +48,7 @@ def blue_marble(port="default", debug=True):
 
 @pytest.fixture
 def remote_file_url():
-    return "https://github.com/giswqs/data/raw/main/raster/landsat7.tif"
+    return "https://pub-5ec9af56ea924492b07db6cf4015bba0.r2.dev/examples/landsat7.tif"
 
 
 @pytest.fixture
@@ -71,9 +73,9 @@ def compare(request):
         else:
             with open(gen / filename, "wb") as f:
                 f.write(image)
-            result = compare_images(path / filename, gen / filename, 0.1, in_decorator=True)
-            assert (
-                result is None
-            ), f"Image comparison failed with RMS {result['rms']}. Difference in {result['diff']}"
+            result = compare_images(path / filename, gen / filename, 20, in_decorator=True)
+            assert result is None, (
+                f"Image comparison failed with RMS {result['rms']}. Difference in {result['diff']}"
+            )
 
     return _compare

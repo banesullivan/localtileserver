@@ -16,37 +16,59 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || ( github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository )
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.2
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v6.2.0
+        with:
+          python-version: "3.13"
+      - name: Resolve package version
+        id: version
+        run: |
+          python -m pip install --upgrade pip setuptools_scm
+          version="$(python -m setuptools_scm)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: $version"
       - name: Log into the Container registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v3.6.0
         with:
           registry: ${{ env.REGISTRY }}
-          username: token
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract metadata for the Docker image
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v5.10.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
       - name: Build and push the Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v6.18.0
         with:
           context: .
-          file: Dockerfile
+          target: slim
           push: ${{ github.actor != 'dependabot[bot]' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            SETUPTOOLS_SCM_PRETEND_VERSION_FOR_LOCALTILESERVER=${{ steps.version.outputs.version }}
       - name: Extract metadata for the Jupyter Docker image
         id: meta_jupyter
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v5.10.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-jupyter
       - name: Build and push the Jupyter Docker image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v6.18.0
         with:
           context: .
-          file: jupyter.Dockerfile
+          target: jupyter
           push: ${{ github.actor != 'dependabot[bot]' }}
           tags: ${{ steps.meta_jupyter.outputs.tags }}
           labels: ${{ steps.meta_jupyter.outputs.labels }}
+          build-args: |
+            SETUPTOOLS_SCM_PRETEND_VERSION_FOR_LOCALTILESERVER=${{ steps.version.outputs.version }}

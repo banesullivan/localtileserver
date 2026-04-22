@@ -1,4 +1,5 @@
-# flake8: noqa: F401
+"""Tile generation and image processing for localtileserver."""
+
 from localtileserver.tiler.data import (
     get_building_docs,
     get_co_elevation_url,
@@ -9,14 +10,22 @@ from localtileserver.tiler.data import (
     str_to_bool,
 )
 from localtileserver.tiler.handler import (
+    get_feature,
     get_meta_data,
+    get_part,
     get_point,
     get_preview,
     get_reader,
     get_source_bounds,
+    get_statistics,
     get_tile,
 )
-from localtileserver.tiler.palettes import get_palettes, palette_valid_or_raise
+from localtileserver.tiler.palettes import (
+    get_palettes,
+    get_registered_colormap,
+    palette_valid_or_raise,
+    register_colormap,
+)
 from localtileserver.tiler.utilities import (
     ImageBytes,
     format_to_encoding,
