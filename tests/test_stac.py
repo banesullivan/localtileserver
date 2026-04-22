@@ -415,3 +415,18 @@ def test_stac_client_get_or_create_passthrough(MockReader):
         assert created is False
     finally:
         client.shutdown(force=True)
+
+
+@patch("localtileserver.tiler.stac.STACReader")
+def test_open_stac_client_passthrough(MockReader):
+    import localtileserver as lts
+
+    reader = MagicMock()
+    MockReader.return_value = reader
+
+    client = STACClient("https://example.com/stac/item.json")
+    try:
+        result = lts.open(client)
+        assert result is client
+    finally:
+        client.shutdown(force=True)

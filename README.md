@@ -46,14 +46,14 @@ The following is a minimal example to visualize a local raster file with
 `ipyleaflet`:
 
 ```py
-from localtileserver import get_leaflet_tile_layer, TileClient
+import localtileserver as lts
 from ipyleaflet import Map
 
 # First, create a tile server from local raster file
-client = TileClient('path/to/geo.tif')
+client = lts.open('path/to/geo.tif')
 
 # Create ipyleaflet tile layer from that server
-t = get_leaflet_tile_layer(client)
+t = lts.get_leaflet_tile_layer(client)
 
 m = Map(center=client.center(), zoom=client.default_zoom)
 m.add(t)
@@ -67,11 +67,11 @@ m
 Compute derived imagery on the fly using band math expressions:
 
 ```py
-client = TileClient('path/to/multispectral.tif')
+client = lts.open('path/to/multispectral.tif')
 
 # NDVI: (NIR - Red) / (NIR + Red) where NIR=b4, Red=b1
-t = get_leaflet_tile_layer(client, expression='(b4-b1)/(b4+b1)',
-                           vmin=-1, vmax=1, colormap='RdYlGn')
+t = lts.get_leaflet_tile_layer(client, expression='(b4-b1)/(b4+b1)',
+                               vmin=-1, vmax=1, colormap='RdYlGn')
 ```
 
 ### STAC Support
@@ -121,7 +121,7 @@ If you use a `TileClient` outside those helpers (e.g. embedding raw tile
 URLs in a custom HTML output), call the method explicitly:
 
 ```py
-client = TileClient('path/to/geo.tif')
+client = lts.open('path/to/geo.tif')
 client.enable_jupyter_loopback()
 ```
 
@@ -218,6 +218,6 @@ If you would like to report any bugs or make feature requests, please open an is
 If filing a bug report, please share a scooby `Report`:
 
 ```py
-import localtileserver
-print(localtileserver.Report())
+import localtileserver as lts
+print(lts.Report())
 ```
