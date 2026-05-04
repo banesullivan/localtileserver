@@ -15,7 +15,7 @@ repos:
         args: [--branch, main]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.1
+    rev: v0.15.12
     hooks:
       - id: ruff-format
       - id: ruff
@@ -39,12 +39,12 @@ repos:
       - id: taplo-format
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.36.1
+    rev: 0.37.2
     hooks:
       - id: check-github-workflows
 
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.8.1
+    rev: 0.9.1
     hooks:
       - id: nbstripout
         # Strip outputs + execution counts from every .ipynb so committed
