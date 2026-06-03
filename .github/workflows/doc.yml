@@ -48,7 +48,7 @@ jobs:
           name: doc-build
           path: doc/build
       - name: Deploy to GH Pages
-        uses: peaceiris/actions-gh-pages@v4.0.0
+        uses: peaceiris/actions-gh-pages@v4.1.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: doc/build/html
