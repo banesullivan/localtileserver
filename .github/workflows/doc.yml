@@ -19,7 +19,7 @@ jobs:
           fetch-tags: true
           persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v6.2.0
+        uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       - name: Install localtileserver with doc dependencies
