@@ -30,7 +30,7 @@ jobs:
           fetch-tags: true
           persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v6.2.0
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install localtileserver with test dependencies
