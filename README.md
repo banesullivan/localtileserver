@@ -50,7 +50,7 @@ import localtileserver as lts
 from ipyleaflet import Map
 
 # First, create a tile server from local raster file
-client = lts.open('path/to/geo.tif')
+client = lts.open("path/to/geo.tif")
 
 # Create ipyleaflet tile layer from that server
 t = lts.get_leaflet_tile_layer(client)
@@ -67,11 +67,12 @@ m
 Compute derived imagery on the fly using band math expressions:
 
 ```py
-client = lts.open('path/to/multispectral.tif')
+client = lts.open("path/to/multispectral.tif")
 
 # NDVI: (NIR - Red) / (NIR + Red) where NIR=b4, Red=b1
-t = lts.get_leaflet_tile_layer(client, expression='(b4-b1)/(b4+b1)',
-                               vmin=-1, vmax=1, colormap='RdYlGn')
+t = lts.get_leaflet_tile_layer(
+    client, expression="(b4-b1)/(b4+b1)", vmin=-1, vmax=1, colormap="RdYlGn"
+)
 ```
 
 ### STAC Support
@@ -82,9 +83,10 @@ Visualize assets from STAC catalogs:
 import requests
 
 # Fetch tiles from a STAC item's assets
-resp = requests.get('http://localhost:PORT/api/stac/tiles/10/512/512.png',
-                    params={'url': 'https://example.com/stac/item.json',
-                            'assets': 'visual'})
+resp = requests.get(
+    "http://localhost:PORT/api/stac/tiles/10/512/512.png",
+    params={"url": "https://example.com/stac/item.json", "assets": "visual"},
+)
 ```
 
 ### Xarray DataArrays
@@ -94,9 +96,9 @@ Serve tiles directly from xarray DataArrays (NetCDF, Zarr, etc.):
 ```py
 import xarray as xr
 
-ds = xr.open_dataset('temperature.nc')
-da = ds['temperature']
-da = da.rio.write_crs('EPSG:4326')
+ds = xr.open_dataset("temperature.nc")
+da = ds["temperature"]
+da = da.rio.write_crs("EPSG:4326")
 
 # Register and serve tiles through the REST API
 ```
@@ -121,7 +123,7 @@ If you use a `TileClient` outside those helpers (e.g. embedding raw tile
 URLs in a custom HTML output), call the method explicitly:
 
 ```py
-client = lts.open('path/to/geo.tif')
+client = lts.open("path/to/geo.tif")
 client.enable_jupyter_loopback()
 ```
 
@@ -129,6 +131,7 @@ Or, for a specific port you're managing yourself:
 
 ```py
 import localtileserver
+
 localtileserver.enable_jupyter_loopback(port)
 ```
 
@@ -219,5 +222,6 @@ If filing a bug report, please share a scooby `Report`:
 
 ```py
 import localtileserver as lts
+
 print(lts.Report())
 ```
